@@ -71,12 +71,12 @@ func (h *Handler) saveAnalysis(w netHTTP.ResponseWriter, analysisData *cli.Analy
 	if err != nil {
 		if err == enums.ErrorNotFoundRecords {
 			httpUtil.StatusNotFound(w, err)
-		} else {
-			httpUtil.StatusInternalServerError(w, err)
+			return
 		}
-	} else {
-		httpUtil.StatusCreated(w, analysisID)
+		httpUtil.StatusInternalServerError(w, err)
+		return
 	}
+	httpUtil.StatusCreated(w, analysisID)
 }
 
 func (h *Handler) getCompanyIDAndRepositoryIDInCxt(r *netHTTP.Request) (uuid.UUID, uuid.UUID, error) {
