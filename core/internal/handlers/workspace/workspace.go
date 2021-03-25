@@ -1,9 +1,9 @@
 package workspace
 
 import (
-	httpUtils "github.com/ZupIT/horusec-devkit/pkg/utils/http"
+	httpUtils "github.com/ZupIT/horusec-devkit/pkg/utils/http" // nolint
 	"github.com/ZupIT/horusec-platform/core/internal/controllers/workspace"
-	"net/http"
+	"net/http" // nolint
 )
 
 type Handler struct {

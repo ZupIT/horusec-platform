@@ -1,7 +1,7 @@
 GO ?= go
 GOFMT ?= gofmt
 GO_FILES ?= $$(find . -name '*.go' | grep -v vendor)
-GOLANG_CI_LINT ?= ./bin/golangci-lint
+
 GO_IMPORTS ?= goimports
 GO_IMPORTS_LOCAL ?= github.com/ZupIT/horusec-devkit
 HORUSEC ?= horusec
@@ -10,12 +10,8 @@ fmt:
 	$(GOFMT) -w $(GO_FILES)
 
 lint:
-    ifeq ($(wildcard $(GOLANG_CI_LINT)), $(GOLANG_CI_LINT))
-		$(GOLANG_CI_LINT) run -v --timeout=5m -c .golangci.yml ./...
-    else
-		curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s latest
-		$(GOLANG_CI_LINT) run -v --timeout=5m -c .golangci.yml ./...
-    endif
+	chmod +x deployments/scripts/go_lint.sh
+	deployments/scripts/go_lint.sh
 
 coverage:
 	chmod +x scripts/coverage.sh

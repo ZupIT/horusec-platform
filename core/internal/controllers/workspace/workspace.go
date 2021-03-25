@@ -15,6 +15,7 @@ type Controller struct {
 	databaseWrite database.IDatabaseWrite
 }
 
+// nolint
 func NewWorkspaceController(broker broker.IBroker, databaseConnection *database.Connection) IController {
 	return &Controller{
 		broker:        broker,

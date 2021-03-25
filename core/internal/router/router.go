@@ -1,9 +1,9 @@
 package router
 
 import (
-	"github.com/ZupIT/horusec-devkit/pkg/services/http"
+	"github.com/ZupIT/horusec-devkit/pkg/services/http" // nolint
 	"github.com/ZupIT/horusec-platform/core/internal/handlers/workspace"
-	"github.com/go-chi/chi"
+	"github.com/go-chi/chi" // nolint
 )
 
 type IRouter interface {
