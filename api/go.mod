@@ -3,9 +3,11 @@ module github.com/ZupIT/horusec-platform/api
 go 1.16
 
 require (
-	github.com/ZupIT/horusec-devkit v0.0.0-20210325142541-66b01eaa87eb
+	github.com/ZupIT/horusec-devkit v0.0.0-20210325165722-25a0727ac4d6
 	github.com/go-chi/chi v4.1.2+incompatible
 	github.com/go-chi/cors v1.2.0
+	github.com/go-ozzo/ozzo-validation/v4 v4.3.0
+	github.com/google/uuid v1.2.0
 	github.com/google/wire v0.5.0
 	github.com/jackc/pgx/v4 v4.11.0 // indirect
 	github.com/prometheus/common v0.20.0 // indirect

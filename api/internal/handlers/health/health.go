@@ -16,27 +16,32 @@ package health
 
 import (
 	"fmt"
-	"github.com/ZupIT/horusec-devkit/pkg/services/broker"
+	netHTTP "net/http"
+
+	"google.golang.org/grpc"
+
+	brokerService "github.com/ZupIT/horusec-devkit/pkg/services/broker"
+	brokerConfig "github.com/ZupIT/horusec-devkit/pkg/services/broker/config"
 	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/health"
-	"github.com/ZupIT/horusec-devkit/pkg/utils/env"
 	httpUtil "github.com/ZupIT/horusec-devkit/pkg/utils/http"
 	httpUtilEnums "github.com/ZupIT/horusec-devkit/pkg/utils/http/enums"
-	"google.golang.org/grpc"
-	netHTTP "net/http"
 
 	"github.com/ZupIT/horusec-devkit/pkg/services/database"
 )
 
 type Handler struct {
-	broker                 broker.IBroker
+	broker                 brokerService.IBroker
+	brokerConfig           brokerConfig.IConfig
 	databaseRead           database.IDatabaseRead
 	databaseWrite          database.IDatabaseWrite
 	grpcHealthCheckService health.ICheckClient
 }
 
-func NewHealthHandler(broker broker.IBroker, databaseConnection *database.Connection, grpcCon *grpc.ClientConn) *Handler {
+func NewHealthHandler(broker brokerService.IBroker, brokerConfiguration brokerConfig.IConfig,
+	databaseConnection *database.Connection, grpcCon *grpc.ClientConn) *Handler {
 	return &Handler{
 		broker:                 broker,
+		brokerConfig:           brokerConfiguration,
 		databaseRead:           databaseConnection.Read,
 		databaseWrite:          databaseConnection.Write,
 		grpcHealthCheckService: health.NewHealthCheckGrpcClient(grpcCon),
@@ -48,27 +53,27 @@ func (h *Handler) Options(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
 }
 
 func (h *Handler) Get(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
-	if !h.databaseRead.IsAvailable() || !h.databaseWrite.IsAvailable() {
+	if h.databaseAvailable() {
 		httpUtil.StatusInternalServerError(w, httpUtilEnums.ErrorDatabaseIsNotHealth)
 		return
 	}
-
-	if !isDisabledBroker() {
-		if !h.broker.IsAvailable() {
-			httpUtil.StatusInternalServerError(w, httpUtilEnums.ErrorBrokerIsNotHealth)
-			return
-		}
+	if h.brokerAvailable() {
+		httpUtil.StatusInternalServerError(w, httpUtilEnums.ErrorBrokerIsNotHealth)
+		return
 	}
-
-	if isAvailable, state := h.grpcHealthCheckService.IsAvailable(); !isAvailable {
+	if isAvailable, state := h.grpcAvailable(); !isAvailable {
 		httpUtil.StatusInternalServerError(w, fmt.Errorf("%e %s", httpUtilEnums.ErrorGrpcIsNotHealth, state))
 		return
 	}
-
 	httpUtil.StatusOK(w, "service is healthy")
 }
 
-// TODO REMOVE THIS an get from config
-func isDisabledBroker() bool {
-	return env.GetEnvOrDefaultBool("BROKER_DISABLE", true)
+func (h *Handler) databaseAvailable() bool {
+	return !h.databaseRead.IsAvailable() || !h.databaseWrite.IsAvailable()
+}
+func (h *Handler) brokerAvailable() bool {
+	return h.brokerConfig.GetEnableBroker() && !h.broker.IsAvailable()
+}
+func (h *Handler) grpcAvailable() (bool, string) {
+	return h.grpcHealthCheckService.IsAvailable()
 }

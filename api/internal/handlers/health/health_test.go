@@ -15,13 +15,14 @@
 package health
 
 import (
-	"github.com/ZupIT/horusec-devkit/pkg/services/broker"
-	"github.com/ZupIT/horusec-devkit/pkg/services/database"
-	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/health"
 	"net/http"
 	"net/http/httptest"
-	"os"
 	"testing"
+
+	"github.com/ZupIT/horusec-devkit/pkg/services/broker"
+	brokerConfig "github.com/ZupIT/horusec-devkit/pkg/services/broker/config"
+	"github.com/ZupIT/horusec-devkit/pkg/services/database"
+	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/health"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -33,7 +34,7 @@ func TestOptions(t *testing.T) {
 			Write: &database.Mock{},
 		}
 
-		handler := NewHealthHandler(nil, db, nil)
+		handler := NewHealthHandler(nil, nil, db, nil)
 		r, _ := http.NewRequest(http.MethodOptions, "api/health", nil)
 		w := httptest.NewRecorder()
 
@@ -55,10 +56,11 @@ func TestGet(t *testing.T) {
 		dbMockWrite.On("IsAvailable").Return(true)
 
 		handler := Handler{
-			broker: brokerMock,
-			databaseRead: dbMockRead,
-			databaseWrite: dbMockWrite,
+			broker:                 brokerMock,
+			databaseRead:           dbMockRead,
+			databaseWrite:          dbMockWrite,
 			grpcHealthCheckService: mockGrpcService,
+			brokerConfig:           brokerConfig.NewBrokerConfig(),
 		}
 
 		r, _ := http.NewRequest(http.MethodGet, "/test", nil)
@@ -69,21 +71,22 @@ func TestGet(t *testing.T) {
 		assert.Equal(t, http.StatusOK, w.Code)
 	})
 
-	t.Run("should return 200 everything its ok and config disable", func(t *testing.T) {
-		assert.NoError(t, os.Setenv("BROKER_DISABLE", "true")) // TODO Remove this
+	t.Run("should return 200 everything its ok and broker disable", func(t *testing.T) {
 		mockGrpcService := &health.MockHealthCheckClient{}
 		mockGrpcService.On("IsAvailable").Return(true, "")
 		brokerMock := &broker.Mock{}
 		brokerMock.On("IsAvailable").Return(true)
+		brokerConfigMock := brokerConfig.NewBrokerConfig()
+		brokerConfigMock.SetEnableBroker(false)
 		dbMockRead := &database.Mock{}
 		dbMockRead.On("IsAvailable").Return(true)
 		dbMockWrite := &database.Mock{}
 		dbMockWrite.On("IsAvailable").Return(true)
-
 		handler := Handler{
-			broker: brokerMock,
-			databaseRead: dbMockRead,
-			databaseWrite: dbMockWrite,
+			broker:                 brokerMock,
+			brokerConfig:           brokerConfigMock,
+			databaseRead:           dbMockRead,
+			databaseWrite:          dbMockWrite,
 			grpcHealthCheckService: mockGrpcService,
 		}
 
@@ -93,7 +96,6 @@ func TestGet(t *testing.T) {
 		handler.Get(w, r)
 
 		assert.Equal(t, http.StatusOK, w.Code)
-		assert.NoError(t, os.Setenv("BROKER_DISABLE", "")) // TODO Remove this
 	})
 
 	t.Run("should return 500 when broker is not healthy", func(t *testing.T) {
@@ -107,10 +109,11 @@ func TestGet(t *testing.T) {
 		dbMockWrite.On("IsAvailable").Return(true)
 
 		handler := Handler{
-			broker: brokerMock,
-			databaseRead: dbMockRead,
-			databaseWrite: dbMockWrite,
+			broker:                 brokerMock,
+			databaseRead:           dbMockRead,
+			databaseWrite:          dbMockWrite,
 			grpcHealthCheckService: mockGrpcService,
+			brokerConfig:           brokerConfig.NewBrokerConfig(),
 		}
 
 		r, _ := http.NewRequest(http.MethodGet, "/test", nil)
@@ -132,10 +135,11 @@ func TestGet(t *testing.T) {
 		dbMockWrite.On("IsAvailable").Return(false)
 
 		handler := Handler{
-			broker: brokerMock,
-			databaseRead: dbMockRead,
-			databaseWrite: dbMockWrite,
+			broker:                 brokerMock,
+			databaseRead:           dbMockRead,
+			databaseWrite:          dbMockWrite,
 			grpcHealthCheckService: mockGrpcService,
+			brokerConfig:           brokerConfig.NewBrokerConfig(),
 		}
 
 		r, _ := http.NewRequest(http.MethodGet, "/test", nil)
@@ -157,10 +161,11 @@ func TestGet(t *testing.T) {
 		dbMockWrite.On("IsAvailable").Return(true)
 
 		handler := Handler{
-			broker: brokerMock,
-			databaseRead: dbMockRead,
-			databaseWrite: dbMockWrite,
+			broker:                 brokerMock,
+			databaseRead:           dbMockRead,
+			databaseWrite:          dbMockWrite,
 			grpcHealthCheckService: mockGrpcService,
+			brokerConfig:           brokerConfig.NewBrokerConfig(),
 		}
 
 		r, _ := http.NewRequest(http.MethodGet, "/test", nil)
@@ -182,10 +187,11 @@ func TestGet(t *testing.T) {
 		dbMockWrite.On("IsAvailable").Return(true)
 
 		handler := Handler{
-			broker: brokerMock,
-			databaseRead: dbMockRead,
-			databaseWrite: dbMockWrite,
+			broker:                 brokerMock,
+			databaseRead:           dbMockRead,
+			databaseWrite:          dbMockWrite,
 			grpcHealthCheckService: mockGrpcService,
+			brokerConfig:           brokerConfig.NewBrokerConfig(),
 		}
 
 		r, _ := http.NewRequest(http.MethodGet, "/test", nil)

@@ -1,10 +1,11 @@
 package router
 
 import (
-	"github.com/ZupIT/horusec-devkit/pkg/services/http"
 	"github.com/ZupIT/horusec-platform/api/internal/handlers/analysis"
 	"github.com/ZupIT/horusec-platform/api/internal/handlers/health"
 	"github.com/go-chi/chi"
+
+	"github.com/ZupIT/horusec-devkit/pkg/services/http"
 )
 
 type IRouter interface {
@@ -14,14 +15,14 @@ type IRouter interface {
 type Router struct {
 	http.IRouter
 	analysisHandler *analysis.Handler
-	healthHandler *health.Handler
+	healthHandler   *health.Handler
 }
 
 func NewHTTPRouter(router http.IRouter, analysisHandler *analysis.Handler, healthHandler *health.Handler) IRouter {
 	routes := &Router{
-		IRouter:          router,
+		IRouter:         router,
 		analysisHandler: analysisHandler,
-		healthHandler: healthHandler,
+		healthHandler:   healthHandler,
 	}
 
 	return routes.setRoutes()
