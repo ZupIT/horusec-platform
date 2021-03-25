@@ -1,9 +1,13 @@
 package router
 
 import (
-	"github.com/ZupIT/horusec-devkit/pkg/services/http"
-	"github.com/ZupIT/horusec-platform/core/internal/handlers/workspace"
+	"github.com/ZupIT/horusec-platform/core/internal/enums/routes"
 	"github.com/go-chi/chi"
+
+	"github.com/ZupIT/horusec-devkit/pkg/services/http"
+	"github.com/ZupIT/horusec-devkit/pkg/services/middlewares"
+
+	"github.com/ZupIT/horusec-platform/core/internal/handlers/workspace"
 )
 
 type IRouter interface {
@@ -12,26 +16,29 @@ type IRouter interface {
 
 type Router struct {
 	http.IRouter
+	middlewares.IAuthzMiddleware
 	workspaceHandler *workspace.Handler
 }
 
-func NewHTTPRouter(router http.IRouter, workspaceHandler *workspace.Handler) IRouter {
-	routes := &Router{
+func NewHTTPRouter(router http.IRouter, workspaceHandler *workspace.Handler,
+	authzMiddleware middlewares.IAuthzMiddleware) IRouter {
+	httpRoutes := &Router{
 		IRouter:          router,
+		IAuthzMiddleware: authzMiddleware,
 		workspaceHandler: workspaceHandler,
 	}
 
-	return routes.setRoutes()
+	return httpRoutes.setRoutes()
 }
 
 func (r *Router) setRoutes() IRouter {
-	r.routerTest()
+	r.workspaceRoutes()
 
 	return r
 }
 
-func (r *Router) routerTest() {
-	r.Route("/test", func(router chi.Router) {
-		router.Get("/", r.workspaceHandler.Get)
+func (r *Router) workspaceRoutes() {
+	r.Route(routes.WorkspaceHandler, func(router chi.Router) {
+		router.With(r.IsApplicationAdmin).Post("/", r.workspaceHandler.Create)
 	})
 }
