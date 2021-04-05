@@ -1,0 +1,50 @@
+definitions:
+  workspace.CreateWorkspaceData:
+    properties:
+      authzAdmin:
+        items:
+          type: string
+        type: array
+      authzMember:
+        items:
+          type: string
+        type: array
+      description:
+        type: string
+      name:
+        type: string
+    type: object
+info:
+  contact:
+    email: horusec@zup.com.br
+    name: Horusec
+    url: https://github.com/ZupIT/horusec-platform
+  description: Service responsible for workspace, repositories, token operations.
+  termsOfService: http://swagger.io/terms/
+  title: Horusec-Core
+paths:
+  /core/workspaces:
+    post:
+      consumes:
+      - application/json
+      description: Create a new workspace
+      operationId: create-workspace
+      parameters:
+      - description: create workspace data
+        in: body
+        name: Workspace
+        required: true
+        schema:
+          $ref: '#/definitions/workspace.CreateWorkspaceData'
+      produces:
+      - application/json
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Workspace
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: X-Horusec-Authorization
+    type: apiKey
+swagger: "2.0"

@@ -16,12 +16,12 @@ import (
 )
 
 type CreateWorkspaceData struct {
-	AccountID   uuid.UUID `json:"accountID"`
+	AccountID   uuid.UUID `json:"accountID" swaggerignore:"true"`
 	Name        string    `json:"name"`
 	Description string    `json:"description"`
 	AuthzMember []string  `json:"authzMember"`
 	AuthzAdmin  []string  `json:"authzAdmin"`
-	Permissions []string  `json:"permissions"`
+	Permissions []string  `json:"permissions" swaggerignore:"true"`
 }
 
 func (c *CreateWorkspaceData) Validate() error {

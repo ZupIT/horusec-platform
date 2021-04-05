@@ -1,0 +1,78 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Service responsible for workspace, repositories, token operations.",
+        "title": "Horusec-Core",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "Horusec",
+            "url": "https://github.com/ZupIT/horusec-platform",
+            "email": "horusec@zup.com.br"
+        }
+    },
+    "paths": {
+        "/core/workspaces": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Create a new workspace",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Workspace"
+                ],
+                "operationId": "create-workspace",
+                "parameters": [
+                    {
+                        "description": "create workspace data",
+                        "name": "Workspace",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/workspace.CreateWorkspaceData"
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    "definitions": {
+        "workspace.CreateWorkspaceData": {
+            "type": "object",
+            "properties": {
+                "authzAdmin": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "authzMember": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "description": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "ApiKeyAuth": {
+            "type": "apiKey",
+            "name": "X-Horusec-Authorization",
+            "in": "header"
+        }
+    }
+}

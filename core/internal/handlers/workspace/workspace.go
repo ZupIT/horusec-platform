@@ -33,6 +33,14 @@ func NewWorkspaceHandler(controller workspaceController.IController, useCases wo
 	}
 }
 
+// @Tags Workspace
+// @Description Create a new workspace
+// @ID create-workspace
+// @Accept  json
+// @Produce  json
+// @Param Workspace body workspaceEntities.CreateWorkspaceData true "create workspace data"
+// @Router /core/workspaces [post]
+// @Security ApiKeyAuth
 func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	workspaceData, err := h.getCreateData(r)
 	if err != nil {
