@@ -8,6 +8,9 @@ import (
 	"github.com/ZupIT/horusec-platform/api/internal/router"
 	"github.com/google/wire"
 
+	appConfiguration "github.com/ZupIT/horusec-devkit/pkg/services/app"
+	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth/proto"
+
 	"github.com/ZupIT/horusec-devkit/pkg/services/broker"
 	brokerConfig "github.com/ZupIT/horusec-devkit/pkg/services/broker/config"
 	"github.com/ZupIT/horusec-devkit/pkg/services/database"
@@ -25,12 +28,14 @@ var providers = wire.NewSet(
 	databaseConfig.NewDatabaseConfig,
 	database.NewDatabaseReadAndWrite,
 	auth.NewAuthGRPCConnection,
+	proto.NewAuthServiceClient,
 	cors.NewCorsConfig,
 	http.NewHTTPRouter,
-	router.NewHTTPRouter,
+	appConfiguration.NewAppConfig,
 	analysisController.NewAnalysisController,
 	analysisHandler.NewAnalysisHandler,
 	healthHandler.NewHealthHandler,
+	router.NewHTTPRouter,
 )
 
 func Initialize(defaultPort string) (router.IRouter, error) {

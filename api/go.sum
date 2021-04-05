@@ -14,6 +14,10 @@ github.com/Shopify/toxiproxy v2.1.4+incompatible/go.mod h1:OXgGpZ6Cli1/URJOF1DMx
 github.com/VividCortex/gohistogram v1.0.0/go.mod h1:Pf5mBqqDxYaXu3hDrrU+w6nw50o/4+TcAqDqk/vUH7g=
 github.com/ZupIT/horusec-devkit v0.0.0-20210325165722-25a0727ac4d6 h1:Ha58aaDNSZDbwl38vUFaW75CiMsbmJUpg7mCAytCt2s=
 github.com/ZupIT/horusec-devkit v0.0.0-20210325165722-25a0727ac4d6/go.mod h1:8at5UCthaQ+8VtOWAzv08/d06sVyXvVppq9KXC1pMfo=
+github.com/ZupIT/horusec-devkit v0.0.0-20210405143442-d66c1a4034e1 h1:bQWnhPRnL1nUj49DrowobgwT1RlUZXN2obnRx7lryEg=
+github.com/ZupIT/horusec-devkit v0.0.0-20210405143442-d66c1a4034e1/go.mod h1:8at5UCthaQ+8VtOWAzv08/d06sVyXvVppq9KXC1pMfo=
+github.com/ZupIT/horusec-devkit v0.0.0-20210405183733-caccac7a654c h1:HubvWlIEzHtOtVQjWYXVJ8DubZz7/R5Tv1ey/HXlDuU=
+github.com/ZupIT/horusec-devkit v0.0.0-20210405183733-caccac7a654c/go.mod h1:8at5UCthaQ+8VtOWAzv08/d06sVyXvVppq9KXC1pMfo=
 github.com/afex/hystrix-go v0.0.0-20180502004556-fa1af6a1f4f5/go.mod h1:SkGFH1ia65gfNATL8TAiHDNxPzPdmEL5uirI2Uyuz6c=
 github.com/alecthomas/template v0.0.0-20160405071501-a0175ee3bccc/go.mod h1:LOuyumcjzFXgccqObfd/Ljyb9UuFJ6TxHnclSeseNhc=
 github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751/go.mod h1:LOuyumcjzFXgccqObfd/Ljyb9UuFJ6TxHnclSeseNhc=

@@ -19,6 +19,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	appConfiguration "github.com/ZupIT/horusec-devkit/pkg/services/app"
+
 	"github.com/ZupIT/horusec-devkit/pkg/services/broker"
 	brokerConfig "github.com/ZupIT/horusec-devkit/pkg/services/broker/config"
 	"github.com/ZupIT/horusec-devkit/pkg/services/database"
@@ -34,7 +36,7 @@ func TestOptions(t *testing.T) {
 			Write: &database.Mock{},
 		}
 
-		handler := NewHealthHandler(nil, nil, db, nil)
+		handler := NewHealthHandler(nil, nil, db, nil, nil)
 		r, _ := http.NewRequest(http.MethodOptions, "api/health", nil)
 		w := httptest.NewRecorder()
 
@@ -77,17 +79,19 @@ func TestGet(t *testing.T) {
 		brokerMock := &broker.Mock{}
 		brokerMock.On("IsAvailable").Return(true)
 		brokerConfigMock := brokerConfig.NewBrokerConfig()
-		brokerConfigMock.SetEnableBroker(false)
 		dbMockRead := &database.Mock{}
 		dbMockRead.On("IsAvailable").Return(true)
 		dbMockWrite := &database.Mock{}
 		dbMockWrite.On("IsAvailable").Return(true)
+		mockAppConfig := &appConfiguration.Mock{}
+		mockAppConfig.On("IsBrokerDisabled").Return(true)
 		handler := Handler{
 			broker:                 brokerMock,
 			brokerConfig:           brokerConfigMock,
 			databaseRead:           dbMockRead,
 			databaseWrite:          dbMockWrite,
 			grpcHealthCheckService: mockGrpcService,
+			appConfig:              mockAppConfig,
 		}
 
 		r, _ := http.NewRequest(http.MethodGet, "/test", nil)

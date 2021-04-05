@@ -4,6 +4,16 @@ import (
 	"bytes"
 	"context"
 	"errors"
+	"net/http"
+	"net/http/httptest"
+	"testing"
+	"time"
+
+	analysisController "github.com/ZupIT/horusec-platform/api/internal/controllers/analysis"
+	"github.com/go-chi/chi"
+	"github.com/google/uuid"
+	"github.com/stretchr/testify/assert"
+
 	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 	"github.com/ZupIT/horusec-devkit/pkg/entities/cli"
 	"github.com/ZupIT/horusec-devkit/pkg/entities/vulnerability"
@@ -14,14 +24,6 @@ import (
 	vulnerabilityEnum "github.com/ZupIT/horusec-devkit/pkg/enums/vulnerability"
 	"github.com/ZupIT/horusec-devkit/pkg/services/database/enums"
 	middlewaresEnums "github.com/ZupIT/horusec-devkit/pkg/services/middlewares/enums"
-	analysisController "github.com/ZupIT/horusec-platform/api/internal/controllers/analysis"
-	"github.com/go-chi/chi"
-	"github.com/google/uuid"
-	"github.com/stretchr/testify/assert"
-	"net/http"
-	"net/http/httptest"
-	"testing"
-	"time"
 )
 
 func TestHandler_Options(t *testing.T) {
@@ -95,23 +97,22 @@ func TestHandler_Get(t *testing.T) {
 	})
 }
 
-
 func TestHandler_Post(t *testing.T) {
 	var VulnerabilityID = uuid.New()
 	var AnalysisID = uuid.New()
 	var analysisDataMock = &cli.AnalysisData{
-		Analysis:       &analysis.Analysis{
-			ID:                      AnalysisID,
-			Status:                  analysisEnum.Running,
-			Errors:                  "",
-			CreatedAt:               time.Now(),
-			FinishedAt:              time.Now(),
+		Analysis: &analysis.Analysis{
+			ID:         AnalysisID,
+			Status:     analysisEnum.Running,
+			Errors:     "",
+			CreatedAt:  time.Now(),
+			FinishedAt: time.Now(),
 			AnalysisVulnerabilities: []analysis.RelationshipAnalysisVuln{
 				{
 					VulnerabilityID: VulnerabilityID,
 					AnalysisID:      AnalysisID,
 					CreatedAt:       time.Now(),
-					Vulnerability:   vulnerability.Vulnerability{
+					Vulnerability: vulnerability.Vulnerability{
 						VulnerabilityID: VulnerabilityID,
 						Line:            "1",
 						Column:          "1",
