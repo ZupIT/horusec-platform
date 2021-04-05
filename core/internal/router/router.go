@@ -1,12 +1,12 @@
 package router
 
 import (
-	"github.com/ZupIT/horusec-platform/core/internal/enums/routes"
 	"github.com/go-chi/chi"
 
 	"github.com/ZupIT/horusec-devkit/pkg/services/http"
 	"github.com/ZupIT/horusec-devkit/pkg/services/middlewares"
 
+	"github.com/ZupIT/horusec-platform/core/internal/enums/routes"
 	"github.com/ZupIT/horusec-platform/core/internal/handlers/workspace"
 )
 

@@ -44,7 +44,7 @@ func Initialize(defaultPort string) (router.IRouter, error) {
 	}
 	iController := workspace.NewWorkspaceController(iBroker, connection, appIConfig)
 	iUseCases := workspace2.NewWorkspaceUseCases()
-	handler := workspace3.NewWorkspaceHandler(iController, iUseCases, authServiceClient)
+	handler := workspace3.NewWorkspaceHandler(iController, iUseCases, authServiceClient, appIConfig)
 	iAuthzMiddleware := middlewares.NewAuthzMiddleware(clientConnInterface)
 	routerIRouter := router.NewHTTPRouter(iRouter, handler, iAuthzMiddleware)
 	return routerIRouter, nil

@@ -4,12 +4,13 @@ import (
 	"context"
 	"net/http"
 
+	"github.com/ZupIT/horusec-devkit/pkg/services/app"
 	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth/proto"
 	httpUtil "github.com/ZupIT/horusec-devkit/pkg/utils/http"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/jwt/enums"
-	"github.com/google/uuid"
 
 	workspaceController "github.com/ZupIT/horusec-platform/core/internal/controllers/workspace"
+	workspaceEntities "github.com/ZupIT/horusec-platform/core/internal/entities/workspace"
 	workspaceUseCases "github.com/ZupIT/horusec-platform/core/internal/usecases/workspace"
 )
 
@@ -18,34 +19,26 @@ type Handler struct {
 	useCases   workspaceUseCases.IUseCases
 	authGRPC   proto.AuthServiceClient
 	context    context.Context
+	appConfig  app.IConfig
 }
 
 func NewWorkspaceHandler(controller workspaceController.IController, useCases workspaceUseCases.IUseCases,
-	authGRPC proto.AuthServiceClient) *Handler {
+	authGRPC proto.AuthServiceClient, appConfig app.IConfig) *Handler {
 	return &Handler{
 		controller: controller,
 		useCases:   useCases,
 		authGRPC:   authGRPC,
 		context:    context.Background(),
+		appConfig:  appConfig,
 	}
 }
 
 func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
-	workspaceData, err := h.useCases.GetCreateWorkspaceData(r)
+	workspaceData, err := h.getCreateData(r)
 	if err != nil {
 		httpUtil.StatusBadRequest(w, err)
 		return
 	}
-
-	response, err := h.authGRPC.GetAccountInfo(h.context,
-		&proto.GetAccountData{Token: r.Header.Get(enums.HorusecJWTHeader)})
-	if err != nil {
-		return
-	}
-
-	accountID, _ := uuid.Parse(response.AccountID)
-	workspaceData.AccountID = accountID
-	workspaceData.Permissions = response.Permissions
 
 	workspace, err := h.controller.Create(workspaceData)
 	if err != nil {
@@ -54,4 +47,23 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	httpUtil.StatusCreated(w, workspace)
+}
+
+func (h *Handler) getCreateData(r *http.Request) (*workspaceEntities.CreateWorkspaceData, error) {
+	workspaceData, err := h.useCases.GetCreateWorkspaceData(r.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	accountData, err := h.getAccountData(r)
+	if err != nil {
+		return nil, err
+	}
+
+	workspaceData.SetAccountData(accountData)
+	return workspaceData, workspaceData.CheckLdapGroups(h.appConfig.GetAuthorizationType())
+}
+
+func (h *Handler) getAccountData(r *http.Request) (*proto.GetAccountDataResponse, error) {
+	return h.authGRPC.GetAccountInfo(h.context, &proto.GetAccountData{Token: r.Header.Get(enums.HorusecJWTHeader)})
 }

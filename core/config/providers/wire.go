@@ -3,7 +3,6 @@
 package providers
 
 import (
-	workspaceUseCases "github.com/ZupIT/horusec-platform/core/internal/usecases/workspace"
 	"github.com/google/wire"
 
 	"github.com/ZupIT/horusec-devkit/pkg/services/app"
@@ -20,6 +19,7 @@ import (
 	workspaceController "github.com/ZupIT/horusec-platform/core/internal/controllers/workspace"
 	workspaceHandler "github.com/ZupIT/horusec-platform/core/internal/handlers/workspace"
 	"github.com/ZupIT/horusec-platform/core/internal/router"
+	workspaceUseCases "github.com/ZupIT/horusec-platform/core/internal/usecases/workspace"
 )
 
 var devKitProviders = wire.NewSet(

@@ -3,12 +3,12 @@ package workspace
 import (
 	"github.com/ZupIT/horusec-devkit/pkg/enums/account"
 	"github.com/ZupIT/horusec-devkit/pkg/services/app"
-	"github.com/ZupIT/horusec-devkit/pkg/services/broker"
+	brokerService "github.com/ZupIT/horusec-devkit/pkg/services/broker"
 	"github.com/ZupIT/horusec-devkit/pkg/services/database"
+	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 
 	workspaceEntities "github.com/ZupIT/horusec-platform/core/internal/entities/workspace"
 	workspaceEnums "github.com/ZupIT/horusec-platform/core/internal/enums/workspace"
-	"github.com/ZupIT/horusec-platform/core/internal/utils"
 )
 
 type IController interface {
@@ -16,13 +16,13 @@ type IController interface {
 }
 
 type Controller struct {
-	broker        broker.IBroker
+	broker        brokerService.IBroker
 	databaseRead  database.IDatabaseRead
 	databaseWrite database.IDatabaseWrite
 	appConfig     app.IConfig
 }
 
-func NewWorkspaceController(broker broker.IBroker, databaseConnection *database.Connection,
+func NewWorkspaceController(broker brokerService.IBroker, databaseConnection *database.Connection,
 	appConfig app.IConfig) IController {
 	return &Controller{
 		broker:        broker,
@@ -33,25 +33,18 @@ func NewWorkspaceController(broker broker.IBroker, databaseConnection *database.
 }
 
 func (c *Controller) Create(data *workspaceEntities.CreateWorkspaceData) (*workspaceEntities.Workspace, error) {
-	if utils.IsInvalidLdapGroups(c.appConfig.GetAuthorizationType(), data.AuthzAdmin, data.Permissions) {
-		return nil, workspaceEnums.ErrorInvalidLdapGroup
-	}
-
-	return c.createWorkspaceTransaction(data)
-}
-
-func (c *Controller) createWorkspaceTransaction(
-	data *workspaceEntities.CreateWorkspaceData) (*workspaceEntities.Workspace, error) {
 	transaction := c.databaseWrite.StartTransaction()
 	workspace := data.ToWorkspace()
 
 	if err := transaction.Create(workspace, workspaceEnums.DatabaseWorkspaceTable).GetError(); err != nil {
-		return nil, transaction.RollbackTransaction().GetError()
+		logger.LogError(workspaceEnums.ErrorRollbackCreate, transaction.RollbackTransaction().GetError())
+		return nil, err
 	}
 
 	if err := transaction.Create(workspace.ToAccountWorkspace(data.AccountID, account.Admin),
 		workspaceEnums.DatabaseAccountWorkspaceTable).GetError(); err != nil {
-		return nil, transaction.RollbackTransaction().GetError()
+		logger.LogError(workspaceEnums.ErrorRollbackCreate, transaction.RollbackTransaction().GetError())
+		return nil, err
 	}
 
 	return workspace, transaction.CommitTransaction().GetError()

@@ -1,7 +1,7 @@
 package workspace
 
 import (
-	"net/http"
+	"io"
 
 	"github.com/ZupIT/horusec-devkit/pkg/utils/parser"
 
@@ -9,7 +9,7 @@ import (
 )
 
 type IUseCases interface {
-	GetCreateWorkspaceData(r *http.Request) (data *workspace.CreateWorkspaceData, err error)
+	GetCreateWorkspaceData(body io.ReadCloser) (data *workspace.CreateWorkspaceData, err error)
 }
 
 type UseCases struct {
@@ -19,10 +19,9 @@ func NewWorkspaceUseCases() IUseCases {
 	return &UseCases{}
 }
 
-func (u *UseCases) GetCreateWorkspaceData(r *http.Request) (*workspace.CreateWorkspaceData, error) {
+func (u *UseCases) GetCreateWorkspaceData(body io.ReadCloser) (*workspace.CreateWorkspaceData, error) {
 	data := &workspace.CreateWorkspaceData{}
-	err := parser.ParseBodyToEntity(r.Body, data)
-	if err != nil {
+	if err := parser.ParseBodyToEntity(body, data); err != nil {
 		return nil, err
 	}
 
