@@ -14,17 +14,19 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/services/database/response"
 	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth/proto"
 
-	"github.com/ZupIT/horusec-platform/core/internal/entities/workspace"
+	workspaceEntities "github.com/ZupIT/horusec-platform/core/internal/entities/workspace"
+	workspaceUseCases "github.com/ZupIT/horusec-platform/core/internal/usecases/workspace"
 )
 
 func TestNewWorkspaceController(t *testing.T) {
 	t.Run("should success create a new workspace controller", func(t *testing.T) {
-		assert.NotNil(t, NewWorkspaceController(&broker.Broker{}, &database.Connection{}, &app.Config{}))
+		assert.NotNil(t, NewWorkspaceController(&broker.Broker{}, &database.Connection{},
+			&app.Config{}, workspaceUseCases.NewWorkspaceUseCases()))
 	})
 }
 
 func TestCreate(t *testing.T) {
-	workspaceData := &workspace.CreateWorkspaceData{
+	workspaceData := &workspaceEntities.Data{
 		AccountID:   uuid.New(),
 		Name:        "test",
 		Description: "test",
@@ -46,7 +48,8 @@ func TestCreate(t *testing.T) {
 		authGRPCMock.On("GetAuthConfig").Return(authConfig, nil)
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
-		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection, app.NewAppConfig(authGRPCMock))
+		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection,
+			app.NewAppConfig(authGRPCMock), workspaceUseCases.NewWorkspaceUseCases())
 
 		result, err := controller.Create(workspaceData)
 		assert.NoError(t, err)
@@ -64,7 +67,8 @@ func TestCreate(t *testing.T) {
 		authGRPCMock.On("GetAuthConfig").Return(authConfig, nil)
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
-		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection, app.NewAppConfig(authGRPCMock))
+		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection,
+			app.NewAppConfig(authGRPCMock), workspaceUseCases.NewWorkspaceUseCases())
 
 		result, err := controller.Create(workspaceData)
 		assert.NoError(t, err)
@@ -82,7 +86,8 @@ func TestCreate(t *testing.T) {
 		authGRPCMock.On("GetAuthConfig").Return(authConfig, nil)
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
-		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection, app.NewAppConfig(authGRPCMock))
+		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection,
+			app.NewAppConfig(authGRPCMock), workspaceUseCases.NewWorkspaceUseCases())
 
 		result, err := controller.Create(workspaceData)
 		assert.NoError(t, err)
@@ -100,7 +105,8 @@ func TestCreate(t *testing.T) {
 		authGRPCMock.On("GetAuthConfig").Return(authConfig, nil)
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
-		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection, app.NewAppConfig(authGRPCMock))
+		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection,
+			app.NewAppConfig(authGRPCMock), workspaceUseCases.NewWorkspaceUseCases())
 
 		result, err := controller.Create(workspaceData)
 		assert.NoError(t, err)
@@ -120,7 +126,8 @@ func TestCreate(t *testing.T) {
 		authGRPCMock.On("GetAuthConfig").Return(authConfig, nil)
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
-		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection, app.NewAppConfig(authGRPCMock))
+		controller := NewWorkspaceController(&broker.Broker{},
+			databaseConnection, app.NewAppConfig(authGRPCMock), workspaceUseCases.NewWorkspaceUseCases())
 
 		result, err := controller.Create(workspaceData)
 		assert.Error(t, err)
@@ -140,7 +147,8 @@ func TestCreate(t *testing.T) {
 		authGRPCMock.On("GetAuthConfig").Return(authConfig, nil)
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
-		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection, app.NewAppConfig(authGRPCMock))
+		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection,
+			app.NewAppConfig(authGRPCMock), workspaceUseCases.NewWorkspaceUseCases())
 
 		result, err := controller.Create(workspaceData)
 		assert.Error(t, err)

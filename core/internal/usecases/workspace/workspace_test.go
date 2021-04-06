@@ -20,7 +20,7 @@ func TestGetCreateWorkspaceData(t *testing.T) {
 	t.Run("should success get workspace data from request body", func(t *testing.T) {
 		useCases := NewWorkspaceUseCases()
 
-		createWorkspaceData := &workspace.CreateWorkspaceData{
+		createWorkspaceData := &workspace.Data{
 			AccountID: uuid.New(),
 			Name:      "test",
 		}

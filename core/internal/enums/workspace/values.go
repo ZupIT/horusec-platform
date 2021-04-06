@@ -1,6 +1,7 @@
 package workspace
 
 const (
-	DatabaseWorkspaceTable        = "workspace"
+	DatabaseWorkspaceTable        = "workspaces"
 	DatabaseAccountWorkspaceTable = "account_workspace"
+	ID                            = "workspaceID"
 )

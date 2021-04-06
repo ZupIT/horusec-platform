@@ -26,7 +26,7 @@ func TestNewWorkspaceHandler(t *testing.T) {
 }
 
 func TestCreate(t *testing.T) {
-	workspaceData := &workspaceEntities.CreateWorkspaceData{
+	workspaceData := &workspaceEntities.Data{
 		Name:        "test",
 		Description: "test",
 		AuthzMember: []string{"test"},

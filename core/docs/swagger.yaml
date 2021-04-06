@@ -1,5 +1,14 @@
 definitions:
-  workspace.CreateWorkspaceData:
+  entities.Response:
+    properties:
+      code:
+        type: integer
+      content:
+        type: object
+      status:
+        type: string
+    type: object
+  workspace.Data:
     properties:
       authzAdmin:
         items:
@@ -19,11 +28,39 @@ info:
     email: horusec@zup.com.br
     name: Horusec
     url: https://github.com/ZupIT/horusec-platform
-  description: Service responsible for workspace, repositories, token operations.
+  description: Service responsible for workspace, repositories and token operations.
   termsOfService: http://swagger.io/terms/
   title: Horusec-Core
 paths:
   /core/workspaces:
+    get:
+      consumes:
+      - application/json
+      description: List all workspaces of an account
+      operationId: list-workspace
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/entities.Response'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Workspace
     post:
       consumes:
       - application/json
@@ -35,9 +72,135 @@ paths:
         name: Workspace
         required: true
         schema:
-          $ref: '#/definitions/workspace.CreateWorkspaceData'
+          $ref: '#/definitions/workspace.Data'
       produces:
       - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/entities.Response'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Workspace
+  /core/workspaces/{workspaceID}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a workspace by id
+      operationId: delete-workspace
+      parameters:
+      - description: ID of the workspace
+        in: path
+        name: workspaceID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/entities.Response'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Workspace
+    get:
+      consumes:
+      - application/json
+      description: Search for a existing workspace by id
+      operationId: get-workspace
+      parameters:
+      - description: ID of the workspace
+        in: path
+        name: workspaceID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/entities.Response'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Workspace
+    patch:
+      consumes:
+      - application/json
+      description: Updates a existing workspace by id
+      operationId: update-workspace
+      parameters:
+      - description: ID of the workspace
+        in: path
+        name: workspaceID
+        required: true
+        type: string
+      - description: update workspace data
+        in: body
+        name: Workspace
+        required: true
+        schema:
+          $ref: '#/definitions/workspace.Data'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/entities.Response'
       security:
       - ApiKeyAuth: []
       tags:

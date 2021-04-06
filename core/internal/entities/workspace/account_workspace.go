@@ -9,7 +9,7 @@ import (
 )
 
 type AccountWorkspace struct {
-	WorkspaceID uuid.UUID    `json:"companyID"`
+	WorkspaceID uuid.UUID    `json:"workspaceID"`
 	AccountID   uuid.UUID    `json:"accountID"`
 	Role        account.Role `json:"role"`
 	CreatedAt   time.Time    `json:"createdAt"`

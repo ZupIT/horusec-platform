@@ -25,6 +25,28 @@ func (w *Workspace) ToAccountWorkspace(accountID uuid.UUID, role account.Role) *
 		AccountID:   accountID,
 		Role:        role,
 		CreatedAt:   time.Now(),
-		UpdatedAt:   time.Time{},
+		UpdatedAt:   time.Now(),
 	}
+}
+
+func (w *Workspace) ToWorkspaceResponse(role account.Role) *Response {
+	return &Response{
+		WorkspaceID: w.WorkspaceID,
+		Name:        w.Name,
+		Role:        role,
+		Description: w.Description,
+		AuthzAdmin:  w.AuthzAdmin,
+		AuthzMember: w.AuthzMember,
+		CreatedAt:   w.CreatedAt,
+		UpdatedAt:   w.UpdatedAt,
+	}
+}
+
+func (w *Workspace) Update(data *Data) *Workspace {
+	w.Name = data.Name
+	w.Description = data.Description
+	w.AuthzMember = data.AuthzMember
+	w.AuthzAdmin = data.AuthzAdmin
+
+	return w
 }

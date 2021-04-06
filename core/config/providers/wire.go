@@ -3,6 +3,7 @@
 package providers
 
 import (
+	workspaceRepository "github.com/ZupIT/horusec-platform/core/internal/repositories/workspace"
 	"github.com/google/wire"
 
 	"github.com/ZupIT/horusec-devkit/pkg/services/app"
@@ -51,9 +52,12 @@ var useCasesProviders = wire.NewSet(
 	workspaceUseCases.NewWorkspaceUseCases,
 )
 
-var repositoriesProviders = wire.NewSet()
+var repositoriesProviders = wire.NewSet(
+	workspaceRepository.NewWorkspaceRepository,
+)
 
-func Initialize(defaultPort string) (router.IRouter, error) {
-	wire.Build(devKitProviders, configProviders, controllerProviders, handleProviders, useCasesProviders)
+func Initialize(_ string) (router.IRouter, error) {
+	wire.Build(devKitProviders, configProviders, controllerProviders, handleProviders,
+		useCasesProviders, repositoriesProviders)
 	return &router.Router{}, nil
 }

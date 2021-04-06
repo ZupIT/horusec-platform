@@ -44,7 +44,11 @@ func (r *Router) setRoutes() IRouter {
 
 func (r *Router) workspaceRoutes() {
 	r.Route(routes.WorkspaceHandler, func(router chi.Router) {
+		router.Get("/", r.workspaceHandler.List)
 		router.With(r.IsApplicationAdmin).Post("/", r.workspaceHandler.Create)
+		router.With(r.IsWorkspaceMember).Get("/{workspaceID}", r.workspaceHandler.Get)
+		router.With(r.IsWorkspaceAdmin).Patch("/{workspaceID}", r.workspaceHandler.Update)
+		router.With(r.IsWorkspaceAdmin).Delete("/{workspaceID}", r.workspaceHandler.Delete)
 	})
 }
 

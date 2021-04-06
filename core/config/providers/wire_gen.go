@@ -6,13 +6,6 @@
 package providers
 
 import (
-	"github.com/ZupIT/horusec-platform/core/config/cors"
-	"github.com/ZupIT/horusec-platform/core/internal/controllers/workspace"
-	workspace3 "github.com/ZupIT/horusec-platform/core/internal/handlers/workspace"
-	"github.com/ZupIT/horusec-platform/core/internal/router"
-	workspace2 "github.com/ZupIT/horusec-platform/core/internal/usecases/workspace"
-	"github.com/google/wire"
-
 	"github.com/ZupIT/horusec-devkit/pkg/services/app"
 	"github.com/ZupIT/horusec-devkit/pkg/services/broker"
 	"github.com/ZupIT/horusec-devkit/pkg/services/broker/config"
@@ -22,13 +15,20 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth/proto"
 	"github.com/ZupIT/horusec-devkit/pkg/services/http"
 	"github.com/ZupIT/horusec-devkit/pkg/services/middlewares"
+	"github.com/ZupIT/horusec-platform/core/config/cors"
+	workspace3 "github.com/ZupIT/horusec-platform/core/internal/controllers/workspace"
+	workspace4 "github.com/ZupIT/horusec-platform/core/internal/handlers/workspace"
+	workspace2 "github.com/ZupIT/horusec-platform/core/internal/repositories/workspace"
+	"github.com/ZupIT/horusec-platform/core/internal/router"
+	"github.com/ZupIT/horusec-platform/core/internal/usecases/workspace"
+	"github.com/google/wire"
 )
 
 // Injectors from wire.go:
 
-func Initialize(defaultPort string) (router.IRouter, error) {
+func Initialize(string2 string) (router.IRouter, error) {
 	options := cors.NewCorsConfig()
-	iRouter := http.NewHTTPRouter(options, defaultPort)
+	iRouter := http.NewHTTPRouter(options, string2)
 	iConfig := config.NewBrokerConfig()
 	clientConnInterface := auth.NewAuthGRPCConnection()
 	authServiceClient := proto.NewAuthServiceClient(clientConnInterface)
@@ -42,9 +42,10 @@ func Initialize(defaultPort string) (router.IRouter, error) {
 	if err != nil {
 		return nil, err
 	}
-	iController := workspace.NewWorkspaceController(iBroker, connection, appIConfig)
-	iUseCases := workspace2.NewWorkspaceUseCases()
-	handler := workspace3.NewWorkspaceHandler(iController, iUseCases, authServiceClient, appIConfig)
+	iUseCases := workspace.NewWorkspaceUseCases()
+	iRepository := workspace2.NewWorkspaceRepository(connection)
+	iController := workspace3.NewWorkspaceController(iBroker, connection, appIConfig, iUseCases, iRepository)
+	handler := workspace4.NewWorkspaceHandler(iController, iUseCases, authServiceClient, appIConfig)
 	iAuthzMiddleware := middlewares.NewAuthzMiddleware(clientConnInterface)
 	routerIRouter := router.NewHTTPRouter(iRouter, handler, iAuthzMiddleware)
 	return routerIRouter, nil
@@ -56,10 +57,10 @@ var devKitProviders = wire.NewSet(config.NewBrokerConfig, broker.NewBroker, conf
 
 var configProviders = wire.NewSet(cors.NewCorsConfig, router.NewHTTPRouter)
 
-var controllerProviders = wire.NewSet(workspace.NewWorkspaceController)
+var controllerProviders = wire.NewSet(workspace3.NewWorkspaceController)
 
-var handleProviders = wire.NewSet(workspace3.NewWorkspaceHandler)
+var handleProviders = wire.NewSet(workspace4.NewWorkspaceHandler)
 
-var useCasesProviders = wire.NewSet(workspace2.NewWorkspaceUseCases)
+var useCasesProviders = wire.NewSet(workspace.NewWorkspaceUseCases)
 
-var repositoriesProviders = wire.NewSet()
+var repositoriesProviders = wire.NewSet(workspace2.NewWorkspaceRepository)
