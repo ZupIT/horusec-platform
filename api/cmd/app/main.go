@@ -5,7 +5,7 @@ import (
 )
 
 func main() {
-	router, err := providers.Initialize("8000")
+	router, err := providers.Initialize("8001")
 	if err != nil {
 		panic(err)
 	}

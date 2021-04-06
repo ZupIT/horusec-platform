@@ -6,6 +6,8 @@ import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/go-ozzo/ozzo-validation/v4/is"
 
+	"github.com/ZupIT/horusec-devkit/pkg/utils/parser/enums"
+
 	analysisEntity "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 	"github.com/ZupIT/horusec-devkit/pkg/entities/cli"
 	"github.com/ZupIT/horusec-devkit/pkg/entities/vulnerability"
@@ -30,10 +32,23 @@ func NewAnalysisUseCases() Interface {
 
 func (au *UseCases) DecodeAnalysisDataFromIoRead(body io.ReadCloser) (
 	analysisData *cli.AnalysisData, err error) {
+	if body == nil {
+		return nil, enums.ErrorBodyEmpty
+	}
 	if err := parser.ParseBodyToEntity(body, &analysisData); err != nil {
 		return nil, err
 	}
-	return analysisData, au.validateAnalysis(analysisData.Analysis)
+	return analysisData, au.validateAnalysisData(analysisData)
+}
+
+func (au *UseCases) validateAnalysisData(analysisData *cli.AnalysisData) error {
+	err := validation.ValidateStruct(analysisData,
+		validation.Field(&analysisData.Analysis, validation.Required),
+	)
+	if err != nil {
+		return err
+	}
+	return au.validateAnalysis(analysisData.Analysis)
 }
 
 func (au *UseCases) validateAnalysis(analysis *analysisEntity.Analysis) error {

@@ -16,48 +16,41 @@ package analysis
 
 import "C"
 import (
+	repoAnalysis "github.com/ZupIT/horusec-platform/api/internal/repositories/analysis"
+	"github.com/ZupIT/horusec-platform/api/internal/repositories/repository"
 	"github.com/google/uuid"
 
 	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
-	"github.com/ZupIT/horusec-devkit/pkg/entities/cli"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/queues"
 	appConfiguration "github.com/ZupIT/horusec-devkit/pkg/services/app"
 	brokerService "github.com/ZupIT/horusec-devkit/pkg/services/broker"
-	brokerConfiguration "github.com/ZupIT/horusec-devkit/pkg/services/broker/config"
-	"github.com/ZupIT/horusec-devkit/pkg/services/database"
 	"github.com/ZupIT/horusec-devkit/pkg/services/database/enums"
 )
 
 type IController interface {
 	GetAnalysis(analysisID uuid.UUID) (*analysis.Analysis, error)
-	SaveAnalysis(analysisData *cli.AnalysisData) (uuid.UUID, error)
+	SaveAnalysis(analysisEntity *analysis.Analysis) (uuid.UUID, error)
 }
 
 type Controller struct {
-	broker        brokerService.IBroker
-	databaseRead  database.IDatabaseRead
-	databaseWrite database.IDatabaseWrite
-	brokerConfig  brokerConfiguration.IConfig
-	appConfig     appConfiguration.IConfig
+	broker         brokerService.IBroker
+	repoRepository repository.IRepository
+	repoAnalysis   repoAnalysis.IAnalysis
+	appConfig      appConfiguration.IConfig
 }
 
-func NewAnalysisController(broker brokerService.IBroker, brokerConfig brokerConfiguration.IConfig,
-	databaseConnection *database.Connection, appConfig appConfiguration.IConfig) IController {
+func NewAnalysisController(broker brokerService.IBroker, appConfig appConfiguration.IConfig,
+	repositoriesRepository repository.IRepository, repositoriesAnalysis repoAnalysis.IAnalysis) IController {
 	return &Controller{
-		appConfig:     appConfig,
-		broker:        broker,
-		brokerConfig:  brokerConfig,
-		databaseRead:  databaseConnection.Read,
-		databaseWrite: databaseConnection.Write,
+		repoRepository: repositoriesRepository,
+		repoAnalysis:   repositoriesAnalysis,
+		appConfig:      appConfig,
+		broker:         broker,
 	}
 }
 
 func (c *Controller) GetAnalysis(analysisID uuid.UUID) (*analysis.Analysis, error) {
-	response := c.databaseRead.Find(
-		&analysis.Analysis{},
-		map[string]interface{}{"analysis_id": analysisID},
-		(&analysis.Analysis{}).GetTable())
-
+	response := c.repoAnalysis.FindAnalysisByID(analysisID)
 	if response.GetError() != nil {
 		return nil, response.GetError()
 	}
@@ -68,24 +61,39 @@ func (c *Controller) GetAnalysis(analysisID uuid.UUID) (*analysis.Analysis, erro
 	return response.GetData().(*analysis.Analysis), nil
 }
 
-func (c *Controller) SaveAnalysis(analysisData *cli.AnalysisData) (uuid.UUID, error) {
-	analysisDecorated, err := c.decoratorAnalysisToSave(analysisData)
-	if err != nil {
+func (c *Controller) SaveAnalysis(analysisEntity *analysis.Analysis) (uuid.UUID, error) {
+	if err := c.createRepositoryIfNotExists(analysisEntity); err != nil {
 		return uuid.Nil, err
 	}
-	if err := c.createNewAnalysis(analysisDecorated); err != nil {
+	analysisDecorated, err := c.decorateAnalysisEntityAndSaveOnDatabase(analysisEntity)
+	if err != nil {
 		return uuid.Nil, err
 	}
 	return analysisDecorated.ID, c.publishToWebhookAnalysis(analysisDecorated)
 }
 
-func (c *Controller) decoratorAnalysisToSave(data *cli.AnalysisData) (*analysis.Analysis, error) {
-	newAnalysis, err := c.extractBaseOfTheAnalysis(data)
+func (c *Controller) createRepositoryIfNotExists(analysisEntity *analysis.Analysis) error {
+	if analysisEntity.RepositoryID == uuid.Nil {
+		analysisEntity.RepositoryID = uuid.New()
+		return c.repoRepository.
+			CreateRepository(analysisEntity.RepositoryID, analysisEntity.WorkspaceID, analysisEntity.RepositoryName)
+	}
+	return nil
+}
+
+func (c *Controller) decorateAnalysisEntityAndSaveOnDatabase(
+	analysisEntity *analysis.Analysis) (*analysis.Analysis, error) {
+	analysisDecorated, err := c.decoratorAnalysisToSave(analysisEntity)
 	if err != nil {
 		return nil, err
 	}
-	for keyObservable := range data.Analysis.AnalysisVulnerabilities {
-		observable := data.Analysis.AnalysisVulnerabilities[keyObservable]
+	return analysisDecorated, c.createNewAnalysis(analysisDecorated)
+}
+
+func (c *Controller) decoratorAnalysisToSave(analysisEntity *analysis.Analysis) (*analysis.Analysis, error) {
+	newAnalysis := c.extractBaseOfTheAnalysis(analysisEntity)
+	for keyObservable := range analysisEntity.AnalysisVulnerabilities {
+		observable := analysisEntity.AnalysisVulnerabilities[keyObservable]
 		if !c.hasDuplicatedHash(newAnalysis, &observable) {
 			newAnalysis.AnalysisVulnerabilities = append(newAnalysis.AnalysisVulnerabilities, observable)
 		}
@@ -93,60 +101,22 @@ func (c *Controller) decoratorAnalysisToSave(data *cli.AnalysisData) (*analysis.
 	return newAnalysis, nil
 }
 
-func (c *Controller) publishToWebhookAnalysis(analysisData *analysis.Analysis) error {
-	if !c.appConfig.IsBrokerDisabled() {
-		return c.broker.Publish(queues.HorusecWebhookDispatch.ToString(), "", "", analysisData.ToBytes())
-	}
-	return nil
+func (c *Controller) createNewAnalysis(newAnalysis *analysis.Analysis) error {
+	return c.repoAnalysis.CreateAnalysis(newAnalysis)
 }
 
-func (c *Controller) extractBaseOfTheAnalysis(data *cli.AnalysisData) (*analysis.Analysis, error) {
-	workspace, repo, err := c.getWorkspaceAndRepository(data.Analysis.CompanyID, data.Analysis.RepositoryID, data.RepositoryName)
-	if err != nil {
-		return nil, err
-	}
+func (c *Controller) extractBaseOfTheAnalysis(analysisEntity *analysis.Analysis) *analysis.Analysis {
 	return &analysis.Analysis{
 		ID:             uuid.New(),
-		RepositoryID:   repo["repositoryID"].(uuid.UUID),
-		RepositoryName: repo["name"].(string),
-		CompanyID:      workspace["workspaceID"].(uuid.UUID),
-		CompanyName:    workspace["name"].(string),
-		Status:         data.Analysis.Status,
-		Errors:         data.Analysis.Errors,
-		CreatedAt:      data.Analysis.CreatedAt,
-		FinishedAt:     data.Analysis.FinishedAt,
-	}, nil
-}
-
-// TODO: remove map and get data from database
-func (c *Controller) getWorkspaceAndRepository(
-	workspaceID uuid.UUID, repositoryID uuid.UUID, repositoryName string) (
-	map[string]interface{}, map[string]interface{}, error) {
-	repo, err := c.getRepositoryByRepositoryIDOrName(repositoryID, repositoryName)
-	if err != nil {
-		return map[string]interface{}{}, map[string]interface{}{}, err
+		RepositoryID:   analysisEntity.RepositoryID,
+		RepositoryName: analysisEntity.RepositoryName,
+		WorkspaceID:    analysisEntity.WorkspaceID,
+		WorkspaceName:  analysisEntity.WorkspaceName,
+		Status:         analysisEntity.Status,
+		Errors:         analysisEntity.Errors,
+		CreatedAt:      analysisEntity.CreatedAt,
+		FinishedAt:     analysisEntity.FinishedAt,
 	}
-	workspace, err := c.getWorkspaceByID(workspaceID)
-	if err != nil {
-		return map[string]interface{}{}, map[string]interface{}{}, err
-	}
-	return repo, workspace, nil
-}
-
-// TODO: remove map and get data from database
-func (c *Controller) getRepositoryByRepositoryIDOrName(repositoryID uuid.UUID, repositoryName string) (map[string]interface{}, error) {
-	return map[string]interface{}{
-		"repositoryID": repositoryID,
-		"name":         repositoryName,
-	}, nil
-}
-
-// TODO: remove map and get data from database
-func (c *Controller) getWorkspaceByID(workspace uuid.UUID) (map[string]interface{}, error) {
-	return map[string]interface{}{
-		"workspaceID": workspace,
-		"name":        uuid.New().String(),
-	}, nil
 }
 
 func (c *Controller) hasDuplicatedHash(newAnalysis *analysis.Analysis, observable *analysis.RelationshipAnalysisVuln) bool {
@@ -159,6 +129,9 @@ func (c *Controller) hasDuplicatedHash(newAnalysis *analysis.Analysis, observabl
 	return false
 }
 
-func (c *Controller) createNewAnalysis(newAnalysis *analysis.Analysis) error {
-	return c.databaseWrite.Create(newAnalysis, newAnalysis.GetTable()).GetError()
+func (c *Controller) publishToWebhookAnalysis(analysisData *analysis.Analysis) error {
+	if !c.appConfig.IsBrokerDisabled() {
+		return c.broker.Publish(queues.HorusecWebhookDispatch.ToString(), "", "", analysisData.ToBytes())
+	}
+	return nil
 }

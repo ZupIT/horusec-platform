@@ -18,6 +18,14 @@ github.com/ZupIT/horusec-devkit v0.0.0-20210405143442-d66c1a4034e1 h1:bQWnhPRnL1
 github.com/ZupIT/horusec-devkit v0.0.0-20210405143442-d66c1a4034e1/go.mod h1:8at5UCthaQ+8VtOWAzv08/d06sVyXvVppq9KXC1pMfo=
 github.com/ZupIT/horusec-devkit v0.0.0-20210405183733-caccac7a654c h1:HubvWlIEzHtOtVQjWYXVJ8DubZz7/R5Tv1ey/HXlDuU=
 github.com/ZupIT/horusec-devkit v0.0.0-20210405183733-caccac7a654c/go.mod h1:8at5UCthaQ+8VtOWAzv08/d06sVyXvVppq9KXC1pMfo=
+github.com/ZupIT/horusec-devkit v0.0.0-20210406114859-46952c3245ac h1:O7WutXCMK5ULERVrnYv56CI4Aaqvu4DIhzsEoXp0H+4=
+github.com/ZupIT/horusec-devkit v0.0.0-20210406114859-46952c3245ac/go.mod h1:8at5UCthaQ+8VtOWAzv08/d06sVyXvVppq9KXC1pMfo=
+github.com/ZupIT/horusec-devkit v0.0.0-20210406123206-342d4b55cea4 h1:Poa39n/DLok5BRIvAXMEyJuG3iTbuJcwyxnh+1u0lB0=
+github.com/ZupIT/horusec-devkit v0.0.0-20210406123206-342d4b55cea4/go.mod h1:8at5UCthaQ+8VtOWAzv08/d06sVyXvVppq9KXC1pMfo=
+github.com/ZupIT/horusec-devkit v0.0.0-20210406141103-747290de3712 h1:vaGELbs1+WaV8CQPlq2emowKuxL8N1ZbdaiYA4G8+OI=
+github.com/ZupIT/horusec-devkit v0.0.0-20210406141103-747290de3712/go.mod h1:8at5UCthaQ+8VtOWAzv08/d06sVyXvVppq9KXC1pMfo=
+github.com/ZupIT/horusec-devkit v0.0.0-20210406165349-7e1993e68225 h1:117opOCvQqdjsqttGqP2oSUYTiXHk3EhQP9QA3DQgN8=
+github.com/ZupIT/horusec-devkit v0.0.0-20210406165349-7e1993e68225/go.mod h1:8at5UCthaQ+8VtOWAzv08/d06sVyXvVppq9KXC1pMfo=
 github.com/afex/hystrix-go v0.0.0-20180502004556-fa1af6a1f4f5/go.mod h1:SkGFH1ia65gfNATL8TAiHDNxPzPdmEL5uirI2Uyuz6c=
 github.com/alecthomas/template v0.0.0-20160405071501-a0175ee3bccc/go.mod h1:LOuyumcjzFXgccqObfd/Ljyb9UuFJ6TxHnclSeseNhc=
 github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751/go.mod h1:LOuyumcjzFXgccqObfd/Ljyb9UuFJ6TxHnclSeseNhc=
