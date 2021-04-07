@@ -4,14 +4,13 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/ZupIT/horusec-devkit/pkg/utils/parser"
-
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/go-ozzo/ozzo-validation/v4/is"
 	"github.com/google/uuid"
 
 	"github.com/ZupIT/horusec-devkit/pkg/enums/auth"
 	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth/proto"
+	"github.com/ZupIT/horusec-devkit/pkg/utils/parser"
 
 	workspaceEnums "github.com/ZupIT/horusec-platform/core/internal/enums/workspace"
 	"github.com/ZupIT/horusec-platform/core/internal/utils"

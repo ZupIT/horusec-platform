@@ -3,11 +3,12 @@ package workspace
 import (
 	"testing"
 
-	"github.com/ZupIT/horusec-platform/core/internal/entities/workspace"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/ZupIT/horusec-devkit/pkg/utils/parser"
+
+	"github.com/ZupIT/horusec-platform/core/internal/entities/workspace"
 )
 
 func TestNewWorkspaceUseCases(t *testing.T) {
@@ -28,7 +29,7 @@ func TestGetCreateWorkspaceData(t *testing.T) {
 		readCloser, err := parser.ParseEntityToIOReadCloser(createWorkspaceData)
 		assert.NoError(t, err)
 
-		response, err := useCases.GetCreateWorkspaceData(readCloser)
+		response, err := useCases.WorkspaceDataFromIOReadCloser(readCloser)
 		assert.NoError(t, err)
 		assert.NotNil(t, response)
 		assert.Equal(t, createWorkspaceData.AccountID, response.AccountID)
@@ -41,7 +42,7 @@ func TestGetCreateWorkspaceData(t *testing.T) {
 		readCloser, err := parser.ParseEntityToIOReadCloser("")
 		assert.NoError(t, err)
 
-		response, err := useCases.GetCreateWorkspaceData(readCloser)
+		response, err := useCases.WorkspaceDataFromIOReadCloser(readCloser)
 		assert.Error(t, err)
 		assert.Nil(t, response)
 	})

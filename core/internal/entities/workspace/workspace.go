@@ -47,6 +47,7 @@ func (w *Workspace) Update(data *Data) *Workspace {
 	w.Description = data.Description
 	w.AuthzMember = data.AuthzMember
 	w.AuthzAdmin = data.AuthzAdmin
+	w.UpdatedAt = time.Now()
 
 	return w
 }

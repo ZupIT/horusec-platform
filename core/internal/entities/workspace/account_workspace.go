@@ -6,6 +6,8 @@ import (
 	"github.com/google/uuid"
 
 	"github.com/ZupIT/horusec-devkit/pkg/enums/account"
+
+	"github.com/ZupIT/horusec-platform/core/internal/entities/role"
 )
 
 type AccountWorkspace struct {
@@ -14,4 +16,27 @@ type AccountWorkspace struct {
 	Role        account.Role `json:"role"`
 	CreatedAt   time.Time    `json:"createdAt"`
 	UpdatedAt   time.Time    `json:"updatedAt"`
+}
+
+func (a *AccountWorkspace) Update(data *role.Data) *AccountWorkspace {
+	a.Role = data.Role
+	a.UpdatedAt = time.Now()
+
+	return a
+}
+
+func (a *AccountWorkspace) ToResponse() *role.Response {
+	return &role.Response{
+		AccountID: a.AccountID,
+		Role:      a.Role,
+	}
+}
+
+func (a *AccountWorkspace) ToResponseWithEmailAndUsername(email, username string) *role.Response {
+	return &role.Response{
+		AccountID: a.AccountID,
+		Email:     email,
+		Username:  username,
+		Role:      a.Role,
+	}
 }

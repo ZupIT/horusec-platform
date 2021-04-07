@@ -6,6 +6,14 @@
 package providers
 
 import (
+	"github.com/ZupIT/horusec-platform/core/config/cors"
+	workspace3 "github.com/ZupIT/horusec-platform/core/internal/controllers/workspace"
+	workspace4 "github.com/ZupIT/horusec-platform/core/internal/handlers/workspace"
+	workspace2 "github.com/ZupIT/horusec-platform/core/internal/repositories/workspace"
+	"github.com/ZupIT/horusec-platform/core/internal/router"
+	"github.com/ZupIT/horusec-platform/core/internal/usecases/workspace"
+	"github.com/google/wire"
+
 	"github.com/ZupIT/horusec-devkit/pkg/services/app"
 	"github.com/ZupIT/horusec-devkit/pkg/services/broker"
 	"github.com/ZupIT/horusec-devkit/pkg/services/broker/config"
@@ -15,13 +23,6 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth/proto"
 	"github.com/ZupIT/horusec-devkit/pkg/services/http"
 	"github.com/ZupIT/horusec-devkit/pkg/services/middlewares"
-	"github.com/ZupIT/horusec-platform/core/config/cors"
-	workspace3 "github.com/ZupIT/horusec-platform/core/internal/controllers/workspace"
-	workspace4 "github.com/ZupIT/horusec-platform/core/internal/handlers/workspace"
-	workspace2 "github.com/ZupIT/horusec-platform/core/internal/repositories/workspace"
-	"github.com/ZupIT/horusec-platform/core/internal/router"
-	"github.com/ZupIT/horusec-platform/core/internal/usecases/workspace"
-	"github.com/google/wire"
 )
 
 // Injectors from wire.go:
@@ -43,7 +44,7 @@ func Initialize(string2 string) (router.IRouter, error) {
 		return nil, err
 	}
 	iUseCases := workspace.NewWorkspaceUseCases()
-	iRepository := workspace2.NewWorkspaceRepository(connection)
+	iRepository := workspace2.NewWorkspaceRepository(connection, iUseCases)
 	iController := workspace3.NewWorkspaceController(iBroker, connection, appIConfig, iUseCases, iRepository)
 	handler := workspace4.NewWorkspaceHandler(iController, iUseCases, authServiceClient, appIConfig)
 	iAuthzMiddleware := middlewares.NewAuthzMiddleware(clientConnInterface)

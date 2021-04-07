@@ -15,13 +15,14 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth/proto"
 
 	workspaceEntities "github.com/ZupIT/horusec-platform/core/internal/entities/workspace"
+	workspaceRepository "github.com/ZupIT/horusec-platform/core/internal/repositories/workspace"
 	workspaceUseCases "github.com/ZupIT/horusec-platform/core/internal/usecases/workspace"
 )
 
 func TestNewWorkspaceController(t *testing.T) {
 	t.Run("should success create a new workspace controller", func(t *testing.T) {
 		assert.NotNil(t, NewWorkspaceController(&broker.Broker{}, &database.Connection{},
-			&app.Config{}, workspaceUseCases.NewWorkspaceUseCases()))
+			&app.Config{}, workspaceUseCases.NewWorkspaceUseCases(), &workspaceRepository.Repository{}))
 	})
 }
 
@@ -38,6 +39,8 @@ func TestCreate(t *testing.T) {
 	authConfig := &proto.GetAuthConfigResponse{}
 
 	t.Run("should success create a new workspace with horusec auth type", func(t *testing.T) {
+		repositoryMock := &workspaceRepository.Mock{}
+
 		databaseMock := &database.Mock{}
 		databaseMock.On("Create").Return(&response.Response{})
 		databaseMock.On("StartTransaction").Return(databaseMock)
@@ -49,7 +52,7 @@ func TestCreate(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection,
-			app.NewAppConfig(authGRPCMock), workspaceUseCases.NewWorkspaceUseCases())
+			app.NewAppConfig(authGRPCMock), workspaceUseCases.NewWorkspaceUseCases(), repositoryMock)
 
 		result, err := controller.Create(workspaceData)
 		assert.NoError(t, err)
@@ -57,6 +60,8 @@ func TestCreate(t *testing.T) {
 	})
 
 	t.Run("should success create a new workspace with ldap auth type", func(t *testing.T) {
+		repositoryMock := &workspaceRepository.Mock{}
+
 		databaseMock := &database.Mock{}
 		databaseMock.On("Create").Return(&response.Response{})
 		databaseMock.On("StartTransaction").Return(databaseMock)
@@ -68,7 +73,7 @@ func TestCreate(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection,
-			app.NewAppConfig(authGRPCMock), workspaceUseCases.NewWorkspaceUseCases())
+			app.NewAppConfig(authGRPCMock), workspaceUseCases.NewWorkspaceUseCases(), repositoryMock)
 
 		result, err := controller.Create(workspaceData)
 		assert.NoError(t, err)
@@ -76,6 +81,8 @@ func TestCreate(t *testing.T) {
 	})
 
 	t.Run("should success create a new workspace with keycloak auth type", func(t *testing.T) {
+		repositoryMock := &workspaceRepository.Mock{}
+
 		databaseMock := &database.Mock{}
 		databaseMock.On("Create").Return(&response.Response{})
 		databaseMock.On("StartTransaction").Return(databaseMock)
@@ -87,7 +94,7 @@ func TestCreate(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection,
-			app.NewAppConfig(authGRPCMock), workspaceUseCases.NewWorkspaceUseCases())
+			app.NewAppConfig(authGRPCMock), workspaceUseCases.NewWorkspaceUseCases(), repositoryMock)
 
 		result, err := controller.Create(workspaceData)
 		assert.NoError(t, err)
@@ -95,6 +102,8 @@ func TestCreate(t *testing.T) {
 	})
 
 	t.Run("should success create a new workspace with keycloak auth type", func(t *testing.T) {
+		repositoryMock := &workspaceRepository.Mock{}
+
 		databaseMock := &database.Mock{}
 		databaseMock.On("Create").Return(&response.Response{})
 		databaseMock.On("StartTransaction").Return(databaseMock)
@@ -106,7 +115,7 @@ func TestCreate(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection,
-			app.NewAppConfig(authGRPCMock), workspaceUseCases.NewWorkspaceUseCases())
+			app.NewAppConfig(authGRPCMock), workspaceUseCases.NewWorkspaceUseCases(), repositoryMock)
 
 		result, err := controller.Create(workspaceData)
 		assert.NoError(t, err)
@@ -114,6 +123,8 @@ func TestCreate(t *testing.T) {
 	})
 
 	t.Run("should return error when creating account workspace relation", func(t *testing.T) {
+		repositoryMock := &workspaceRepository.Mock{}
+
 		databaseMock := &database.Mock{}
 		databaseMock.On("Create").Once().Return(&response.Response{})
 		databaseMock.On("Create").Return(response.NewResponse(1,
@@ -126,8 +137,8 @@ func TestCreate(t *testing.T) {
 		authGRPCMock.On("GetAuthConfig").Return(authConfig, nil)
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
-		controller := NewWorkspaceController(&broker.Broker{},
-			databaseConnection, app.NewAppConfig(authGRPCMock), workspaceUseCases.NewWorkspaceUseCases())
+		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection,
+			app.NewAppConfig(authGRPCMock), workspaceUseCases.NewWorkspaceUseCases(), repositoryMock)
 
 		result, err := controller.Create(workspaceData)
 		assert.Error(t, err)
@@ -136,6 +147,8 @@ func TestCreate(t *testing.T) {
 	})
 
 	t.Run("should return error when creating workspace", func(t *testing.T) {
+		repositoryMock := &workspaceRepository.Mock{}
+
 		databaseMock := &database.Mock{}
 		databaseMock.On("Create").Return(response.NewResponse(1,
 			errors.New("test"), nil))
@@ -148,7 +161,7 @@ func TestCreate(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection,
-			app.NewAppConfig(authGRPCMock), workspaceUseCases.NewWorkspaceUseCases())
+			app.NewAppConfig(authGRPCMock), workspaceUseCases.NewWorkspaceUseCases(), repositoryMock)
 
 		result, err := controller.Create(workspaceData)
 		assert.Error(t, err)

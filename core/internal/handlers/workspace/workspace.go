@@ -4,16 +4,19 @@ import (
 	"context"
 	"net/http"
 
+	"github.com/go-chi/chi"
+	"github.com/google/uuid"
+
 	"github.com/ZupIT/horusec-devkit/pkg/services/app"
 	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth/proto"
 	httpUtil "github.com/ZupIT/horusec-devkit/pkg/utils/http"
 	_ "github.com/ZupIT/horusec-devkit/pkg/utils/http/entities" // swagger import
 	"github.com/ZupIT/horusec-devkit/pkg/utils/jwt/enums"
-	"github.com/go-chi/chi"
-	"github.com/google/uuid"
 
 	workspaceController "github.com/ZupIT/horusec-platform/core/internal/controllers/workspace"
+	roleEntities "github.com/ZupIT/horusec-platform/core/internal/entities/role"
 	workspaceEntities "github.com/ZupIT/horusec-platform/core/internal/entities/workspace"
+	roleEnums "github.com/ZupIT/horusec-platform/core/internal/enums/role"
 	workspaceEnums "github.com/ZupIT/horusec-platform/core/internal/enums/workspace"
 	workspaceUseCases "github.com/ZupIT/horusec-platform/core/internal/usecases/workspace"
 )
@@ -71,7 +74,7 @@ func (h *Handler) getCreateData(r *http.Request) (*workspaceEntities.Data, error
 		return nil, err
 	}
 
-	workspaceData, err := h.useCases.GetCreateWorkspaceData(r.Body)
+	workspaceData, err := h.useCases.WorkspaceDataFromIOReadCloser(r.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -187,8 +190,7 @@ func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = h.controller.Delete(workspaceID)
-	if err != nil {
+	if err = h.controller.Delete(workspaceID); err != nil {
 		httpUtil.StatusInternalServerError(w, err)
 		return
 	}
@@ -230,4 +232,161 @@ func (h *Handler) getListData(r *http.Request) (*workspaceEntities.Data, error) 
 	}
 
 	return h.useCases.NewWorkspaceData(uuid.Nil, accountData), nil
+}
+
+// @Tags Workspace
+// @Description Update an account role of a workspace
+// @ID workspace-role
+// @Accept  json
+// @Produce  json
+// @Param workspaceID path string true "ID of the workspace"
+// @Param accountID path string true "ID of the account"
+// @Param Workspace body workspaceEntities.Data true "update role of a account in a specific workspace"
+// @Success 200 {object} entities.Response
+// @Failure 400 {object} entities.Response
+// @Failure 401 {object} entities.Response
+// @Failure 500 {object} entities.Response
+// @Router /core/workspaces/{workspaceID}/roles/{accountID} [patch]
+// @Security ApiKeyAuth
+func (h *Handler) UpdateRole(w http.ResponseWriter, r *http.Request) {
+	data, err := h.getUpdateRoleData(r)
+	if err != nil {
+		httpUtil.StatusBadRequest(w, err)
+		return
+	}
+
+	role, err := h.controller.UpdateRole(data)
+	if err != nil {
+		httpUtil.StatusInternalServerError(w, err)
+		return
+	}
+
+	httpUtil.StatusOK(w, role)
+}
+
+func (h *Handler) getUpdateRoleData(r *http.Request) (*roleEntities.Data, error) {
+	roleData, err := h.getInviteUserData(r)
+	if err != nil {
+		return nil, err
+	}
+
+	accountID, err := uuid.Parse(chi.URLParam(r, roleEnums.AccountID))
+	if err != nil {
+		return nil, err
+	}
+
+	return roleData.SetAccountID(accountID), nil
+}
+
+// @Tags Workspace
+// @Description Invite a user to a workspace
+// @ID invite-user
+// @Accept  json
+// @Produce  json
+// @Param workspaceID path string true "ID of the workspace"
+// @Param Workspace body workspaceEntities.Data true "update role of a account in a specific workspace"
+// @Success 200 {object} entities.Response
+// @Failure 400 {object} entities.Response
+// @Failure 401 {object} entities.Response
+// @Failure 500 {object} entities.Response
+// @Router /core/workspaces/{workspaceID}/roles [post]
+// @Security ApiKeyAuth
+func (h *Handler) InviteUser(w http.ResponseWriter, r *http.Request) {
+	data, err := h.getInviteUserData(r)
+	if err != nil {
+		httpUtil.StatusBadRequest(w, err)
+		return
+	}
+
+	role, err := h.controller.InviteUser(data)
+	if err != nil {
+		httpUtil.StatusInternalServerError(w, err)
+		return
+	}
+
+	httpUtil.StatusOK(w, role)
+}
+
+func (h *Handler) getInviteUserData(r *http.Request) (*roleEntities.Data, error) {
+	roleData, err := h.useCases.WorkspaceRoleDataFromIOReadCloser(r.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	workspaceID, err := uuid.Parse(chi.URLParam(r, workspaceEnums.ID))
+	if err != nil {
+		return nil, err
+	}
+
+	return roleData.SetWorkspaceID(workspaceID), nil
+}
+
+// @Tags Workspace
+// @Description Get all users of a workspace
+// @ID get-users
+// @Accept  json
+// @Produce  json
+// @Param workspaceID path string true "ID of the workspace"
+// @Success 200 {object} entities.Response
+// @Failure 400 {object} entities.Response
+// @Failure 401 {object} entities.Response
+// @Failure 500 {object} entities.Response
+// @Router /core/workspaces/{workspaceID}/roles [get]
+// @Security ApiKeyAuth
+func (h *Handler) GetUsers(w http.ResponseWriter, r *http.Request) {
+	workspaceID, err := uuid.Parse(chi.URLParam(r, workspaceEnums.ID))
+	if err != nil {
+		httpUtil.StatusBadRequest(w, err)
+		return
+	}
+
+	users, err := h.controller.GetUsers(workspaceID)
+	if err != nil {
+		httpUtil.StatusInternalServerError(w, err)
+		return
+	}
+
+	httpUtil.StatusOK(w, users)
+}
+
+// @Tags Workspace
+// @Description Remove a user from a workspace
+// @ID remove-user
+// @Accept  json
+// @Produce  json
+// @Param workspaceID path string true "ID of the workspace"
+// @Param accountID path string true "ID of the account"
+// @Success 200 {object} entities.Response
+// @Failure 400 {object} entities.Response
+// @Failure 401 {object} entities.Response
+// @Failure 500 {object} entities.Response
+// @Router /core/workspaces/{workspaceID}/roles/{accountID} [delete]
+// @Security ApiKeyAuth
+func (h *Handler) RemoveUser(w http.ResponseWriter, r *http.Request) {
+	data, err := h.getRemoveUserData(r)
+	if err != nil {
+		httpUtil.StatusBadRequest(w, err)
+		return
+	}
+
+	if err := h.controller.RemoveUser(data); err != nil {
+		httpUtil.StatusInternalServerError(w, err)
+		return
+	}
+
+	httpUtil.StatusNoContent(w)
+}
+
+func (h *Handler) getRemoveUserData(r *http.Request) (*roleEntities.Data, error) {
+	workspaceID, err := uuid.Parse(chi.URLParam(r, workspaceEnums.ID))
+	if err != nil {
+		return nil, err
+	}
+
+	accountID, err := uuid.Parse(chi.URLParam(r, roleEnums.AccountID))
+	if err != nil {
+		return nil, err
+	}
+
+	return h.useCases.NewRoleData(workspaceID, accountID), nil
 }
