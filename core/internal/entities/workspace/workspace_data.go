@@ -7,6 +7,7 @@ import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/go-ozzo/ozzo-validation/v4/is"
 	"github.com/google/uuid"
+	"github.com/lib/pq"
 
 	"github.com/ZupIT/horusec-devkit/pkg/enums/auth"
 	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth/proto"
@@ -15,13 +16,13 @@ import (
 )
 
 type Data struct {
-	WorkspaceID uuid.UUID `json:"workspaceID" swaggerignore:"true"`
-	AccountID   uuid.UUID `json:"accountID" swaggerignore:"true"`
-	Name        string    `json:"name"`
-	Description string    `json:"description"`
-	AuthzMember []string  `json:"authzMember"`
-	AuthzAdmin  []string  `json:"authzAdmin"`
-	Permissions []string  `json:"permissions" swaggerignore:"true"`
+	WorkspaceID uuid.UUID      `json:"workspaceID" swaggerignore:"true"`
+	AccountID   uuid.UUID      `json:"accountID" swaggerignore:"true"`
+	Name        string         `json:"name"`
+	Description string         `json:"description"`
+	AuthzMember pq.StringArray `json:"authzMember"`
+	AuthzAdmin  pq.StringArray `json:"authzAdmin"`
+	Permissions []string       `json:"permissions" swaggerignore:"true"`
 }
 
 func (d *Data) Validate() error {

@@ -75,9 +75,9 @@ func (u *UseCases) NewOrganizationInviteEmail(email, username, workspaceName str
 		TemplateName: emailEnums.OrganizationInvite,
 		Subject:      "[Horusec] Organization invite",
 		Data: map[string]interface{}{
-			"CompanyName": workspaceName,
-			"Username":    username,
-			"URL":         envUtils.GetHorusecManagerURL()},
+			"WorkspaceName": workspaceName,
+			"Username":      username,
+			"URL":           envUtils.GetHorusecManagerURL()},
 	}
 
 	return emailMessage.ToBytes()
