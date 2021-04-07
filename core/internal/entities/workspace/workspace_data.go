@@ -11,9 +11,7 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/enums/auth"
 	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth/proto"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/parser"
-
-	workspaceEnums "github.com/ZupIT/horusec-platform/core/internal/enums/workspace"
-	"github.com/ZupIT/horusec-platform/core/internal/utils"
+	utilsValidation "github.com/ZupIT/horusec-devkit/pkg/utils/validation"
 )
 
 type Data struct {
@@ -57,11 +55,7 @@ func (d *Data) ToBytes() []byte {
 }
 
 func (d *Data) CheckLdapGroups(authorizationType auth.AuthorizationType) error {
-	if utils.IsInvalidLdapGroups(authorizationType, d.AuthzAdmin, d.Permissions) {
-		return workspaceEnums.ErrorInvalidLdapGroup
-	}
-
-	return nil
+	return utilsValidation.CheckInvalidLdapGroups(authorizationType, d.AuthzAdmin, d.Permissions)
 }
 
 func (d *Data) SetWorkspaceID(workspaceID uuid.UUID) *Data {
