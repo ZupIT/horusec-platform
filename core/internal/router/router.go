@@ -51,7 +51,7 @@ func (r *Router) workspaceRoutes() {
 		router.With(r.IsWorkspaceAdmin).Delete("/{workspaceID}", r.workspaceHandler.Delete)
 		router.With(r.IsWorkspaceAdmin).Get("/{workspaceID}/roles", r.workspaceHandler.GetUsers)
 		router.With(r.IsWorkspaceAdmin).Patch("/{workspaceID}/roles/{accountID}", r.workspaceHandler.UpdateRole)
-		router.With(r.IsWorkspaceAdmin).Get("/{workspaceID}/roles", r.workspaceHandler.InviteUser)
+		router.With(r.IsWorkspaceAdmin).Post("/{workspaceID}/roles", r.workspaceHandler.InviteUser)
 		router.With(r.IsWorkspaceAdmin).Delete("/{workspaceID}/roles/{accountID}", r.workspaceHandler.RemoveUser)
 	})
 }

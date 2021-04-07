@@ -12,6 +12,7 @@ import (
 	httpUtil "github.com/ZupIT/horusec-devkit/pkg/utils/http"
 	_ "github.com/ZupIT/horusec-devkit/pkg/utils/http/entities" // swagger import
 	"github.com/ZupIT/horusec-devkit/pkg/utils/jwt/enums"
+	"github.com/ZupIT/horusec-devkit/pkg/utils/parser"
 
 	workspaceController "github.com/ZupIT/horusec-platform/core/internal/controllers/workspace"
 	roleEntities "github.com/ZupIT/horusec-platform/core/internal/entities/role"
@@ -95,6 +96,7 @@ func (h *Handler) getAccountData(r *http.Request) (*proto.GetAccountDataResponse
 // @Success 200 {object} entities.Response
 // @Failure 400 {object} entities.Response
 // @Failure 401 {object} entities.Response
+// @Failure 404 {object} entities.Response
 // @Failure 500 {object} entities.Response
 // @Router /core/workspaces/{workspaceID} [get]
 // @Security ApiKeyAuth
@@ -138,6 +140,7 @@ func (h *Handler) getByIDData(r *http.Request) (*workspaceEntities.Data, error) 
 // @Success 200 {object} entities.Response
 // @Failure 400 {object} entities.Response
 // @Failure 401 {object} entities.Response
+// @Failure 404 {object} entities.Response
 // @Failure 500 {object} entities.Response
 // @Router /core/workspaces/{workspaceID} [patch]
 // @Security ApiKeyAuth
@@ -180,6 +183,7 @@ func (h *Handler) getUpdateData(r *http.Request) (*workspaceEntities.Data, error
 // @Success 204 {object} entities.Response
 // @Failure 400 {object} entities.Response
 // @Failure 401 {object} entities.Response
+// @Failure 404 {object} entities.Response
 // @Failure 500 {object} entities.Response
 // @Router /core/workspaces/{workspaceID} [delete]
 // @Security ApiKeyAuth
@@ -241,10 +245,11 @@ func (h *Handler) getListData(r *http.Request) (*workspaceEntities.Data, error) 
 // @Produce  json
 // @Param workspaceID path string true "ID of the workspace"
 // @Param accountID path string true "ID of the account"
-// @Param Workspace body workspaceEntities.Data true "update role of a account in a specific workspace"
+// @Param Workspace body roleEntities.Data true "update role of a account in a specific workspace"
 // @Success 200 {object} entities.Response
 // @Failure 400 {object} entities.Response
 // @Failure 401 {object} entities.Response
+// @Failure 404 {object} entities.Response
 // @Failure 500 {object} entities.Response
 // @Router /core/workspaces/{workspaceID}/roles/{accountID} [patch]
 // @Security ApiKeyAuth
@@ -265,7 +270,7 @@ func (h *Handler) UpdateRole(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) getUpdateRoleData(r *http.Request) (*roleEntities.Data, error) {
-	roleData, err := h.getInviteUserData(r)
+	data, err := h.useCases.RoleDataFromIOReadCloser(r.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -275,7 +280,7 @@ func (h *Handler) getUpdateRoleData(r *http.Request) (*roleEntities.Data, error)
 		return nil, err
 	}
 
-	return roleData.SetAccountID(accountID), nil
+	return data.SetAccountAndWorkspaceID(accountID, parser.ParseStringToUUID(chi.URLParam(r, workspaceEnums.ID))), nil
 }
 
 // @Tags Workspace
@@ -284,10 +289,11 @@ func (h *Handler) getUpdateRoleData(r *http.Request) (*roleEntities.Data, error)
 // @Accept  json
 // @Produce  json
 // @Param workspaceID path string true "ID of the workspace"
-// @Param Workspace body workspaceEntities.Data true "update role of a account in a specific workspace"
+// @Param Workspace body roleEntities.InviteUserData true "update role of a account in a specific workspace"
 // @Success 200 {object} entities.Response
 // @Failure 400 {object} entities.Response
 // @Failure 401 {object} entities.Response
+// @Failure 404 {object} entities.Response
 // @Failure 500 {object} entities.Response
 // @Router /core/workspaces/{workspaceID}/roles [post]
 // @Security ApiKeyAuth
@@ -307,8 +313,8 @@ func (h *Handler) InviteUser(w http.ResponseWriter, r *http.Request) {
 	httpUtil.StatusOK(w, role)
 }
 
-func (h *Handler) getInviteUserData(r *http.Request) (*roleEntities.Data, error) {
-	roleData, err := h.useCases.WorkspaceRoleDataFromIOReadCloser(r.Body)
+func (h *Handler) getInviteUserData(r *http.Request) (*roleEntities.InviteUserData, error) {
+	data, err := h.useCases.InviteUserDataFromIOReadCloser(r.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -318,7 +324,7 @@ func (h *Handler) getInviteUserData(r *http.Request) (*roleEntities.Data, error)
 		return nil, err
 	}
 
-	return roleData.SetWorkspaceID(workspaceID), nil
+	return data.SetWorkspaceID(workspaceID), nil
 }
 
 // @Tags Workspace
@@ -330,6 +336,7 @@ func (h *Handler) getInviteUserData(r *http.Request) (*roleEntities.Data, error)
 // @Success 200 {object} entities.Response
 // @Failure 400 {object} entities.Response
 // @Failure 401 {object} entities.Response
+// @Failure 404 {object} entities.Response
 // @Failure 500 {object} entities.Response
 // @Router /core/workspaces/{workspaceID}/roles [get]
 // @Security ApiKeyAuth
@@ -359,6 +366,7 @@ func (h *Handler) GetUsers(w http.ResponseWriter, r *http.Request) {
 // @Success 200 {object} entities.Response
 // @Failure 400 {object} entities.Response
 // @Failure 401 {object} entities.Response
+// @Failure 404 {object} entities.Response
 // @Failure 500 {object} entities.Response
 // @Router /core/workspaces/{workspaceID}/roles/{accountID} [delete]
 // @Security ApiKeyAuth

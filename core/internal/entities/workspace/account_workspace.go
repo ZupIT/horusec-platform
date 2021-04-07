@@ -18,11 +18,9 @@ type AccountWorkspace struct {
 	UpdatedAt   time.Time    `json:"updatedAt"`
 }
 
-func (a *AccountWorkspace) Update(data *role.Data) *AccountWorkspace {
+func (a *AccountWorkspace) Update(data *role.Data) {
 	a.Role = data.Role
 	a.UpdatedAt = time.Now()
-
-	return a
 }
 
 func (a *AccountWorkspace) ToResponse() *role.Response {

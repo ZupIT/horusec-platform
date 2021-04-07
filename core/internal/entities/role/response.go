@@ -7,8 +7,8 @@ import (
 )
 
 type Response struct {
-	AccountID uuid.UUID    `json:"accountID"`
-	Email     string       `json:"email"`
-	Username  string       `json:"username"`
-	Role      account.Role `json:"role"`
+	AccountID uuid.UUID    `json:"accountID,omitempty"`
+	Email     string       `json:"email,omitempty"`
+	Username  string       `json:"username,omitempty"`
+	Role      account.Role `json:"role,omitempty"`
 }

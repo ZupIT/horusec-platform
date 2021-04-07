@@ -10,39 +10,24 @@ import (
 
 type Data struct {
 	Role         account.Role `json:"role"`
-	Email        string       `json:"email"`
-	AccountID    uuid.UUID    `json:"accountID"`
-	Username     string       `json:"username"`
-	WorkspaceID  uuid.UUID    `json:"workspaceID"`
-	RepositoryID uuid.UUID    `json:"repositoryID"`
+	AccountID    uuid.UUID    `json:"accountID" swaggerignore:"true"`
+	WorkspaceID  uuid.UUID    `json:"workspaceID" swaggerignore:"true"`
+	RepositoryID uuid.UUID    `json:"repositoryID" swaggerignore:"true"`
 }
 
-func (r *Data) Validate() error {
-	return validation.ValidateStruct(r,
-		validation.Field(&r.Role, validation.Required, validation.In(r.Role.Values())),
-		validation.Field(&r.Email, validation.Length(0, 255), is.EmailFormat),
-		validation.Field(&r.Username, validation.Length(0, 255)),
-		validation.Field(&r.AccountID, is.UUID),
-		validation.Field(&r.WorkspaceID, is.UUID),
-		validation.Field(&r.RepositoryID, is.UUID),
+func (d *Data) Validate() error {
+	return validation.ValidateStruct(d,
+		validation.Field(&d.Role, validation.Required, validation.In(
+			account.Admin, account.Supervisor, account.Member)),
+		validation.Field(&d.AccountID, is.UUID),
+		validation.Field(&d.WorkspaceID, is.UUID),
+		validation.Field(&d.RepositoryID, is.UUID),
 	)
 }
 
-func (r *Data) SetAccountAndWorkspaceID(accountID, workspaceID uuid.UUID) *Data {
-	r.AccountID = accountID
-	r.SetWorkspaceID(workspaceID)
+func (d *Data) SetAccountAndWorkspaceID(accountID, workspaceID uuid.UUID) *Data {
+	d.AccountID = accountID
+	d.WorkspaceID = workspaceID
 
-	return r
-}
-
-func (r *Data) SetWorkspaceID(workspaceID uuid.UUID) *Data {
-	r.WorkspaceID = workspaceID
-
-	return r
-}
-
-func (r *Data) SetAccountID(accountID uuid.UUID) *Data {
-	r.AccountID = accountID
-
-	return r
+	return d
 }

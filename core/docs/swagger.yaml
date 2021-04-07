@@ -8,6 +8,22 @@ definitions:
       status:
         type: string
     type: object
+  role.Data:
+    properties:
+      role:
+        type: string
+    type: object
+  role.InviteUserData:
+    properties:
+      accountID:
+        type: string
+      email:
+        type: string
+      role:
+        type: string
+      username:
+        type: string
+    type: object
   workspace.Data:
     properties:
       authzAdmin:
@@ -123,6 +139,10 @@ paths:
           description: Unauthorized
           schema:
             $ref: '#/definitions/entities.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/entities.Response'
         "500":
           description: Internal Server Error
           schema:
@@ -155,6 +175,10 @@ paths:
             $ref: '#/definitions/entities.Response'
         "401":
           description: Unauthorized
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "404":
+          description: Not Found
           schema:
             $ref: '#/definitions/entities.Response'
         "500":
@@ -197,6 +221,10 @@ paths:
           description: Unauthorized
           schema:
             $ref: '#/definitions/entities.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/entities.Response'
         "500":
           description: Internal Server Error
           schema:
@@ -232,6 +260,10 @@ paths:
           description: Unauthorized
           schema:
             $ref: '#/definitions/entities.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/entities.Response'
         "500":
           description: Internal Server Error
           schema:
@@ -256,7 +288,7 @@ paths:
         name: Workspace
         required: true
         schema:
-          $ref: '#/definitions/workspace.Data'
+          $ref: '#/definitions/role.InviteUserData'
       produces:
       - application/json
       responses:
@@ -270,6 +302,10 @@ paths:
             $ref: '#/definitions/entities.Response'
         "401":
           description: Unauthorized
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "404":
+          description: Not Found
           schema:
             $ref: '#/definitions/entities.Response'
         "500":
@@ -312,6 +348,10 @@ paths:
           description: Unauthorized
           schema:
             $ref: '#/definitions/entities.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/entities.Response'
         "500":
           description: Internal Server Error
           schema:
@@ -341,7 +381,7 @@ paths:
         name: Workspace
         required: true
         schema:
-          $ref: '#/definitions/workspace.Data'
+          $ref: '#/definitions/role.Data'
       produces:
       - application/json
       responses:
@@ -355,6 +395,10 @@ paths:
             $ref: '#/definitions/entities.Response'
         "401":
           description: Unauthorized
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "404":
+          description: Not Found
           schema:
             $ref: '#/definitions/entities.Response'
         "500":

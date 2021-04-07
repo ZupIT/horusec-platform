@@ -54,7 +54,8 @@ func (r *Repository) GetAccountWorkspace(accountID,
 func (r *Repository) ListWorkspacesAuthTypeHorusec(accountID uuid.UUID) (*[]workspaceEntities.Response, error) {
 	workspaces := &[]workspaceEntities.Response{}
 
-	return workspaces, r.databaseRead.Raw(r.queryListWorkspacesAuthTypeHorusec(), workspaces, accountID).GetError()
+	return workspaces, r.databaseRead.Raw(
+		r.queryListWorkspacesAuthTypeHorusec(), workspaces, accountID).GetErrorExceptNotFound()
 }
 
 func (r *Repository) queryListWorkspacesAuthTypeHorusec() string {
@@ -70,7 +71,7 @@ func (r *Repository) ListWorkspacesAuthTypeLdap(permissions []string) (*[]worksp
 	workspaces := &[]workspaceEntities.Response{}
 
 	return workspaces, r.databaseRead.Raw(r.queryListWorkspacesAuthTypeLdap(), workspaces,
-		sql.Named("permissions", pq.StringArray(permissions))).GetError()
+		sql.Named("permissions", pq.StringArray(permissions))).GetErrorExceptNotFound()
 }
 
 //nolint:funlen // query needs more than 15 lines
@@ -101,14 +102,14 @@ func (r *Repository) queryListWorkspacesAuthTypeLdap() string {
 func (r *Repository) ListAllWorkspaceUsers(workspaceID uuid.UUID) (*[]roleEntities.Response, error) {
 	users := &[]roleEntities.Response{}
 
-	return users, r.databaseRead.Raw(r.queryListAllWorkspaceUsers(), users, workspaceID).GetError()
+	return users, r.databaseRead.Raw(r.queryListAllWorkspaceUsers(), users, workspaceID).GetErrorExceptNotFound()
 }
 
 func (r *Repository) queryListAllWorkspaceUsers() string {
 	return `
 			SELECT ac.email, ac.username, aw.role, ac.account_id
 			FROM accounts AS ac
-			INNER JOIN account_workspace AS aw ON ws.account_id = ac.account_id
+			INNER JOIN account_workspace AS aw ON aw.account_id = ac.account_id
 			WHERE aw.workspace_id = ?
 	`
 }
