@@ -20,12 +20,16 @@ import (
 	handlersEnums "github.com/ZupIT/horusec-platform/api/internal/handlers/analysis/enums"
 	tokenMiddlewareEnum "github.com/ZupIT/horusec-platform/api/internal/middelwares/token/enums"
 
-	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
-
 	analysisController "github.com/ZupIT/horusec-platform/api/internal/controllers/analysis"
 	analysisUseCases "github.com/ZupIT/horusec-platform/api/internal/usecases/analysis"
 	"github.com/go-chi/chi"
 	"github.com/google/uuid"
+
+	_ "github.com/ZupIT/horusec-devkit/pkg/entities/cli"
+	_ "github.com/ZupIT/horusec-devkit/pkg/entities/vulnerability"
+	_ "github.com/ZupIT/horusec-devkit/pkg/utils/http/entities"
+
+	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 
 	"github.com/ZupIT/horusec-devkit/pkg/services/database/enums"
 	httpUtil "github.com/ZupIT/horusec-devkit/pkg/utils/http"
@@ -47,6 +51,18 @@ func (h *Handler) Options(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
 	httpUtil.StatusNoContent(w)
 }
 
+// @Tags Analysis
+// @Security ApiKeyAuth
+// @Description Start new analysis
+// @ID start-new-analysis
+// @Accept  json
+// @Produce  json
+// @Param SendNewAnalysis body cli.AnalysisData{repositoryName=string,analysis=analysis.Analysis{analysisVulnerabilities=[]analysis.AnalysisVulnerabilities{vulnerabilities=vulnerability.Vulnerability}}} true "send new analysis info"
+// @Success 201 {object} entities.Response{content=string} "CREATED"
+// @Success 400 {object} entities.Response{content=string} "BAD REQUEST"
+// @Success 404 {object} entities.Response{content=string} "NOT FOUND"
+// @Failure 500 {object} entities.Response{content=string} "INTERNAL SERVER ERROR"
+// @Router /api/analysis [post]
 func (h *Handler) Post(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	analysisData, err := h.useCases.DecodeAnalysisDataFromIoRead(r.Body)
 	if err != nil {
@@ -106,6 +122,18 @@ func (h *Handler) saveAnalysis(w netHTTP.ResponseWriter, analysisEntity *analysi
 	httpUtil.StatusCreated(w, analysisID)
 }
 
+// @Tags Analysis
+// @Security ApiKeyAuth
+// @Description Get analysis on database
+// @ID get-one-analysis
+// @Accept  json
+// @Produce  json
+// @Param analysisID path string true "analysisID of the analysis"
+// @Success 200 {object} entities.Response{content=analysis.Analysis{analysisVulnerabilities=[]analysis.AnalysisVulnerabilities{vulnerabilities=vulnerability.Vulnerability}}} "OK"
+// @Success 400 {object} entities.Response{content=string} "BAD REQUEST"
+// @Success 404 {object} entities.Response{content=string} "NOT FOUND"
+// @Failure 500 {object} entities.Response{content=string} "INTERNAL SERVER ERROR"
+// @Router /api/analysis/{analysisID} [get]
 func (h *Handler) Get(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	analysisID, err := uuid.Parse(chi.URLParam(r, "analysisID"))
 	if err != nil || analysisID == uuid.Nil {

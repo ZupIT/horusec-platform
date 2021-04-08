@@ -25,10 +25,11 @@ import (
 	brokerService "github.com/ZupIT/horusec-devkit/pkg/services/broker"
 	brokerConfig "github.com/ZupIT/horusec-devkit/pkg/services/broker/config"
 	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/health"
-	httpUtil "github.com/ZupIT/horusec-devkit/pkg/utils/http"
 	httpUtilEnums "github.com/ZupIT/horusec-devkit/pkg/utils/http/enums"
 
 	"github.com/ZupIT/horusec-devkit/pkg/services/database"
+	httpUtil "github.com/ZupIT/horusec-devkit/pkg/utils/http"
+	_ "github.com/ZupIT/horusec-devkit/pkg/utils/http/entities"
 )
 
 type Handler struct {
@@ -57,6 +58,15 @@ func (h *Handler) Options(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
 	httpUtil.StatusNoContent(w)
 }
 
+// nolint
+// @Tags Health
+// @Description Check if Health of service it's OK!
+// @ID health
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} entities.Response{content=string} "OK"
+// @Failure 500 {object} entities.Response{content=string} "INTERNAL SERVER ERROR"
+// @Router /api/health [get]
 func (h *Handler) Get(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
 	if h.databaseNotAvailable() {
 		httpUtil.StatusInternalServerError(w, httpUtilEnums.ErrorDatabaseIsNotHealth)

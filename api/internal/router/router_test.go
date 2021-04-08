@@ -18,7 +18,7 @@ func TestNewHTTPRouter(t *testing.T) {
 		healthMock := &healthHandler.Handler{}
 		analysisMock := &analysisHandler.Handler{}
 		tokenMiddlewareMock := token.NewTokenAuthz(nil)
-		instance := NewHTTPRouter(router, analysisMock, healthMock, tokenMiddlewareMock)
+		instance := NewHTTPRouter(router, tokenMiddlewareMock, analysisMock, healthMock)
 		assert.NotEmpty(t, instance)
 	})
 }

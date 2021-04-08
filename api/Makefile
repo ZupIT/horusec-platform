@@ -40,3 +40,6 @@ security:
     endif
 
 pipeline: fmt fix-imports lint test coverage security
+
+update-swagger:
+	curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec-devkit/develop/scripts/update-swagger.sh | bash
