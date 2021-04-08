@@ -15,6 +15,7 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/services/database"
 	"github.com/ZupIT/horusec-devkit/pkg/services/database/response"
 
+	"github.com/ZupIT/horusec-platform/core/internal/entities/role"
 	workspaceEntities "github.com/ZupIT/horusec-platform/core/internal/entities/workspace"
 	workspaceRepository "github.com/ZupIT/horusec-platform/core/internal/repositories/workspace"
 	workspaceUseCases "github.com/ZupIT/horusec-platform/core/internal/usecases/workspace"
@@ -308,8 +309,7 @@ func TestDelete(t *testing.T) {
 		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection, appConfig,
 			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock)
 
-		err := controller.Delete(uuid.New())
-		assert.NoError(t, err)
+		assert.NoError(t, controller.Delete(uuid.New()))
 	})
 }
 
@@ -374,7 +374,8 @@ func TestList(t *testing.T) {
 
 	t.Run("should return error when failed to list with horusec auth type", func(t *testing.T) {
 		repositoryMock := &workspaceRepository.Mock{}
-		repositoryMock.On("ListWorkspacesAuthTypeHorusec").Return(workspaceResponse, errors.New("test"))
+		repositoryMock.On("ListWorkspacesAuthTypeHorusec").Return(
+			workspaceResponse, errors.New("test"))
 
 		appConfig := &app.Mock{}
 		appConfig.On("GetAuthorizationType").Return(auth.Horusec)
@@ -404,5 +405,221 @@ func TestList(t *testing.T) {
 
 		_, err := controller.List(workspaceData)
 		assert.Error(t, err)
+	})
+}
+
+func TestUpdateRole(t *testing.T) {
+	data := &role.Data{
+		Role: account.Admin,
+	}
+
+	accountWorkspace := &workspaceEntities.AccountWorkspace{
+		WorkspaceID: uuid.New(),
+		AccountID:   uuid.New(),
+		Role:        account.Admin,
+		CreatedAt:   time.Now(),
+		UpdatedAt:   time.Now(),
+	}
+
+	t.Run("should success update user role", func(t *testing.T) {
+		repositoryMock := &workspaceRepository.Mock{}
+		repositoryMock.On("GetAccountWorkspace").Return(accountWorkspace, nil)
+
+		databaseMock := &database.Mock{}
+		databaseMock.On("Update").Return(&response.Response{})
+
+		appConfig := &app.Mock{}
+
+		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
+		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection, appConfig,
+			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock)
+
+		result, err := controller.UpdateRole(data)
+		assert.NoError(t, err)
+		assert.NotNil(t, result)
+	})
+
+	t.Run("should return error when failed to get account workspace", func(t *testing.T) {
+		repositoryMock := &workspaceRepository.Mock{}
+		repositoryMock.On("GetAccountWorkspace").Return(accountWorkspace, errors.New("test"))
+
+		databaseMock := &database.Mock{}
+		appConfig := &app.Mock{}
+
+		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
+		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection, appConfig,
+			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock)
+
+		_, err := controller.UpdateRole(data)
+		assert.Error(t, err)
+	})
+}
+
+func TestInviteUser(t *testing.T) {
+	data := &role.InviteUserData{
+		Role: account.Admin,
+	}
+
+	workspace := &workspaceEntities.Workspace{
+		WorkspaceID: uuid.New(),
+		Name:        "test",
+		Description: "test",
+		AuthzMember: []string{"test"},
+		AuthzAdmin:  []string{"test"},
+		CreatedAt:   time.Now(),
+		UpdatedAt:   time.Now(),
+	}
+
+	t.Run("should success create new account workspace without email", func(t *testing.T) {
+		repositoryMock := &workspaceRepository.Mock{}
+		repositoryMock.On("GetWorkspace").Return(workspace, nil)
+
+		databaseMock := &database.Mock{}
+		databaseMock.On("Create").Return(&response.Response{})
+
+		appConfig := &app.Mock{}
+		appConfig.On("IsBrokerDisabled").Return(true)
+
+		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
+		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection, appConfig,
+			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock)
+
+		result, err := controller.InviteUser(data)
+		assert.NoError(t, err)
+		assert.NotNil(t, result)
+	})
+
+	t.Run("should success create new account workspace with email", func(t *testing.T) {
+		repositoryMock := &workspaceRepository.Mock{}
+		repositoryMock.On("GetWorkspace").Return(workspace, nil)
+
+		databaseMock := &database.Mock{}
+		databaseMock.On("Create").Return(&response.Response{})
+
+		appConfig := &app.Mock{}
+		appConfig.On("IsBrokerDisabled").Return(false)
+
+		brokerMock := &broker.Mock{}
+		brokerMock.On("Publish").Return(nil)
+
+		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
+		controller := NewWorkspaceController(brokerMock, databaseConnection, appConfig,
+			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock)
+
+		result, err := controller.InviteUser(data)
+		assert.NoError(t, err)
+		assert.NotNil(t, result)
+	})
+
+	t.Run("should return error when failed to create account workspace", func(t *testing.T) {
+		repositoryMock := &workspaceRepository.Mock{}
+		repositoryMock.On("GetWorkspace").Return(workspace, nil)
+
+		databaseMock := &database.Mock{}
+		databaseMock.On("Create").Return(
+			response.NewResponse(0, errors.New("test"), nil))
+
+		appConfig := &app.Mock{}
+
+		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
+		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection, appConfig,
+			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock)
+
+		_, err := controller.InviteUser(data)
+		assert.Error(t, err)
+	})
+
+	t.Run("should return error when failed to get workspace", func(t *testing.T) {
+		repositoryMock := &workspaceRepository.Mock{}
+		repositoryMock.On("GetWorkspace").Return(workspace, errors.New("test"))
+
+		databaseMock := &database.Mock{}
+		appConfig := &app.Mock{}
+
+		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
+		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection, appConfig,
+			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock)
+
+		_, err := controller.InviteUser(data)
+		assert.Error(t, err)
+	})
+}
+
+func TestGetUsers(t *testing.T) {
+	usersResponse := &[]role.Response{
+		{
+			AccountID: uuid.New(),
+			Email:     "test@test.com",
+			Username:  "test",
+			Role:      account.Admin,
+		},
+	}
+
+	t.Run("should success get all users of workspace", func(t *testing.T) {
+		repositoryMock := &workspaceRepository.Mock{}
+		repositoryMock.On("ListAllWorkspaceUsers").Return(usersResponse, nil)
+
+		databaseMock := &database.Mock{}
+		appConfig := &app.Mock{}
+
+		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
+		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection, appConfig,
+			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock)
+
+		result, err := controller.GetUsers(uuid.New())
+		assert.NoError(t, err)
+		assert.NotNil(t, result)
+	})
+}
+
+func TestRemoveUser(t *testing.T) {
+	data := &role.Data{
+		AccountID:   uuid.New(),
+		WorkspaceID: uuid.New(),
+	}
+
+	t.Run("should success remove user from repositories and workspace", func(t *testing.T) {
+		repositoryMock := &workspaceRepository.Mock{}
+		appConfig := &app.Mock{}
+
+		databaseMock := &database.Mock{}
+		databaseMock.On("Delete").Return(&response.Response{})
+
+		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
+		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection, appConfig,
+			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock)
+
+		assert.NoError(t, controller.RemoveUser(data))
+	})
+
+	t.Run("should return error when failed to remove user from workspace", func(t *testing.T) {
+		repositoryMock := &workspaceRepository.Mock{}
+		appConfig := &app.Mock{}
+
+		databaseMock := &database.Mock{}
+		databaseMock.On("Delete").Once().Return(&response.Response{})
+		databaseMock.On("Delete").Return(
+			response.NewResponse(0, errors.New("test"), nil))
+
+		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
+		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection, appConfig,
+			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock)
+
+		assert.Error(t, controller.RemoveUser(data))
+	})
+
+	t.Run("should return error when failed to remove user from repositories", func(t *testing.T) {
+		repositoryMock := &workspaceRepository.Mock{}
+		appConfig := &app.Mock{}
+
+		databaseMock := &database.Mock{}
+		databaseMock.On("Delete").Return(
+			response.NewResponse(0, errors.New("test"), nil))
+
+		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
+		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection, appConfig,
+			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock)
+
+		assert.Error(t, controller.RemoveUser(data))
 	})
 }
