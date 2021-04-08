@@ -62,7 +62,8 @@ func (h *Handler) Post(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	h.saveAnalysis(w, analysisEntity)
 }
 
-func (h *Handler) decoratorAnalysisFromContext(analysisEntity *analysis.Analysis, r *netHTTP.Request) *analysis.Analysis {
+func (h *Handler) decoratorAnalysisFromContext(
+	analysisEntity *analysis.Analysis, r *netHTTP.Request) *analysis.Analysis {
 	analysisEntity.WorkspaceID = r.Context().Value(tokenMiddlewareEnum.WorkspaceID).(uuid.UUID)
 	analysisEntity.WorkspaceName = r.Context().Value(tokenMiddlewareEnum.WorkspaceName).(string)
 	analysisEntity.RepositoryID = r.Context().Value(tokenMiddlewareEnum.RepositoryID).(uuid.UUID)
@@ -72,23 +73,33 @@ func (h *Handler) decoratorAnalysisFromContext(analysisEntity *analysis.Analysis
 
 func (h *Handler) decoratorAnalysisToRepositoryName(
 	analysisEntity *analysis.Analysis, repositoryName string) (*analysis.Analysis, error) {
-	if repositoryName == "" && analysisEntity.RepositoryName == "" {
-		// If user not send repository on body and not exists repository on token
+	if h.isInvalidWorkspaceToCreateAnalysis(analysisEntity) {
+		return nil, handlersEnums.ErrorWorkspaceNotSelected
+	}
+	if h.isValidRepositoryToCreateAnalysis(analysisEntity, repositoryName) {
 		return nil, handlersEnums.ErrorRepositoryNotSelected
-	} else if analysisEntity.RepositoryName == "" && analysisEntity.RepositoryID == uuid.Nil {
-		// If user send repository on body and not exists repository on token is necessary create new repository
+	}
+	if h.isToCreateNewRepository(analysisEntity) {
 		analysisEntity.RepositoryName = repositoryName
 	}
 	return analysisEntity, nil
 }
 
+func (h *Handler) isInvalidWorkspaceToCreateAnalysis(analysisEntity *analysis.Analysis) bool {
+	return analysisEntity.WorkspaceName == "" || analysisEntity.WorkspaceID == uuid.Nil
+}
+
+func (h *Handler) isValidRepositoryToCreateAnalysis(analysisEntity *analysis.Analysis, repositoryName string) bool {
+	return repositoryName == "" && analysisEntity.RepositoryName == ""
+}
+
+func (h *Handler) isToCreateNewRepository(analysisEntity *analysis.Analysis) bool {
+	return analysisEntity.RepositoryName == "" && analysisEntity.RepositoryID == uuid.Nil
+}
+
 func (h *Handler) saveAnalysis(w netHTTP.ResponseWriter, analysisEntity *analysis.Analysis) {
 	analysisID, err := h.controller.SaveAnalysis(analysisEntity)
 	if err != nil {
-		if err == enums.ErrorNotFoundRecords {
-			httpUtil.StatusNotFound(w, err)
-			return
-		}
 		httpUtil.StatusInternalServerError(w, err)
 		return
 	}

@@ -69,7 +69,10 @@ func (c *Controller) SaveAnalysis(analysisEntity *analysis.Analysis) (uuid.UUID,
 	if err != nil {
 		return uuid.Nil, err
 	}
-	return analysisDecorated.ID, c.publishToWebhookAnalysis(analysisDecorated)
+	if err := c.publishToWebhookAnalysis(analysisDecorated); err != nil {
+		return uuid.Nil, err
+	}
+	return analysisDecorated.ID, nil
 }
 
 func (c *Controller) createRepositoryIfNotExists(analysisEntity *analysis.Analysis) error {
@@ -83,14 +86,11 @@ func (c *Controller) createRepositoryIfNotExists(analysisEntity *analysis.Analys
 
 func (c *Controller) decorateAnalysisEntityAndSaveOnDatabase(
 	analysisEntity *analysis.Analysis) (*analysis.Analysis, error) {
-	analysisDecorated, err := c.decoratorAnalysisToSave(analysisEntity)
-	if err != nil {
-		return nil, err
-	}
+	analysisDecorated := c.decoratorAnalysisToSave(analysisEntity)
 	return analysisDecorated, c.createNewAnalysis(analysisDecorated)
 }
 
-func (c *Controller) decoratorAnalysisToSave(analysisEntity *analysis.Analysis) (*analysis.Analysis, error) {
+func (c *Controller) decoratorAnalysisToSave(analysisEntity *analysis.Analysis) *analysis.Analysis {
 	newAnalysis := c.extractBaseOfTheAnalysis(analysisEntity)
 	for keyObservable := range analysisEntity.AnalysisVulnerabilities {
 		observable := analysisEntity.AnalysisVulnerabilities[keyObservable]
@@ -98,7 +98,7 @@ func (c *Controller) decoratorAnalysisToSave(analysisEntity *analysis.Analysis) 
 			newAnalysis.AnalysisVulnerabilities = append(newAnalysis.AnalysisVulnerabilities, observable)
 		}
 	}
-	return newAnalysis, nil
+	return newAnalysis
 }
 
 func (c *Controller) createNewAnalysis(newAnalysis *analysis.Analysis) error {

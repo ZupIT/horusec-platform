@@ -2,4 +2,6 @@ package enums
 
 import "errors"
 
-var ErrorRepositoryNotSelected = errors.New("{HORUSEC} repositoryName can not be blank to token of workspace")
+var ErrorWorkspaceNotSelected = errors.New("{HORUSEC} workspace not found for token sent")
+var ErrorRepositoryNotSelected = errors.New("{HORUSEC} repositoryName cannot be empty " +
+	"in the body for a workspace token")

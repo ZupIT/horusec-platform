@@ -13,14 +13,16 @@ type IRepository interface {
 }
 
 type Repository struct {
-	databaseWrite database.IDatabaseWrite
-	databaseRead  database.IDatabaseRead
+	databaseWrite       database.IDatabaseWrite
+	databaseRead        database.IDatabaseRead
+	repositoryTableName string
 }
 
 func NewRepositoriesRepository(connection *database.Connection) IRepository {
 	return &Repository{
-		databaseWrite: connection.Write,
-		databaseRead:  connection.Read,
+		databaseWrite:       connection.Write,
+		databaseRead:        connection.Read,
+		repositoryTableName: "repositories",
 	}
 }
 
@@ -35,5 +37,5 @@ func (r *Repository) CreateRepository(repositoryID, workspaceID uuid.UUID, name 
 		"authz_admin":      "{}",
 		"authz_supervisor": "{}",
 	}
-	return r.databaseWrite.Create(entity, "repositories").GetError()
+	return r.databaseWrite.Create(entity, r.repositoryTableName).GetError()
 }
