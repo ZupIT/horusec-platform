@@ -14,7 +14,6 @@
 
 package analysis
 
-import "C"
 import (
 	repoAnalysis "github.com/ZupIT/horusec-platform/api/internal/repositories/analysis"
 	"github.com/ZupIT/horusec-platform/api/internal/repositories/repository"
@@ -119,7 +118,8 @@ func (c *Controller) extractBaseOfTheAnalysis(analysisEntity *analysis.Analysis)
 	}
 }
 
-func (c *Controller) hasDuplicatedHash(newAnalysis *analysis.Analysis, observable *analysis.RelationshipAnalysisVuln) bool {
+func (c *Controller) hasDuplicatedHash(
+	newAnalysis *analysis.Analysis, observable *analysis.RelationshipAnalysisVuln) bool {
 	for keyCurrent := range newAnalysis.AnalysisVulnerabilities {
 		current := newAnalysis.AnalysisVulnerabilities[keyCurrent]
 		if observable.Vulnerability.VulnHash == current.Vulnerability.VulnHash {
