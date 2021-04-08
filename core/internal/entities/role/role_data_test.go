@@ -42,3 +42,11 @@ func TestSetAccountAndWorkspaceID(t *testing.T) {
 		assert.Equal(t, id, data.AccountID)
 	})
 }
+
+func TestToBytesRoleData(t *testing.T) {
+	t.Run("should success parse to bytes", func(t *testing.T) {
+		data := Data{}
+
+		assert.NotEmpty(t, data.ToBytes())
+	})
+}

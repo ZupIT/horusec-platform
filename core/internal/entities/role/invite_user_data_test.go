@@ -64,3 +64,11 @@ func TestSetWorkspaceID(t *testing.T) {
 		assert.Equal(t, id, data.WorkspaceID)
 	})
 }
+
+func TestToBytesInviteUserData(t *testing.T) {
+	t.Run("should success parse to bytes", func(t *testing.T) {
+		data := InviteUserData{}
+
+		assert.NotEmpty(t, data.ToBytes())
+	})
+}

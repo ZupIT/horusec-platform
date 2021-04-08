@@ -1,6 +1,8 @@
 package role
 
 import (
+	"encoding/json"
+
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/go-ozzo/ozzo-validation/v4/is"
 	"github.com/google/uuid"
@@ -30,4 +32,10 @@ func (d *Data) SetAccountAndWorkspaceID(accountID, workspaceID uuid.UUID) *Data 
 	d.WorkspaceID = workspaceID
 
 	return d
+}
+
+func (d *Data) ToBytes() []byte {
+	bytes, _ := json.Marshal(d)
+
+	return bytes
 }
