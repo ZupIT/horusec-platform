@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/lib/pq"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/ZupIT/horusec-devkit/pkg/enums/account"
@@ -81,8 +82,8 @@ func TestUpdateWorkspace(t *testing.T) {
 		workspace.Update(data)
 		assert.Equal(t, data.Name, workspace.Name)
 		assert.Equal(t, data.Description, workspace.Description)
-		assert.Equal(t, data.AuthzAdmin, workspace.AuthzAdmin)
-		assert.Equal(t, data.AuthzMember, workspace.AuthzMember)
+		assert.Equal(t, pq.StringArray(data.AuthzAdmin), workspace.AuthzAdmin)
+		assert.Equal(t, pq.StringArray(data.AuthzMember), workspace.AuthzMember)
 		assert.NotEqual(t, expectedTime, workspace.UpdatedAt)
 	})
 }
