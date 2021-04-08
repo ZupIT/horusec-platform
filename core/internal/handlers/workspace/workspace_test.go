@@ -20,6 +20,7 @@ import (
 	workspaceController "github.com/ZupIT/horusec-platform/core/internal/controllers/workspace"
 	"github.com/ZupIT/horusec-platform/core/internal/entities/role"
 	workspaceEntities "github.com/ZupIT/horusec-platform/core/internal/entities/workspace"
+	workspaceEnums "github.com/ZupIT/horusec-platform/core/internal/enums/workspace"
 	workspaceUseCases "github.com/ZupIT/horusec-platform/core/internal/usecases/workspace"
 )
 
@@ -44,7 +45,7 @@ func TestCreate(t *testing.T) {
 
 	t.Run("should return 201 when everything it is ok", func(t *testing.T) {
 		controllerMock := &workspaceController.Mock{}
-		controllerMock.On("Create").Return(&workspaceEntities.Workspace{}, nil)
+		controllerMock.On("Create").Return(&workspaceEntities.Response{}, nil)
 
 		authGRPCMock := &proto.Mock{}
 		authGRPCMock.On("GetAccountInfo").Return(accountData, nil)
@@ -65,7 +66,7 @@ func TestCreate(t *testing.T) {
 
 	t.Run("should return 500 when something went wrong while creating workspace", func(t *testing.T) {
 		controllerMock := &workspaceController.Mock{}
-		controllerMock.On("Create").Return(&workspaceEntities.Workspace{}, errors.New("test"))
+		controllerMock.On("Create").Return(&workspaceEntities.Response{}, errors.New("test"))
 
 		authGRPCMock := &proto.Mock{}
 		authGRPCMock.On("GetAccountInfo").Return(accountData, nil)
@@ -82,6 +83,28 @@ func TestCreate(t *testing.T) {
 		handler.Create(w, r)
 
 		assert.Equal(t, http.StatusInternalServerError, w.Code)
+	})
+
+	t.Run("should return 400 when workspace name already in user", func(t *testing.T) {
+		controllerMock := &workspaceController.Mock{}
+		controllerMock.On("Create").Return(
+			&workspaceEntities.Response{}, workspaceEnums.ErrorWorkspaceNameAlreadyInUse)
+
+		authGRPCMock := &proto.Mock{}
+		authGRPCMock.On("GetAccountInfo").Return(accountData, nil)
+
+		appConfigMock := &app.Mock{}
+		appConfigMock.On("GetAuthorizationType").Return(auth.Horusec)
+
+		handler := NewWorkspaceHandler(controllerMock, workspaceUseCases.NewWorkspaceUseCases(),
+			authGRPCMock, appConfigMock)
+
+		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(workspaceData.ToBytes()))
+		w := httptest.NewRecorder()
+
+		handler.Create(w, r)
+
+		assert.Equal(t, http.StatusBadRequest, w.Code)
 	})
 
 	t.Run("should return 400 when failed to get account data", func(t *testing.T) {
@@ -260,7 +283,7 @@ func TestUpdate(t *testing.T) {
 
 	t.Run("should return 200 when everything it is ok", func(t *testing.T) {
 		controllerMock := &workspaceController.Mock{}
-		controllerMock.On("Update").Return(&workspaceEntities.Workspace{}, nil)
+		controllerMock.On("Update").Return(&workspaceEntities.Response{}, nil)
 
 		authGRPCMock := &proto.Mock{}
 		authGRPCMock.On("GetAccountInfo").Return(accountData, nil)
@@ -285,7 +308,7 @@ func TestUpdate(t *testing.T) {
 
 	t.Run("should return 500 when something went wrong", func(t *testing.T) {
 		controllerMock := &workspaceController.Mock{}
-		controllerMock.On("Update").Return(&workspaceEntities.Workspace{}, errors.New("test"))
+		controllerMock.On("Update").Return(&workspaceEntities.Response{}, errors.New("test"))
 
 		authGRPCMock := &proto.Mock{}
 		authGRPCMock.On("GetAccountInfo").Return(accountData, nil)

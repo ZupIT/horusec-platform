@@ -41,6 +41,10 @@ func NewWorkspaceHandler(controller workspaceController.IController, useCases wo
 	}
 }
 
+func (h *Handler) getAccountData(r *http.Request) (*proto.GetAccountDataResponse, error) {
+	return h.authGRPC.GetAccountInfo(h.context, &proto.GetAccountData{Token: r.Header.Get(enums.HorusecJWTHeader)})
+}
+
 // @Tags Workspace
 // @Description Create a new workspace
 // @ID create-workspace
@@ -62,7 +66,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 
 	workspace, err := h.controller.Create(workspaceData)
 	if err != nil {
-		httpUtil.StatusInternalServerError(w, err)
+		h.checkCreateRepositoryErrors(w, err)
 		return
 	}
 
@@ -83,8 +87,13 @@ func (h *Handler) getCreateData(r *http.Request) (*workspaceEntities.Data, error
 	return workspaceData.SetAccountData(accountData), workspaceData.CheckLdapGroups(h.appConfig.GetAuthorizationType())
 }
 
-func (h *Handler) getAccountData(r *http.Request) (*proto.GetAccountDataResponse, error) {
-	return h.authGRPC.GetAccountInfo(h.context, &proto.GetAccountData{Token: r.Header.Get(enums.HorusecJWTHeader)})
+func (h *Handler) checkCreateRepositoryErrors(w http.ResponseWriter, err error) {
+	if err == workspaceEnums.ErrorWorkspaceNameAlreadyInUse {
+		httpUtil.StatusBadRequest(w, err)
+		return
+	}
+
+	httpUtil.StatusInternalServerError(w, err)
 }
 
 // @Tags Workspace

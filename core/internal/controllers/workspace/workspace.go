@@ -20,9 +20,9 @@ import (
 )
 
 type IController interface {
-	Create(data *workspaceEntities.Data) (*workspaceEntities.Workspace, error)
+	Create(data *workspaceEntities.Data) (*workspaceEntities.Response, error)
 	Get(data *workspaceEntities.Data) (*workspaceEntities.Response, error)
-	Update(data *workspaceEntities.Data) (*workspaceEntities.Workspace, error)
+	Update(data *workspaceEntities.Data) (*workspaceEntities.Response, error)
 	Delete(workspaceID uuid.UUID) error
 	List(data *workspaceEntities.Data) (*[]workspaceEntities.Response, error)
 	UpdateRole(data *roleEntities.Data) (*roleEntities.Response, error)
@@ -53,7 +53,7 @@ func NewWorkspaceController(broker brokerService.IBroker, databaseConnection *da
 	}
 }
 
-func (c *Controller) Create(data *workspaceEntities.Data) (*workspaceEntities.Workspace, error) {
+func (c *Controller) Create(data *workspaceEntities.Data) (*workspaceEntities.Response, error) {
 	transaction := c.databaseWrite.StartTransaction()
 	workspace := data.ToWorkspace()
 
@@ -68,7 +68,7 @@ func (c *Controller) Create(data *workspaceEntities.Data) (*workspaceEntities.Wo
 		return nil, err
 	}
 
-	return workspace, transaction.CommitTransaction().GetError()
+	return workspace.ToWorkspaceResponse(accountEnums.Admin), transaction.CommitTransaction().GetError()
 }
 
 func (c *Controller) Get(data *workspaceEntities.Data) (*workspaceEntities.Response, error) {
@@ -85,15 +85,15 @@ func (c *Controller) Get(data *workspaceEntities.Data) (*workspaceEntities.Respo
 	return workspace.ToWorkspaceResponse(accountWorkspace.Role), nil
 }
 
-func (c *Controller) Update(data *workspaceEntities.Data) (*workspaceEntities.Workspace, error) {
+func (c *Controller) Update(data *workspaceEntities.Data) (*workspaceEntities.Response, error) {
 	workspace, err := c.repository.GetWorkspace(data.WorkspaceID)
 	if err != nil {
 		return nil, err
 	}
 
 	workspace.Update(data)
-	return workspace, c.databaseWrite.Update(workspace, c.useCases.FilterWorkspaceByID(data.WorkspaceID),
-		workspaceEnums.DatabaseWorkspaceTable).GetError()
+	return workspace.ToWorkspaceResponse(accountEnums.Admin), c.databaseWrite.Update(
+		workspace, c.useCases.FilterWorkspaceByID(data.WorkspaceID), workspaceEnums.DatabaseWorkspaceTable).GetError()
 }
 
 func (c *Controller) Delete(workspaceID uuid.UUID) error {
