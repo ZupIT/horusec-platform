@@ -2,11 +2,13 @@ package repository
 
 import (
 	"bytes"
+	"context"
 	"errors"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
+	"github.com/go-chi/chi"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 
@@ -16,8 +18,8 @@ import (
 
 	repositoryController "github.com/ZupIT/horusec-platform/core/internal/controllers/repository"
 	repositoryEntities "github.com/ZupIT/horusec-platform/core/internal/entities/repository"
-	repositoryUseCases "github.com/ZupIT/horusec-platform/core/internal/usecases/repository"
 	repositoryEnums "github.com/ZupIT/horusec-platform/core/internal/enums/repository"
+	repositoryUseCases "github.com/ZupIT/horusec-platform/core/internal/usecases/repository"
 )
 
 func TestCreate(t *testing.T) {
@@ -150,6 +152,102 @@ func TestCreate(t *testing.T) {
 		w := httptest.NewRecorder()
 
 		handler.Create(w, r)
+
+		assert.Equal(t, http.StatusBadRequest, w.Code)
+	})
+}
+
+func TestGet(t *testing.T) {
+	accountData := &proto.GetAccountDataResponse{
+		AccountID: uuid.New().String(),
+	}
+
+	t.Run("should return 200 when everything it is ok", func(t *testing.T) {
+		controllerMock := &repositoryController.Mock{}
+		controllerMock.On("Get").Return(&repositoryEntities.Response{}, nil)
+
+		authGRPCMock := &proto.Mock{}
+		authGRPCMock.On("GetAccountInfo").Return(accountData, nil)
+
+		appConfigMock := &app.Mock{}
+
+		handler := NewRepositoryHandler(repositoryUseCases.NewRepositoryUseCases(), controllerMock,
+			appConfigMock, authGRPCMock)
+
+		r, _ := http.NewRequest(http.MethodGet, "test", nil)
+		w := httptest.NewRecorder()
+
+		ctx := chi.NewRouteContext()
+		ctx.URLParams.Add("repositoryID", uuid.NewString())
+		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
+
+		handler.Get(w, r)
+
+		assert.Equal(t, http.StatusOK, w.Code)
+	})
+
+	t.Run("should return 500 when something went wrong", func(t *testing.T) {
+		controllerMock := &repositoryController.Mock{}
+		controllerMock.On("Get").Return(&repositoryEntities.Response{}, errors.New("test"))
+
+		authGRPCMock := &proto.Mock{}
+		authGRPCMock.On("GetAccountInfo").Return(accountData, nil)
+
+		appConfigMock := &app.Mock{}
+
+		handler := NewRepositoryHandler(repositoryUseCases.NewRepositoryUseCases(), controllerMock,
+			appConfigMock, authGRPCMock)
+
+		r, _ := http.NewRequest(http.MethodGet, "test", nil)
+		w := httptest.NewRecorder()
+
+		ctx := chi.NewRouteContext()
+		ctx.URLParams.Add("repositoryID", uuid.NewString())
+		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
+
+		handler.Get(w, r)
+
+		assert.Equal(t, http.StatusInternalServerError, w.Code)
+	})
+
+	t.Run("should return 400 when failed to get account data", func(t *testing.T) {
+		controllerMock := &repositoryController.Mock{}
+		appConfigMock := &app.Mock{}
+
+		authGRPCMock := &proto.Mock{}
+		authGRPCMock.On("GetAccountInfo").Return(accountData, errors.New("test"))
+
+		handler := NewRepositoryHandler(repositoryUseCases.NewRepositoryUseCases(), controllerMock,
+			appConfigMock, authGRPCMock)
+
+		r, _ := http.NewRequest(http.MethodGet, "test", nil)
+		w := httptest.NewRecorder()
+
+		ctx := chi.NewRouteContext()
+		ctx.URLParams.Add("repositoryID", uuid.NewString())
+		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
+
+		handler.Get(w, r)
+
+		assert.Equal(t, http.StatusBadRequest, w.Code)
+	})
+
+	t.Run("should return 400 when invalid repository id", func(t *testing.T) {
+		controllerMock := &repositoryController.Mock{}
+		appConfigMock := &app.Mock{}
+		authGRPCMock := &proto.Mock{}
+
+		handler := NewRepositoryHandler(repositoryUseCases.NewRepositoryUseCases(), controllerMock,
+			appConfigMock, authGRPCMock)
+
+		r, _ := http.NewRequest(http.MethodGet, "test", nil)
+		w := httptest.NewRecorder()
+
+		ctx := chi.NewRouteContext()
+		ctx.URLParams.Add("repositoryID", "test")
+		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
+
+		handler.Get(w, r)
 
 		assert.Equal(t, http.StatusBadRequest, w.Code)
 	})

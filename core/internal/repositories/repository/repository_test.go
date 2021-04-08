@@ -33,3 +33,33 @@ func TestGetRepositoryByName(t *testing.T) {
 		assert.NotNil(t, result)
 	})
 }
+
+func TestGetRepository(t *testing.T) {
+	t.Run("should success get a repository", func(t *testing.T) {
+		databaseMock := &database.Mock{}
+		databaseMock.On("Find").
+			Return(response.NewResponse(1, nil, &repositoryEntities.Repository{}))
+
+		repository := NewRepositoryRepository(&database.Connection{Read: databaseMock, Write: databaseMock},
+			repositoryUseCases.NewRepositoryUseCases())
+
+		result, err := repository.GetRepository(uuid.New())
+		assert.NoError(t, err)
+		assert.NotNil(t, result)
+	})
+}
+
+func TestGetAccountRepository(t *testing.T) {
+	t.Run("should success get a account repository", func(t *testing.T) {
+		databaseMock := &database.Mock{}
+		databaseMock.On("Find").
+			Return(response.NewResponse(1, nil, &repositoryEntities.Repository{}))
+
+		repository := NewRepositoryRepository(&database.Connection{Read: databaseMock, Write: databaseMock},
+			repositoryUseCases.NewRepositoryUseCases())
+
+		result, err := repository.GetAccountRepository(uuid.New(), uuid.New())
+		assert.NoError(t, err)
+		assert.NotNil(t, result)
+	})
+}

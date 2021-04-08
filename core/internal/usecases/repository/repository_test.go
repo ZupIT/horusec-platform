@@ -88,3 +88,30 @@ func TestNewRepositoryData(t *testing.T) {
 		assert.Equal(t, id, data.AccountID)
 	})
 }
+
+func TestFilterRepositoryByID(t *testing.T) {
+	t.Run("should success create a repository filter by id", func(t *testing.T) {
+		useCases := NewRepositoryUseCases()
+		id := uuid.New()
+
+		filter := useCases.FilterRepositoryByID(id)
+
+		assert.NotPanics(t, func() {
+			assert.Equal(t, id, filter["repository_id"])
+		})
+	})
+}
+
+func TestFilterAccountRepositoryByID(t *testing.T) {
+	t.Run("should success create a account repository filter by id", func(t *testing.T) {
+		useCases := NewRepositoryUseCases()
+		id := uuid.New()
+
+		filter := useCases.FilterAccountRepositoryByID(id, id)
+
+		assert.NotPanics(t, func() {
+			assert.Equal(t, id, filter["repository_id"])
+			assert.Equal(t, id, filter["account_id"])
+		})
+	})
+}

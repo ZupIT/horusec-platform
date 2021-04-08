@@ -9,8 +9,8 @@ import (
 
 	"github.com/ZupIT/horusec-devkit/pkg/services/app"
 	"github.com/ZupIT/horusec-devkit/pkg/services/database"
-	"github.com/ZupIT/horusec-devkit/pkg/services/database/response"
 	databaseEnums "github.com/ZupIT/horusec-devkit/pkg/services/database/enums"
+	"github.com/ZupIT/horusec-devkit/pkg/services/database/response"
 
 	repositoryEntities "github.com/ZupIT/horusec-platform/core/internal/entities/repository"
 	repositoryRepository "github.com/ZupIT/horusec-platform/core/internal/repositories/repository"
@@ -104,6 +104,62 @@ func TestCreate(t *testing.T) {
 			repositoryUseCases.NewRepositoryUseCases(), repositoryMock)
 
 		_, err := controller.Create(data)
+		assert.Error(t, err)
+	})
+}
+
+func TestGet(t *testing.T) {
+	data := &repositoryEntities.Data{
+		AccountID:    uuid.New(),
+		RepositoryID: uuid.New(),
+	}
+
+	t.Run("should success get a repository", func(t *testing.T) {
+		repositoryMock := &repositoryRepository.Mock{}
+		repositoryMock.On("GetRepository").Return(&repositoryEntities.Repository{}, nil)
+		repositoryMock.On("GetAccountRepository").Return(&repositoryEntities.AccountRepository{}, nil)
+
+		databaseMock := &database.Mock{}
+		appConfig := &app.Mock{}
+
+		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
+		controller := NewRepositoryController(databaseConnection, appConfig,
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock)
+
+		result, err := controller.Get(data)
+		assert.NoError(t, err)
+		assert.NotNil(t, result)
+	})
+
+	t.Run("should return error when failed to get repository", func(t *testing.T) {
+		repositoryMock := &repositoryRepository.Mock{}
+		repositoryMock.On("GetRepository").Return(&repositoryEntities.Repository{}, errors.New("test"))
+		repositoryMock.On("GetAccountRepository").Return(&repositoryEntities.AccountRepository{}, nil)
+
+		databaseMock := &database.Mock{}
+		appConfig := &app.Mock{}
+
+		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
+		controller := NewRepositoryController(databaseConnection, appConfig,
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock)
+
+		_, err := controller.Get(data)
+		assert.Error(t, err)
+	})
+
+	t.Run("should return error when failed to get account repository", func(t *testing.T) {
+		repositoryMock := &repositoryRepository.Mock{}
+		repositoryMock.On("GetAccountRepository").Return(
+			&repositoryEntities.AccountRepository{}, errors.New("test"))
+
+		databaseMock := &database.Mock{}
+		appConfig := &app.Mock{}
+
+		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
+		controller := NewRepositoryController(databaseConnection, appConfig,
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock)
+
+		_, err := controller.Get(data)
 		assert.Error(t, err)
 	})
 }
