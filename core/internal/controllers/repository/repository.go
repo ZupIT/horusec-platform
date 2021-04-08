@@ -5,7 +5,7 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/services/app"
 	"github.com/ZupIT/horusec-devkit/pkg/services/database"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
-
+	
 	repositoryEntities "github.com/ZupIT/horusec-platform/core/internal/entities/repository"
 	repositoryEnums "github.com/ZupIT/horusec-platform/core/internal/enums/repository"
 	repositoryRepository "github.com/ZupIT/horusec-platform/core/internal/repositories/repository"
@@ -15,6 +15,7 @@ import (
 type IController interface {
 	Create(data *repositoryEntities.Data) (*repositoryEntities.Response, error)
 	Get(data *repositoryEntities.Data) (*repositoryEntities.Response, error)
+	Update(data *repositoryEntities.Data) (*repositoryEntities.Response, error)
 }
 
 type Controller struct {
@@ -75,4 +76,20 @@ func (c *Controller) Get(data *repositoryEntities.Data) (*repositoryEntities.Res
 	}
 
 	return repository.ToRepositoryResponse(accountRepository.Role), nil
+}
+
+func (c *Controller) Update(data *repositoryEntities.Data) (*repositoryEntities.Response, error) {
+	repository, err := c.repository.GetRepository(data.RepositoryID)
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = c.repository.GetRepositoryByName(data.WorkspaceID, data.Name)
+	if repository.Name != data.Name && !c.useCases.IsNotFoundError(err) {
+		return nil, repositoryEnums.ErrorRepositoryNameAlreadyInUse
+	}
+
+	repository.Update(data)
+	return repository.ToRepositoryResponse(accountEnums.Admin), c.databaseWrite.Update(repository,
+		c.useCases.FilterRepositoryByID(data.RepositoryID), repositoryEnums.DatabaseRepositoryTable).GetError()
 }

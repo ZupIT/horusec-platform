@@ -46,3 +46,12 @@ func (r *Repository) ToRepositoryResponse(role account.Role) *Response {
 		UpdatedAt:       r.UpdatedAt,
 	}
 }
+
+func (r *Repository) Update(data *Data) {
+	r.Name = data.Name
+	r.Description = data.Description
+	r.AuthzMember = data.AuthzMember
+	r.AuthzSupervisor = data.AuthzSupervisor
+	r.AuthzAdmin = data.AuthzAdmin
+	r.UpdatedAt = time.Now()
+}

@@ -102,6 +102,7 @@ func (h *Handler) checkCreateRepositoryErrors(w http.ResponseWriter, err error) 
 // @ID get-repository
 // @Accept  json
 // @Produce  json
+// @Param workspaceID path string true "ID of the workspace"
 // @Param repositoryID path string true "ID of the repository"
 // @Success 200 {object} entities.Response
 // @Failure 400 {object} entities.Response
@@ -138,4 +139,59 @@ func (h *Handler) getByIDData(r *http.Request) (*repositoryEntities.Data, error)
 	}
 
 	return h.useCases.NewRepositoryData(parser.ParseStringToUUID(accountData.AccountID), repositoryID), nil
+}
+
+// @Tags Repository
+// @Description Updates a existing repository by id
+// @ID update-repository
+// @Accept  json
+// @Produce  json
+// @Param workspaceID path string true "ID of the workspace"
+// @Param repositoryID path string true "ID of the repository"
+// @Param Repository body repositoryEntities.Data true "update repository data"
+// @Success 200 {object} entities.Response
+// @Failure 400 {object} entities.Response
+// @Failure 401 {object} entities.Response
+// @Failure 404 {object} entities.Response
+// @Failure 500 {object} entities.Response
+// @Router /core/workspaces/{workspaceID}/repositories/{repositoryID} [patch]
+// @Security ApiKeyAuth
+func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
+	data, err := h.getUpdateData(r)
+	if err != nil {
+		httpUtil.StatusBadRequest(w, err)
+		return
+	}
+
+	repository, err := h.controller.Update(data)
+	if err != nil {
+		h.checkUpdateRepositoryErrors(w, err)
+		return
+	}
+
+	httpUtil.StatusOK(w, repository)
+}
+
+func (h *Handler) getUpdateData(r *http.Request) (*repositoryEntities.Data, error) {
+	repositoryID, err := uuid.Parse(chi.URLParam(r, repositoryEnums.ID))
+	if err != nil {
+		return nil, err
+	}
+
+	data, err := h.getCreateData(r)
+	if err != nil {
+		return nil, err
+	}
+
+	return data.SetWorkspaceAndRepositoryID(parser.ParseStringToUUID(chi.URLParam(r, workspaceEnums.ID)),
+		repositoryID), data.CheckLdapGroups(h.appConfig.GetAuthorizationType())
+}
+
+func (h *Handler) checkUpdateRepositoryErrors(w http.ResponseWriter, err error) {
+	if err == repositoryEnums.ErrorRepositoryNameAlreadyInUse {
+		httpUtil.StatusBadRequest(w, err)
+		return
+	}
+
+	httpUtil.StatusInternalServerError(w, err)
 }

@@ -71,3 +71,10 @@ func (d *Data) ToBytes() []byte {
 
 	return bytes
 }
+
+func (d *Data) SetWorkspaceAndRepositoryID(workspaceID, repositoryID uuid.UUID) *Data {
+	d.RepositoryID = repositoryID
+	d.WorkspaceID = workspaceID
+
+	return d
+}

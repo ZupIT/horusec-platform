@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/lib/pq"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/ZupIT/horusec-devkit/pkg/enums/account"
@@ -59,5 +60,31 @@ func TestToRepositoryResponse(t *testing.T) {
 		assert.Equal(t, repository.Name, response.Name)
 		assert.Equal(t, account.Member, response.Role)
 
+	})
+}
+
+func TestUpdate(t *testing.T) {
+	t.Run("should success update repository data", func(t *testing.T) {
+		expectedTime := time.Now()
+
+		repository := &Repository{
+			UpdatedAt: expectedTime,
+		}
+
+		data := &Data{
+			Name:            "test",
+			Description:     "test",
+			AuthzMember:     []string{"test"},
+			AuthzSupervisor: []string{"test"},
+			AuthzAdmin:      []string{"test"},
+		}
+
+		repository.Update(data)
+		assert.Equal(t, data.Name, repository.Name)
+		assert.Equal(t, data.Description, repository.Description)
+		assert.Equal(t, pq.StringArray(data.AuthzMember), repository.AuthzMember)
+		assert.Equal(t, pq.StringArray(data.AuthzSupervisor), repository.AuthzSupervisor)
+		assert.Equal(t, pq.StringArray(data.AuthzAdmin), repository.AuthzAdmin)
+		assert.NotEqual(t, expectedTime, repository.UpdatedAt)
 	})
 }
