@@ -318,6 +318,70 @@ var doc = `{
                 }
             }
         },
+        "/core/workspaces/{workspaceID}/repositories": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Create a new repository",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Repository"
+                ],
+                "operationId": "create-repository",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID of the workspace",
+                        "name": "workspaceID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "create repository data",
+                        "name": "Repository",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/repository.Data"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/entities.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/entities.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/entities.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/entities.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/core/workspaces/{workspaceID}/roles": {
             "get": {
                 "security": [
@@ -602,6 +666,35 @@ var doc = `{
                     "type": "object"
                 },
                 "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "repository.Data": {
+            "type": "object",
+            "properties": {
+                "authzAdmin": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "authzMember": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "authzSupervisor": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "description": {
+                    "type": "string"
+                },
+                "name": {
                     "type": "string"
                 }
             }

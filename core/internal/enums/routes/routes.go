@@ -1,5 +1,6 @@
 package routes
 
 const (
-	WorkspaceHandler = "/core/workspaces"
+	WorkspaceHandler  = "/core/workspaces"
+	RepositoryHandler = "/core/workspaces/{workspaceID}/repositories"
 )

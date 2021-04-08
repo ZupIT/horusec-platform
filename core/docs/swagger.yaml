@@ -8,6 +8,25 @@ definitions:
       status:
         type: string
     type: object
+  repository.Data:
+    properties:
+      authzAdmin:
+        items:
+          type: string
+        type: array
+      authzMember:
+        items:
+          type: string
+        type: array
+      authzSupervisor:
+        items:
+          type: string
+        type: array
+      description:
+        type: string
+      name:
+        type: string
+    type: object
   role.Data:
     properties:
       role:
@@ -233,6 +252,47 @@ paths:
       - ApiKeyAuth: []
       tags:
       - Workspace
+  /core/workspaces/{workspaceID}/repositories:
+    post:
+      consumes:
+      - application/json
+      description: Create a new repository
+      operationId: create-repository
+      parameters:
+      - description: ID of the workspace
+        in: path
+        name: workspaceID
+        required: true
+        type: string
+      - description: create repository data
+        in: body
+        name: Repository
+        required: true
+        schema:
+          $ref: '#/definitions/repository.Data'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/entities.Response'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Repository
   /core/workspaces/{workspaceID}/roles:
     get:
       consumes:

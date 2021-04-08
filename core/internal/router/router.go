@@ -9,6 +9,7 @@ import (
 
 	"github.com/ZupIT/horusec-platform/core/docs"
 	"github.com/ZupIT/horusec-platform/core/internal/enums/routes"
+	"github.com/ZupIT/horusec-platform/core/internal/handlers/repository"
 	"github.com/ZupIT/horusec-platform/core/internal/handlers/workspace"
 )
 
@@ -19,17 +20,19 @@ type IRouter interface {
 type Router struct {
 	http.IRouter
 	middlewares.IAuthzMiddleware
-	workspaceHandler *workspace.Handler
+	workspaceHandler  *workspace.Handler
+	repositoryHandler *repository.Handler
 	swagger.ISwagger
 }
 
-func NewHTTPRouter(router http.IRouter, workspaceHandler *workspace.Handler,
-	authzMiddleware middlewares.IAuthzMiddleware) IRouter {
+func NewHTTPRouter(router http.IRouter, authzMiddleware middlewares.IAuthzMiddleware,
+	workspaceHandler *workspace.Handler, repositoryHandler *repository.Handler) IRouter {
 	httpRoutes := &Router{
-		IRouter:          router,
-		IAuthzMiddleware: authzMiddleware,
-		workspaceHandler: workspaceHandler,
-		ISwagger:         swagger.NewSwagger(router.GetMux(), router.GetPort()),
+		IRouter:           router,
+		IAuthzMiddleware:  authzMiddleware,
+		ISwagger:          swagger.NewSwagger(router.GetMux(), router.GetPort()),
+		workspaceHandler:  workspaceHandler,
+		repositoryHandler: repositoryHandler,
 	}
 
 	return httpRoutes.setRoutes()
@@ -38,6 +41,7 @@ func NewHTTPRouter(router http.IRouter, workspaceHandler *workspace.Handler,
 func (r *Router) setRoutes() IRouter {
 	r.swaggerRoutes()
 	r.workspaceRoutes()
+	r.repositoryRoutes()
 
 	return r
 }
@@ -53,6 +57,12 @@ func (r *Router) workspaceRoutes() {
 		router.With(r.IsWorkspaceAdmin).Patch("/{workspaceID}/roles/{accountID}", r.workspaceHandler.UpdateRole)
 		router.With(r.IsWorkspaceAdmin).Post("/{workspaceID}/roles", r.workspaceHandler.InviteUser)
 		router.With(r.IsWorkspaceAdmin).Delete("/{workspaceID}/roles/{accountID}", r.workspaceHandler.RemoveUser)
+	})
+}
+
+func (r *Router) repositoryRoutes() {
+	r.Route(routes.RepositoryHandler, func(router chi.Router) {
+		router.With(r.IsWorkspaceAdmin).Post("/", r.repositoryHandler.Create)
 	})
 }
 

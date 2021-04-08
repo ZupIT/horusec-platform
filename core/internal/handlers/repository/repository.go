@@ -47,6 +47,7 @@ func (h *Handler) getAccountData(r *http.Request) (*proto.GetAccountDataResponse
 // @ID create-repository
 // @Accept  json
 // @Produce  json
+// @Param workspaceID path string true "ID of the workspace"
 // @Param Repository body repositoryEntities.Data true "create repository data"
 // @Success 201 {object} entities.Response
 // @Failure 400 {object} entities.Response

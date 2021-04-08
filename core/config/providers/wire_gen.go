@@ -6,14 +6,6 @@
 package providers
 
 import (
-	"github.com/ZupIT/horusec-platform/core/config/cors"
-	workspace3 "github.com/ZupIT/horusec-platform/core/internal/controllers/workspace"
-	workspace4 "github.com/ZupIT/horusec-platform/core/internal/handlers/workspace"
-	workspace2 "github.com/ZupIT/horusec-platform/core/internal/repositories/workspace"
-	"github.com/ZupIT/horusec-platform/core/internal/router"
-	"github.com/ZupIT/horusec-platform/core/internal/usecases/workspace"
-	"github.com/google/wire"
-
 	"github.com/ZupIT/horusec-devkit/pkg/services/app"
 	"github.com/ZupIT/horusec-devkit/pkg/services/broker"
 	"github.com/ZupIT/horusec-devkit/pkg/services/broker/config"
@@ -23,6 +15,17 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth/proto"
 	"github.com/ZupIT/horusec-devkit/pkg/services/http"
 	"github.com/ZupIT/horusec-devkit/pkg/services/middlewares"
+	"github.com/ZupIT/horusec-platform/core/config/cors"
+	repository3 "github.com/ZupIT/horusec-platform/core/internal/controllers/repository"
+	workspace3 "github.com/ZupIT/horusec-platform/core/internal/controllers/workspace"
+	repository4 "github.com/ZupIT/horusec-platform/core/internal/handlers/repository"
+	workspace4 "github.com/ZupIT/horusec-platform/core/internal/handlers/workspace"
+	repository2 "github.com/ZupIT/horusec-platform/core/internal/repositories/repository"
+	workspace2 "github.com/ZupIT/horusec-platform/core/internal/repositories/workspace"
+	"github.com/ZupIT/horusec-platform/core/internal/router"
+	"github.com/ZupIT/horusec-platform/core/internal/usecases/repository"
+	"github.com/ZupIT/horusec-platform/core/internal/usecases/workspace"
+	"github.com/google/wire"
 )
 
 // Injectors from wire.go:
@@ -30,8 +33,9 @@ import (
 func Initialize(string2 string) (router.IRouter, error) {
 	options := cors.NewCorsConfig()
 	iRouter := http.NewHTTPRouter(options, string2)
-	iConfig := config.NewBrokerConfig()
 	clientConnInterface := auth.NewAuthGRPCConnection()
+	iAuthzMiddleware := middlewares.NewAuthzMiddleware(clientConnInterface)
+	iConfig := config.NewBrokerConfig()
 	authServiceClient := proto.NewAuthServiceClient(clientConnInterface)
 	appIConfig := app.NewAppConfig(authServiceClient)
 	iBroker, err := broker.NewBroker(iConfig, appIConfig)
@@ -47,8 +51,11 @@ func Initialize(string2 string) (router.IRouter, error) {
 	iRepository := workspace2.NewWorkspaceRepository(connection, iUseCases)
 	iController := workspace3.NewWorkspaceController(iBroker, connection, appIConfig, iUseCases, iRepository)
 	handler := workspace4.NewWorkspaceHandler(iController, iUseCases, authServiceClient, appIConfig)
-	iAuthzMiddleware := middlewares.NewAuthzMiddleware(clientConnInterface)
-	routerIRouter := router.NewHTTPRouter(iRouter, handler, iAuthzMiddleware)
+	repositoryIUseCases := repository.NewRepositoryUseCases()
+	repositoryIRepository := repository2.NewRepositoryRepository(connection, repositoryIUseCases)
+	repositoryIController := repository3.NewRepositoryController(connection, appIConfig, repositoryIUseCases, repositoryIRepository)
+	repositoryHandler := repository4.NewRepositoryHandler(repositoryIUseCases, repositoryIController, appIConfig, authServiceClient)
+	routerIRouter := router.NewHTTPRouter(iRouter, iAuthzMiddleware, handler, repositoryHandler)
 	return routerIRouter, nil
 }
 
@@ -58,10 +65,10 @@ var devKitProviders = wire.NewSet(config.NewBrokerConfig, broker.NewBroker, conf
 
 var configProviders = wire.NewSet(cors.NewCorsConfig, router.NewHTTPRouter)
 
-var controllerProviders = wire.NewSet(workspace3.NewWorkspaceController)
+var controllerProviders = wire.NewSet(workspace3.NewWorkspaceController, repository3.NewRepositoryController)
 
-var handleProviders = wire.NewSet(workspace4.NewWorkspaceHandler)
+var handleProviders = wire.NewSet(workspace4.NewWorkspaceHandler, repository4.NewRepositoryHandler)
 
-var useCasesProviders = wire.NewSet(workspace.NewWorkspaceUseCases)
+var useCasesProviders = wire.NewSet(workspace.NewWorkspaceUseCases, repository.NewRepositoryUseCases)
 
-var repositoriesProviders = wire.NewSet(workspace2.NewWorkspaceRepository)
+var repositoriesProviders = wire.NewSet(workspace2.NewWorkspaceRepository, repository2.NewRepositoryRepository)

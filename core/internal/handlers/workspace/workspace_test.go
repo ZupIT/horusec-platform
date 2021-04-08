@@ -20,7 +20,6 @@ import (
 	workspaceController "github.com/ZupIT/horusec-platform/core/internal/controllers/workspace"
 	"github.com/ZupIT/horusec-platform/core/internal/entities/role"
 	workspaceEntities "github.com/ZupIT/horusec-platform/core/internal/entities/workspace"
-	workspaceEnums "github.com/ZupIT/horusec-platform/core/internal/enums/workspace"
 	workspaceUseCases "github.com/ZupIT/horusec-platform/core/internal/usecases/workspace"
 )
 
@@ -83,28 +82,6 @@ func TestCreate(t *testing.T) {
 		handler.Create(w, r)
 
 		assert.Equal(t, http.StatusInternalServerError, w.Code)
-	})
-
-	t.Run("should return 400 when workspace name already in user", func(t *testing.T) {
-		controllerMock := &workspaceController.Mock{}
-		controllerMock.On("Create").Return(
-			&workspaceEntities.Response{}, workspaceEnums.ErrorWorkspaceNameAlreadyInUse)
-
-		authGRPCMock := &proto.Mock{}
-		authGRPCMock.On("GetAccountInfo").Return(accountData, nil)
-
-		appConfigMock := &app.Mock{}
-		appConfigMock.On("GetAuthorizationType").Return(auth.Horusec)
-
-		handler := NewWorkspaceHandler(controllerMock, workspaceUseCases.NewWorkspaceUseCases(),
-			authGRPCMock, appConfigMock)
-
-		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(workspaceData.ToBytes()))
-		w := httptest.NewRecorder()
-
-		handler.Create(w, r)
-
-		assert.Equal(t, http.StatusBadRequest, w.Code)
 	})
 
 	t.Run("should return 400 when failed to get account data", func(t *testing.T) {

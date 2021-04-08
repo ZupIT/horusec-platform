@@ -8,7 +8,6 @@ import (
 
 	repositoryEntities "github.com/ZupIT/horusec-platform/core/internal/entities/repository"
 	repositoryEnums "github.com/ZupIT/horusec-platform/core/internal/enums/repository"
-	workspaceEnums "github.com/ZupIT/horusec-platform/core/internal/enums/workspace"
 	repositoryRepository "github.com/ZupIT/horusec-platform/core/internal/repositories/repository"
 	repositoriesUseCases "github.com/ZupIT/horusec-platform/core/internal/usecases/repository"
 )
@@ -37,17 +36,26 @@ func NewRepositoryController(databaseConnection *database.Connection, appConfig 
 }
 
 func (c *Controller) Create(data *repositoryEntities.Data) (*repositoryEntities.Response, error) {
+	_, err := c.repository.GetRepositoryByName(data.WorkspaceID, data.Name)
+	if c.useCases.IsNotFoundError(err) {
+		return c.createTransaction(data)
+	}
+
+	return nil, repositoryEnums.ErrorRepositoryNameAlreadyInUse
+}
+
+func (c *Controller) createTransaction(data *repositoryEntities.Data) (*repositoryEntities.Response, error) {
 	transaction := c.databaseWrite.StartTransaction()
 	repository := data.ToRepository()
 
 	if err := transaction.Create(repository, repositoryEnums.DatabaseRepositoryTable).GetError(); err != nil {
-		logger.LogError(workspaceEnums.ErrorRollbackCreate, transaction.RollbackTransaction().GetError())
+		logger.LogError(repositoryEnums.ErrorRollbackCreate, transaction.RollbackTransaction().GetError())
 		return nil, err
 	}
 
 	if err := transaction.Create(repository.ToAccountRepository(data.AccountID, accountEnums.Admin),
-		workspaceEnums.DatabaseAccountWorkspaceTable).GetError(); err != nil {
-		logger.LogError(workspaceEnums.ErrorRollbackCreate, transaction.RollbackTransaction().GetError())
+		repositoryEnums.DatabaseAccountRepositoryTable).GetError(); err != nil {
+		logger.LogError(repositoryEnums.ErrorRollbackCreate, transaction.RollbackTransaction().GetError())
 		return nil, err
 	}
 
