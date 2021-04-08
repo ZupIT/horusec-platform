@@ -163,3 +163,71 @@ func TestGet(t *testing.T) {
 		assert.Error(t, err)
 	})
 }
+
+func TestUpdate(t *testing.T) {
+	data := &repositoryEntities.Data{
+		AccountID:       uuid.New(),
+		Name:            "test",
+		Description:     "test",
+		AuthzMember:     []string{"test"},
+		AuthzAdmin:      []string{"test"},
+		AuthzSupervisor: []string{"test"},
+		Permissions:     []string{"test"},
+	}
+
+	t.Run("should success update repository", func(t *testing.T) {
+		repositoryMock := &repositoryRepository.Mock{}
+		repositoryMock.On("GetRepository").Return(&repositoryEntities.Repository{Name: "test2"}, nil)
+		repositoryMock.On("GetRepositoryByName").Return(
+			&repositoryEntities.Repository{}, databaseEnums.ErrorNotFoundRecords)
+
+		databaseMock := &database.Mock{}
+		databaseMock.On("Update").Return(&response.Response{})
+
+		appConfig := &app.Mock{}
+
+		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
+		controller := NewRepositoryController(databaseConnection, appConfig,
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock)
+
+		result, err := controller.Update(data)
+		assert.NoError(t, err)
+		assert.NotNil(t, result)
+	})
+
+	t.Run("should return error name already in use", func(t *testing.T) {
+		repositoryMock := &repositoryRepository.Mock{}
+		repositoryMock.On("GetRepository").Return(&repositoryEntities.Repository{}, nil)
+		repositoryMock.On("GetRepositoryByName").Return(
+			&repositoryEntities.Repository{}, nil)
+
+		databaseMock := &database.Mock{}
+		databaseMock.On("Update").Return(&response.Response{})
+
+		appConfig := &app.Mock{}
+
+		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
+		controller := NewRepositoryController(databaseConnection, appConfig,
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock)
+
+		_, err := controller.Update(data)
+		assert.Error(t, err)
+	})
+
+	t.Run("should return error while getting repository", func(t *testing.T) {
+		repositoryMock := &repositoryRepository.Mock{}
+		repositoryMock.On("GetRepository").Return(&repositoryEntities.Repository{}, errors.New("test"))
+
+		databaseMock := &database.Mock{}
+		databaseMock.On("Update").Return(&response.Response{})
+
+		appConfig := &app.Mock{}
+
+		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
+		controller := NewRepositoryController(databaseConnection, appConfig,
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock)
+
+		_, err := controller.Update(data)
+		assert.Error(t, err)
+	})
+}

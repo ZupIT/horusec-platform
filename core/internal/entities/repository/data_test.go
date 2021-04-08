@@ -3,12 +3,12 @@ package repository
 import (
 	"testing"
 
-	"github.com/lib/pq"
 	"github.com/google/uuid"
+	"github.com/lib/pq"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth/proto"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/auth"
+	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth/proto"
 )
 
 const (
@@ -177,5 +177,16 @@ func TestToRepository(t *testing.T) {
 		assert.Equal(t, pq.StringArray(data.AuthzMember), repository.AuthzMember)
 		assert.Equal(t, pq.StringArray(data.AuthzAdmin), repository.AuthzAdmin)
 		assert.Equal(t, pq.StringArray(data.AuthzSupervisor), repository.AuthzSupervisor)
+	})
+}
+
+func TestSetWorkspaceAndRepositoryID(t *testing.T) {
+	t.Run("should set workspace and repository id", func(t *testing.T) {
+		data := &Data{}
+		id := uuid.New()
+
+		data.SetWorkspaceAndRepositoryID(id, id)
+		assert.Equal(t, id, data.WorkspaceID)
+		assert.Equal(t, id, data.RepositoryID)
 	})
 }

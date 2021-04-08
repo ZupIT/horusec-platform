@@ -203,7 +203,7 @@ func TestUpdate(t *testing.T) {
 		UpdatedAt:   time.Now(),
 	}
 
-	t.Run("should success get workspace with role", func(t *testing.T) {
+	t.Run("should success update workspace", func(t *testing.T) {
 		repositoryMock := &workspaceRepository.Mock{}
 		repositoryMock.On("GetWorkspace").Return(workspace, nil)
 

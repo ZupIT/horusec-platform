@@ -51,6 +51,10 @@ func TestCreate(t *testing.T) {
 		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(data.ToBytes()))
 		w := httptest.NewRecorder()
 
+		ctx := chi.NewRouteContext()
+		ctx.URLParams.Add("workspaceID", uuid.NewString())
+		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
+
 		handler.Create(w, r)
 
 		assert.Equal(t, http.StatusCreated, w.Code)
@@ -71,6 +75,10 @@ func TestCreate(t *testing.T) {
 
 		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(data.ToBytes()))
 		w := httptest.NewRecorder()
+
+		ctx := chi.NewRouteContext()
+		ctx.URLParams.Add("workspaceID", uuid.NewString())
+		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
 
 		handler.Create(w, r)
 
@@ -94,6 +102,10 @@ func TestCreate(t *testing.T) {
 		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(data.ToBytes()))
 		w := httptest.NewRecorder()
 
+		ctx := chi.NewRouteContext()
+		ctx.URLParams.Add("workspaceID", uuid.NewString())
+		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
+
 		handler.Create(w, r)
 
 		assert.Equal(t, http.StatusBadRequest, w.Code)
@@ -115,6 +127,10 @@ func TestCreate(t *testing.T) {
 		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(data.ToBytes()))
 		w := httptest.NewRecorder()
 
+		ctx := chi.NewRouteContext()
+		ctx.URLParams.Add("workspaceID", uuid.NewString())
+		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
+
 		handler.Create(w, r)
 
 		assert.Equal(t, http.StatusBadRequest, w.Code)
@@ -133,6 +149,10 @@ func TestCreate(t *testing.T) {
 		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader([]byte("")))
 		w := httptest.NewRecorder()
 
+		ctx := chi.NewRouteContext()
+		ctx.URLParams.Add("workspaceID", uuid.NewString())
+		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
+
 		handler.Create(w, r)
 
 		assert.Equal(t, http.StatusBadRequest, w.Code)
@@ -150,6 +170,10 @@ func TestCreate(t *testing.T) {
 
 		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader([]byte("")))
 		w := httptest.NewRecorder()
+
+		ctx := chi.NewRouteContext()
+		ctx.URLParams.Add("workspaceID", uuid.NewString())
+		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
 
 		handler.Create(w, r)
 
@@ -179,6 +203,7 @@ func TestGet(t *testing.T) {
 
 		ctx := chi.NewRouteContext()
 		ctx.URLParams.Add("repositoryID", uuid.NewString())
+		ctx.URLParams.Add("workspaceID", uuid.NewString())
 		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
 
 		handler.Get(w, r)
@@ -203,6 +228,7 @@ func TestGet(t *testing.T) {
 
 		ctx := chi.NewRouteContext()
 		ctx.URLParams.Add("repositoryID", uuid.NewString())
+		ctx.URLParams.Add("workspaceID", uuid.NewString())
 		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
 
 		handler.Get(w, r)
@@ -225,6 +251,7 @@ func TestGet(t *testing.T) {
 
 		ctx := chi.NewRouteContext()
 		ctx.URLParams.Add("repositoryID", uuid.NewString())
+		ctx.URLParams.Add("workspaceID", uuid.NewString())
 		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
 
 		handler.Get(w, r)
@@ -245,9 +272,174 @@ func TestGet(t *testing.T) {
 
 		ctx := chi.NewRouteContext()
 		ctx.URLParams.Add("repositoryID", "test")
+		ctx.URLParams.Add("workspaceID", "test")
 		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
 
 		handler.Get(w, r)
+
+		assert.Equal(t, http.StatusBadRequest, w.Code)
+	})
+}
+
+func TestUpdate(t *testing.T) {
+	accountData := &proto.GetAccountDataResponse{
+		AccountID:   uuid.New().String(),
+		Permissions: []string{"test"},
+	}
+
+	data := &repositoryEntities.Data{
+		Name:            "test",
+		Description:     "test",
+		AuthzMember:     []string{"test"},
+		AuthzAdmin:      []string{"test"},
+		AuthzSupervisor: []string{"test"},
+	}
+
+	t.Run("should return 200 when everything it is ok", func(t *testing.T) {
+		controllerMock := &repositoryController.Mock{}
+		controllerMock.On("Update").Return(&repositoryEntities.Response{}, nil)
+
+		authGRPCMock := &proto.Mock{}
+		authGRPCMock.On("GetAccountInfo").Return(accountData, nil)
+
+		appConfigMock := &app.Mock{}
+		appConfigMock.On("GetAuthorizationType").Return(auth.Horusec)
+
+		handler := NewRepositoryHandler(repositoryUseCases.NewRepositoryUseCases(), controllerMock,
+			appConfigMock, authGRPCMock)
+
+		r, _ := http.NewRequest(http.MethodPatch, "test", bytes.NewReader(data.ToBytes()))
+		w := httptest.NewRecorder()
+
+		ctx := chi.NewRouteContext()
+		ctx.URLParams.Add("workspaceID", uuid.NewString())
+		ctx.URLParams.Add("repositoryID", uuid.NewString())
+		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
+
+		handler.Update(w, r)
+
+		assert.Equal(t, http.StatusOK, w.Code)
+	})
+
+	t.Run("should return 500 when something went wrong", func(t *testing.T) {
+		controllerMock := &repositoryController.Mock{}
+		controllerMock.On("Update").Return(&repositoryEntities.Response{}, errors.New("test"))
+
+		authGRPCMock := &proto.Mock{}
+		authGRPCMock.On("GetAccountInfo").Return(accountData, nil)
+
+		appConfigMock := &app.Mock{}
+		appConfigMock.On("GetAuthorizationType").Return(auth.Horusec)
+
+		handler := NewRepositoryHandler(repositoryUseCases.NewRepositoryUseCases(), controllerMock,
+			appConfigMock, authGRPCMock)
+
+		r, _ := http.NewRequest(http.MethodPatch, "test", bytes.NewReader(data.ToBytes()))
+		w := httptest.NewRecorder()
+
+		ctx := chi.NewRouteContext()
+		ctx.URLParams.Add("workspaceID", uuid.NewString())
+		ctx.URLParams.Add("repositoryID", uuid.NewString())
+		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
+
+		handler.Update(w, r)
+
+		assert.Equal(t, http.StatusInternalServerError, w.Code)
+	})
+
+	t.Run("should return 400 when name already in use", func(t *testing.T) {
+		controllerMock := &repositoryController.Mock{}
+		controllerMock.On("Update").Return(
+			&repositoryEntities.Response{}, repositoryEnums.ErrorRepositoryNameAlreadyInUse)
+
+		authGRPCMock := &proto.Mock{}
+		authGRPCMock.On("GetAccountInfo").Return(accountData, nil)
+
+		appConfigMock := &app.Mock{}
+		appConfigMock.On("GetAuthorizationType").Return(auth.Horusec)
+
+		handler := NewRepositoryHandler(repositoryUseCases.NewRepositoryUseCases(), controllerMock,
+			appConfigMock, authGRPCMock)
+
+		r, _ := http.NewRequest(http.MethodPatch, "test", bytes.NewReader(data.ToBytes()))
+		w := httptest.NewRecorder()
+
+		ctx := chi.NewRouteContext()
+		ctx.URLParams.Add("workspaceID", uuid.NewString())
+		ctx.URLParams.Add("repositoryID", uuid.NewString())
+		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
+
+		handler.Update(w, r)
+
+		assert.Equal(t, http.StatusBadRequest, w.Code)
+	})
+
+	t.Run("should return 400 when invalid ldap groups", func(t *testing.T) {
+		controllerMock := &repositoryController.Mock{}
+
+		authGRPCMock := &proto.Mock{}
+		authGRPCMock.On("GetAccountInfo").Return(accountData, nil)
+
+		appConfigMock := &app.Mock{}
+		appConfigMock.On("GetAuthorizationType").Return(auth.Ldap)
+
+		handler := NewRepositoryHandler(repositoryUseCases.NewRepositoryUseCases(), controllerMock,
+			appConfigMock, authGRPCMock)
+
+		data.AuthzAdmin = []string{"test2"}
+		r, _ := http.NewRequest(http.MethodPatch, "test", bytes.NewReader(data.ToBytes()))
+		w := httptest.NewRecorder()
+
+		ctx := chi.NewRouteContext()
+		ctx.URLParams.Add("workspaceID", uuid.NewString())
+		ctx.URLParams.Add("repositoryID", uuid.NewString())
+		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
+
+		handler.Update(w, r)
+
+		assert.Equal(t, http.StatusBadRequest, w.Code)
+	})
+
+	t.Run("should return 400 when failed to get account data", func(t *testing.T) {
+		controllerMock := &repositoryController.Mock{}
+		appConfigMock := &app.Mock{}
+
+		authGRPCMock := &proto.Mock{}
+		authGRPCMock.On("GetAccountInfo").Return(accountData, errors.New("test"))
+
+		handler := NewRepositoryHandler(repositoryUseCases.NewRepositoryUseCases(), controllerMock,
+			appConfigMock, authGRPCMock)
+
+		r, _ := http.NewRequest(http.MethodPatch, "test", bytes.NewReader(data.ToBytes()))
+		w := httptest.NewRecorder()
+
+		ctx := chi.NewRouteContext()
+		ctx.URLParams.Add("workspaceID", uuid.NewString())
+		ctx.URLParams.Add("repositoryID", uuid.NewString())
+		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
+
+		handler.Update(w, r)
+
+		assert.Equal(t, http.StatusBadRequest, w.Code)
+	})
+
+	t.Run("should return 400 when failed to get repository id", func(t *testing.T) {
+		controllerMock := &repositoryController.Mock{}
+		authGRPCMock := &proto.Mock{}
+		appConfigMock := &app.Mock{}
+
+		handler := NewRepositoryHandler(repositoryUseCases.NewRepositoryUseCases(), controllerMock,
+			appConfigMock, authGRPCMock)
+
+		r, _ := http.NewRequest(http.MethodPatch, "test", bytes.NewReader(data.ToBytes()))
+		w := httptest.NewRecorder()
+
+		ctx := chi.NewRouteContext()
+		ctx.URLParams.Add("workspaceID", "test")
+		ctx.URLParams.Add("repositoryID", "test")
+		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
+
+		handler.Update(w, r)
 
 		assert.Equal(t, http.StatusBadRequest, w.Code)
 	})

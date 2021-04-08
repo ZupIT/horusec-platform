@@ -21,3 +21,8 @@ func (m *Mock) Get(_ *repositoryEntities.Data) (*repositoryEntities.Response, er
 	args := m.MethodCalled("Get")
 	return args.Get(0).(*repositoryEntities.Response), mockUtils.ReturnNilOrError(args, 1)
 }
+
+func (m *Mock) Update(_ *repositoryEntities.Data) (*repositoryEntities.Response, error) {
+	args := m.MethodCalled("Update")
+	return args.Get(0).(*repositoryEntities.Response), mockUtils.ReturnNilOrError(args, 1)
+}

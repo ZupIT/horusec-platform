@@ -5,7 +5,7 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/services/app"
 	"github.com/ZupIT/horusec-devkit/pkg/services/database"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
-	
+
 	repositoryEntities "github.com/ZupIT/horusec-platform/core/internal/entities/repository"
 	repositoryEnums "github.com/ZupIT/horusec-platform/core/internal/enums/repository"
 	repositoryRepository "github.com/ZupIT/horusec-platform/core/internal/repositories/repository"
