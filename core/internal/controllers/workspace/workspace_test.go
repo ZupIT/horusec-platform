@@ -38,64 +38,7 @@ func TestCreate(t *testing.T) {
 		Permissions: []string{"test"},
 	}
 
-	t.Run("should success create a new workspace with horusec auth type", func(t *testing.T) {
-		repositoryMock := &workspaceRepository.Mock{}
-
-		databaseMock := &database.Mock{}
-		databaseMock.On("Create").Return(&response.Response{})
-		databaseMock.On("StartTransaction").Return(databaseMock)
-		databaseMock.On("CommitTransaction").Return(&response.Response{})
-
-		appConfig := &app.Mock{}
-
-		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
-		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection, appConfig,
-			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock)
-
-		result, err := controller.Create(workspaceData)
-		assert.NoError(t, err)
-		assert.NotNil(t, result)
-	})
-
-	t.Run("should success create a new workspace with ldap auth type", func(t *testing.T) {
-		repositoryMock := &workspaceRepository.Mock{}
-
-		databaseMock := &database.Mock{}
-		databaseMock.On("Create").Return(&response.Response{})
-		databaseMock.On("StartTransaction").Return(databaseMock)
-		databaseMock.On("CommitTransaction").Return(&response.Response{})
-
-		appConfig := &app.Mock{}
-
-		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
-		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection, appConfig,
-			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock)
-
-		result, err := controller.Create(workspaceData)
-		assert.NoError(t, err)
-		assert.NotNil(t, result)
-	})
-
-	t.Run("should success create a new workspace with keycloak auth type", func(t *testing.T) {
-		repositoryMock := &workspaceRepository.Mock{}
-
-		databaseMock := &database.Mock{}
-		databaseMock.On("Create").Return(&response.Response{})
-		databaseMock.On("StartTransaction").Return(databaseMock)
-		databaseMock.On("CommitTransaction").Return(&response.Response{})
-
-		appConfig := &app.Mock{}
-
-		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
-		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection, appConfig,
-			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock)
-
-		result, err := controller.Create(workspaceData)
-		assert.NoError(t, err)
-		assert.NotNil(t, result)
-	})
-
-	t.Run("should success create a new workspace with keycloak auth type", func(t *testing.T) {
+	t.Run("should success create a new workspace", func(t *testing.T) {
 		repositoryMock := &workspaceRepository.Mock{}
 
 		databaseMock := &database.Mock{}

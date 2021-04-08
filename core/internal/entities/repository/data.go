@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"encoding/json"
 	"time"
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
@@ -31,6 +32,7 @@ func (d *Data) Validate() error {
 		validation.Field(&d.Description, validation.Length(0, 255)),
 		validation.Field(&d.AuthzAdmin, validation.Length(0, 5)),
 		validation.Field(&d.AuthzMember, validation.Length(0, 5)),
+		validation.Field(&d.AuthzSupervisor, validation.Length(0, 5)),
 		validation.Field(&d.AccountID, is.UUID),
 		validation.Field(&d.WorkspaceID, is.UUID),
 		validation.Field(&d.RepositoryID, is.UUID),
@@ -62,4 +64,10 @@ func (d *Data) ToRepository() *Repository {
 		CreatedAt:       time.Now(),
 		UpdatedAt:       time.Now(),
 	}
+}
+
+func (d *Data) ToBytes() []byte {
+	bytes, _ := json.Marshal(d)
+
+	return bytes
 }
