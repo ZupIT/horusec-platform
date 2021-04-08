@@ -15,6 +15,9 @@ type IUseCases interface {
 	RepositoryDataFromIOReadCloser(body io.ReadCloser) (*repository.Data, error)
 	FilterRepositoryByName(workspaceID uuid.UUID, name string) map[string]interface{}
 	IsNotFoundError(err error) bool
+	NewRepositoryData(accountID, repositoryID uuid.UUID) *repository.Data
+	FilterRepositoryByID(repositoryID uuid.UUID) map[string]interface{}
+	FilterAccountRepositoryByID(accountID, repositoryID uuid.UUID) map[string]interface{}
 }
 
 type UseCases struct {
@@ -46,4 +49,19 @@ func (u *UseCases) IsNotFoundError(err error) bool {
 	}
 
 	return false
+}
+
+func (u *UseCases) NewRepositoryData(accountID, repositoryID uuid.UUID) *repository.Data {
+	return &repository.Data{
+		RepositoryID: repositoryID,
+		AccountID:    accountID,
+	}
+}
+
+func (u *UseCases) FilterRepositoryByID(repositoryID uuid.UUID) map[string]interface{} {
+	return map[string]interface{}{"repository_id": repositoryID}
+}
+
+func (u *UseCases) FilterAccountRepositoryByID(accountID, repositoryID uuid.UUID) map[string]interface{} {
+	return map[string]interface{}{"account_id": accountID, "repository_id": repositoryID}
 }

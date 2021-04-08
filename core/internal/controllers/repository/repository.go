@@ -14,6 +14,7 @@ import (
 
 type IController interface {
 	Create(data *repositoryEntities.Data) (*repositoryEntities.Response, error)
+	Get(data *repositoryEntities.Data) (*repositoryEntities.Response, error)
 }
 
 type Controller struct {
@@ -60,4 +61,18 @@ func (c *Controller) createTransaction(data *repositoryEntities.Data) (*reposito
 	}
 
 	return repository.ToRepositoryResponse(accountEnums.Admin), transaction.CommitTransaction().GetError()
+}
+
+func (c *Controller) Get(data *repositoryEntities.Data) (*repositoryEntities.Response, error) {
+	accountRepository, err := c.repository.GetAccountRepository(data.AccountID, data.RepositoryID)
+	if err != nil {
+		return nil, err
+	}
+
+	repository, err := c.repository.GetRepository(data.RepositoryID)
+	if err != nil {
+		return nil, err
+	}
+
+	return repository.ToRepositoryResponse(accountRepository.Role), nil
 }

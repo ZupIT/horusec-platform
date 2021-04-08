@@ -77,3 +77,14 @@ func TestIsNotFoundError(t *testing.T) {
 		assert.True(t, useCases.IsNotFoundError(databaseEnums.ErrorNotFoundRecords))
 	})
 }
+
+func TestNewRepositoryData(t *testing.T) {
+	t.Run("should success create a new repository data with account and repository id", func(t *testing.T) {
+		useCases := NewRepositoryUseCases()
+		id := uuid.New()
+
+		data := useCases.NewRepositoryData(id, id)
+		assert.Equal(t, id, data.RepositoryID)
+		assert.Equal(t, id, data.AccountID)
+	})
+}

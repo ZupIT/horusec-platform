@@ -5,10 +5,12 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi"
+	"github.com/google/uuid"
 
 	"github.com/ZupIT/horusec-devkit/pkg/services/app"
 	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth/proto"
 	httpUtil "github.com/ZupIT/horusec-devkit/pkg/utils/http"
+	_ "github.com/ZupIT/horusec-devkit/pkg/utils/http/entities" // swagger import
 	"github.com/ZupIT/horusec-devkit/pkg/utils/jwt/enums"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/parser"
 
@@ -82,8 +84,8 @@ func (h *Handler) getCreateData(r *http.Request) (*repositoryEntities.Data, erro
 		return nil, err
 	}
 
-	return data.SetWorkspaceIDAndAccountData(parser.ParseStringToUUID(chi.URLParam(r, workspaceEnums.ID)), accountData),
-		data.CheckLdapGroups(h.appConfig.GetAuthorizationType())
+	return data.SetWorkspaceIDAndAccountData(parser.ParseStringToUUID(
+		chi.URLParam(r, workspaceEnums.ID)), accountData), data.CheckLdapGroups(h.appConfig.GetAuthorizationType())
 }
 
 func (h *Handler) checkCreateRepositoryErrors(w http.ResponseWriter, err error) {
@@ -93,4 +95,47 @@ func (h *Handler) checkCreateRepositoryErrors(w http.ResponseWriter, err error) 
 	}
 
 	httpUtil.StatusInternalServerError(w, err)
+}
+
+// @Tags Repository
+// @Description Search for a existing repository by id
+// @ID get-repository
+// @Accept  json
+// @Produce  json
+// @Param repositoryID path string true "ID of the repository"
+// @Success 200 {object} entities.Response
+// @Failure 400 {object} entities.Response
+// @Failure 401 {object} entities.Response
+// @Failure 404 {object} entities.Response
+// @Failure 500 {object} entities.Response
+// @Router /core/workspaces/{workspaceID}/repositories/{repositoryID} [get]
+// @Security ApiKeyAuth
+func (h *Handler) Get(w http.ResponseWriter, r *http.Request) {
+	data, err := h.getByIDData(r)
+	if err != nil {
+		httpUtil.StatusBadRequest(w, err)
+		return
+	}
+
+	repository, err := h.controller.Get(data)
+	if err != nil {
+		httpUtil.StatusInternalServerError(w, err)
+		return
+	}
+
+	httpUtil.StatusOK(w, repository)
+}
+
+func (h *Handler) getByIDData(r *http.Request) (*repositoryEntities.Data, error) {
+	repositoryID, err := uuid.Parse(chi.URLParam(r, repositoryEnums.ID))
+	if err != nil {
+		return nil, err
+	}
+
+	accountData, err := h.getAccountData(r)
+	if err != nil {
+		return nil, err
+	}
+
+	return h.useCases.NewRepositoryData(parser.ParseStringToUUID(accountData.AccountID), repositoryID), nil
 }

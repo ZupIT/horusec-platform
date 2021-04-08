@@ -12,7 +12,12 @@ type Mock struct {
 	mock.Mock
 }
 
-func (m *Mock) Create(data *repositoryEntities.Data) (*repositoryEntities.Response, error) {
+func (m *Mock) Create(_ *repositoryEntities.Data) (*repositoryEntities.Response, error) {
 	args := m.MethodCalled("Create")
+	return args.Get(0).(*repositoryEntities.Response), mockUtils.ReturnNilOrError(args, 1)
+}
+
+func (m *Mock) Get(_ *repositoryEntities.Data) (*repositoryEntities.Response, error) {
+	args := m.MethodCalled("Get")
 	return args.Get(0).(*repositoryEntities.Response), mockUtils.ReturnNilOrError(args, 1)
 }

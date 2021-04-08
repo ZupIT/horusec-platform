@@ -63,6 +63,7 @@ func (r *Router) workspaceRoutes() {
 func (r *Router) repositoryRoutes() {
 	r.Route(routes.RepositoryHandler, func(router chi.Router) {
 		router.With(r.IsWorkspaceAdmin).Post("/", r.repositoryHandler.Create)
+		router.With(r.IsRepositoryMember).Get("/{repositoryID}", r.repositoryHandler.Get)
 	})
 }
 
