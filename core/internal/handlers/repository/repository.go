@@ -195,3 +195,32 @@ func (h *Handler) checkUpdateRepositoryErrors(w http.ResponseWriter, err error) 
 
 	httpUtil.StatusInternalServerError(w, err)
 }
+
+// @Tags Repository
+// @Description Delete a repository by id
+// @ID delete-repository
+// @Accept  json
+// @Produce  json
+// @Param workspaceID path string true "ID of the workspace"
+// @Param repositoryID path string true "ID of the repository"
+// @Success 204 {object} entities.Response
+// @Failure 400 {object} entities.Response
+// @Failure 401 {object} entities.Response
+// @Failure 404 {object} entities.Response
+// @Failure 500 {object} entities.Response
+// @Router /core/workspaces/{workspaceID}/repositories/{repositoryID} [delete]
+// @Security ApiKeyAuth
+func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
+	repositoryID, err := uuid.Parse(chi.URLParam(r, repositoryEnums.ID))
+	if err != nil {
+		httpUtil.StatusBadRequest(w, err)
+		return
+	}
+
+	if err = h.controller.Delete(repositoryID); err != nil {
+		httpUtil.StatusInternalServerError(w, err)
+		return
+	}
+
+	httpUtil.StatusNoContent(w)
+}

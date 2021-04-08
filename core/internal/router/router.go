@@ -65,6 +65,7 @@ func (r *Router) repositoryRoutes() {
 		router.With(r.IsWorkspaceAdmin).Post("/", r.repositoryHandler.Create)
 		router.With(r.IsRepositoryMember).Get("/{repositoryID}", r.repositoryHandler.Get)
 		router.With(r.IsRepositoryAdmin).Patch("/{repositoryID}", r.repositoryHandler.Update)
+		router.With(r.IsRepositoryAdmin).Delete("/{repositoryID}", r.repositoryHandler.Delete)
 	})
 }
 

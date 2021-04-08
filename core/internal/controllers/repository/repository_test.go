@@ -231,3 +231,19 @@ func TestUpdate(t *testing.T) {
 		assert.Error(t, err)
 	})
 }
+
+func TestDelete(t *testing.T) {
+	t.Run("should success delete repository", func(t *testing.T) {
+		repositoryMock := &repositoryRepository.Mock{}
+		appConfig := &app.Mock{}
+
+		databaseMock := &database.Mock{}
+		databaseMock.On("Delete").Return(&response.Response{})
+
+		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
+		controller := NewRepositoryController(databaseConnection, appConfig,
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock)
+
+		assert.NoError(t, controller.Delete(uuid.New()))
+	})
+}

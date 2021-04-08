@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"github.com/google/uuid"
+
 	accountEnums "github.com/ZupIT/horusec-devkit/pkg/enums/account"
 	"github.com/ZupIT/horusec-devkit/pkg/services/app"
 	"github.com/ZupIT/horusec-devkit/pkg/services/database"
@@ -16,6 +18,7 @@ type IController interface {
 	Create(data *repositoryEntities.Data) (*repositoryEntities.Response, error)
 	Get(data *repositoryEntities.Data) (*repositoryEntities.Response, error)
 	Update(data *repositoryEntities.Data) (*repositoryEntities.Response, error)
+	Delete(repositoryID uuid.UUID) error
 }
 
 type Controller struct {
@@ -92,4 +95,9 @@ func (c *Controller) Update(data *repositoryEntities.Data) (*repositoryEntities.
 	repository.Update(data)
 	return repository.ToRepositoryResponse(accountEnums.Admin), c.databaseWrite.Update(repository,
 		c.useCases.FilterRepositoryByID(data.RepositoryID), repositoryEnums.DatabaseRepositoryTable).GetError()
+}
+
+func (c *Controller) Delete(repositoryID uuid.UUID) error {
+	return c.databaseWrite.Delete(c.useCases.FilterRepositoryByID(repositoryID),
+		repositoryEnums.DatabaseRepositoryTable).GetError()
 }

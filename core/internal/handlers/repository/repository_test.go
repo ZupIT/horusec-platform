@@ -444,3 +444,72 @@ func TestUpdate(t *testing.T) {
 		assert.Equal(t, http.StatusBadRequest, w.Code)
 	})
 }
+
+func TestDelete(t *testing.T) {
+	t.Run("should return 204 when everything it is ok", func(t *testing.T) {
+		controllerMock := &repositoryController.Mock{}
+		controllerMock.On("Delete").Return(nil)
+
+		authGRPCMock := &proto.Mock{}
+		appConfigMock := &app.Mock{}
+
+		handler := NewRepositoryHandler(repositoryUseCases.NewRepositoryUseCases(), controllerMock,
+			appConfigMock, authGRPCMock)
+
+		r, _ := http.NewRequest(http.MethodDelete, "test", nil)
+		w := httptest.NewRecorder()
+
+		ctx := chi.NewRouteContext()
+		ctx.URLParams.Add("workspaceID", uuid.NewString())
+		ctx.URLParams.Add("repositoryID", uuid.NewString())
+		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
+
+		handler.Delete(w, r)
+
+		assert.Equal(t, http.StatusNoContent, w.Code)
+	})
+
+	t.Run("should return 500 whe something went wrong", func(t *testing.T) {
+		controllerMock := &repositoryController.Mock{}
+		controllerMock.On("Delete").Return(errors.New("test"))
+
+		authGRPCMock := &proto.Mock{}
+		appConfigMock := &app.Mock{}
+
+		handler := NewRepositoryHandler(repositoryUseCases.NewRepositoryUseCases(), controllerMock,
+			appConfigMock, authGRPCMock)
+
+		r, _ := http.NewRequest(http.MethodDelete, "test", nil)
+		w := httptest.NewRecorder()
+
+		ctx := chi.NewRouteContext()
+		ctx.URLParams.Add("workspaceID", uuid.NewString())
+		ctx.URLParams.Add("repositoryID", uuid.NewString())
+		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
+
+		handler.Delete(w, r)
+
+		assert.Equal(t, http.StatusInternalServerError, w.Code)
+	})
+
+	t.Run("should return 400 when failed to get repository id", func(t *testing.T) {
+		controllerMock := &repositoryController.Mock{}
+		authGRPCMock := &proto.Mock{}
+		appConfigMock := &app.Mock{}
+
+		handler := NewRepositoryHandler(repositoryUseCases.NewRepositoryUseCases(), controllerMock,
+			appConfigMock, authGRPCMock)
+
+		r, _ := http.NewRequest(http.MethodDelete, "test", nil)
+		w := httptest.NewRecorder()
+
+		ctx := chi.NewRouteContext()
+		ctx.URLParams.Add("workspaceID", "test")
+		ctx.URLParams.Add("repositoryID", "test")
+		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
+
+		handler.Delete(w, r)
+
+		assert.Equal(t, http.StatusBadRequest, w.Code)
+	})
+}
