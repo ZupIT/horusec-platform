@@ -108,7 +108,7 @@ func TestHandler_Post(t *testing.T) {
 			Errors:     "",
 			CreatedAt:  time.Now(),
 			FinishedAt: time.Now(),
-			AnalysisVulnerabilities: []analysis.RelationshipAnalysisVuln{
+			AnalysisVulnerabilities: []analysis.AnalysisVulnerabilities{
 				{
 					VulnerabilityID: VulnerabilityID,
 					AnalysisID:      AnalysisID,

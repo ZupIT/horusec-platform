@@ -15,6 +15,8 @@
 package analysis
 
 import (
+	"time"
+
 	repoAnalysis "github.com/ZupIT/horusec-platform/api/internal/repositories/analysis"
 	"github.com/ZupIT/horusec-platform/api/internal/repositories/repository"
 	"github.com/google/uuid"
@@ -94,14 +96,20 @@ func (c *Controller) decoratorAnalysisToSave(analysisEntity *analysis.Analysis) 
 	for keyObservable := range analysisEntity.AnalysisVulnerabilities {
 		observable := analysisEntity.AnalysisVulnerabilities[keyObservable]
 		if !c.hasDuplicatedHash(newAnalysis, &observable) {
-			newAnalysis.AnalysisVulnerabilities = append(newAnalysis.AnalysisVulnerabilities, observable)
+			newAnalysis.AnalysisVulnerabilities = append(newAnalysis.AnalysisVulnerabilities,
+				analysis.AnalysisVulnerabilities{
+					VulnerabilityID: observable.Vulnerability.VulnerabilityID,
+					AnalysisID:      newAnalysis.ID,
+					CreatedAt:       time.Now(),
+					Vulnerability:   observable.Vulnerability,
+				})
 		}
 	}
 	return newAnalysis
 }
 
 func (c *Controller) createNewAnalysis(newAnalysis *analysis.Analysis) error {
-	return c.repoAnalysis.CreateAnalysis(newAnalysis)
+	return c.repoAnalysis.CreateFullAnalysis(newAnalysis)
 }
 
 func (c *Controller) extractBaseOfTheAnalysis(analysisEntity *analysis.Analysis) *analysis.Analysis {
@@ -119,7 +127,7 @@ func (c *Controller) extractBaseOfTheAnalysis(analysisEntity *analysis.Analysis)
 }
 
 func (c *Controller) hasDuplicatedHash(
-	newAnalysis *analysis.Analysis, observable *analysis.RelationshipAnalysisVuln) bool {
+	newAnalysis *analysis.Analysis, observable *analysis.AnalysisVulnerabilities) bool {
 	for keyCurrent := range newAnalysis.AnalysisVulnerabilities {
 		current := newAnalysis.AnalysisVulnerabilities[keyCurrent]
 		if observable.Vulnerability.VulnHash == current.Vulnerability.VulnHash {

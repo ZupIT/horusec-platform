@@ -72,7 +72,7 @@ func TestUseCases_DecodeAnalysisDataFromIoRead(t *testing.T) {
 			Errors:     "",
 			CreatedAt:  time.Now(),
 			FinishedAt: time.Now(),
-			AnalysisVulnerabilities: []analysis.RelationshipAnalysisVuln{
+			AnalysisVulnerabilities: []analysis.AnalysisVulnerabilities{
 				{
 					VulnerabilityID: uuid.New(),
 					AnalysisID:      uuid.New(),
@@ -115,7 +115,7 @@ func TestUseCases_DecodeAnalysisDataFromIoRead(t *testing.T) {
 			Errors:     "",
 			CreatedAt:  time.Now(),
 			FinishedAt: time.Now(),
-			AnalysisVulnerabilities: []analysis.RelationshipAnalysisVuln{
+			AnalysisVulnerabilities: []analysis.AnalysisVulnerabilities{
 				{
 					VulnerabilityID: uuid.New(),
 					AnalysisID:      uuid.New(),

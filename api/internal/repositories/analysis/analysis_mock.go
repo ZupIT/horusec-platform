@@ -17,8 +17,8 @@ func (m *Mock) FindAnalysisByID(_ uuid.UUID) response.IResponse {
 	args := m.MethodCalled("FindAnalysisByID")
 	return args.Get(0).(response.IResponse)
 }
-func (m *Mock) CreateAnalysis(analysisArgument *analysis.Analysis) error {
-	m.MethodCalled("CreateAnalysisArguments").Get(0).(func(*analysis.Analysis))(analysisArgument)
-	args := m.MethodCalled("CreateAnalysisResponse")
+func (m *Mock) CreateFullAnalysis(analysisArgument *analysis.Analysis) error {
+	m.MethodCalled("CreateFullAnalysisArguments").Get(0).(func(*analysis.Analysis))(analysisArgument)
+	args := m.MethodCalled("CreateFullAnalysisResponse")
 	return utilsMock.ReturnNilOrError(args, 0)
 }

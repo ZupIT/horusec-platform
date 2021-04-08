@@ -106,8 +106,8 @@ func TestController_SaveAnalysis(t *testing.T) {
 		appConfigMock.On("IsBrokerDisabled").Return(true)
 		repoRepositoryMock := &repository.Mock{}
 		repoAnalysisMock := &repoAnalysis.Mock{}
-		repoAnalysisMock.On("CreateAnalysisResponse").Return(nil)
-		repoAnalysisMock.On("CreateAnalysisArguments").Return(func(any *analysis.Analysis) {})
+		repoAnalysisMock.On("CreateFullAnalysisResponse").Return(nil)
+		repoAnalysisMock.On("CreateFullAnalysisArguments").Return(func(any *analysis.Analysis) {})
 		controller := NewAnalysisController(
 			brokerMock,
 			appConfigMock,
@@ -134,8 +134,8 @@ func TestController_SaveAnalysis(t *testing.T) {
 		appConfigMock.On("IsBrokerDisabled").Return(true)
 		repoRepositoryMock := &repository.Mock{}
 		repoAnalysisMock := &repoAnalysis.Mock{}
-		repoAnalysisMock.On("CreateAnalysisResponse").Return(nil)
-		repoAnalysisMock.On("CreateAnalysisArguments").Return(func(any *analysis.Analysis) {})
+		repoAnalysisMock.On("CreateFullAnalysisResponse").Return(nil)
+		repoAnalysisMock.On("CreateFullAnalysisArguments").Return(func(any *analysis.Analysis) {})
 		controller := NewAnalysisController(
 			brokerMock,
 			appConfigMock,
@@ -152,7 +152,7 @@ func TestController_SaveAnalysis(t *testing.T) {
 			Errors:         "",
 			CreatedAt:      time.Now(),
 			FinishedAt:     time.Now(),
-			AnalysisVulnerabilities: []analysis.RelationshipAnalysisVuln{
+			AnalysisVulnerabilities: []analysis.AnalysisVulnerabilities{
 				{
 					VulnerabilityID: uuid.New(),
 					AnalysisID:      uuid.New(),
@@ -188,8 +188,8 @@ func TestController_SaveAnalysis(t *testing.T) {
 		appConfigMock.On("IsBrokerDisabled").Return(true)
 		repoRepositoryMock := &repository.Mock{}
 		repoAnalysisMock := &repoAnalysis.Mock{}
-		repoAnalysisMock.On("CreateAnalysisResponse").Return(nil)
-		repoAnalysisMock.On("CreateAnalysisArguments").Return(func(arguments *analysis.Analysis) {
+		repoAnalysisMock.On("CreateFullAnalysisResponse").Return(nil)
+		repoAnalysisMock.On("CreateFullAnalysisArguments").Return(func(arguments *analysis.Analysis) {
 			assert.Len(t, arguments.AnalysisVulnerabilities, 1)
 		})
 		controller := NewAnalysisController(
@@ -208,7 +208,7 @@ func TestController_SaveAnalysis(t *testing.T) {
 			Errors:         "",
 			CreatedAt:      time.Now(),
 			FinishedAt:     time.Now(),
-			AnalysisVulnerabilities: []analysis.RelationshipAnalysisVuln{
+			AnalysisVulnerabilities: []analysis.AnalysisVulnerabilities{
 				{
 					VulnerabilityID: uuid.New(),
 					AnalysisID:      uuid.New(),
@@ -297,8 +297,8 @@ func TestController_SaveAnalysis(t *testing.T) {
 		appConfigMock.On("IsBrokerDisabled").Return(true)
 		repoRepositoryMock := &repository.Mock{}
 		repoAnalysisMock := &repoAnalysis.Mock{}
-		repoAnalysisMock.On("CreateAnalysisResponse").Return(errors.New("unexpected error"))
-		repoAnalysisMock.On("CreateAnalysisArguments").Return(func(any *analysis.Analysis) {})
+		repoAnalysisMock.On("CreateFullAnalysisResponse").Return(errors.New("unexpected error"))
+		repoAnalysisMock.On("CreateFullAnalysisArguments").Return(func(any *analysis.Analysis) {})
 		controller := NewAnalysisController(
 			brokerMock,
 			appConfigMock,
@@ -326,8 +326,8 @@ func TestController_SaveAnalysis(t *testing.T) {
 		appConfigMock.On("IsBrokerDisabled").Return(false)
 		repoRepositoryMock := &repository.Mock{}
 		repoAnalysisMock := &repoAnalysis.Mock{}
-		repoAnalysisMock.On("CreateAnalysisResponse").Return(nil)
-		repoAnalysisMock.On("CreateAnalysisArguments").Return(func(any *analysis.Analysis) {})
+		repoAnalysisMock.On("CreateFullAnalysisResponse").Return(nil)
+		repoAnalysisMock.On("CreateFullAnalysisArguments").Return(func(any *analysis.Analysis) {})
 		controller := NewAnalysisController(
 			brokerMock,
 			appConfigMock,
@@ -355,8 +355,8 @@ func TestController_SaveAnalysis(t *testing.T) {
 		appConfigMock.On("IsBrokerDisabled").Return(false)
 		repoRepositoryMock := &repository.Mock{}
 		repoAnalysisMock := &repoAnalysis.Mock{}
-		repoAnalysisMock.On("CreateAnalysisResponse").Return(nil)
-		repoAnalysisMock.On("CreateAnalysisArguments").Return(func(any *analysis.Analysis) {})
+		repoAnalysisMock.On("CreateFullAnalysisResponse").Return(nil)
+		repoAnalysisMock.On("CreateFullAnalysisArguments").Return(func(any *analysis.Analysis) {})
 		controller := NewAnalysisController(
 			brokerMock,
 			appConfigMock,

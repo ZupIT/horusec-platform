@@ -64,7 +64,7 @@ func (au *UseCases) validateAnalysis(analysis *analysisEntity.Analysis) error {
 }
 
 func (au *UseCases) validateVulnerabilities(
-	analysisVulnerabilities []analysisEntity.RelationshipAnalysisVuln) validation.RuleFunc {
+	analysisVulnerabilities []analysisEntity.AnalysisVulnerabilities) validation.RuleFunc {
 	return func(value interface{}) error {
 		for key := range analysisVulnerabilities {
 			if err := au.setupValidationVulnerabilities(&analysisVulnerabilities[key].Vulnerability); err != nil {
