@@ -131,3 +131,30 @@ func TestListRepositoriesAuthTypeLdap(t *testing.T) {
 		assert.NotNil(t, result)
 	})
 }
+
+func TestIsNotMemberOfWorkspace(t *testing.T) {
+	t.Run("should return true when user does not belong to workspace", func(t *testing.T) {
+		databaseMock := &database.Mock{}
+
+		workspaceRepositoryMock := &workspaceRepository.Mock{}
+		workspaceRepositoryMock.On("GetAccountWorkspace").Return(
+			&workspaceEntities.AccountWorkspace{}, errors.New("test"))
+
+		repository := NewRepositoryRepository(&database.Connection{Read: databaseMock, Write: databaseMock},
+			repositoryUseCases.NewRepositoryUseCases(), workspaceRepositoryMock)
+
+		assert.True(t, repository.IsNotMemberOfWorkspace(uuid.New(), uuid.New()))
+	})
+
+	t.Run("should return false when user belong to workspace", func(t *testing.T) {
+		databaseMock := &database.Mock{}
+
+		workspaceRepositoryMock := &workspaceRepository.Mock{}
+		workspaceRepositoryMock.On("GetAccountWorkspace").Return(&workspaceEntities.AccountWorkspace{}, nil)
+
+		repository := NewRepositoryRepository(&database.Connection{Read: databaseMock, Write: databaseMock},
+			repositoryUseCases.NewRepositoryUseCases(), workspaceRepositoryMock)
+
+		assert.False(t, repository.IsNotMemberOfWorkspace(uuid.New(), uuid.New()))
+	})
+}

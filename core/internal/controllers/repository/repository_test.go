@@ -7,6 +7,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 
+	"github.com/ZupIT/horusec-devkit/pkg/enums/account"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/auth"
 	"github.com/ZupIT/horusec-devkit/pkg/services/app"
 	"github.com/ZupIT/horusec-devkit/pkg/services/database"
@@ -14,6 +15,8 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/services/database/response"
 
 	repositoryEntities "github.com/ZupIT/horusec-platform/core/internal/entities/repository"
+	roleEntities "github.com/ZupIT/horusec-platform/core/internal/entities/role"
+	repositoryEnums "github.com/ZupIT/horusec-platform/core/internal/enums/repository"
 	repositoryRepository "github.com/ZupIT/horusec-platform/core/internal/repositories/repository"
 	repositoryUseCases "github.com/ZupIT/horusec-platform/core/internal/usecases/repository"
 )
@@ -290,5 +293,87 @@ func TestList(t *testing.T) {
 		result, err := controller.List(data)
 		assert.NoError(t, err)
 		assert.NotNil(t, result)
+	})
+}
+
+func TestUpdateRole(t *testing.T) {
+	data := &roleEntities.Data{
+		Role:         account.Member,
+		AccountID:    uuid.New(),
+		WorkspaceID:  uuid.New(),
+		RepositoryID: uuid.New(),
+	}
+
+	t.Run("should success update user role", func(t *testing.T) {
+		repositoryMock := &repositoryRepository.Mock{}
+		repositoryMock.On("IsNotMemberOfWorkspace").Return(false)
+		repositoryMock.On("GetAccountRepository").Return(&repositoryEntities.AccountRepository{}, nil)
+
+		databaseMock := &database.Mock{}
+		databaseMock.On("Update").Return(&response.Response{})
+
+		appConfig := &app.Mock{}
+
+		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
+		controller := NewRepositoryController(databaseConnection, appConfig,
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock)
+
+		result, err := controller.UpdateRole(data)
+		assert.NoError(t, err)
+		assert.NotNil(t, result)
+	})
+
+	t.Run("should return error when failed to update", func(t *testing.T) {
+		repositoryMock := &repositoryRepository.Mock{}
+		repositoryMock.On("IsNotMemberOfWorkspace").Return(false)
+		repositoryMock.On("GetAccountRepository").Return(&repositoryEntities.AccountRepository{}, nil)
+
+		databaseMock := &database.Mock{}
+		databaseMock.On("Update").Return(
+			response.NewResponse(0, errors.New("test"), nil))
+
+		appConfig := &app.Mock{}
+
+		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
+		controller := NewRepositoryController(databaseConnection, appConfig,
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock)
+
+		_, err := controller.UpdateRole(data)
+		assert.Error(t, err)
+	})
+
+	t.Run("should return error when failed to get account repository", func(t *testing.T) {
+		repositoryMock := &repositoryRepository.Mock{}
+		repositoryMock.On("IsNotMemberOfWorkspace").Return(false)
+		repositoryMock.On("GetAccountRepository").Return(
+			&repositoryEntities.AccountRepository{}, errors.New("test"))
+
+		databaseMock := &database.Mock{}
+		appConfig := &app.Mock{}
+
+		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
+		controller := NewRepositoryController(databaseConnection, appConfig,
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock)
+
+		result, err := controller.UpdateRole(data)
+		assert.Error(t, err)
+		assert.Nil(t, result)
+	})
+
+	t.Run("should return error when user does not belong to workspace", func(t *testing.T) {
+		repositoryMock := &repositoryRepository.Mock{}
+		repositoryMock.On("IsNotMemberOfWorkspace").Return(true)
+
+		databaseMock := &database.Mock{}
+		appConfig := &app.Mock{}
+
+		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
+		controller := NewRepositoryController(databaseConnection, appConfig,
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock)
+
+		result, err := controller.UpdateRole(data)
+		assert.Error(t, err)
+		assert.Equal(t, repositoryEnums.ErrorUserDoesNotBelongToWorkspace, err)
+		assert.Nil(t, result)
 	})
 }
