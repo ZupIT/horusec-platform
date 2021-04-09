@@ -5,7 +5,9 @@ import (
 
 	accountEnums "github.com/ZupIT/horusec-devkit/pkg/enums/account"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/auth"
+	"github.com/ZupIT/horusec-devkit/pkg/enums/queues"
 	"github.com/ZupIT/horusec-devkit/pkg/services/app"
+	brokerService "github.com/ZupIT/horusec-devkit/pkg/services/broker"
 	"github.com/ZupIT/horusec-devkit/pkg/services/database"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 
@@ -23,9 +25,11 @@ type IController interface {
 	Delete(repositoryID uuid.UUID) error
 	List(data *repositoryEntities.Data) (*[]repositoryEntities.Response, error)
 	UpdateRole(data *roleEntities.Data) (*roleEntities.Response, error)
+	InviteUser(data *roleEntities.UserData) (*roleEntities.Response, error)
 }
 
 type Controller struct {
+	broker        brokerService.IBroker
 	databaseRead  database.IDatabaseRead
 	databaseWrite database.IDatabaseWrite
 	appConfig     app.IConfig
@@ -33,14 +37,16 @@ type Controller struct {
 	repository    repositoryRepository.IRepository
 }
 
-func NewRepositoryController(databaseConnection *database.Connection, appConfig app.IConfig,
-	useCases repositoriesUseCases.IUseCases, repository repositoryRepository.IRepository) IController {
+func NewRepositoryController(broker brokerService.IBroker, databaseConnection *database.Connection,
+	appConfig app.IConfig, useCases repositoriesUseCases.IUseCases,
+	repository repositoryRepository.IRepository) IController {
 	return &Controller{
 		databaseRead:  databaseConnection.Read,
 		databaseWrite: databaseConnection.Write,
 		appConfig:     appConfig,
 		useCases:      useCases,
 		repository:    repository,
+		broker:        broker,
 	}
 }
 
@@ -128,4 +134,38 @@ func (c *Controller) UpdateRole(data *roleEntities.Data) (*roleEntities.Response
 	return accountRepository.ToResponse(), c.databaseWrite.Update(accountRepository,
 		c.useCases.FilterAccountRepositoryByID(data.AccountID, data.RepositoryID),
 		repositoryEnums.DatabaseAccountRepositoryTable).GetError()
+}
+
+func (c *Controller) InviteUser(data *roleEntities.UserData) (*roleEntities.Response, error) {
+	if c.repository.IsNotMemberOfWorkspace(data.AccountID, data.WorkspaceID) {
+		return nil, repositoryEnums.ErrorUserDoesNotBelongToWorkspace
+	}
+
+	repository, err := c.repository.GetRepository(data.RepositoryID)
+	if err != nil {
+		return nil, err
+	}
+
+	return c.createRepositoryRelationAndSendEmail(data, repository)
+}
+
+func (c *Controller) createRepositoryRelationAndSendEmail(data *roleEntities.UserData,
+	repository *repositoryEntities.Repository) (*roleEntities.Response, error) {
+	accountRepository := repository.ToAccountRepository(data.AccountID, data.Role)
+	if err := c.databaseWrite.Create(accountRepository,
+		repositoryEnums.DatabaseAccountRepositoryTable).GetError(); err != nil {
+		return nil, err
+	}
+
+	return accountRepository.ToResponseWithEmailAndUsername(data.Email, data.Username),
+		c.sendInviteUserEmail(data.Email, data.Username, repository.Name)
+}
+
+func (c *Controller) sendInviteUserEmail(email, username, repositoryName string) error {
+	if c.appConfig.IsBrokerDisabled() {
+		return nil
+	}
+
+	return c.broker.Publish(queues.HorusecEmail.ToString(), "", "",
+		c.useCases.NewRepositoryInviteEmail(email, username, repositoryName))
 }

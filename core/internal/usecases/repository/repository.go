@@ -5,6 +5,8 @@ import (
 
 	"github.com/google/uuid"
 
+	emailEntities "github.com/ZupIT/horusec-devkit/pkg/entities/email"
+	emailEnums "github.com/ZupIT/horusec-devkit/pkg/enums/email"
 	databaseEnums "github.com/ZupIT/horusec-devkit/pkg/services/database/enums"
 	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth/proto"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/parser"
@@ -19,6 +21,7 @@ type IUseCases interface {
 	NewRepositoryData(repositoryID, workspaceID uuid.UUID, accountData *proto.GetAccountDataResponse) *repository.Data
 	FilterRepositoryByID(repositoryID uuid.UUID) map[string]interface{}
 	FilterAccountRepositoryByID(accountID, repositoryID uuid.UUID) map[string]interface{}
+	NewRepositoryInviteEmail(email, username, repositoryName string) []byte
 }
 
 type UseCases struct {
@@ -68,4 +71,18 @@ func (u *UseCases) FilterRepositoryByID(repositoryID uuid.UUID) map[string]inter
 
 func (u *UseCases) FilterAccountRepositoryByID(accountID, repositoryID uuid.UUID) map[string]interface{} {
 	return map[string]interface{}{"account_id": accountID, "repository_id": repositoryID}
+}
+
+func (u *UseCases) NewRepositoryInviteEmail(email, username, repositoryName string) []byte {
+	emailMessage := &emailEntities.Message{
+		To:           email,
+		TemplateName: emailEnums.RepositoryInvite,
+		Subject:      "[Horusec] Repository invite",
+		Data: map[string]interface{}{
+			"repositoryName": repositoryName,
+			"username":       username,
+		},
+	}
+
+	return emailMessage.ToBytes()
 }

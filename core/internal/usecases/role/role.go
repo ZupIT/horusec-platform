@@ -12,7 +12,7 @@ import (
 
 type IUseCases interface {
 	NewRoleData(accountID, workspaceID, repositoryID uuid.UUID) *role.Data
-	InviteUserDataFromIOReadCloser(body io.ReadCloser) (*role.InviteUserData, error)
+	InviteUserDataFromIOReadCloser(body io.ReadCloser) (*role.UserData, error)
 	RoleDataFromIOReadCloser(body io.ReadCloser) (*role.Data, error)
 }
 
@@ -31,8 +31,8 @@ func (u *UseCases) NewRoleData(accountID, workspaceID, repositoryID uuid.UUID) *
 	}
 }
 
-func (u *UseCases) InviteUserDataFromIOReadCloser(body io.ReadCloser) (*role.InviteUserData, error) {
-	data := &role.InviteUserData{}
+func (u *UseCases) InviteUserDataFromIOReadCloser(body io.ReadCloser) (*role.UserData, error) {
+	data := &role.UserData{}
 
 	if err := parser.ParseBodyToEntity(body, data); err != nil {
 		return nil, err

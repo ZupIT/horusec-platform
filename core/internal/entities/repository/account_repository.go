@@ -30,3 +30,12 @@ func (a *AccountRepository) ToResponse() *roleEntities.Response {
 		Role:      a.Role,
 	}
 }
+
+func (a *AccountRepository) ToResponseWithEmailAndUsername(email, username string) *roleEntities.Response {
+	return &roleEntities.Response{
+		AccountID: a.AccountID,
+		Email:     email,
+		Username:  username,
+		Role:      a.Role,
+	}
+}

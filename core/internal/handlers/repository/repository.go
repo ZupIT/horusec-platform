@@ -271,7 +271,7 @@ func (h *Handler) getListData(r *http.Request) (*repositoryEntities.Data, error)
 
 // @Tags Repository
 // @Description Update an account role of a repository
-// @ID repository-role
+// @ID update-repository-role
 // @Accept  json
 // @Produce  json
 // @Param workspaceID path string true "ID of the workspace"
@@ -316,6 +316,55 @@ func (h *Handler) getUpdateRoleData(r *http.Request) (*roleEntities.Data, error)
 }
 
 func (h *Handler) checkUpdateRoleErrors(w http.ResponseWriter, err error) {
+	if err == repositoryEnums.ErrorUserDoesNotBelongToWorkspace {
+		httpUtil.StatusBadRequest(w, err)
+		return
+	}
+
+	httpUtil.StatusInternalServerError(w, err)
+}
+
+// @Tags Repository
+// @Description Invite a user to a repository
+// @ID invite-user-repository
+// @Accept  json
+// @Produce  json
+// @Param workspaceID path string true "ID of the workspace"
+// @Param repositoryID path string true "ID of the repository"
+// @Param User Data body roleEntities.UserData true "user account data"
+// @Success 200 {object} entities.Response
+// @Failure 400 {object} entities.Response
+// @Failure 401 {object} entities.Response
+// @Failure 404 {object} entities.Response
+// @Failure 500 {object} entities.Response
+// @Router /core/workspaces/{workspaceID}/repositories/{repositoryID}/roles [post]
+// @Security ApiKeyAuth
+func (h *Handler) InviteUser(w http.ResponseWriter, r *http.Request) {
+	data, err := h.getInviteUserData(r)
+	if err != nil {
+		httpUtil.StatusBadRequest(w, err)
+		return
+	}
+
+	role, err := h.controller.InviteUser(data)
+	if err != nil {
+		h.checkInviteUserErrors(w, err)
+		return
+	}
+
+	httpUtil.StatusOK(w, role)
+}
+
+func (h *Handler) getInviteUserData(r *http.Request) (*roleEntities.UserData, error) {
+	data, err := h.roleUseCases.InviteUserDataFromIOReadCloser(r.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	return data.SetIDs(chi.URLParam(r, workspaceEnums.ID), chi.URLParam(r, repositoryEnums.ID)), nil
+}
+
+func (h *Handler) checkInviteUserErrors(w http.ResponseWriter, err error) {
 	if err == repositoryEnums.ErrorUserDoesNotBelongToWorkspace {
 		httpUtil.StatusBadRequest(w, err)
 		return

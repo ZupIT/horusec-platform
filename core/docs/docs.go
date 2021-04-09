@@ -644,6 +644,83 @@ var doc = `{
                 }
             }
         },
+        "/core/workspaces/{workspaceID}/repositories/{repositoryID}/roles": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Invite a user to a repository",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Repository"
+                ],
+                "operationId": "invite-user-repository",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID of the workspace",
+                        "name": "workspaceID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "ID of the repository",
+                        "name": "repositoryID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "user account data",
+                        "name": "Data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/role.UserData"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entities.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/entities.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/entities.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/entities.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/entities.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/core/workspaces/{workspaceID}/repositories/{repositoryID}/roles/{accountID}": {
             "patch": {
                 "security": [
@@ -661,7 +738,7 @@ var doc = `{
                 "tags": [
                     "Repository"
                 ],
-                "operationId": "repository-role",
+                "operationId": "update-repository-role",
                 "parameters": [
                     {
                         "type": "string",
@@ -804,7 +881,7 @@ var doc = `{
                 "tags": [
                     "Workspace"
                 ],
-                "operationId": "invite-user",
+                "operationId": "invite-user-workspace",
                 "parameters": [
                     {
                         "type": "string",
@@ -814,12 +891,12 @@ var doc = `{
                         "required": true
                     },
                     {
-                        "description": "update role of a account in a specific workspace",
+                        "description": "user account data",
                         "name": "Workspace",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/role.InviteUserData"
+                            "$ref": "#/definitions/role.UserData"
                         }
                     }
                 ],
@@ -940,7 +1017,7 @@ var doc = `{
                 "tags": [
                     "Workspace"
                 ],
-                "operationId": "workspace-role",
+                "operationId": "update-workspace-role",
                 "parameters": [
                     {
                         "type": "string",
@@ -1053,7 +1130,7 @@ var doc = `{
                 }
             }
         },
-        "role.InviteUserData": {
+        "role.UserData": {
             "type": "object",
             "properties": {
                 "accountID": {

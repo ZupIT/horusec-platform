@@ -242,7 +242,7 @@ func (h *Handler) getListData(r *http.Request) (*workspaceEntities.Data, error) 
 
 // @Tags Workspace
 // @Description Update an account role of a workspace
-// @ID workspace-role
+// @ID update-workspace-role
 // @Accept  json
 // @Produce  json
 // @Param workspaceID path string true "ID of the workspace"
@@ -287,11 +287,11 @@ func (h *Handler) getUpdateRoleData(r *http.Request) (*roleEntities.Data, error)
 
 // @Tags Workspace
 // @Description Invite a user to a workspace
-// @ID invite-user
+// @ID invite-user-workspace
 // @Accept  json
 // @Produce  json
 // @Param workspaceID path string true "ID of the workspace"
-// @Param Workspace body roleEntities.InviteUserData true "update role of a account in a specific workspace"
+// @Param Workspace body roleEntities.UserData true "user account data"
 // @Success 200 {object} entities.Response
 // @Failure 400 {object} entities.Response
 // @Failure 401 {object} entities.Response
@@ -315,18 +315,13 @@ func (h *Handler) InviteUser(w http.ResponseWriter, r *http.Request) {
 	httpUtil.StatusOK(w, role)
 }
 
-func (h *Handler) getInviteUserData(r *http.Request) (*roleEntities.InviteUserData, error) {
+func (h *Handler) getInviteUserData(r *http.Request) (*roleEntities.UserData, error) {
 	data, err := h.roleUseCases.InviteUserDataFromIOReadCloser(r.Body)
 	if err != nil {
 		return nil, err
 	}
 
-	workspaceID, err := uuid.Parse(chi.URLParam(r, workspaceEnums.ID))
-	if err != nil {
-		return nil, err
-	}
-
-	return data.SetWorkspaceID(workspaceID), nil
+	return data.SetIDs(chi.URLParam(r, workspaceEnums.ID), ""), nil
 }
 
 // @Tags Workspace

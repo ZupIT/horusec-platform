@@ -12,14 +12,14 @@ import (
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 
+	"github.com/ZupIT/horusec-devkit/pkg/enums/account"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/auth"
 	"github.com/ZupIT/horusec-devkit/pkg/services/app"
 	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth/proto"
-	"github.com/ZupIT/horusec-devkit/pkg/enums/account"
-	"github.com/ZupIT/horusec-platform/core/internal/entities/role"
 
 	repositoryController "github.com/ZupIT/horusec-platform/core/internal/controllers/repository"
 	repositoryEntities "github.com/ZupIT/horusec-platform/core/internal/entities/repository"
+	"github.com/ZupIT/horusec-platform/core/internal/entities/role"
 	repositoryEnums "github.com/ZupIT/horusec-platform/core/internal/enums/repository"
 	repositoryUseCases "github.com/ZupIT/horusec-platform/core/internal/usecases/repository"
 	roleUseCases "github.com/ZupIT/horusec-platform/core/internal/usecases/role"
@@ -704,6 +704,109 @@ func TestUpdateRole(t *testing.T) {
 		w := httptest.NewRecorder()
 
 		handler.UpdateRole(w, r)
+
+		assert.Equal(t, http.StatusBadRequest, w.Code)
+	})
+}
+
+func TestInviteUser(t *testing.T) {
+	roleData := &role.UserData{
+		Role:      account.Member,
+		Email:     "test@test.com",
+		AccountID: uuid.New(),
+		Username:  "test",
+	}
+
+	t.Run("should return 200 when everything it is ok", func(t *testing.T) {
+		controllerMock := &repositoryController.Mock{}
+		controllerMock.On("InviteUser").Return(&role.Response{}, nil)
+
+		authGRPCMock := &proto.Mock{}
+		appConfigMock := &app.Mock{}
+
+		handler := NewRepositoryHandler(repositoryUseCases.NewRepositoryUseCases(), controllerMock,
+			appConfigMock, authGRPCMock, roleUseCases.NewRoleUseCases())
+
+		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(roleData.ToBytes()))
+		w := httptest.NewRecorder()
+
+		ctx := chi.NewRouteContext()
+		ctx.URLParams.Add("workspaceID", uuid.NewString())
+		ctx.URLParams.Add("repositoryID", uuid.NewString())
+		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
+
+		handler.InviteUser(w, r)
+
+		assert.Equal(t, http.StatusOK, w.Code)
+	})
+
+	t.Run("should return 500 when something went wrong", func(t *testing.T) {
+		controllerMock := &repositoryController.Mock{}
+		controllerMock.On("InviteUser").Return(&role.Response{}, errors.New("test"))
+
+		authGRPCMock := &proto.Mock{}
+		appConfigMock := &app.Mock{}
+
+		handler := NewRepositoryHandler(repositoryUseCases.NewRepositoryUseCases(), controllerMock,
+			appConfigMock, authGRPCMock, roleUseCases.NewRoleUseCases())
+
+		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(roleData.ToBytes()))
+		w := httptest.NewRecorder()
+
+		ctx := chi.NewRouteContext()
+		ctx.URLParams.Add("workspaceID", uuid.NewString())
+		ctx.URLParams.Add("repositoryID", uuid.NewString())
+		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
+
+		handler.InviteUser(w, r)
+
+		assert.Equal(t, http.StatusInternalServerError, w.Code)
+	})
+
+	t.Run("should return 400 when user does not belong to workspace", func(t *testing.T) {
+		controllerMock := &repositoryController.Mock{}
+		controllerMock.On("InviteUser").Return(
+			&role.Response{}, repositoryEnums.ErrorUserDoesNotBelongToWorkspace)
+
+		authGRPCMock := &proto.Mock{}
+		appConfigMock := &app.Mock{}
+
+		handler := NewRepositoryHandler(repositoryUseCases.NewRepositoryUseCases(), controllerMock,
+			appConfigMock, authGRPCMock, roleUseCases.NewRoleUseCases())
+
+		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(roleData.ToBytes()))
+		w := httptest.NewRecorder()
+
+		ctx := chi.NewRouteContext()
+		ctx.URLParams.Add("workspaceID", uuid.NewString())
+		ctx.URLParams.Add("repositoryID", uuid.NewString())
+		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
+
+		handler.InviteUser(w, r)
+
+		assert.Equal(t, http.StatusBadRequest, w.Code)
+	})
+
+	t.Run("should return 400 when invalid request body", func(t *testing.T) {
+		controllerMock := &repositoryController.Mock{}
+		controllerMock.On("InviteUser").Return(
+			&role.Response{}, repositoryEnums.ErrorUserDoesNotBelongToWorkspace)
+
+		authGRPCMock := &proto.Mock{}
+		appConfigMock := &app.Mock{}
+
+		handler := NewRepositoryHandler(repositoryUseCases.NewRepositoryUseCases(), controllerMock,
+			appConfigMock, authGRPCMock, roleUseCases.NewRoleUseCases())
+
+		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader([]byte("test")))
+		w := httptest.NewRecorder()
+
+		ctx := chi.NewRouteContext()
+		ctx.URLParams.Add("workspaceID", uuid.NewString())
+		ctx.URLParams.Add("repositoryID", uuid.NewString())
+		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
+
+		handler.InviteUser(w, r)
 
 		assert.Equal(t, http.StatusBadRequest, w.Code)
 	})

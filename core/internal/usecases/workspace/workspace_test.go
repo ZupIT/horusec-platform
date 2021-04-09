@@ -111,7 +111,6 @@ func TestNewOrganizationInviteEmail(t *testing.T) {
 		assert.Equal(t, "test@test.com", email.To)
 		assert.Equal(t, emailEnums.OrganizationInvite, email.TemplateName)
 		assert.Equal(t, "[Horusec] Organization invite", email.Subject)
-		assert.Equal(t, "test@test.com", email.To)
 
 		assert.NotPanics(t, func() {
 			data := email.Data.(map[string]interface{})

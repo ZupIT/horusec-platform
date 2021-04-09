@@ -1,12 +1,15 @@
 package repository
 
 import (
+	"encoding/json"
 	"errors"
 	"testing"
 
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 
+	emailEntities "github.com/ZupIT/horusec-devkit/pkg/entities/email"
+	emailEnums "github.com/ZupIT/horusec-devkit/pkg/enums/email"
 	databaseEnums "github.com/ZupIT/horusec-devkit/pkg/services/database/enums"
 	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth/proto"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/parser"
@@ -120,6 +123,31 @@ func TestFilterAccountRepositoryByID(t *testing.T) {
 		assert.NotPanics(t, func() {
 			assert.Equal(t, id, filter["repository_id"])
 			assert.Equal(t, id, filter["account_id"])
+		})
+	})
+}
+
+func TestNewOrganizationInviteEmail(t *testing.T) {
+	t.Run("should success create a new repository invite email", func(t *testing.T) {
+		useCases := NewRepositoryUseCases()
+
+		emailBytes := useCases.NewRepositoryInviteEmail("test@test.com", "test", "test")
+		assert.NotNil(t, emailBytes)
+		assert.NotEmpty(t, emailBytes)
+
+		email := &emailEntities.Message{}
+		assert.NoError(t, json.Unmarshal(emailBytes, email))
+
+		assert.Equal(t, "test@test.com", email.To)
+		assert.Equal(t, emailEnums.RepositoryInvite, email.TemplateName)
+		assert.Equal(t, "[Horusec] Repository invite", email.Subject)
+
+		assert.NotPanics(t, func() {
+			data := email.Data.(map[string]interface{})
+
+			assert.Equal(t, "test", data["repositoryName"])
+			assert.Equal(t, "test", data["username"])
+
 		})
 	})
 }

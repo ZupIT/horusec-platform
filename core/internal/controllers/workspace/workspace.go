@@ -26,7 +26,7 @@ type IController interface {
 	Delete(workspaceID uuid.UUID) error
 	List(data *workspaceEntities.Data) (*[]workspaceEntities.Response, error)
 	UpdateRole(data *roleEntities.Data) (*roleEntities.Response, error)
-	InviteUser(data *roleEntities.InviteUserData) (*roleEntities.Response, error)
+	InviteUser(data *roleEntities.UserData) (*roleEntities.Response, error)
 	GetUsers(workspaceID uuid.UUID) (*[]roleEntities.Response, error)
 	RemoveUser(data *roleEntities.Data) error
 }
@@ -121,7 +121,7 @@ func (c *Controller) UpdateRole(data *roleEntities.Data) (*roleEntities.Response
 		workspaceEnums.DatabaseAccountWorkspaceTable).GetError()
 }
 
-func (c *Controller) InviteUser(data *roleEntities.InviteUserData) (*roleEntities.Response, error) {
+func (c *Controller) InviteUser(data *roleEntities.UserData) (*roleEntities.Response, error) {
 	workspace, err := c.repository.GetWorkspace(data.WorkspaceID)
 	if err != nil {
 		return nil, err

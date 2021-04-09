@@ -43,3 +43,8 @@ func (m *Mock) UpdateRole(_ *roleEntities.Data) (*roleEntities.Response, error) 
 	args := m.MethodCalled("UpdateRole")
 	return args.Get(0).(*roleEntities.Response), mockUtils.ReturnNilOrError(args, 1)
 }
+
+func (m *Mock) InviteUser(_ *roleEntities.UserData) (*roleEntities.Response, error) {
+	args := m.MethodCalled("InviteUser")
+	return args.Get(0).(*roleEntities.Response), mockUtils.ReturnNilOrError(args, 1)
+}

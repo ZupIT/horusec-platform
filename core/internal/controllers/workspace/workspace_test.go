@@ -399,7 +399,7 @@ func TestUpdateRole(t *testing.T) {
 }
 
 func TestInviteUser(t *testing.T) {
-	data := &role.InviteUserData{
+	data := &role.UserData{
 		Role: account.Admin,
 	}
 

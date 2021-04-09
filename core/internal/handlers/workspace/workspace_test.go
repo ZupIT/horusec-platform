@@ -582,10 +582,11 @@ func TestUpdateRole(t *testing.T) {
 }
 
 func TestInviteUser(t *testing.T) {
-	roleData := &role.InviteUserData{
-		Role:     account.Member,
-		Email:    "test@test.com",
-		Username: "test",
+	roleData := &role.UserData{
+		Role:      account.Member,
+		Email:     "test@test.com",
+		AccountID: uuid.New(),
+		Username:  "test",
 	}
 
 	t.Run("should return 200 when everything it is ok", func(t *testing.T) {
@@ -630,26 +631,6 @@ func TestInviteUser(t *testing.T) {
 		handler.InviteUser(w, r)
 
 		assert.Equal(t, http.StatusInternalServerError, w.Code)
-	})
-
-	t.Run("should return 400 when invalid workspace id", func(t *testing.T) {
-		controllerMock := &workspaceController.Mock{}
-		authGRPCMock := &proto.Mock{}
-		appConfigMock := &app.Mock{}
-
-		handler := NewWorkspaceHandler(controllerMock, workspaceUseCases.NewWorkspaceUseCases(),
-			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases())
-
-		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(roleData.ToBytes()))
-		w := httptest.NewRecorder()
-
-		ctx := chi.NewRouteContext()
-		ctx.URLParams.Add("workspaceID", "test")
-		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
-
-		handler.InviteUser(w, r)
-
-		assert.Equal(t, http.StatusBadRequest, w.Code)
 	})
 
 	t.Run("should return 400 request body", func(t *testing.T) {

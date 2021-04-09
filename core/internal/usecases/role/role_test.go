@@ -30,7 +30,7 @@ func TestInviteUserDataFromIOReadCloser(t *testing.T) {
 		useCases := NewRoleUseCases()
 		id := uuid.New()
 
-		data := &role.InviteUserData{
+		data := &role.UserData{
 			Role:         "admin",
 			Email:        "test@test.com",
 			AccountID:    id,

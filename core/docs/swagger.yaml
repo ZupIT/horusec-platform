@@ -32,7 +32,7 @@ definitions:
       role:
         type: string
     type: object
-  role.InviteUserData:
+  role.UserData:
     properties:
       accountID:
         type: string
@@ -463,12 +463,62 @@ paths:
       - ApiKeyAuth: []
       tags:
       - Repository
+  /core/workspaces/{workspaceID}/repositories/{repositoryID}/roles:
+    post:
+      consumes:
+      - application/json
+      description: Invite a user to a repository
+      operationId: invite-user-repository
+      parameters:
+      - description: ID of the workspace
+        in: path
+        name: workspaceID
+        required: true
+        type: string
+      - description: ID of the repository
+        in: path
+        name: repositoryID
+        required: true
+        type: string
+      - description: user account data
+        in: body
+        name: Data
+        required: true
+        schema:
+          $ref: '#/definitions/role.UserData'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/entities.Response'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Repository
   /core/workspaces/{workspaceID}/repositories/{repositoryID}/roles/{accountID}:
     patch:
       consumes:
       - application/json
       description: Update an account role of a repository
-      operationId: repository-role
+      operationId: update-repository-role
       parameters:
       - description: ID of the workspace
         in: path
@@ -561,19 +611,19 @@ paths:
       consumes:
       - application/json
       description: Invite a user to a workspace
-      operationId: invite-user
+      operationId: invite-user-workspace
       parameters:
       - description: ID of the workspace
         in: path
         name: workspaceID
         required: true
         type: string
-      - description: update role of a account in a specific workspace
+      - description: user account data
         in: body
         name: Workspace
         required: true
         schema:
-          $ref: '#/definitions/role.InviteUserData'
+          $ref: '#/definitions/role.UserData'
       produces:
       - application/json
       responses:
@@ -649,7 +699,7 @@ paths:
       consumes:
       - application/json
       description: Update an account role of a workspace
-      operationId: workspace-role
+      operationId: update-workspace-role
       parameters:
       - description: ID of the workspace
         in: path
