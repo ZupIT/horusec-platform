@@ -1,21 +1,26 @@
 package repository
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 
+	"github.com/ZupIT/horusec-devkit/pkg/enums/account"
 	"github.com/ZupIT/horusec-devkit/pkg/services/database"
 	"github.com/ZupIT/horusec-devkit/pkg/services/database/response"
 
 	repositoryEntities "github.com/ZupIT/horusec-platform/core/internal/entities/repository"
+	workspaceEntities "github.com/ZupIT/horusec-platform/core/internal/entities/workspace"
+	workspaceRepository "github.com/ZupIT/horusec-platform/core/internal/repositories/workspace"
 	repositoryUseCases "github.com/ZupIT/horusec-platform/core/internal/usecases/repository"
 )
 
 func TestNewRepositoryRepository(t *testing.T) {
 	t.Run("should success create a repository repository", func(t *testing.T) {
-		assert.NotNil(t, NewRepositoryRepository(&database.Connection{}, repositoryUseCases.NewRepositoryUseCases()))
+		assert.NotNil(t, NewRepositoryRepository(&database.Connection{}, repositoryUseCases.NewRepositoryUseCases(),
+			&workspaceRepository.Mock{}))
 	})
 }
 
@@ -26,7 +31,7 @@ func TestGetRepositoryByName(t *testing.T) {
 			Return(response.NewResponse(1, nil, &repositoryEntities.Repository{}))
 
 		repository := NewRepositoryRepository(&database.Connection{Read: databaseMock, Write: databaseMock},
-			repositoryUseCases.NewRepositoryUseCases())
+			repositoryUseCases.NewRepositoryUseCases(), &workspaceRepository.Mock{})
 
 		result, err := repository.GetRepositoryByName(uuid.New(), "test")
 		assert.NoError(t, err)
@@ -41,7 +46,7 @@ func TestGetRepository(t *testing.T) {
 			Return(response.NewResponse(1, nil, &repositoryEntities.Repository{}))
 
 		repository := NewRepositoryRepository(&database.Connection{Read: databaseMock, Write: databaseMock},
-			repositoryUseCases.NewRepositoryUseCases())
+			repositoryUseCases.NewRepositoryUseCases(), &workspaceRepository.Mock{})
 
 		result, err := repository.GetRepository(uuid.New())
 		assert.NoError(t, err)
@@ -56,9 +61,72 @@ func TestGetAccountRepository(t *testing.T) {
 			Return(response.NewResponse(1, nil, &repositoryEntities.Repository{}))
 
 		repository := NewRepositoryRepository(&database.Connection{Read: databaseMock, Write: databaseMock},
-			repositoryUseCases.NewRepositoryUseCases())
+			repositoryUseCases.NewRepositoryUseCases(), &workspaceRepository.Mock{})
 
 		result, err := repository.GetAccountRepository(uuid.New(), uuid.New())
+		assert.NoError(t, err)
+		assert.NotNil(t, result)
+	})
+}
+
+func TestListRepositoriesAuthTypeHorusec(t *testing.T) {
+	t.Run("should success list repositories when admin", func(t *testing.T) {
+		databaseMock := &database.Mock{}
+		databaseMock.On("Raw").Return(&response.Response{})
+
+		workspaceRepositoryMock := &workspaceRepository.Mock{}
+		workspaceRepositoryMock.On("GetAccountWorkspace").Return(
+			&workspaceEntities.AccountWorkspace{Role: account.Admin}, nil)
+
+		repository := NewRepositoryRepository(&database.Connection{Read: databaseMock, Write: databaseMock},
+			repositoryUseCases.NewRepositoryUseCases(), workspaceRepositoryMock)
+
+		result, err := repository.ListRepositoriesAuthTypeHorusec(uuid.New(), uuid.New())
+		assert.NoError(t, err)
+		assert.NotNil(t, result)
+	})
+
+	t.Run("should success list repositories by role", func(t *testing.T) {
+		databaseMock := &database.Mock{}
+		databaseMock.On("Raw").Return(&response.Response{})
+
+		workspaceRepositoryMock := &workspaceRepository.Mock{}
+		workspaceRepositoryMock.On("GetAccountWorkspace").Return(
+			&workspaceEntities.AccountWorkspace{Role: account.Member}, nil)
+
+		repository := NewRepositoryRepository(&database.Connection{Read: databaseMock, Write: databaseMock},
+			repositoryUseCases.NewRepositoryUseCases(), workspaceRepositoryMock)
+
+		result, err := repository.ListRepositoriesAuthTypeHorusec(uuid.New(), uuid.New())
+		assert.NoError(t, err)
+		assert.NotNil(t, result)
+	})
+
+	t.Run("should return error when failed to get account workspace", func(t *testing.T) {
+		databaseMock := &database.Mock{}
+
+		workspaceRepositoryMock := &workspaceRepository.Mock{}
+		workspaceRepositoryMock.On("GetAccountWorkspace").Return(
+			&workspaceEntities.AccountWorkspace{}, errors.New("test"))
+
+		repository := NewRepositoryRepository(&database.Connection{Read: databaseMock, Write: databaseMock},
+			repositoryUseCases.NewRepositoryUseCases(), workspaceRepositoryMock)
+
+		result, err := repository.ListRepositoriesAuthTypeHorusec(uuid.New(), uuid.New())
+		assert.Error(t, err)
+		assert.Nil(t, result)
+	})
+}
+
+func TestListRepositoriesAuthTypeLdap(t *testing.T) {
+	t.Run("should success list repositories", func(t *testing.T) {
+		databaseMock := &database.Mock{}
+		databaseMock.On("Raw").Return(&response.Response{})
+
+		repository := NewRepositoryRepository(&database.Connection{Read: databaseMock, Write: databaseMock},
+			repositoryUseCases.NewRepositoryUseCases(), &workspaceRepository.Mock{})
+
+		result, err := repository.ListRepositoriesAuthTypeLdap(uuid.New(), []string{"test"})
 		assert.NoError(t, err)
 		assert.NotNil(t, result)
 	})

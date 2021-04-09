@@ -7,6 +7,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 
+	"github.com/ZupIT/horusec-devkit/pkg/enums/auth"
 	"github.com/ZupIT/horusec-devkit/pkg/services/app"
 	"github.com/ZupIT/horusec-devkit/pkg/services/database"
 	databaseEnums "github.com/ZupIT/horusec-devkit/pkg/services/database/enums"
@@ -245,5 +246,49 @@ func TestDelete(t *testing.T) {
 			repositoryUseCases.NewRepositoryUseCases(), repositoryMock)
 
 		assert.NoError(t, controller.Delete(uuid.New()))
+	})
+}
+
+func TestList(t *testing.T) {
+	data := &repositoryEntities.Data{
+		AccountID:   uuid.New(),
+		WorkspaceID: uuid.New(),
+		Permissions: []string{"test"},
+	}
+
+	t.Run("should success list repositories when horusec auth type", func(t *testing.T) {
+		databaseMock := &database.Mock{}
+
+		appConfig := &app.Mock{}
+		appConfig.On("GetAuthorizationType").Return(auth.Horusec)
+
+		repositoryMock := &repositoryRepository.Mock{}
+		repositoryMock.On("ListRepositoriesAuthTypeHorusec").Return(&[]repositoryEntities.Response{}, nil)
+
+		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
+		controller := NewRepositoryController(databaseConnection, appConfig,
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock)
+
+		result, err := controller.List(data)
+		assert.NoError(t, err)
+		assert.NotNil(t, result)
+	})
+
+	t.Run("should success list repositories when ldap auth type", func(t *testing.T) {
+		databaseMock := &database.Mock{}
+
+		appConfig := &app.Mock{}
+		appConfig.On("GetAuthorizationType").Return(auth.Ldap)
+
+		repositoryMock := &repositoryRepository.Mock{}
+		repositoryMock.On("ListRepositoriesAuthTypeLdap").Return(&[]repositoryEntities.Response{}, nil)
+
+		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
+		controller := NewRepositoryController(databaseConnection, appConfig,
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock)
+
+		result, err := controller.List(data)
+		assert.NoError(t, err)
+		assert.NotNil(t, result)
 	})
 }

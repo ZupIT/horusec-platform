@@ -32,3 +32,8 @@ func (m *Mock) Delete(_ uuid.UUID) error {
 	args := m.MethodCalled("Delete")
 	return mockUtils.ReturnNilOrError(args, 0)
 }
+
+func (m *Mock) List(_ *repositoryEntities.Data) (*[]repositoryEntities.Response, error) {
+	args := m.MethodCalled("List")
+	return args.Get(0).(*[]repositoryEntities.Response), mockUtils.ReturnNilOrError(args, 1)
+}

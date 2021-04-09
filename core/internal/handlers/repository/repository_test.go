@@ -513,3 +513,80 @@ func TestDelete(t *testing.T) {
 		assert.Equal(t, http.StatusBadRequest, w.Code)
 	})
 }
+
+func TestList(t *testing.T) {
+	accountData := &proto.GetAccountDataResponse{
+		AccountID:   uuid.New().String(),
+		Permissions: []string{"test"},
+	}
+
+	t.Run("should return 200 when everything it is ok", func(t *testing.T) {
+		controllerMock := &repositoryController.Mock{}
+		controllerMock.On("List").Return(&[]repositoryEntities.Response{}, nil)
+
+		authGRPCMock := &proto.Mock{}
+		authGRPCMock.On("GetAccountInfo").Return(accountData, nil)
+
+		appConfigMock := &app.Mock{}
+
+		handler := NewRepositoryHandler(repositoryUseCases.NewRepositoryUseCases(), controllerMock,
+			appConfigMock, authGRPCMock)
+
+		r, _ := http.NewRequest(http.MethodGet, "test", nil)
+		w := httptest.NewRecorder()
+
+		ctx := chi.NewRouteContext()
+		ctx.URLParams.Add("workspaceID", uuid.New().String())
+		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
+
+		handler.List(w, r)
+
+		assert.Equal(t, http.StatusOK, w.Code)
+	})
+
+	t.Run("should return 500 when something went wrong", func(t *testing.T) {
+		controllerMock := &repositoryController.Mock{}
+		controllerMock.On("List").Return(&[]repositoryEntities.Response{}, errors.New("test"))
+
+		authGRPCMock := &proto.Mock{}
+		authGRPCMock.On("GetAccountInfo").Return(accountData, nil)
+
+		appConfigMock := &app.Mock{}
+
+		handler := NewRepositoryHandler(repositoryUseCases.NewRepositoryUseCases(), controllerMock,
+			appConfigMock, authGRPCMock)
+
+		r, _ := http.NewRequest(http.MethodGet, "test", nil)
+		w := httptest.NewRecorder()
+
+		ctx := chi.NewRouteContext()
+		ctx.URLParams.Add("workspaceID", uuid.New().String())
+		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
+
+		handler.List(w, r)
+
+		assert.Equal(t, http.StatusInternalServerError, w.Code)
+	})
+
+	t.Run("should return 400 when failed to get account data", func(t *testing.T) {
+		controllerMock := &repositoryController.Mock{}
+		appConfigMock := &app.Mock{}
+
+		authGRPCMock := &proto.Mock{}
+		authGRPCMock.On("GetAccountInfo").Return(accountData, errors.New("test"))
+
+		handler := NewRepositoryHandler(repositoryUseCases.NewRepositoryUseCases(), controllerMock,
+			appConfigMock, authGRPCMock)
+
+		r, _ := http.NewRequest(http.MethodGet, "test", nil)
+		w := httptest.NewRecorder()
+
+		ctx := chi.NewRouteContext()
+		ctx.URLParams.Add("workspaceID", uuid.New().String())
+		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
+
+		handler.List(w, r)
+
+		assert.Equal(t, http.StatusBadRequest, w.Code)
+	})
+}

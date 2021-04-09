@@ -27,3 +27,13 @@ func (m *Mock) GetAccountRepository(_, _ uuid.UUID) (*repositoryEntities.Account
 	args := m.MethodCalled("GetAccountRepository")
 	return args.Get(0).(*repositoryEntities.AccountRepository), mockUtils.ReturnNilOrError(args, 1)
 }
+
+func (m *Mock) ListRepositoriesAuthTypeHorusec(accountID, workspaceID uuid.UUID) (*[]repositoryEntities.Response, error) {
+	args := m.MethodCalled("ListRepositoriesAuthTypeHorusec")
+	return args.Get(0).(*[]repositoryEntities.Response), mockUtils.ReturnNilOrError(args, 1)
+}
+
+func (m *Mock) ListRepositoriesAuthTypeLdap(_ uuid.UUID, _ []string) (*[]repositoryEntities.Response, error) {
+	args := m.MethodCalled("ListRepositoriesAuthTypeLdap")
+	return args.Get(0).(*[]repositoryEntities.Response), mockUtils.ReturnNilOrError(args, 1)
+}

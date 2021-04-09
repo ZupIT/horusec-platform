@@ -6,8 +6,8 @@ import (
 	"github.com/google/uuid"
 
 	databaseEnums "github.com/ZupIT/horusec-devkit/pkg/services/database/enums"
-	"github.com/ZupIT/horusec-devkit/pkg/utils/parser"
 	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth/proto"
+	"github.com/ZupIT/horusec-devkit/pkg/utils/parser"
 
 	"github.com/ZupIT/horusec-platform/core/internal/entities/repository"
 )

@@ -31,12 +31,12 @@ type Repository struct {
 }
 
 func NewRepositoryRepository(databaseConnection *database.Connection,
-	useCases repositoriesUseCases.IUseCases, workspaceRepository workspaceRepository.IRepository) IRepository {
+	useCases repositoriesUseCases.IUseCases, repository workspaceRepository.IRepository) IRepository {
 	return &Repository{
 		databaseRead:        databaseConnection.Read,
 		databaseWrite:       databaseConnection.Write,
 		useCases:            useCases,
-		workspaceRepository: workspaceRepository,
+		workspaceRepository: repository,
 	}
 }
 

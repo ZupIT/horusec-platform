@@ -4,10 +4,10 @@ import (
 	"github.com/google/uuid"
 
 	accountEnums "github.com/ZupIT/horusec-devkit/pkg/enums/account"
+	"github.com/ZupIT/horusec-devkit/pkg/enums/auth"
 	"github.com/ZupIT/horusec-devkit/pkg/services/app"
 	"github.com/ZupIT/horusec-devkit/pkg/services/database"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
-	"github.com/ZupIT/horusec-devkit/pkg/enums/auth"
 
 	repositoryEntities "github.com/ZupIT/horusec-platform/core/internal/entities/repository"
 	repositoryEnums "github.com/ZupIT/horusec-platform/core/internal/enums/repository"
