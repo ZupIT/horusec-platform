@@ -26,6 +26,7 @@ type IController interface {
 	List(data *repositoryEntities.Data) (*[]repositoryEntities.Response, error)
 	UpdateRole(data *roleEntities.Data) (*roleEntities.Response, error)
 	InviteUser(data *roleEntities.UserData) (*roleEntities.Response, error)
+	GetUsers(repositoryID uuid.UUID) (*[]roleEntities.Response, error)
 }
 
 type Controller struct {
@@ -168,4 +169,8 @@ func (c *Controller) sendInviteUserEmail(email, username, repositoryName string)
 
 	return c.broker.Publish(queues.HorusecEmail.ToString(), "", "",
 		c.useCases.NewRepositoryInviteEmail(email, username, repositoryName))
+}
+
+func (c *Controller) GetUsers(repositoryID uuid.UUID) (*[]roleEntities.Response, error) {
+	return c.repository.ListAllRepositoryUsers(repositoryID)
 }

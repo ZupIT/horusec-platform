@@ -7,6 +7,7 @@ import (
 	mockUtils "github.com/ZupIT/horusec-devkit/pkg/utils/mock"
 
 	repositoryEntities "github.com/ZupIT/horusec-platform/core/internal/entities/repository"
+	roleEntities "github.com/ZupIT/horusec-platform/core/internal/entities/role"
 )
 
 type Mock struct {
@@ -41,4 +42,9 @@ func (m *Mock) ListRepositoriesAuthTypeLdap(_ uuid.UUID, _ []string) (*[]reposit
 func (m *Mock) IsNotMemberOfWorkspace(_, _ uuid.UUID) bool {
 	args := m.MethodCalled("IsNotMemberOfWorkspace")
 	return args.Get(0).(bool)
+}
+
+func (m *Mock) ListAllRepositoryUsers(_ uuid.UUID) (*[]roleEntities.Response, error) {
+	args := m.MethodCalled("ListAllRepositoryUsers")
+	return args.Get(0).(*[]roleEntities.Response), mockUtils.ReturnNilOrError(args, 1)
 }

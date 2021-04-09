@@ -69,6 +69,7 @@ func (r *Router) repositoryRoutes() {
 		router.With(r.IsRepositoryAdmin).Delete("/{repositoryID}", r.repositoryHandler.Delete)
 		router.With(r.IsRepositoryAdmin).Post("/{repositoryID}/roles", r.repositoryHandler.InviteUser)
 		router.With(r.IsRepositoryAdmin).Patch("/{repositoryID}/roles/{accountID}", r.repositoryHandler.UpdateRole)
+		router.With(r.IsRepositoryAdmin).Get("/{repositoryID}/roles", r.repositoryHandler.GetUsers)
 	})
 }
 

@@ -48,3 +48,8 @@ func (m *Mock) InviteUser(_ *roleEntities.UserData) (*roleEntities.Response, err
 	args := m.MethodCalled("InviteUser")
 	return args.Get(0).(*roleEntities.Response), mockUtils.ReturnNilOrError(args, 1)
 }
+
+func (m *Mock) GetUsers(_ uuid.UUID) (*[]roleEntities.Response, error) {
+	args := m.MethodCalled("GetUsers")
+	return args.Get(0).(*[]roleEntities.Response), mockUtils.ReturnNilOrError(args, 1)
+}

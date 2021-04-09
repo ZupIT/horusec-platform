@@ -326,7 +326,7 @@ func (h *Handler) getInviteUserData(r *http.Request) (*roleEntities.UserData, er
 
 // @Tags Workspace
 // @Description Get all users of a workspace
-// @ID get-users
+// @ID get-workspace-users
 // @Accept  json
 // @Produce  json
 // @Param workspaceID path string true "ID of the workspace"
