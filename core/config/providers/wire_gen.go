@@ -52,7 +52,7 @@ func Initialize(string2 string) (router.IRouter, error) {
 	iController := workspace3.NewWorkspaceController(iBroker, connection, appIConfig, iUseCases, iRepository)
 	handler := workspace4.NewWorkspaceHandler(iController, iUseCases, authServiceClient, appIConfig)
 	repositoryIUseCases := repository.NewRepositoryUseCases()
-	repositoryIRepository := repository2.NewRepositoryRepository(connection, repositoryIUseCases)
+	repositoryIRepository := repository2.NewRepositoryRepository(connection, repositoryIUseCases, iRepository)
 	repositoryIController := repository3.NewRepositoryController(connection, appIConfig, repositoryIUseCases, repositoryIRepository)
 	repositoryHandler := repository4.NewRepositoryHandler(repositoryIUseCases, repositoryIController, appIConfig, authServiceClient)
 	routerIRouter := router.NewHTTPRouter(iRouter, iAuthzMiddleware, handler, repositoryHandler)

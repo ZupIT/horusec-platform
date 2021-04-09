@@ -7,6 +7,7 @@ import (
 
 	databaseEnums "github.com/ZupIT/horusec-devkit/pkg/services/database/enums"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/parser"
+	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth/proto"
 
 	"github.com/ZupIT/horusec-platform/core/internal/entities/repository"
 )
@@ -15,7 +16,7 @@ type IUseCases interface {
 	RepositoryDataFromIOReadCloser(body io.ReadCloser) (*repository.Data, error)
 	FilterRepositoryByName(workspaceID uuid.UUID, name string) map[string]interface{}
 	IsNotFoundError(err error) bool
-	NewRepositoryData(accountID, repositoryID uuid.UUID) *repository.Data
+	NewRepositoryData(repositoryID, workspaceID uuid.UUID, accountData *proto.GetAccountDataResponse) *repository.Data
 	FilterRepositoryByID(repositoryID uuid.UUID) map[string]interface{}
 	FilterAccountRepositoryByID(accountID, repositoryID uuid.UUID) map[string]interface{}
 }
@@ -51,10 +52,13 @@ func (u *UseCases) IsNotFoundError(err error) bool {
 	return false
 }
 
-func (u *UseCases) NewRepositoryData(accountID, repositoryID uuid.UUID) *repository.Data {
+func (u *UseCases) NewRepositoryData(repositoryID, workspaceID uuid.UUID,
+	accountData *proto.GetAccountDataResponse) *repository.Data {
 	return &repository.Data{
 		RepositoryID: repositoryID,
-		AccountID:    accountID,
+		WorkspaceID:  workspaceID,
+		AccountID:    parser.ParseStringToUUID(accountData.AccountID),
+		Permissions:  accountData.Permissions,
 	}
 }
 

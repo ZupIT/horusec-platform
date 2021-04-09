@@ -9,6 +9,7 @@ import (
 
 	databaseEnums "github.com/ZupIT/horusec-devkit/pkg/services/database/enums"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/parser"
+	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth/proto"
 
 	"github.com/ZupIT/horusec-platform/core/internal/entities/repository"
 )
@@ -81,11 +82,18 @@ func TestIsNotFoundError(t *testing.T) {
 func TestNewRepositoryData(t *testing.T) {
 	t.Run("should success create a new repository data with account and repository id", func(t *testing.T) {
 		useCases := NewRepositoryUseCases()
-		id := uuid.New()
 
-		data := useCases.NewRepositoryData(id, id)
+		id := uuid.New()
+		accountData := &proto.GetAccountDataResponse{
+			AccountID:   id.String(),
+			Permissions: []string{"test"},
+		}
+
+		data := useCases.NewRepositoryData(id, id, accountData)
 		assert.Equal(t, id, data.RepositoryID)
+		assert.Equal(t, id, data.WorkspaceID)
 		assert.Equal(t, id, data.AccountID)
+		assert.Equal(t, []string{"test"}, data.Permissions)
 	})
 }
 

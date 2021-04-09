@@ -138,7 +138,8 @@ func (h *Handler) getByIDData(r *http.Request) (*repositoryEntities.Data, error)
 		return nil, err
 	}
 
-	return h.useCases.NewRepositoryData(parser.ParseStringToUUID(accountData.AccountID), repositoryID), nil
+	return h.useCases.NewRepositoryData(repositoryID, parser.ParseStringToUUID(
+		chi.URLParam(r, workspaceEnums.ID)), accountData), nil
 }
 
 // @Tags Repository
@@ -223,4 +224,42 @@ func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
 	}
 
 	httpUtil.StatusNoContent(w)
+}
+
+// @Tags Repository
+// @Description List all repositories of an account in a workspace
+// @ID list-repositories
+// @Accept  json
+// @Produce  json
+// @Param workspaceID path string true "ID of the workspace"
+// @Success 200 {object} entities.Response
+// @Failure 400 {object} entities.Response
+// @Failure 401 {object} entities.Response
+// @Failure 500 {object} entities.Response
+// @Router /core/workspaces/{workspaceID}/repositories [get]
+// @Security ApiKeyAuth
+func (h *Handler) List(w http.ResponseWriter, r *http.Request) {
+	data, err := h.getListData(r)
+	if err != nil {
+		httpUtil.StatusBadRequest(w, err)
+		return
+	}
+
+	repositories, err := h.controller.List(data)
+	if err != nil {
+		httpUtil.StatusInternalServerError(w, err)
+		return
+	}
+
+	httpUtil.StatusOK(w, repositories)
+}
+
+func (h *Handler) getListData(r *http.Request) (*repositoryEntities.Data, error) {
+	accountData, err := h.getAccountData(r)
+	if err != nil {
+		return nil, err
+	}
+
+	return h.useCases.NewRepositoryData(uuid.Nil, parser.ParseStringToUUID(
+		chi.URLParam(r, workspaceEnums.ID)), accountData), nil
 }

@@ -7,6 +7,7 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/services/app"
 	"github.com/ZupIT/horusec-devkit/pkg/services/database"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
+	"github.com/ZupIT/horusec-devkit/pkg/enums/auth"
 
 	repositoryEntities "github.com/ZupIT/horusec-platform/core/internal/entities/repository"
 	repositoryEnums "github.com/ZupIT/horusec-platform/core/internal/enums/repository"
@@ -19,6 +20,7 @@ type IController interface {
 	Get(data *repositoryEntities.Data) (*repositoryEntities.Response, error)
 	Update(data *repositoryEntities.Data) (*repositoryEntities.Response, error)
 	Delete(repositoryID uuid.UUID) error
+	List(data *repositoryEntities.Data) (*[]repositoryEntities.Response, error)
 }
 
 type Controller struct {
@@ -100,4 +102,12 @@ func (c *Controller) Update(data *repositoryEntities.Data) (*repositoryEntities.
 func (c *Controller) Delete(repositoryID uuid.UUID) error {
 	return c.databaseWrite.Delete(c.useCases.FilterRepositoryByID(repositoryID),
 		repositoryEnums.DatabaseRepositoryTable).GetError()
+}
+
+func (c *Controller) List(data *repositoryEntities.Data) (*[]repositoryEntities.Response, error) {
+	if c.appConfig.GetAuthorizationType() == auth.Ldap {
+		return c.repository.ListRepositoriesAuthTypeLdap(data.WorkspaceID, data.Permissions)
+	}
+
+	return c.repository.ListRepositoriesAuthTypeHorusec(data.AccountID, data.WorkspaceID)
 }

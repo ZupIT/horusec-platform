@@ -63,6 +63,7 @@ func (r *Router) workspaceRoutes() {
 func (r *Router) repositoryRoutes() {
 	r.Route(routes.RepositoryHandler, func(router chi.Router) {
 		router.With(r.IsWorkspaceAdmin).Post("/", r.repositoryHandler.Create)
+		router.With(r.IsWorkspaceMember).Get("/", r.repositoryHandler.List)
 		router.With(r.IsRepositoryMember).Get("/{repositoryID}", r.repositoryHandler.Get)
 		router.With(r.IsRepositoryAdmin).Patch("/{repositoryID}", r.repositoryHandler.Update)
 		router.With(r.IsRepositoryAdmin).Delete("/{repositoryID}", r.repositoryHandler.Delete)
@@ -71,5 +72,6 @@ func (r *Router) repositoryRoutes() {
 
 func (r *Router) swaggerRoutes() {
 	r.SetupSwagger()
+
 	docs.SwaggerInfo.Host = r.GetSwaggerHost()
 }
