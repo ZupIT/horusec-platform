@@ -484,3 +484,21 @@ func TestInviteUser(t *testing.T) {
 		assert.Nil(t, result)
 	})
 }
+
+func TestGetUsers(t *testing.T) {
+	t.Run("should success get repository users", func(t *testing.T) {
+		appConfig := &app.Mock{}
+		databaseMock := &database.Mock{}
+
+		repositoryMock := &repositoryRepository.Mock{}
+		repositoryMock.On("ListAllRepositoryUsers").Return(&[]roleEntities.Response{}, nil)
+
+		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
+		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock)
+
+		result, err := controller.GetUsers(uuid.New())
+		assert.NoError(t, err)
+		assert.NotNil(t, result)
+	})
+}

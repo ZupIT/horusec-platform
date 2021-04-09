@@ -158,3 +158,19 @@ func TestIsNotMemberOfWorkspace(t *testing.T) {
 		assert.False(t, repository.IsNotMemberOfWorkspace(uuid.New(), uuid.New()))
 	})
 }
+
+func TestListAllRepositoryUsers(t *testing.T) {
+	t.Run("should success get all repositories users", func(t *testing.T) {
+		workspaceRepositoryMock := &workspaceRepository.Mock{}
+
+		databaseMock := &database.Mock{}
+		databaseMock.On("Raw").Return(&response.Response{})
+
+		repository := NewRepositoryRepository(&database.Connection{Read: databaseMock, Write: databaseMock},
+			repositoryUseCases.NewRepositoryUseCases(), workspaceRepositoryMock)
+
+		result, err := repository.ListAllRepositoryUsers(uuid.New())
+		assert.NoError(t, err)
+		assert.NotNil(t, result)
+	})
+}
