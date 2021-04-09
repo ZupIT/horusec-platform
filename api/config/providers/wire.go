@@ -5,8 +5,15 @@ package providers
 import (
 	analysisHandler "github.com/ZupIT/horusec-platform/api/internal/handlers/analysis"
 	healthHandler "github.com/ZupIT/horusec-platform/api/internal/handlers/health"
+	"github.com/ZupIT/horusec-platform/api/internal/middelwares/token"
+	"github.com/ZupIT/horusec-platform/api/internal/repositories/analysis"
+	"github.com/ZupIT/horusec-platform/api/internal/repositories/repository"
+	repositoriesToken "github.com/ZupIT/horusec-platform/api/internal/repositories/token"
 	"github.com/ZupIT/horusec-platform/api/internal/router"
 	"github.com/google/wire"
+
+	appConfiguration "github.com/ZupIT/horusec-devkit/pkg/services/app"
+	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth/proto"
 
 	"github.com/ZupIT/horusec-devkit/pkg/services/broker"
 	brokerConfig "github.com/ZupIT/horusec-devkit/pkg/services/broker/config"
@@ -25,12 +32,18 @@ var providers = wire.NewSet(
 	databaseConfig.NewDatabaseConfig,
 	database.NewDatabaseReadAndWrite,
 	auth.NewAuthGRPCConnection,
+	proto.NewAuthServiceClient,
+	token.NewTokenAuthz,
+	analysis.NewRepositoriesAnalysis,
+	repository.NewRepositoriesRepository,
+	repositoriesToken.NewRepositoriesToken,
 	cors.NewCorsConfig,
 	http.NewHTTPRouter,
-	router.NewHTTPRouter,
+	appConfiguration.NewAppConfig,
 	analysisController.NewAnalysisController,
 	analysisHandler.NewAnalysisHandler,
 	healthHandler.NewHealthHandler,
+	router.NewHTTPRouter,
 )
 
 func Initialize(defaultPort string) (router.IRouter, error) {
