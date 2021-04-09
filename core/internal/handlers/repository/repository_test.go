@@ -882,3 +882,75 @@ func TestGetUsers(t *testing.T) {
 		assert.Equal(t, http.StatusBadRequest, w.Code)
 	})
 }
+
+func TestRemoveUser(t *testing.T) {
+	t.Run("should return 204 success remove user", func(t *testing.T) {
+		authGRPCMock := &proto.Mock{}
+		appConfigMock := &app.Mock{}
+
+		controllerMock := &repositoryController.Mock{}
+		controllerMock.On("RemoveUser").Return(nil)
+
+		handler := NewRepositoryHandler(repositoryUseCases.NewRepositoryUseCases(), controllerMock,
+			appConfigMock, authGRPCMock, roleUseCases.NewRoleUseCases())
+
+		r, _ := http.NewRequest(http.MethodDelete, "test", nil)
+		w := httptest.NewRecorder()
+
+		ctx := chi.NewRouteContext()
+		ctx.URLParams.Add("workspaceID", uuid.NewString())
+		ctx.URLParams.Add("repositoryID", uuid.NewString())
+		ctx.URLParams.Add("accountID", uuid.NewString())
+		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
+
+		handler.RemoveUser(w, r)
+
+		assert.Equal(t, http.StatusNoContent, w.Code)
+	})
+
+	t.Run("should return 500 when something went wrong", func(t *testing.T) {
+		authGRPCMock := &proto.Mock{}
+		appConfigMock := &app.Mock{}
+
+		controllerMock := &repositoryController.Mock{}
+		controllerMock.On("RemoveUser").Return(errors.New("test"))
+
+		handler := NewRepositoryHandler(repositoryUseCases.NewRepositoryUseCases(), controllerMock,
+			appConfigMock, authGRPCMock, roleUseCases.NewRoleUseCases())
+
+		r, _ := http.NewRequest(http.MethodDelete, "test", nil)
+		w := httptest.NewRecorder()
+
+		ctx := chi.NewRouteContext()
+		ctx.URLParams.Add("workspaceID", uuid.NewString())
+		ctx.URLParams.Add("repositoryID", uuid.NewString())
+		ctx.URLParams.Add("accountID", uuid.NewString())
+		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
+
+		handler.RemoveUser(w, r)
+
+		assert.Equal(t, http.StatusInternalServerError, w.Code)
+	})
+
+	t.Run("should return 400 when invalid account id", func(t *testing.T) {
+		authGRPCMock := &proto.Mock{}
+		appConfigMock := &app.Mock{}
+		controllerMock := &repositoryController.Mock{}
+
+		handler := NewRepositoryHandler(repositoryUseCases.NewRepositoryUseCases(), controllerMock,
+			appConfigMock, authGRPCMock, roleUseCases.NewRoleUseCases())
+
+		r, _ := http.NewRequest(http.MethodDelete, "test", nil)
+		w := httptest.NewRecorder()
+
+		ctx := chi.NewRouteContext()
+		ctx.URLParams.Add("workspaceID", uuid.NewString())
+		ctx.URLParams.Add("repositoryID", uuid.NewString())
+		ctx.URLParams.Add("accountID", "test")
+		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
+
+		handler.RemoveUser(w, r)
+
+		assert.Equal(t, http.StatusBadRequest, w.Code)
+	})
+}

@@ -27,6 +27,7 @@ type IController interface {
 	UpdateRole(data *roleEntities.Data) (*roleEntities.Response, error)
 	InviteUser(data *roleEntities.UserData) (*roleEntities.Response, error)
 	GetUsers(repositoryID uuid.UUID) (*[]roleEntities.Response, error)
+	RemoveUser(data *roleEntities.Data) error
 }
 
 type Controller struct {
@@ -173,4 +174,9 @@ func (c *Controller) sendInviteUserEmail(email, username, repositoryName string)
 
 func (c *Controller) GetUsers(repositoryID uuid.UUID) (*[]roleEntities.Response, error) {
 	return c.repository.ListAllRepositoryUsers(repositoryID)
+}
+
+func (c *Controller) RemoveUser(data *roleEntities.Data) error {
+	return c.databaseWrite.Delete(c.useCases.FilterAccountRepositoryByID(data.AccountID, data.RepositoryID),
+		repositoryEnums.DatabaseAccountRepositoryTable).GetError()
 }

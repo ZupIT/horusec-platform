@@ -355,7 +355,7 @@ func (h *Handler) GetUsers(w http.ResponseWriter, r *http.Request) {
 
 // @Tags Workspace
 // @Description Remove a user from a workspace
-// @ID remove-user
+// @ID remove-workspace-user
 // @Accept  json
 // @Produce  json
 // @Param workspaceID path string true "ID of the workspace"

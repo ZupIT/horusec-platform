@@ -788,6 +788,79 @@ var doc = `{
             }
         },
         "/core/workspaces/{workspaceID}/repositories/{repositoryID}/roles/{accountID}": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Remove a user from a repository",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Repository"
+                ],
+                "operationId": "remove-repository-user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID of the workspace",
+                        "name": "workspaceID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "ID of the repository",
+                        "name": "repositoryID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "ID of the account",
+                        "name": "accountID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entities.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/entities.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/entities.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/entities.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/entities.Response"
+                        }
+                    }
+                }
+            },
             "patch": {
                 "security": [
                     {
@@ -1017,7 +1090,7 @@ var doc = `{
                 "tags": [
                     "Workspace"
                 ],
-                "operationId": "remove-user",
+                "operationId": "remove-workspace-user",
                 "parameters": [
                     {
                         "type": "string",

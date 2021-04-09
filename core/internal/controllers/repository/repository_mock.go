@@ -53,3 +53,8 @@ func (m *Mock) GetUsers(_ uuid.UUID) (*[]roleEntities.Response, error) {
 	args := m.MethodCalled("GetUsers")
 	return args.Get(0).(*[]roleEntities.Response), mockUtils.ReturnNilOrError(args, 1)
 }
+
+func (m *Mock) RemoveUser(_ *roleEntities.Data) error {
+	args := m.MethodCalled("RemoveUser")
+	return mockUtils.ReturnNilOrError(args, 0)
+}

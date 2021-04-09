@@ -502,3 +502,26 @@ func TestGetUsers(t *testing.T) {
 		assert.NotNil(t, result)
 	})
 }
+
+func TestRemoveUser(t *testing.T) {
+	data := &roleEntities.Data{
+		Role:         account.Member,
+		AccountID:    uuid.New(),
+		WorkspaceID:  uuid.New(),
+		RepositoryID: uuid.New(),
+	}
+
+	t.Run("should success remove user from repository", func(t *testing.T) {
+		appConfig := &app.Mock{}
+		repositoryMock := &repositoryRepository.Mock{}
+
+		databaseMock := &database.Mock{}
+		databaseMock.On("Delete").Return(&response.Response{})
+
+		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
+		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock)
+
+		assert.NoError(t, controller.RemoveUser(data))
+	})
+}

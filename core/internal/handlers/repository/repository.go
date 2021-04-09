@@ -402,3 +402,43 @@ func (h *Handler) GetUsers(w http.ResponseWriter, r *http.Request) {
 
 	httpUtil.StatusOK(w, users)
 }
+
+// @Tags Repository
+// @Description Remove a user from a repository
+// @ID remove-repository-user
+// @Accept  json
+// @Produce  json
+// @Param workspaceID path string true "ID of the workspace"
+// @Param repositoryID path string true "ID of the repository"
+// @Param accountID path string true "ID of the account"
+// @Success 200 {object} entities.Response
+// @Failure 400 {object} entities.Response
+// @Failure 401 {object} entities.Response
+// @Failure 404 {object} entities.Response
+// @Failure 500 {object} entities.Response
+// @Router /core/workspaces/{workspaceID}/repositories/{repositoryID}/roles/{accountID} [delete]
+// @Security ApiKeyAuth
+func (h *Handler) RemoveUser(w http.ResponseWriter, r *http.Request) {
+	data, err := h.getRemoveUserData(r)
+	if err != nil {
+		httpUtil.StatusBadRequest(w, err)
+		return
+	}
+
+	if err := h.controller.RemoveUser(data); err != nil {
+		httpUtil.StatusInternalServerError(w, err)
+		return
+	}
+
+	httpUtil.StatusNoContent(w)
+}
+
+func (h *Handler) getRemoveUserData(r *http.Request) (*roleEntities.Data, error) {
+	accountID, err := uuid.Parse(chi.URLParam(r, roleEnums.AccountID))
+	if err != nil {
+		return nil, err
+	}
+
+	return h.roleUseCases.NewRoleData(accountID, parser.ParseStringToUUID(chi.URLParam(r, workspaceEnums.ID)),
+		parser.ParseStringToUUID(chi.URLParam(r, repositoryEnums.ID))), nil
+}

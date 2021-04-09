@@ -557,6 +557,54 @@ paths:
       tags:
       - Repository
   /core/workspaces/{workspaceID}/repositories/{repositoryID}/roles/{accountID}:
+    delete:
+      consumes:
+      - application/json
+      description: Remove a user from a repository
+      operationId: remove-repository-user
+      parameters:
+      - description: ID of the workspace
+        in: path
+        name: workspaceID
+        required: true
+        type: string
+      - description: ID of the repository
+        in: path
+        name: repositoryID
+        required: true
+        type: string
+      - description: ID of the account
+        in: path
+        name: accountID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/entities.Response'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Repository
     patch:
       consumes:
       - application/json
@@ -699,7 +747,7 @@ paths:
       consumes:
       - application/json
       description: Remove a user from a workspace
-      operationId: remove-user
+      operationId: remove-workspace-user
       parameters:
       - description: ID of the workspace
         in: path
