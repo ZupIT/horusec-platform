@@ -32,13 +32,14 @@ func TestValidateRoleData(t *testing.T) {
 	})
 }
 
-func TestSetAccountAndWorkspaceID(t *testing.T) {
+func TestSetDataIDs(t *testing.T) {
 	t.Run("should success set account and workspace id", func(t *testing.T) {
 		data := &Data{}
 		id := uuid.New()
 
-		_ = data.SetAccountAndWorkspaceID(id, id)
+		_ = data.SetDataIDs(id, id.String(), id.String())
 		assert.Equal(t, id, data.WorkspaceID)
+		assert.Equal(t, id, data.RepositoryID)
 		assert.Equal(t, id, data.AccountID)
 	})
 }

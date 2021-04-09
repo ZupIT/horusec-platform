@@ -11,7 +11,6 @@ import (
 	envUtils "github.com/ZupIT/horusec-devkit/pkg/utils/env"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/parser"
 
-	"github.com/ZupIT/horusec-platform/core/internal/entities/role"
 	"github.com/ZupIT/horusec-platform/core/internal/entities/workspace"
 )
 
@@ -20,10 +19,7 @@ type IUseCases interface {
 	FilterAccountWorkspaceByID(accountID, workspaceID uuid.UUID) map[string]interface{}
 	FilterWorkspaceByID(workspaceID uuid.UUID) map[string]interface{}
 	NewWorkspaceData(workspaceID uuid.UUID, accountData *proto.GetAccountDataResponse) *workspace.Data
-	RoleDataFromIOReadCloser(body io.ReadCloser) (*role.Data, error)
 	NewOrganizationInviteEmail(email, username, workspaceName string) []byte
-	NewRoleData(workspaceID, accountID uuid.UUID) *role.Data
-	InviteUserDataFromIOReadCloser(body io.ReadCloser) (*role.InviteUserData, error)
 }
 
 type UseCases struct {
@@ -59,16 +55,6 @@ func (u *UseCases) NewWorkspaceData(workspaceID uuid.UUID, accountData *proto.Ge
 	return data.SetAccountData(accountData)
 }
 
-func (u *UseCases) RoleDataFromIOReadCloser(body io.ReadCloser) (*role.Data, error) {
-	data := &role.Data{}
-
-	if err := parser.ParseBodyToEntity(body, data); err != nil {
-		return nil, err
-	}
-
-	return data, data.Validate()
-}
-
 func (u *UseCases) NewOrganizationInviteEmail(email, username, workspaceName string) []byte {
 	emailMessage := &emailEntities.Message{
 		To:           email,
@@ -81,21 +67,4 @@ func (u *UseCases) NewOrganizationInviteEmail(email, username, workspaceName str
 	}
 
 	return emailMessage.ToBytes()
-}
-
-func (u *UseCases) NewRoleData(workspaceID, accountID uuid.UUID) *role.Data {
-	return &role.Data{
-		WorkspaceID: workspaceID,
-		AccountID:   accountID,
-	}
-}
-
-func (u *UseCases) InviteUserDataFromIOReadCloser(body io.ReadCloser) (*role.InviteUserData, error) {
-	data := &role.InviteUserData{}
-
-	if err := parser.ParseBodyToEntity(body, data); err != nil {
-		return nil, err
-	}
-
-	return data, data.Validate()
 }

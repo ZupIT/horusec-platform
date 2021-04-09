@@ -21,6 +21,7 @@ type IRepository interface {
 	GetAccountRepository(accountID, repositoryID uuid.UUID) (*repositoryEntities.AccountRepository, error)
 	ListRepositoriesAuthTypeHorusec(accountID, workspaceID uuid.UUID) (*[]repositoryEntities.Response, error)
 	ListRepositoriesAuthTypeLdap(workspaceID uuid.UUID, permissions []string) (*[]repositoryEntities.Response, error)
+	IsNotMemberOfWorkspace(accountID, workspaceID uuid.UUID) bool
 }
 
 type Repository struct {
@@ -163,4 +164,13 @@ func (r *Repository) queryListRepositoriesAuthTypeLdap() string {
 					)
 			)
 	`
+}
+
+func (r *Repository) IsNotMemberOfWorkspace(accountID, workspaceID uuid.UUID) bool {
+	accountWorkspace, err := r.workspaceRepository.GetAccountWorkspace(accountID, workspaceID)
+	if err != nil || accountWorkspace == nil {
+		return true
+	}
+
+	return false
 }

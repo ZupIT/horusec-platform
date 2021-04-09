@@ -463,6 +463,61 @@ paths:
       - ApiKeyAuth: []
       tags:
       - Repository
+  /core/workspaces/{workspaceID}/repositories/{repositoryID}/roles/{accountID}:
+    patch:
+      consumes:
+      - application/json
+      description: Update an account role of a repository
+      operationId: repository-role
+      parameters:
+      - description: ID of the workspace
+        in: path
+        name: workspaceID
+        required: true
+        type: string
+      - description: ID of the account
+        in: path
+        name: accountID
+        required: true
+        type: string
+      - description: ID of the repository
+        in: path
+        name: repositoryID
+        required: true
+        type: string
+      - description: update role of a account in a specific workspace
+        in: body
+        name: Role
+        required: true
+        schema:
+          $ref: '#/definitions/role.Data'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/entities.Response'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Repository
   /core/workspaces/{workspaceID}/roles:
     get:
       consumes:

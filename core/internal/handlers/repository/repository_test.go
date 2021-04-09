@@ -20,6 +20,7 @@ import (
 	repositoryEntities "github.com/ZupIT/horusec-platform/core/internal/entities/repository"
 	repositoryEnums "github.com/ZupIT/horusec-platform/core/internal/enums/repository"
 	repositoryUseCases "github.com/ZupIT/horusec-platform/core/internal/usecases/repository"
+	roleUseCases "github.com/ZupIT/horusec-platform/core/internal/usecases/role"
 )
 
 func TestCreate(t *testing.T) {
@@ -46,7 +47,7 @@ func TestCreate(t *testing.T) {
 		appConfigMock.On("GetAuthorizationType").Return(auth.Horusec)
 
 		handler := NewRepositoryHandler(repositoryUseCases.NewRepositoryUseCases(), controllerMock,
-			appConfigMock, authGRPCMock)
+			appConfigMock, authGRPCMock, roleUseCases.NewRoleUseCases())
 
 		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(data.ToBytes()))
 		w := httptest.NewRecorder()
@@ -71,7 +72,7 @@ func TestCreate(t *testing.T) {
 		appConfigMock.On("GetAuthorizationType").Return(auth.Horusec)
 
 		handler := NewRepositoryHandler(repositoryUseCases.NewRepositoryUseCases(), controllerMock,
-			appConfigMock, authGRPCMock)
+			appConfigMock, authGRPCMock, roleUseCases.NewRoleUseCases())
 
 		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(data.ToBytes()))
 		w := httptest.NewRecorder()
@@ -97,7 +98,7 @@ func TestCreate(t *testing.T) {
 		appConfigMock.On("GetAuthorizationType").Return(auth.Horusec)
 
 		handler := NewRepositoryHandler(repositoryUseCases.NewRepositoryUseCases(), controllerMock,
-			appConfigMock, authGRPCMock)
+			appConfigMock, authGRPCMock, roleUseCases.NewRoleUseCases())
 
 		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(data.ToBytes()))
 		w := httptest.NewRecorder()
@@ -121,7 +122,7 @@ func TestCreate(t *testing.T) {
 		appConfigMock.On("GetAuthorizationType").Return(auth.Ldap)
 
 		handler := NewRepositoryHandler(repositoryUseCases.NewRepositoryUseCases(), controllerMock,
-			appConfigMock, authGRPCMock)
+			appConfigMock, authGRPCMock, roleUseCases.NewRoleUseCases())
 
 		data.AuthzAdmin = []string{"test2"}
 		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(data.ToBytes()))
@@ -144,7 +145,7 @@ func TestCreate(t *testing.T) {
 		authGRPCMock.On("GetAccountInfo").Return(accountData, nil)
 
 		handler := NewRepositoryHandler(repositoryUseCases.NewRepositoryUseCases(), controllerMock,
-			appConfigMock, authGRPCMock)
+			appConfigMock, authGRPCMock, roleUseCases.NewRoleUseCases())
 
 		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader([]byte("")))
 		w := httptest.NewRecorder()
@@ -166,7 +167,7 @@ func TestCreate(t *testing.T) {
 		authGRPCMock.On("GetAccountInfo").Return(accountData, errors.New("test"))
 
 		handler := NewRepositoryHandler(repositoryUseCases.NewRepositoryUseCases(), controllerMock,
-			appConfigMock, authGRPCMock)
+			appConfigMock, authGRPCMock, roleUseCases.NewRoleUseCases())
 
 		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader([]byte("")))
 		w := httptest.NewRecorder()
@@ -196,7 +197,7 @@ func TestGet(t *testing.T) {
 		appConfigMock := &app.Mock{}
 
 		handler := NewRepositoryHandler(repositoryUseCases.NewRepositoryUseCases(), controllerMock,
-			appConfigMock, authGRPCMock)
+			appConfigMock, authGRPCMock, roleUseCases.NewRoleUseCases())
 
 		r, _ := http.NewRequest(http.MethodGet, "test", nil)
 		w := httptest.NewRecorder()
@@ -221,7 +222,7 @@ func TestGet(t *testing.T) {
 		appConfigMock := &app.Mock{}
 
 		handler := NewRepositoryHandler(repositoryUseCases.NewRepositoryUseCases(), controllerMock,
-			appConfigMock, authGRPCMock)
+			appConfigMock, authGRPCMock, roleUseCases.NewRoleUseCases())
 
 		r, _ := http.NewRequest(http.MethodGet, "test", nil)
 		w := httptest.NewRecorder()
@@ -244,7 +245,7 @@ func TestGet(t *testing.T) {
 		authGRPCMock.On("GetAccountInfo").Return(accountData, errors.New("test"))
 
 		handler := NewRepositoryHandler(repositoryUseCases.NewRepositoryUseCases(), controllerMock,
-			appConfigMock, authGRPCMock)
+			appConfigMock, authGRPCMock, roleUseCases.NewRoleUseCases())
 
 		r, _ := http.NewRequest(http.MethodGet, "test", nil)
 		w := httptest.NewRecorder()
@@ -265,7 +266,7 @@ func TestGet(t *testing.T) {
 		authGRPCMock := &proto.Mock{}
 
 		handler := NewRepositoryHandler(repositoryUseCases.NewRepositoryUseCases(), controllerMock,
-			appConfigMock, authGRPCMock)
+			appConfigMock, authGRPCMock, roleUseCases.NewRoleUseCases())
 
 		r, _ := http.NewRequest(http.MethodGet, "test", nil)
 		w := httptest.NewRecorder()
@@ -306,7 +307,7 @@ func TestUpdate(t *testing.T) {
 		appConfigMock.On("GetAuthorizationType").Return(auth.Horusec)
 
 		handler := NewRepositoryHandler(repositoryUseCases.NewRepositoryUseCases(), controllerMock,
-			appConfigMock, authGRPCMock)
+			appConfigMock, authGRPCMock, roleUseCases.NewRoleUseCases())
 
 		r, _ := http.NewRequest(http.MethodPatch, "test", bytes.NewReader(data.ToBytes()))
 		w := httptest.NewRecorder()
@@ -332,7 +333,7 @@ func TestUpdate(t *testing.T) {
 		appConfigMock.On("GetAuthorizationType").Return(auth.Horusec)
 
 		handler := NewRepositoryHandler(repositoryUseCases.NewRepositoryUseCases(), controllerMock,
-			appConfigMock, authGRPCMock)
+			appConfigMock, authGRPCMock, roleUseCases.NewRoleUseCases())
 
 		r, _ := http.NewRequest(http.MethodPatch, "test", bytes.NewReader(data.ToBytes()))
 		w := httptest.NewRecorder()
@@ -359,7 +360,7 @@ func TestUpdate(t *testing.T) {
 		appConfigMock.On("GetAuthorizationType").Return(auth.Horusec)
 
 		handler := NewRepositoryHandler(repositoryUseCases.NewRepositoryUseCases(), controllerMock,
-			appConfigMock, authGRPCMock)
+			appConfigMock, authGRPCMock, roleUseCases.NewRoleUseCases())
 
 		r, _ := http.NewRequest(http.MethodPatch, "test", bytes.NewReader(data.ToBytes()))
 		w := httptest.NewRecorder()
@@ -384,7 +385,7 @@ func TestUpdate(t *testing.T) {
 		appConfigMock.On("GetAuthorizationType").Return(auth.Ldap)
 
 		handler := NewRepositoryHandler(repositoryUseCases.NewRepositoryUseCases(), controllerMock,
-			appConfigMock, authGRPCMock)
+			appConfigMock, authGRPCMock, roleUseCases.NewRoleUseCases())
 
 		data.AuthzAdmin = []string{"test2"}
 		r, _ := http.NewRequest(http.MethodPatch, "test", bytes.NewReader(data.ToBytes()))
@@ -408,7 +409,7 @@ func TestUpdate(t *testing.T) {
 		authGRPCMock.On("GetAccountInfo").Return(accountData, errors.New("test"))
 
 		handler := NewRepositoryHandler(repositoryUseCases.NewRepositoryUseCases(), controllerMock,
-			appConfigMock, authGRPCMock)
+			appConfigMock, authGRPCMock, roleUseCases.NewRoleUseCases())
 
 		r, _ := http.NewRequest(http.MethodPatch, "test", bytes.NewReader(data.ToBytes()))
 		w := httptest.NewRecorder()
@@ -429,7 +430,7 @@ func TestUpdate(t *testing.T) {
 		appConfigMock := &app.Mock{}
 
 		handler := NewRepositoryHandler(repositoryUseCases.NewRepositoryUseCases(), controllerMock,
-			appConfigMock, authGRPCMock)
+			appConfigMock, authGRPCMock, roleUseCases.NewRoleUseCases())
 
 		r, _ := http.NewRequest(http.MethodPatch, "test", bytes.NewReader(data.ToBytes()))
 		w := httptest.NewRecorder()
@@ -454,7 +455,7 @@ func TestDelete(t *testing.T) {
 		appConfigMock := &app.Mock{}
 
 		handler := NewRepositoryHandler(repositoryUseCases.NewRepositoryUseCases(), controllerMock,
-			appConfigMock, authGRPCMock)
+			appConfigMock, authGRPCMock, roleUseCases.NewRoleUseCases())
 
 		r, _ := http.NewRequest(http.MethodDelete, "test", nil)
 		w := httptest.NewRecorder()
@@ -477,7 +478,7 @@ func TestDelete(t *testing.T) {
 		appConfigMock := &app.Mock{}
 
 		handler := NewRepositoryHandler(repositoryUseCases.NewRepositoryUseCases(), controllerMock,
-			appConfigMock, authGRPCMock)
+			appConfigMock, authGRPCMock, roleUseCases.NewRoleUseCases())
 
 		r, _ := http.NewRequest(http.MethodDelete, "test", nil)
 		w := httptest.NewRecorder()
@@ -498,7 +499,7 @@ func TestDelete(t *testing.T) {
 		appConfigMock := &app.Mock{}
 
 		handler := NewRepositoryHandler(repositoryUseCases.NewRepositoryUseCases(), controllerMock,
-			appConfigMock, authGRPCMock)
+			appConfigMock, authGRPCMock, roleUseCases.NewRoleUseCases())
 
 		r, _ := http.NewRequest(http.MethodDelete, "test", nil)
 		w := httptest.NewRecorder()
@@ -530,7 +531,7 @@ func TestList(t *testing.T) {
 		appConfigMock := &app.Mock{}
 
 		handler := NewRepositoryHandler(repositoryUseCases.NewRepositoryUseCases(), controllerMock,
-			appConfigMock, authGRPCMock)
+			appConfigMock, authGRPCMock, roleUseCases.NewRoleUseCases())
 
 		r, _ := http.NewRequest(http.MethodGet, "test", nil)
 		w := httptest.NewRecorder()
@@ -554,7 +555,7 @@ func TestList(t *testing.T) {
 		appConfigMock := &app.Mock{}
 
 		handler := NewRepositoryHandler(repositoryUseCases.NewRepositoryUseCases(), controllerMock,
-			appConfigMock, authGRPCMock)
+			appConfigMock, authGRPCMock, roleUseCases.NewRoleUseCases())
 
 		r, _ := http.NewRequest(http.MethodGet, "test", nil)
 		w := httptest.NewRecorder()
@@ -576,7 +577,7 @@ func TestList(t *testing.T) {
 		authGRPCMock.On("GetAccountInfo").Return(accountData, errors.New("test"))
 
 		handler := NewRepositoryHandler(repositoryUseCases.NewRepositoryUseCases(), controllerMock,
-			appConfigMock, authGRPCMock)
+			appConfigMock, authGRPCMock, roleUseCases.NewRoleUseCases())
 
 		r, _ := http.NewRequest(http.MethodGet, "test", nil)
 		w := httptest.NewRecorder()

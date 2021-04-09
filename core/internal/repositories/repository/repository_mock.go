@@ -37,3 +37,8 @@ func (m *Mock) ListRepositoriesAuthTypeLdap(_ uuid.UUID, _ []string) (*[]reposit
 	args := m.MethodCalled("ListRepositoriesAuthTypeLdap")
 	return args.Get(0).(*[]repositoryEntities.Response), mockUtils.ReturnNilOrError(args, 1)
 }
+
+func (m *Mock) IsNotMemberOfWorkspace(_, _ uuid.UUID) bool {
+	args := m.MethodCalled("IsNotMemberOfWorkspace")
+	return args.Get(0).(bool)
+}

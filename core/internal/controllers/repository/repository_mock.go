@@ -7,6 +7,7 @@ import (
 	mockUtils "github.com/ZupIT/horusec-devkit/pkg/utils/mock"
 
 	repositoryEntities "github.com/ZupIT/horusec-platform/core/internal/entities/repository"
+	roleEntities "github.com/ZupIT/horusec-platform/core/internal/entities/role"
 )
 
 type Mock struct {
@@ -36,4 +37,9 @@ func (m *Mock) Delete(_ uuid.UUID) error {
 func (m *Mock) List(_ *repositoryEntities.Data) (*[]repositoryEntities.Response, error) {
 	args := m.MethodCalled("List")
 	return args.Get(0).(*[]repositoryEntities.Response), mockUtils.ReturnNilOrError(args, 1)
+}
+
+func (m *Mock) UpdateRole(_ *roleEntities.Data) (*roleEntities.Response, error) {
+	args := m.MethodCalled("UpdateRole")
+	return args.Get(0).(*roleEntities.Response), mockUtils.ReturnNilOrError(args, 1)
 }

@@ -16,27 +16,32 @@ import (
 
 	repositoryController "github.com/ZupIT/horusec-platform/core/internal/controllers/repository"
 	repositoryEntities "github.com/ZupIT/horusec-platform/core/internal/entities/repository"
+	roleEntities "github.com/ZupIT/horusec-platform/core/internal/entities/role"
 	repositoryEnums "github.com/ZupIT/horusec-platform/core/internal/enums/repository"
+	roleEnums "github.com/ZupIT/horusec-platform/core/internal/enums/role"
 	workspaceEnums "github.com/ZupIT/horusec-platform/core/internal/enums/workspace"
 	repositoryUseCases "github.com/ZupIT/horusec-platform/core/internal/usecases/repository"
+	roleUseCases "github.com/ZupIT/horusec-platform/core/internal/usecases/role"
 )
 
 type Handler struct {
-	useCases   repositoryUseCases.IUseCases
-	controller repositoryController.IController
-	appConfig  app.IConfig
-	authGRPC   proto.AuthServiceClient
-	context    context.Context
+	useCases     repositoryUseCases.IUseCases
+	controller   repositoryController.IController
+	appConfig    app.IConfig
+	authGRPC     proto.AuthServiceClient
+	context      context.Context
+	roleUseCases roleUseCases.IUseCases
 }
 
 func NewRepositoryHandler(useCases repositoryUseCases.IUseCases, controller repositoryController.IController,
-	appConfig app.IConfig, authGRPC proto.AuthServiceClient) *Handler {
+	appConfig app.IConfig, authGRPC proto.AuthServiceClient, useCasesRole roleUseCases.IUseCases) *Handler {
 	return &Handler{
-		useCases:   useCases,
-		controller: controller,
-		appConfig:  appConfig,
-		authGRPC:   authGRPC,
-		context:    context.Background(),
+		useCases:     useCases,
+		controller:   controller,
+		appConfig:    appConfig,
+		authGRPC:     authGRPC,
+		context:      context.Background(),
+		roleUseCases: useCasesRole,
 	}
 }
 
@@ -262,4 +267,59 @@ func (h *Handler) getListData(r *http.Request) (*repositoryEntities.Data, error)
 
 	return h.useCases.NewRepositoryData(uuid.Nil, parser.ParseStringToUUID(
 		chi.URLParam(r, workspaceEnums.ID)), accountData), nil
+}
+
+// @Tags Repository
+// @Description Update an account role of a repository
+// @ID repository-role
+// @Accept  json
+// @Produce  json
+// @Param workspaceID path string true "ID of the workspace"
+// @Param accountID path string true "ID of the account"
+// @Param repositoryID path string true "ID of the repository"
+// @Param Role body roleEntities.Data true "update role of a account in a specific workspace"
+// @Success 200 {object} entities.Response
+// @Failure 400 {object} entities.Response
+// @Failure 401 {object} entities.Response
+// @Failure 404 {object} entities.Response
+// @Failure 500 {object} entities.Response
+// @Router /core/workspaces/{workspaceID}/repositories/{repositoryID}/roles/{accountID} [patch]
+// @Security ApiKeyAuth
+func (h *Handler) UpdateRole(w http.ResponseWriter, r *http.Request) {
+	data, err := h.getUpdateRoleData(r)
+	if err != nil {
+		httpUtil.StatusBadRequest(w, err)
+		return
+	}
+
+	role, err := h.controller.UpdateRole(data)
+	if err != nil {
+		h.checkUpdateRoleErrors(w, err)
+		return
+	}
+
+	httpUtil.StatusOK(w, role)
+}
+
+func (h *Handler) getUpdateRoleData(r *http.Request) (*roleEntities.Data, error) {
+	data, err := h.roleUseCases.RoleDataFromIOReadCloser(r.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	accountID, err := uuid.Parse(chi.URLParam(r, roleEnums.AccountID))
+	if err != nil {
+		return nil, err
+	}
+
+	return data.SetDataIDs(accountID, chi.URLParam(r, workspaceEnums.ID), chi.URLParam(r, repositoryEnums.ID)), nil
+}
+
+func (h *Handler) checkUpdateRoleErrors(w http.ResponseWriter, err error) {
+	if err == repositoryEnums.ErrorUserDoesNotBelongToWorkspace {
+		httpUtil.StatusBadRequest(w, err)
+		return
+	}
+
+	httpUtil.StatusInternalServerError(w, err)
 }

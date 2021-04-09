@@ -12,32 +12,34 @@ import (
 	httpUtil "github.com/ZupIT/horusec-devkit/pkg/utils/http"
 	_ "github.com/ZupIT/horusec-devkit/pkg/utils/http/entities" // swagger import
 	"github.com/ZupIT/horusec-devkit/pkg/utils/jwt/enums"
-	"github.com/ZupIT/horusec-devkit/pkg/utils/parser"
 
 	workspaceController "github.com/ZupIT/horusec-platform/core/internal/controllers/workspace"
 	roleEntities "github.com/ZupIT/horusec-platform/core/internal/entities/role"
 	workspaceEntities "github.com/ZupIT/horusec-platform/core/internal/entities/workspace"
 	roleEnums "github.com/ZupIT/horusec-platform/core/internal/enums/role"
 	workspaceEnums "github.com/ZupIT/horusec-platform/core/internal/enums/workspace"
+	roleUseCases "github.com/ZupIT/horusec-platform/core/internal/usecases/role"
 	workspaceUseCases "github.com/ZupIT/horusec-platform/core/internal/usecases/workspace"
 )
 
 type Handler struct {
-	controller workspaceController.IController
-	useCases   workspaceUseCases.IUseCases
-	authGRPC   proto.AuthServiceClient
-	context    context.Context
-	appConfig  app.IConfig
+	controller   workspaceController.IController
+	useCases     workspaceUseCases.IUseCases
+	roleUseCases roleUseCases.IUseCases
+	authGRPC     proto.AuthServiceClient
+	context      context.Context
+	appConfig    app.IConfig
 }
 
 func NewWorkspaceHandler(controller workspaceController.IController, useCases workspaceUseCases.IUseCases,
-	authGRPC proto.AuthServiceClient, appConfig app.IConfig) *Handler {
+	authGRPC proto.AuthServiceClient, appConfig app.IConfig, useCasesRole roleUseCases.IUseCases) *Handler {
 	return &Handler{
-		controller: controller,
-		useCases:   useCases,
-		authGRPC:   authGRPC,
-		context:    context.Background(),
-		appConfig:  appConfig,
+		controller:   controller,
+		useCases:     useCases,
+		authGRPC:     authGRPC,
+		context:      context.Background(),
+		appConfig:    appConfig,
+		roleUseCases: useCasesRole,
 	}
 }
 
@@ -270,7 +272,7 @@ func (h *Handler) UpdateRole(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) getUpdateRoleData(r *http.Request) (*roleEntities.Data, error) {
-	data, err := h.useCases.RoleDataFromIOReadCloser(r.Body)
+	data, err := h.roleUseCases.RoleDataFromIOReadCloser(r.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -280,7 +282,7 @@ func (h *Handler) getUpdateRoleData(r *http.Request) (*roleEntities.Data, error)
 		return nil, err
 	}
 
-	return data.SetAccountAndWorkspaceID(accountID, parser.ParseStringToUUID(chi.URLParam(r, workspaceEnums.ID))), nil
+	return data.SetDataIDs(accountID, chi.URLParam(r, workspaceEnums.ID), ""), nil
 }
 
 // @Tags Workspace
@@ -314,7 +316,7 @@ func (h *Handler) InviteUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) getInviteUserData(r *http.Request) (*roleEntities.InviteUserData, error) {
-	data, err := h.useCases.InviteUserDataFromIOReadCloser(r.Body)
+	data, err := h.roleUseCases.InviteUserDataFromIOReadCloser(r.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -396,5 +398,5 @@ func (h *Handler) getRemoveUserData(r *http.Request) (*roleEntities.Data, error)
 		return nil, err
 	}
 
-	return h.useCases.NewRoleData(workspaceID, accountID), nil
+	return h.roleUseCases.NewRoleData(accountID, workspaceID, uuid.Nil), nil
 }

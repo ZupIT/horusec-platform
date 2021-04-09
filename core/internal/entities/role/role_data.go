@@ -8,6 +8,7 @@ import (
 	"github.com/google/uuid"
 
 	"github.com/ZupIT/horusec-devkit/pkg/enums/account"
+	"github.com/ZupIT/horusec-devkit/pkg/utils/parser"
 )
 
 type Data struct {
@@ -27,9 +28,10 @@ func (d *Data) Validate() error {
 	)
 }
 
-func (d *Data) SetAccountAndWorkspaceID(accountID, workspaceID uuid.UUID) *Data {
+func (d *Data) SetDataIDs(accountID uuid.UUID, workspaceID, repositoryID string) *Data {
 	d.AccountID = accountID
-	d.WorkspaceID = workspaceID
+	d.WorkspaceID = parser.ParseStringToUUID(workspaceID)
+	d.RepositoryID = parser.ParseStringToUUID(repositoryID)
 
 	return d
 }

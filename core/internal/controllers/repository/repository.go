@@ -10,6 +10,7 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 
 	repositoryEntities "github.com/ZupIT/horusec-platform/core/internal/entities/repository"
+	roleEntities "github.com/ZupIT/horusec-platform/core/internal/entities/role"
 	repositoryEnums "github.com/ZupIT/horusec-platform/core/internal/enums/repository"
 	repositoryRepository "github.com/ZupIT/horusec-platform/core/internal/repositories/repository"
 	repositoriesUseCases "github.com/ZupIT/horusec-platform/core/internal/usecases/repository"
@@ -21,6 +22,7 @@ type IController interface {
 	Update(data *repositoryEntities.Data) (*repositoryEntities.Response, error)
 	Delete(repositoryID uuid.UUID) error
 	List(data *repositoryEntities.Data) (*[]repositoryEntities.Response, error)
+	UpdateRole(data *roleEntities.Data) (*roleEntities.Response, error)
 }
 
 type Controller struct {
@@ -110,4 +112,20 @@ func (c *Controller) List(data *repositoryEntities.Data) (*[]repositoryEntities.
 	}
 
 	return c.repository.ListRepositoriesAuthTypeHorusec(data.AccountID, data.WorkspaceID)
+}
+
+func (c *Controller) UpdateRole(data *roleEntities.Data) (*roleEntities.Response, error) {
+	if c.repository.IsNotMemberOfWorkspace(data.AccountID, data.WorkspaceID) {
+		return nil, repositoryEnums.ErrorUserDoesNotBelongToWorkspace
+	}
+
+	accountRepository, err := c.repository.GetAccountRepository(data.AccountID, data.RepositoryID)
+	if err != nil {
+		return nil, err
+	}
+
+	accountRepository.Update(data.Role)
+	return accountRepository.ToResponse(), c.databaseWrite.Update(accountRepository,
+		c.useCases.FilterAccountRepositoryByID(data.AccountID, data.RepositoryID),
+		repositoryEnums.DatabaseAccountRepositoryTable).GetError()
 }
