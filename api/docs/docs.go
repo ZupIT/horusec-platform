@@ -24,7 +24,6 @@ var doc = `{
             "url": "https://github.com/ZupIT/horusec-platform",
             "email": "horusec@zup.com.br"
         },
-        "license": {},
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
@@ -55,22 +54,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/cli.AnalysisData"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "analysis": {
-                                            "$ref": "#/definitions/analysis.Analysis"
-                                        },
-                                        "repositoryName": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/cli.AnalysisData"
                         }
                     }
                 ],
@@ -309,13 +293,64 @@ var doc = `{
     },
     "definitions": {
         "analysis.Analysis": {
-            "type": "object"
+            "type": "object",
+            "properties": {
+                "analysisVulnerabilities": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/analysis.AnalysisVulnerabilities"
+                    }
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "errors": {
+                    "type": "string"
+                },
+                "finishedAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "repositoryID": {
+                    "type": "string"
+                },
+                "repositoryName": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "workspaceID": {
+                    "type": "string"
+                },
+                "workspaceName": {
+                    "type": "string"
+                }
+            }
+        },
+        "analysis.AnalysisVulnerabilities": {
+            "type": "object",
+            "properties": {
+                "analysisID": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "vulnerabilities": {
+                    "$ref": "#/definitions/vulnerability.Vulnerability"
+                },
+                "vulnerabilityID": {
+                    "type": "string"
+                }
+            }
         },
         "cli.AnalysisData": {
             "type": "object",
             "properties": {
                 "analysis": {
-                    "type": "object",
                     "$ref": "#/definitions/analysis.Analysis"
                 },
                 "repositoryName": {
@@ -333,6 +368,62 @@ var doc = `{
                     "type": "object"
                 },
                 "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "vulnerability.Vulnerability": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "column": {
+                    "type": "string"
+                },
+                "commitAuthor": {
+                    "type": "string"
+                },
+                "commitDate": {
+                    "type": "string"
+                },
+                "commitEmail": {
+                    "type": "string"
+                },
+                "commitHash": {
+                    "type": "string"
+                },
+                "commitMessage": {
+                    "type": "string"
+                },
+                "confidence": {
+                    "type": "string"
+                },
+                "details": {
+                    "type": "string"
+                },
+                "file": {
+                    "type": "string"
+                },
+                "language": {
+                    "type": "string"
+                },
+                "line": {
+                    "type": "string"
+                },
+                "securityTool": {
+                    "type": "string"
+                },
+                "severity": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "vulnHash": {
+                    "type": "string"
+                },
+                "vulnerabilityID": {
                     "type": "string"
                 }
             }

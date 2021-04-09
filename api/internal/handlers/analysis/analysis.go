@@ -15,24 +15,21 @@
 package analysis
 
 import (
-	netHTTP "net/http"
-
+	analysisController "github.com/ZupIT/horusec-platform/api/internal/controllers/analysis"
 	handlersEnums "github.com/ZupIT/horusec-platform/api/internal/handlers/analysis/enums"
 	tokenMiddlewareEnum "github.com/ZupIT/horusec-platform/api/internal/middelwares/token/enums"
-
-	analysisController "github.com/ZupIT/horusec-platform/api/internal/controllers/analysis"
 	analysisUseCases "github.com/ZupIT/horusec-platform/api/internal/usecases/analysis"
 	"github.com/go-chi/chi"
 	"github.com/google/uuid"
-
-	_ "github.com/ZupIT/horusec-devkit/pkg/entities/cli"
-	_ "github.com/ZupIT/horusec-devkit/pkg/entities/vulnerability"
-	_ "github.com/ZupIT/horusec-devkit/pkg/utils/http/entities"
-
-	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
+	netHTTP "net/http"
 
 	"github.com/ZupIT/horusec-devkit/pkg/services/database/enums"
 	httpUtil "github.com/ZupIT/horusec-devkit/pkg/utils/http"
+
+	analysisEntities "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
+
+	_ "github.com/ZupIT/horusec-devkit/pkg/entities/cli"
+	_ "github.com/ZupIT/horusec-devkit/pkg/utils/http/entities"
 )
 
 type Handler struct {
@@ -57,7 +54,7 @@ func (h *Handler) Options(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
 // @ID start-new-analysis
 // @Accept  json
 // @Produce  json
-// @Param SendNewAnalysis body cli.AnalysisData{repositoryName=string,analysis=analysis.Analysis{analysisVulnerabilities=[]analysis.AnalysisVulnerabilities{vulnerabilities=vulnerability.Vulnerability}}} true "send new analysis info"
+// @Param SendNewAnalysis body cli.AnalysisData true "send new analysis info"
 // @Success 201 {object} entities.Response{content=string} "CREATED"
 // @Success 400 {object} entities.Response{content=string} "BAD REQUEST"
 // @Success 404 {object} entities.Response{content=string} "NOT FOUND"
@@ -79,7 +76,7 @@ func (h *Handler) Post(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 }
 
 func (h *Handler) decoratorAnalysisFromContext(
-	analysisEntity *analysis.Analysis, r *netHTTP.Request) *analysis.Analysis {
+	analysisEntity *analysisEntities.Analysis, r *netHTTP.Request) *analysisEntities.Analysis {
 	analysisEntity.WorkspaceID = r.Context().Value(tokenMiddlewareEnum.WorkspaceID).(uuid.UUID)
 	analysisEntity.WorkspaceName = r.Context().Value(tokenMiddlewareEnum.WorkspaceName).(string)
 	analysisEntity.RepositoryID = r.Context().Value(tokenMiddlewareEnum.RepositoryID).(uuid.UUID)
@@ -88,7 +85,7 @@ func (h *Handler) decoratorAnalysisFromContext(
 }
 
 func (h *Handler) decoratorAnalysisToRepositoryName(
-	analysisEntity *analysis.Analysis, repositoryName string) (*analysis.Analysis, error) {
+	analysisEntity *analysisEntities.Analysis, repositoryName string) (*analysisEntities.Analysis, error) {
 	if h.isInvalidWorkspaceToCreateAnalysis(analysisEntity) {
 		return nil, handlersEnums.ErrorWorkspaceNotSelected
 	}
@@ -101,19 +98,19 @@ func (h *Handler) decoratorAnalysisToRepositoryName(
 	return analysisEntity, nil
 }
 
-func (h *Handler) isInvalidWorkspaceToCreateAnalysis(analysisEntity *analysis.Analysis) bool {
+func (h *Handler) isInvalidWorkspaceToCreateAnalysis(analysisEntity *analysisEntities.Analysis) bool {
 	return analysisEntity.WorkspaceName == "" || analysisEntity.WorkspaceID == uuid.Nil
 }
 
-func (h *Handler) isValidRepositoryToCreateAnalysis(analysisEntity *analysis.Analysis, repositoryName string) bool {
+func (h *Handler) isValidRepositoryToCreateAnalysis(analysisEntity *analysisEntities.Analysis, repositoryName string) bool {
 	return repositoryName == "" && analysisEntity.RepositoryName == ""
 }
 
-func (h *Handler) isToCreateNewRepository(analysisEntity *analysis.Analysis) bool {
+func (h *Handler) isToCreateNewRepository(analysisEntity *analysisEntities.Analysis) bool {
 	return analysisEntity.RepositoryName == "" && analysisEntity.RepositoryID == uuid.Nil
 }
 
-func (h *Handler) saveAnalysis(w netHTTP.ResponseWriter, analysisEntity *analysis.Analysis) {
+func (h *Handler) saveAnalysis(w netHTTP.ResponseWriter, analysisEntity *analysisEntities.Analysis) {
 	analysisID, err := h.controller.SaveAnalysis(analysisEntity)
 	if err != nil {
 		httpUtil.StatusInternalServerError(w, err)
@@ -129,7 +126,7 @@ func (h *Handler) saveAnalysis(w netHTTP.ResponseWriter, analysisEntity *analysi
 // @Accept  json
 // @Produce  json
 // @Param analysisID path string true "analysisID of the analysis"
-// @Success 200 {object} entities.Response{content=analysis.Analysis{analysisVulnerabilities=[]analysis.AnalysisVulnerabilities{vulnerabilities=vulnerability.Vulnerability}}} "OK"
+// @Success 200 {object} entities.Response{content=analysisEntities.Analysis} "OK"
 // @Success 400 {object} entities.Response{content=string} "BAD REQUEST"
 // @Success 404 {object} entities.Response{content=string} "NOT FOUND"
 // @Failure 500 {object} entities.Response{content=string} "INTERNAL SERVER ERROR"
