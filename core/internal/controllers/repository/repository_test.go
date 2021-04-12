@@ -19,6 +19,7 @@ import (
 
 	repositoryEntities "github.com/ZupIT/horusec-platform/core/internal/entities/repository"
 	roleEntities "github.com/ZupIT/horusec-platform/core/internal/entities/role"
+	tokenEntities "github.com/ZupIT/horusec-platform/core/internal/entities/token"
 	workspaceEntities "github.com/ZupIT/horusec-platform/core/internal/entities/workspace"
 	repositoryEnums "github.com/ZupIT/horusec-platform/core/internal/enums/repository"
 	repositoryRepository "github.com/ZupIT/horusec-platform/core/internal/repositories/repository"
@@ -595,5 +596,59 @@ func TestRemoveUser(t *testing.T) {
 			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{})
 
 		assert.NoError(t, controller.RemoveUser(data))
+	})
+}
+
+func TestCreateToken(t *testing.T) {
+	data := &tokenEntities.Data{}
+
+	t.Run("should success create a new repository token ", func(t *testing.T) {
+		repositoryMock := &repositoryRepository.Mock{}
+		appConfig := &app.Mock{}
+
+		databaseMock := &database.Mock{}
+		databaseMock.On("Create").Return(&response.Response{})
+
+		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
+		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{})
+
+		result, err := controller.CreateToken(data)
+		assert.NoError(t, err)
+		assert.NotEmpty(t, result)
+	})
+}
+
+func TestDeleteToken(t *testing.T) {
+	t.Run("should success delete a repository token ", func(t *testing.T) {
+		repositoryMock := &repositoryRepository.Mock{}
+		appConfig := &app.Mock{}
+
+		databaseMock := &database.Mock{}
+		databaseMock.On("Delete").Return(&response.Response{})
+
+		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
+		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{})
+
+		assert.NoError(t, controller.DeleteToken(&tokenEntities.Data{}))
+	})
+}
+
+func TestListTokens(t *testing.T) {
+	t.Run("should success list repository tokens", func(t *testing.T) {
+		repositoryMock := &repositoryRepository.Mock{}
+		appConfig := &app.Mock{}
+
+		databaseMock := &database.Mock{}
+		databaseMock.On("Find").Return(&response.Response{})
+
+		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
+		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{})
+
+		result, err := controller.ListTokens(&tokenEntities.Data{})
+		assert.NoError(t, err)
+		assert.NotNil(t, result)
 	})
 }
