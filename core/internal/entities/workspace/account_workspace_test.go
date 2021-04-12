@@ -5,11 +5,11 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-
-	"github.com/ZupIT/horusec-platform/core/internal/entities/role"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/ZupIT/horusec-devkit/pkg/enums/account"
+
+	"github.com/ZupIT/horusec-platform/core/internal/entities/role"
 )
 
 func TestUpdateAccountWorkspace(t *testing.T) {

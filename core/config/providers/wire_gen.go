@@ -6,6 +6,8 @@
 package providers
 
 import (
+	"github.com/google/wire"
+
 	"github.com/ZupIT/horusec-platform/core/config/cors"
 	repository3 "github.com/ZupIT/horusec-platform/core/internal/controllers/repository"
 	workspace3 "github.com/ZupIT/horusec-platform/core/internal/controllers/workspace"
@@ -17,7 +19,6 @@ import (
 	"github.com/ZupIT/horusec-platform/core/internal/usecases/repository"
 	"github.com/ZupIT/horusec-platform/core/internal/usecases/role"
 	"github.com/ZupIT/horusec-platform/core/internal/usecases/workspace"
-	"github.com/google/wire"
 
 	"github.com/ZupIT/horusec-devkit/pkg/services/app"
 	"github.com/ZupIT/horusec-devkit/pkg/services/broker"

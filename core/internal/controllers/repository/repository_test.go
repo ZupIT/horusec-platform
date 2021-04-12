@@ -5,8 +5,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/lib/pq"
 	"github.com/google/uuid"
+	"github.com/lib/pq"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/ZupIT/horusec-devkit/pkg/enums/account"
