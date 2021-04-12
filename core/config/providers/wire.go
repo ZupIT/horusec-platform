@@ -25,6 +25,7 @@ import (
 	"github.com/ZupIT/horusec-platform/core/internal/router"
 	repositoryUseCases "github.com/ZupIT/horusec-platform/core/internal/usecases/repository"
 	roleUseCases "github.com/ZupIT/horusec-platform/core/internal/usecases/role"
+	"github.com/ZupIT/horusec-platform/core/internal/usecases/token"
 	workspaceUseCases "github.com/ZupIT/horusec-platform/core/internal/usecases/workspace"
 )
 
@@ -59,6 +60,7 @@ var useCasesProviders = wire.NewSet(
 	workspaceUseCases.NewWorkspaceUseCases,
 	repositoryUseCases.NewRepositoryUseCases,
 	roleUseCases.NewRoleUseCases,
+	token.NewTokenUseCases,
 )
 
 var repositoriesProviders = wire.NewSet(

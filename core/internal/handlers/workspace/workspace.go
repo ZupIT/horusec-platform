@@ -15,31 +15,36 @@ import (
 
 	workspaceController "github.com/ZupIT/horusec-platform/core/internal/controllers/workspace"
 	roleEntities "github.com/ZupIT/horusec-platform/core/internal/entities/role"
+	tokenEntities "github.com/ZupIT/horusec-platform/core/internal/entities/token"
 	workspaceEntities "github.com/ZupIT/horusec-platform/core/internal/entities/workspace"
 	roleEnums "github.com/ZupIT/horusec-platform/core/internal/enums/role"
 	workspaceEnums "github.com/ZupIT/horusec-platform/core/internal/enums/workspace"
 	roleUseCases "github.com/ZupIT/horusec-platform/core/internal/usecases/role"
+	"github.com/ZupIT/horusec-platform/core/internal/usecases/token"
 	workspaceUseCases "github.com/ZupIT/horusec-platform/core/internal/usecases/workspace"
 )
 
 type Handler struct {
-	controller   workspaceController.IController
-	useCases     workspaceUseCases.IUseCases
-	roleUseCases roleUseCases.IUseCases
-	authGRPC     proto.AuthServiceClient
-	context      context.Context
-	appConfig    app.IConfig
+	controller    workspaceController.IController
+	useCases      workspaceUseCases.IUseCases
+	roleUseCases  roleUseCases.IUseCases
+	authGRPC      proto.AuthServiceClient
+	context       context.Context
+	appConfig     app.IConfig
+	tokenUseCases token.IUseCases
 }
 
 func NewWorkspaceHandler(controller workspaceController.IController, useCases workspaceUseCases.IUseCases,
-	authGRPC proto.AuthServiceClient, appConfig app.IConfig, useCasesRole roleUseCases.IUseCases) *Handler {
+	authGRPC proto.AuthServiceClient, appConfig app.IConfig, useCasesRole roleUseCases.IUseCases,
+	tokenUseCases token.IUseCases) *Handler {
 	return &Handler{
-		controller:   controller,
-		useCases:     useCases,
-		authGRPC:     authGRPC,
-		context:      context.Background(),
-		appConfig:    appConfig,
-		roleUseCases: useCasesRole,
+		controller:    controller,
+		useCases:      useCases,
+		authGRPC:      authGRPC,
+		context:       context.Background(),
+		appConfig:     appConfig,
+		roleUseCases:  useCasesRole,
+		tokenUseCases: tokenUseCases,
 	}
 }
 
@@ -394,4 +399,47 @@ func (h *Handler) getRemoveUserData(r *http.Request) (*roleEntities.Data, error)
 	}
 
 	return h.roleUseCases.NewRoleData(accountID, workspaceID, uuid.Nil), nil
+}
+
+// @Tags Workspace
+// @Description Create a new workspace token
+// @ID create-workspace-token
+// @Accept  json
+// @Produce  json
+// @Param workspaceID path string true "ID of the workspace"
+// @Param Workspace body tokenEntities.Data true "create workspace token data"
+// @Success 201 {object} entities.Response
+// @Failure 400 {object} entities.Response
+// @Failure 401 {object} entities.Response
+// @Failure 500 {object} entities.Response
+// @Router /core/workspaces/{workspaceID}/tokens [post]
+// @Security ApiKeyAuth
+func (h *Handler) CreateToken(w http.ResponseWriter, r *http.Request) {
+	workspaceData, err := h.getCreateTokenData(r)
+	if err != nil {
+		httpUtil.StatusBadRequest(w, err)
+		return
+	}
+
+	workspace, err := h.controller.CreateToken(workspaceData)
+	if err != nil {
+		httpUtil.StatusInternalServerError(w, err)
+		return
+	}
+
+	httpUtil.StatusCreated(w, workspace)
+}
+
+func (h *Handler) getCreateTokenData(r *http.Request) (*tokenEntities.Data, error) {
+	workspaceID, err := uuid.Parse(chi.URLParam(r, workspaceEnums.ID))
+	if err != nil {
+		return nil, err
+	}
+
+	data, err := h.tokenUseCases.TokenDataFromIOReadCloser(r.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	return data.SetWorkspaceID(workspaceID), nil
 }

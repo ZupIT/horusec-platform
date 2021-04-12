@@ -6,6 +6,15 @@
 package providers
 
 import (
+	"github.com/ZupIT/horusec-devkit/pkg/services/app"
+	"github.com/ZupIT/horusec-devkit/pkg/services/broker"
+	"github.com/ZupIT/horusec-devkit/pkg/services/broker/config"
+	"github.com/ZupIT/horusec-devkit/pkg/services/database"
+	config2 "github.com/ZupIT/horusec-devkit/pkg/services/database/config"
+	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth"
+	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth/proto"
+	"github.com/ZupIT/horusec-devkit/pkg/services/http"
+	"github.com/ZupIT/horusec-devkit/pkg/services/middlewares"
 	"github.com/google/wire"
 
 	"github.com/ZupIT/horusec-platform/core/config/cors"
@@ -18,17 +27,8 @@ import (
 	"github.com/ZupIT/horusec-platform/core/internal/router"
 	"github.com/ZupIT/horusec-platform/core/internal/usecases/repository"
 	"github.com/ZupIT/horusec-platform/core/internal/usecases/role"
+	"github.com/ZupIT/horusec-platform/core/internal/usecases/token"
 	"github.com/ZupIT/horusec-platform/core/internal/usecases/workspace"
-
-	"github.com/ZupIT/horusec-devkit/pkg/services/app"
-	"github.com/ZupIT/horusec-devkit/pkg/services/broker"
-	"github.com/ZupIT/horusec-devkit/pkg/services/broker/config"
-	"github.com/ZupIT/horusec-devkit/pkg/services/database"
-	config2 "github.com/ZupIT/horusec-devkit/pkg/services/database/config"
-	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth"
-	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth/proto"
-	"github.com/ZupIT/horusec-devkit/pkg/services/http"
-	"github.com/ZupIT/horusec-devkit/pkg/services/middlewares"
 )
 
 // Injectors from wire.go:
@@ -54,7 +54,8 @@ func Initialize(string2 string) (router.IRouter, error) {
 	iRepository := workspace2.NewWorkspaceRepository(connection, iUseCases)
 	iController := workspace3.NewWorkspaceController(iBroker, connection, appIConfig, iUseCases, iRepository)
 	roleIUseCases := role.NewRoleUseCases()
-	handler := workspace4.NewWorkspaceHandler(iController, iUseCases, authServiceClient, appIConfig, roleIUseCases)
+	tokenIUseCases := token.NewTokenUseCases()
+	handler := workspace4.NewWorkspaceHandler(iController, iUseCases, authServiceClient, appIConfig, roleIUseCases, tokenIUseCases)
 	repositoryIUseCases := repository.NewRepositoryUseCases()
 	repositoryIRepository := repository2.NewRepositoryRepository(connection, repositoryIUseCases, iRepository)
 	repositoryIController := repository3.NewRepositoryController(iBroker, connection, appIConfig, repositoryIUseCases, repositoryIRepository)
@@ -73,6 +74,6 @@ var controllerProviders = wire.NewSet(workspace3.NewWorkspaceController, reposit
 
 var handleProviders = wire.NewSet(workspace4.NewWorkspaceHandler, repository4.NewRepositoryHandler)
 
-var useCasesProviders = wire.NewSet(workspace.NewWorkspaceUseCases, repository.NewRepositoryUseCases, role.NewRoleUseCases)
+var useCasesProviders = wire.NewSet(workspace.NewWorkspaceUseCases, repository.NewRepositoryUseCases, role.NewRoleUseCases, token.NewTokenUseCases)
 
 var repositoriesProviders = wire.NewSet(workspace2.NewWorkspaceRepository, repository2.NewRepositoryRepository)

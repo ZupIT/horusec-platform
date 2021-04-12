@@ -43,6 +43,15 @@ definitions:
       username:
         type: string
     type: object
+  token.Data:
+    properties:
+      description:
+        type: string
+      expiresAt:
+        type: string
+      isExpirable:
+        type: boolean
+    type: object
   workspace.Data:
     properties:
       authzAdmin:
@@ -825,6 +834,47 @@ paths:
             $ref: '#/definitions/entities.Response'
         "404":
           description: Not Found
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/entities.Response'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Workspace
+  /core/workspaces/{workspaceID}/tokens:
+    post:
+      consumes:
+      - application/json
+      description: Create a new workspace token
+      operationId: create-workspace-token
+      parameters:
+      - description: ID of the workspace
+        in: path
+        name: workspaceID
+        required: true
+        type: string
+      - description: create workspace token data
+        in: body
+        name: Workspace
+        required: true
+        schema:
+          $ref: '#/definitions/token.Data'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "401":
+          description: Unauthorized
           schema:
             $ref: '#/definitions/entities.Response'
         "500":

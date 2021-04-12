@@ -7,6 +7,7 @@ import (
 	mockUtils "github.com/ZupIT/horusec-devkit/pkg/utils/mock"
 
 	roleEntities "github.com/ZupIT/horusec-platform/core/internal/entities/role"
+	tokenEntities "github.com/ZupIT/horusec-platform/core/internal/entities/token"
 	workspaceEntities "github.com/ZupIT/horusec-platform/core/internal/entities/workspace"
 )
 
@@ -57,4 +58,9 @@ func (m *Mock) GetUsers(_ uuid.UUID) (*[]roleEntities.Response, error) {
 func (m *Mock) RemoveUser(_ *roleEntities.Data) error {
 	args := m.MethodCalled("RemoveUser")
 	return mockUtils.ReturnNilOrError(args, 0)
+}
+
+func (m *Mock) CreateToken(_ *tokenEntities.Data) (string, error) {
+	args := m.MethodCalled("CreateToken")
+	return args.Get(0).(string), mockUtils.ReturnNilOrError(args, 1)
 }

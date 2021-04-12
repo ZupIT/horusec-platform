@@ -21,12 +21,14 @@ import (
 	"github.com/ZupIT/horusec-platform/core/internal/entities/role"
 	workspaceEntities "github.com/ZupIT/horusec-platform/core/internal/entities/workspace"
 	roleUseCases "github.com/ZupIT/horusec-platform/core/internal/usecases/role"
+	tokenUseCases "github.com/ZupIT/horusec-platform/core/internal/usecases/token"
 	workspaceUseCases "github.com/ZupIT/horusec-platform/core/internal/usecases/workspace"
 )
 
 func TestNewWorkspaceHandler(t *testing.T) {
 	t.Run("should success create a new workspace handler", func(t *testing.T) {
-		assert.NotNil(t, NewWorkspaceHandler(nil, nil, nil, nil, nil))
+		assert.NotNil(t, NewWorkspaceHandler(nil, nil, nil,
+			nil, nil, nil))
 	})
 }
 
@@ -54,7 +56,7 @@ func TestCreate(t *testing.T) {
 		appConfigMock.On("GetAuthorizationType").Return(auth.Horusec)
 
 		handler := NewWorkspaceHandler(controllerMock, workspaceUseCases.NewWorkspaceUseCases(),
-			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases())
+			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases(), tokenUseCases.NewTokenUseCases())
 
 		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(workspaceData.ToBytes()))
 		w := httptest.NewRecorder()
@@ -75,7 +77,7 @@ func TestCreate(t *testing.T) {
 		appConfigMock.On("GetAuthorizationType").Return(auth.Horusec)
 
 		handler := NewWorkspaceHandler(controllerMock, workspaceUseCases.NewWorkspaceUseCases(),
-			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases())
+			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases(), tokenUseCases.NewTokenUseCases())
 
 		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(workspaceData.ToBytes()))
 		w := httptest.NewRecorder()
@@ -95,7 +97,7 @@ func TestCreate(t *testing.T) {
 		appConfigMock.On("GetAuthorizationType").Return(auth.Horusec)
 
 		handler := NewWorkspaceHandler(controllerMock, workspaceUseCases.NewWorkspaceUseCases(),
-			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases())
+			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases(), tokenUseCases.NewTokenUseCases())
 
 		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(workspaceData.ToBytes()))
 		w := httptest.NewRecorder()
@@ -115,7 +117,7 @@ func TestCreate(t *testing.T) {
 		appConfigMock.On("GetAuthorizationType").Return(auth.Horusec)
 
 		handler := NewWorkspaceHandler(controllerMock, workspaceUseCases.NewWorkspaceUseCases(),
-			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases())
+			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases(), tokenUseCases.NewTokenUseCases())
 
 		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader([]byte("")))
 		w := httptest.NewRecorder()
@@ -137,7 +139,7 @@ func TestCreate(t *testing.T) {
 		appConfigMock.On("GetAuthorizationType").Return(auth.Ldap)
 
 		handler := NewWorkspaceHandler(controllerMock, workspaceUseCases.NewWorkspaceUseCases(),
-			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases())
+			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases(), tokenUseCases.NewTokenUseCases())
 
 		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(workspaceData.ToBytes()))
 		w := httptest.NewRecorder()
@@ -164,7 +166,7 @@ func TestGet(t *testing.T) {
 		appConfigMock := &app.Mock{}
 
 		handler := NewWorkspaceHandler(controllerMock, workspaceUseCases.NewWorkspaceUseCases(),
-			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases())
+			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases(), tokenUseCases.NewTokenUseCases())
 
 		r, _ := http.NewRequest(http.MethodGet, "test", nil)
 		w := httptest.NewRecorder()
@@ -188,7 +190,7 @@ func TestGet(t *testing.T) {
 		appConfigMock := &app.Mock{}
 
 		handler := NewWorkspaceHandler(controllerMock, workspaceUseCases.NewWorkspaceUseCases(),
-			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases())
+			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases(), tokenUseCases.NewTokenUseCases())
 
 		r, _ := http.NewRequest(http.MethodGet, "test", nil)
 		w := httptest.NewRecorder()
@@ -211,7 +213,7 @@ func TestGet(t *testing.T) {
 		appConfigMock := &app.Mock{}
 
 		handler := NewWorkspaceHandler(controllerMock, workspaceUseCases.NewWorkspaceUseCases(),
-			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases())
+			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases(), tokenUseCases.NewTokenUseCases())
 
 		r, _ := http.NewRequest(http.MethodGet, "test", nil)
 		w := httptest.NewRecorder()
@@ -231,7 +233,7 @@ func TestGet(t *testing.T) {
 		appConfigMock := &app.Mock{}
 
 		handler := NewWorkspaceHandler(controllerMock, workspaceUseCases.NewWorkspaceUseCases(),
-			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases())
+			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases(), tokenUseCases.NewTokenUseCases())
 
 		r, _ := http.NewRequest(http.MethodGet, "test", nil)
 		w := httptest.NewRecorder()
@@ -270,7 +272,7 @@ func TestUpdate(t *testing.T) {
 		appConfigMock.On("GetAuthorizationType").Return(auth.Horusec)
 
 		handler := NewWorkspaceHandler(controllerMock, workspaceUseCases.NewWorkspaceUseCases(),
-			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases())
+			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases(), tokenUseCases.NewTokenUseCases())
 
 		r, _ := http.NewRequest(http.MethodPatch, "test", bytes.NewReader(workspaceData.ToBytes()))
 		w := httptest.NewRecorder()
@@ -295,7 +297,7 @@ func TestUpdate(t *testing.T) {
 		appConfigMock.On("GetAuthorizationType").Return(auth.Horusec)
 
 		handler := NewWorkspaceHandler(controllerMock, workspaceUseCases.NewWorkspaceUseCases(),
-			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases())
+			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases(), tokenUseCases.NewTokenUseCases())
 
 		r, _ := http.NewRequest(http.MethodPatch, "test", bytes.NewReader(workspaceData.ToBytes()))
 		w := httptest.NewRecorder()
@@ -319,7 +321,7 @@ func TestUpdate(t *testing.T) {
 		appConfigMock.On("GetAuthorizationType").Return(auth.Horusec)
 
 		handler := NewWorkspaceHandler(controllerMock, workspaceUseCases.NewWorkspaceUseCases(),
-			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases())
+			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases(), tokenUseCases.NewTokenUseCases())
 
 		r, _ := http.NewRequest(http.MethodPatch, "test", bytes.NewReader(workspaceData.ToBytes()))
 		w := httptest.NewRecorder()
@@ -343,7 +345,7 @@ func TestUpdate(t *testing.T) {
 		appConfigMock.On("GetAuthorizationType").Return(auth.Horusec)
 
 		handler := NewWorkspaceHandler(controllerMock, workspaceUseCases.NewWorkspaceUseCases(),
-			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases())
+			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases(), tokenUseCases.NewTokenUseCases())
 
 		r, _ := http.NewRequest(http.MethodPatch, "test", bytes.NewReader(workspaceData.ToBytes()))
 		w := httptest.NewRecorder()
@@ -367,7 +369,7 @@ func TestDelete(t *testing.T) {
 		appConfigMock := &app.Mock{}
 
 		handler := NewWorkspaceHandler(controllerMock, workspaceUseCases.NewWorkspaceUseCases(),
-			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases())
+			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases(), tokenUseCases.NewTokenUseCases())
 
 		r, _ := http.NewRequest(http.MethodDelete, "test", nil)
 		w := httptest.NewRecorder()
@@ -389,7 +391,7 @@ func TestDelete(t *testing.T) {
 		appConfigMock := &app.Mock{}
 
 		handler := NewWorkspaceHandler(controllerMock, workspaceUseCases.NewWorkspaceUseCases(),
-			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases())
+			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases(), tokenUseCases.NewTokenUseCases())
 
 		r, _ := http.NewRequest(http.MethodDelete, "test", nil)
 		w := httptest.NewRecorder()
@@ -409,7 +411,7 @@ func TestDelete(t *testing.T) {
 		appConfigMock := &app.Mock{}
 
 		handler := NewWorkspaceHandler(controllerMock, workspaceUseCases.NewWorkspaceUseCases(),
-			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases())
+			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases(), tokenUseCases.NewTokenUseCases())
 
 		r, _ := http.NewRequest(http.MethodDelete, "test", nil)
 		w := httptest.NewRecorder()
@@ -440,7 +442,7 @@ func TestList(t *testing.T) {
 		appConfigMock := &app.Mock{}
 
 		handler := NewWorkspaceHandler(controllerMock, workspaceUseCases.NewWorkspaceUseCases(),
-			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases())
+			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases(), tokenUseCases.NewTokenUseCases())
 
 		r, _ := http.NewRequest(http.MethodGet, "test", nil)
 		w := httptest.NewRecorder()
@@ -460,7 +462,7 @@ func TestList(t *testing.T) {
 		appConfigMock := &app.Mock{}
 
 		handler := NewWorkspaceHandler(controllerMock, workspaceUseCases.NewWorkspaceUseCases(),
-			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases())
+			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases(), tokenUseCases.NewTokenUseCases())
 
 		r, _ := http.NewRequest(http.MethodGet, "test", nil)
 		w := httptest.NewRecorder()
@@ -478,7 +480,7 @@ func TestList(t *testing.T) {
 		authGRPCMock.On("GetAccountInfo").Return(accountData, errors.New("test"))
 
 		handler := NewWorkspaceHandler(controllerMock, workspaceUseCases.NewWorkspaceUseCases(),
-			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases())
+			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases(), tokenUseCases.NewTokenUseCases())
 
 		r, _ := http.NewRequest(http.MethodGet, "test", nil)
 		w := httptest.NewRecorder()
@@ -502,7 +504,7 @@ func TestUpdateRole(t *testing.T) {
 		appConfigMock := &app.Mock{}
 
 		handler := NewWorkspaceHandler(controllerMock, workspaceUseCases.NewWorkspaceUseCases(),
-			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases())
+			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases(), tokenUseCases.NewTokenUseCases())
 
 		r, _ := http.NewRequest(http.MethodPatch, "test", bytes.NewReader(roleData.ToBytes()))
 		w := httptest.NewRecorder()
@@ -525,7 +527,7 @@ func TestUpdateRole(t *testing.T) {
 		appConfigMock := &app.Mock{}
 
 		handler := NewWorkspaceHandler(controllerMock, workspaceUseCases.NewWorkspaceUseCases(),
-			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases())
+			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases(), tokenUseCases.NewTokenUseCases())
 
 		r, _ := http.NewRequest(http.MethodPatch, "test", bytes.NewReader(roleData.ToBytes()))
 		w := httptest.NewRecorder()
@@ -546,7 +548,7 @@ func TestUpdateRole(t *testing.T) {
 		authGRPCMock := &proto.Mock{}
 
 		handler := NewWorkspaceHandler(controllerMock, workspaceUseCases.NewWorkspaceUseCases(),
-			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases())
+			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases(), tokenUseCases.NewTokenUseCases())
 
 		r, _ := http.NewRequest(http.MethodPatch, "test", bytes.NewReader(roleData.ToBytes()))
 		w := httptest.NewRecorder()
@@ -566,7 +568,7 @@ func TestUpdateRole(t *testing.T) {
 		authGRPCMock := &proto.Mock{}
 
 		handler := NewWorkspaceHandler(controllerMock, workspaceUseCases.NewWorkspaceUseCases(),
-			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases())
+			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases(), tokenUseCases.NewTokenUseCases())
 
 		r, _ := http.NewRequest(http.MethodPatch, "test", bytes.NewReader([]byte("test")))
 		w := httptest.NewRecorder()
@@ -597,7 +599,7 @@ func TestInviteUser(t *testing.T) {
 		appConfigMock := &app.Mock{}
 
 		handler := NewWorkspaceHandler(controllerMock, workspaceUseCases.NewWorkspaceUseCases(),
-			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases())
+			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases(), tokenUseCases.NewTokenUseCases())
 
 		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(roleData.ToBytes()))
 		w := httptest.NewRecorder()
@@ -619,7 +621,7 @@ func TestInviteUser(t *testing.T) {
 		appConfigMock := &app.Mock{}
 
 		handler := NewWorkspaceHandler(controllerMock, workspaceUseCases.NewWorkspaceUseCases(),
-			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases())
+			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases(), tokenUseCases.NewTokenUseCases())
 
 		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(roleData.ToBytes()))
 		w := httptest.NewRecorder()
@@ -639,7 +641,7 @@ func TestInviteUser(t *testing.T) {
 		appConfigMock := &app.Mock{}
 
 		handler := NewWorkspaceHandler(controllerMock, workspaceUseCases.NewWorkspaceUseCases(),
-			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases())
+			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases(), tokenUseCases.NewTokenUseCases())
 
 		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader([]byte("")))
 		w := httptest.NewRecorder()
@@ -659,7 +661,7 @@ func TestGetUsers(t *testing.T) {
 		controllerMock.On("GetUsers").Return(&[]role.Response{}, nil)
 
 		handler := NewWorkspaceHandler(controllerMock, workspaceUseCases.NewWorkspaceUseCases(),
-			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases())
+			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases(), tokenUseCases.NewTokenUseCases())
 
 		r, _ := http.NewRequest(http.MethodGet, "test", nil)
 		w := httptest.NewRecorder()
@@ -681,7 +683,7 @@ func TestGetUsers(t *testing.T) {
 		controllerMock.On("GetUsers").Return(&[]role.Response{}, errors.New("test"))
 
 		handler := NewWorkspaceHandler(controllerMock, workspaceUseCases.NewWorkspaceUseCases(),
-			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases())
+			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases(), tokenUseCases.NewTokenUseCases())
 
 		r, _ := http.NewRequest(http.MethodGet, "test", nil)
 		w := httptest.NewRecorder()
@@ -701,7 +703,7 @@ func TestGetUsers(t *testing.T) {
 		controllerMock := &workspaceController.Mock{}
 
 		handler := NewWorkspaceHandler(controllerMock, workspaceUseCases.NewWorkspaceUseCases(),
-			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases())
+			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases(), tokenUseCases.NewTokenUseCases())
 
 		r, _ := http.NewRequest(http.MethodGet, "test", nil)
 		w := httptest.NewRecorder()
@@ -725,7 +727,7 @@ func TestRemoveUser(t *testing.T) {
 		controllerMock.On("RemoveUser").Return(nil)
 
 		handler := NewWorkspaceHandler(controllerMock, workspaceUseCases.NewWorkspaceUseCases(),
-			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases())
+			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases(), tokenUseCases.NewTokenUseCases())
 
 		r, _ := http.NewRequest(http.MethodDelete, "test", nil)
 		w := httptest.NewRecorder()
@@ -748,7 +750,7 @@ func TestRemoveUser(t *testing.T) {
 		controllerMock.On("RemoveUser").Return(errors.New("test"))
 
 		handler := NewWorkspaceHandler(controllerMock, workspaceUseCases.NewWorkspaceUseCases(),
-			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases())
+			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases(), tokenUseCases.NewTokenUseCases())
 
 		r, _ := http.NewRequest(http.MethodDelete, "test", nil)
 		w := httptest.NewRecorder()
@@ -769,7 +771,7 @@ func TestRemoveUser(t *testing.T) {
 		controllerMock := &workspaceController.Mock{}
 
 		handler := NewWorkspaceHandler(controllerMock, workspaceUseCases.NewWorkspaceUseCases(),
-			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases())
+			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases(), tokenUseCases.NewTokenUseCases())
 
 		r, _ := http.NewRequest(http.MethodDelete, "test", nil)
 		w := httptest.NewRecorder()
@@ -790,7 +792,7 @@ func TestRemoveUser(t *testing.T) {
 		controllerMock := &workspaceController.Mock{}
 
 		handler := NewWorkspaceHandler(controllerMock, workspaceUseCases.NewWorkspaceUseCases(),
-			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases())
+			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases(), tokenUseCases.NewTokenUseCases())
 
 		r, _ := http.NewRequest(http.MethodDelete, "test", nil)
 		w := httptest.NewRecorder()

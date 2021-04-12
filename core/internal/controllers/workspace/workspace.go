@@ -12,8 +12,10 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 
 	roleEntities "github.com/ZupIT/horusec-platform/core/internal/entities/role"
+	tokenEntities "github.com/ZupIT/horusec-platform/core/internal/entities/token"
 	workspaceEntities "github.com/ZupIT/horusec-platform/core/internal/entities/workspace"
 	repositoryEnums "github.com/ZupIT/horusec-platform/core/internal/enums/repository"
+	tokenEnums "github.com/ZupIT/horusec-platform/core/internal/enums/token"
 	workspaceEnums "github.com/ZupIT/horusec-platform/core/internal/enums/workspace"
 	workspaceRepository "github.com/ZupIT/horusec-platform/core/internal/repositories/workspace"
 	workspaceUseCases "github.com/ZupIT/horusec-platform/core/internal/usecases/workspace"
@@ -29,6 +31,7 @@ type IController interface {
 	InviteUser(data *roleEntities.UserData) (*roleEntities.Response, error)
 	GetUsers(workspaceID uuid.UUID) (*[]roleEntities.Response, error)
 	RemoveUser(data *roleEntities.Data) error
+	CreateToken(data *tokenEntities.Data) (string, error)
 }
 
 type Controller struct {
@@ -158,4 +161,10 @@ func (c *Controller) RemoveUser(data *roleEntities.Data) error {
 
 	return c.databaseWrite.Delete(c.useCases.FilterAccountWorkspaceByID(data.AccountID, data.WorkspaceID),
 		workspaceEnums.DatabaseAccountWorkspaceTable).GetError()
+}
+
+func (c *Controller) CreateToken(data *tokenEntities.Data) (string, error) {
+	token, tokenString := data.ToToken()
+
+	return tokenString, c.databaseWrite.Create(token, tokenEnums.DatabaseTokens).GetError()
 }
