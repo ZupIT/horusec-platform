@@ -19,6 +19,7 @@ import (
 	workspaceEntities "github.com/ZupIT/horusec-platform/core/internal/entities/workspace"
 	workspaceRepository "github.com/ZupIT/horusec-platform/core/internal/repositories/workspace"
 	workspaceUseCases "github.com/ZupIT/horusec-platform/core/internal/usecases/workspace"
+	tokenEntities "github.com/ZupIT/horusec-platform/core/internal/entities/token"
 )
 
 func TestNewWorkspaceController(t *testing.T) {
@@ -564,5 +565,41 @@ func TestRemoveUser(t *testing.T) {
 			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock)
 
 		assert.Error(t, controller.RemoveUser(data))
+	})
+}
+
+func TestCreateToken(t *testing.T) {
+	data := &tokenEntities.Data{}
+
+	t.Run("should success create a new workspace token ", func(t *testing.T) {
+		repositoryMock := &workspaceRepository.Mock{}
+		appConfig := &app.Mock{}
+
+		databaseMock := &database.Mock{}
+		databaseMock.On("Create").Return(&response.Response{})
+
+		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
+		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection, appConfig,
+			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock)
+
+		result, err := controller.CreateToken(data)
+		assert.NoError(t, err)
+		assert.NotEmpty(t, result)
+	})
+
+	t.Run("should return error while creating a new workspace token ", func(t *testing.T) {
+		repositoryMock := &workspaceRepository.Mock{}
+		appConfig := &app.Mock{}
+
+		databaseMock := &database.Mock{}
+		databaseMock.On("Create").Return(
+			response.NewResponse(0, errors.New("test"), nil))
+
+		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
+		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection, appConfig,
+			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock)
+
+		_, err := controller.CreateToken(data)
+		assert.Error(t, err)
 	})
 }

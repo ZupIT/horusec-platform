@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 
 	"github.com/go-chi/chi"
 	"github.com/google/uuid"
@@ -23,6 +24,7 @@ import (
 	roleUseCases "github.com/ZupIT/horusec-platform/core/internal/usecases/role"
 	tokenUseCases "github.com/ZupIT/horusec-platform/core/internal/usecases/token"
 	workspaceUseCases "github.com/ZupIT/horusec-platform/core/internal/usecases/workspace"
+	tokenEntities "github.com/ZupIT/horusec-platform/core/internal/entities/token"
 )
 
 func TestNewWorkspaceHandler(t *testing.T) {
@@ -802,6 +804,98 @@ func TestRemoveUser(t *testing.T) {
 		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
 
 		handler.RemoveUser(w, r)
+
+		assert.Equal(t, http.StatusBadRequest, w.Code)
+	})
+}
+
+func TestCreateToken(t *testing.T) {
+	data := &tokenEntities.Data{
+		Description: "test",
+		IsExpirable: false,
+		ExpiresAt:   time.Time{},
+	}
+
+	t.Run("should return 201 when everything it is ok", func(t *testing.T) {
+		authGRPCMock := &proto.Mock{}
+		appConfigMock := &app.Mock{}
+
+		controllerMock := &workspaceController.Mock{}
+		controllerMock.On("CreateToken").Return(uuid.NewString(), nil)
+
+		handler := NewWorkspaceHandler(controllerMock, workspaceUseCases.NewWorkspaceUseCases(),
+			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases(), tokenUseCases.NewTokenUseCases())
+
+		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(data.ToByes()))
+		w := httptest.NewRecorder()
+
+		ctx := chi.NewRouteContext()
+		ctx.URLParams.Add("workspaceID", uuid.NewString())
+		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
+
+		handler.CreateToken(w, r)
+
+		assert.Equal(t, http.StatusCreated, w.Code)
+	})
+
+	t.Run("should return 500 when something went wrong", func(t *testing.T) {
+		authGRPCMock := &proto.Mock{}
+		appConfigMock := &app.Mock{}
+
+		controllerMock := &workspaceController.Mock{}
+		controllerMock.On("CreateToken").Return(uuid.NewString(), errors.New("test"))
+
+		handler := NewWorkspaceHandler(controllerMock, workspaceUseCases.NewWorkspaceUseCases(),
+			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases(), tokenUseCases.NewTokenUseCases())
+
+		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(data.ToByes()))
+		w := httptest.NewRecorder()
+
+		ctx := chi.NewRouteContext()
+		ctx.URLParams.Add("workspaceID", uuid.NewString())
+		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
+
+		handler.CreateToken(w, r)
+
+		assert.Equal(t, http.StatusInternalServerError, w.Code)
+	})
+
+	t.Run("should return 400 when invalid request body", func(t *testing.T) {
+		authGRPCMock := &proto.Mock{}
+		appConfigMock := &app.Mock{}
+		controllerMock := &workspaceController.Mock{}
+
+		handler := NewWorkspaceHandler(controllerMock, workspaceUseCases.NewWorkspaceUseCases(),
+			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases(), tokenUseCases.NewTokenUseCases())
+
+		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader([]byte("test")))
+		w := httptest.NewRecorder()
+
+		ctx := chi.NewRouteContext()
+		ctx.URLParams.Add("workspaceID", uuid.NewString())
+		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
+
+		handler.CreateToken(w, r)
+
+		assert.Equal(t, http.StatusBadRequest, w.Code)
+	})
+
+	t.Run("should return 400 when invalid workspace id", func(t *testing.T) {
+		authGRPCMock := &proto.Mock{}
+		appConfigMock := &app.Mock{}
+		controllerMock := &workspaceController.Mock{}
+
+		handler := NewWorkspaceHandler(controllerMock, workspaceUseCases.NewWorkspaceUseCases(),
+			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases(), tokenUseCases.NewTokenUseCases())
+
+		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(nil))
+		w := httptest.NewRecorder()
+
+		ctx := chi.NewRouteContext()
+		ctx.URLParams.Add("workspaceID", "test")
+		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
+
+		handler.CreateToken(w, r)
 
 		assert.Equal(t, http.StatusBadRequest, w.Code)
 	})

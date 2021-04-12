@@ -1,6 +1,7 @@
 package token
 
 import (
+	"encoding/json"
 	"time"
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
@@ -25,7 +26,6 @@ func (d *Data) Validate() error {
 		validation.Field(&d.WorkspaceID, is.UUID),
 		validation.Field(&d.RepositoryID, is.UUID),
 		validation.Field(&d.Description, validation.Required, validation.Length(1, 255)),
-		validation.Field(&d.IsExpirable, validation.Required),
 		validation.Field(&d.ExpiresAt, validation.By(d.validateExpiresAt)),
 	)
 }
@@ -81,4 +81,10 @@ func (d *Data) getRepositoryID() *uuid.UUID {
 	}
 
 	return &d.RepositoryID
+}
+
+func (d *Data) ToByes() []byte {
+	bytes, _ := json.Marshal(d)
+
+	return bytes
 }
