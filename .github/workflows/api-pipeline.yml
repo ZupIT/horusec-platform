@@ -2,7 +2,10 @@ name: HorusecApiPipeline
 
 on:
   pull_request:
-    paths: [ "api/**" ]
+    paths: [
+        "api/**",
+        ".github/workflows/api-pipeline.yml",
+    ]
 
 jobs:
   install-build-test-fmt-lint:

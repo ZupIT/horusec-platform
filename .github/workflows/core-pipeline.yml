@@ -2,7 +2,10 @@ name: HorusecCorePipeline
 
 on:
   pull_request:
-    paths: [ "core/**" ]
+    paths: [
+        "core/**",
+        ".github/workflows/core-pipeline.yml",
+    ]
 
 jobs:
   install-build-test-fmt-lint:
