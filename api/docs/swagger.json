@@ -1,7 +1,7 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "Service responsible for workspace, repositories and token operations.",
+        "description": "Service responsible for analysis operations from Horusec-CLI.",
         "title": "Horusec-API",
         "termsOfService": "http://swagger.io/terms/",
         "contact": {

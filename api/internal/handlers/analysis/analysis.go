@@ -15,21 +15,22 @@
 package analysis
 
 import (
+	netHTTP "net/http"
+
 	analysisController "github.com/ZupIT/horusec-platform/api/internal/controllers/analysis"
 	handlersEnums "github.com/ZupIT/horusec-platform/api/internal/handlers/analysis/enums"
 	tokenMiddlewareEnum "github.com/ZupIT/horusec-platform/api/internal/middelwares/token/enums"
 	analysisUseCases "github.com/ZupIT/horusec-platform/api/internal/usecases/analysis"
 	"github.com/go-chi/chi"
 	"github.com/google/uuid"
-	netHTTP "net/http"
 
 	"github.com/ZupIT/horusec-devkit/pkg/services/database/enums"
 	httpUtil "github.com/ZupIT/horusec-devkit/pkg/utils/http"
 
 	analysisEntities "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 
-	_ "github.com/ZupIT/horusec-devkit/pkg/entities/cli"
-	_ "github.com/ZupIT/horusec-devkit/pkg/utils/http/entities"
+	_ "github.com/ZupIT/horusec-devkit/pkg/entities/cli"        // [swagger-import]
+	_ "github.com/ZupIT/horusec-devkit/pkg/utils/http/entities" // [swagger-import]
 )
 
 type Handler struct {
@@ -102,7 +103,8 @@ func (h *Handler) isInvalidWorkspaceToCreateAnalysis(analysisEntity *analysisEnt
 	return analysisEntity.WorkspaceName == "" || analysisEntity.WorkspaceID == uuid.Nil
 }
 
-func (h *Handler) isValidRepositoryToCreateAnalysis(analysisEntity *analysisEntities.Analysis, repositoryName string) bool {
+func (h *Handler) isValidRepositoryToCreateAnalysis(
+	analysisEntity *analysisEntities.Analysis, repositoryName string) bool {
 	return repositoryName == "" && analysisEntity.RepositoryName == ""
 }
 
