@@ -69,3 +69,8 @@ func (m *Mock) DeleteToken(_ *tokenEntities.Data) error {
 	args := m.MethodCalled("DeleteToken")
 	return mockUtils.ReturnNilOrError(args, 0)
 }
+
+func (m *Mock) ListTokens(_ uuid.UUID) (*[]tokenEntities.Response, error) {
+	args := m.MethodCalled("ListTokens")
+	return args.Get(0).(*[]tokenEntities.Response), mockUtils.ReturnNilOrError(args, 1)
+}

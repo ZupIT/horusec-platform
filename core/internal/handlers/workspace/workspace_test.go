@@ -912,7 +912,7 @@ func TestDeleteToken(t *testing.T) {
 		handler := NewWorkspaceHandler(controllerMock, workspaceUseCases.NewWorkspaceUseCases(),
 			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases(), tokenUseCases.NewTokenUseCases())
 
-		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(nil))
+		r, _ := http.NewRequest(http.MethodDelete, "test", bytes.NewReader(nil))
 		w := httptest.NewRecorder()
 
 		ctx := chi.NewRouteContext()
@@ -935,7 +935,7 @@ func TestDeleteToken(t *testing.T) {
 		handler := NewWorkspaceHandler(controllerMock, workspaceUseCases.NewWorkspaceUseCases(),
 			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases(), tokenUseCases.NewTokenUseCases())
 
-		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(nil))
+		r, _ := http.NewRequest(http.MethodDelete, "test", bytes.NewReader(nil))
 		w := httptest.NewRecorder()
 
 		ctx := chi.NewRouteContext()
@@ -956,7 +956,7 @@ func TestDeleteToken(t *testing.T) {
 		handler := NewWorkspaceHandler(controllerMock, workspaceUseCases.NewWorkspaceUseCases(),
 			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases(), tokenUseCases.NewTokenUseCases())
 
-		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(nil))
+		r, _ := http.NewRequest(http.MethodDelete, "test", bytes.NewReader(nil))
 		w := httptest.NewRecorder()
 
 		ctx := chi.NewRouteContext()
@@ -977,7 +977,7 @@ func TestDeleteToken(t *testing.T) {
 		handler := NewWorkspaceHandler(controllerMock, workspaceUseCases.NewWorkspaceUseCases(),
 			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases(), tokenUseCases.NewTokenUseCases())
 
-		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(nil))
+		r, _ := http.NewRequest(http.MethodDelete, "test", bytes.NewReader(nil))
 		w := httptest.NewRecorder()
 
 		ctx := chi.NewRouteContext()
@@ -985,6 +985,72 @@ func TestDeleteToken(t *testing.T) {
 		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
 
 		handler.DeleteToken(w, r)
+
+		assert.Equal(t, http.StatusBadRequest, w.Code)
+	})
+}
+
+func TestListTokens(t *testing.T) {
+	t.Run("should return 200 when everything it is ok", func(t *testing.T) {
+		authGRPCMock := &proto.Mock{}
+		appConfigMock := &app.Mock{}
+
+		controllerMock := &workspaceController.Mock{}
+		controllerMock.On("ListTokens").Return(&[]tokenEntities.Response{}, nil)
+
+		handler := NewWorkspaceHandler(controllerMock, workspaceUseCases.NewWorkspaceUseCases(),
+			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases(), tokenUseCases.NewTokenUseCases())
+
+		r, _ := http.NewRequest(http.MethodGet, "test", bytes.NewReader(nil))
+		w := httptest.NewRecorder()
+
+		ctx := chi.NewRouteContext()
+		ctx.URLParams.Add("workspaceID", uuid.NewString())
+		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
+
+		handler.ListTokens(w, r)
+
+		assert.Equal(t, http.StatusOK, w.Code)
+	})
+
+	t.Run("should return 500 when something went wrong", func(t *testing.T) {
+		authGRPCMock := &proto.Mock{}
+		appConfigMock := &app.Mock{}
+
+		controllerMock := &workspaceController.Mock{}
+		controllerMock.On("ListTokens").Return(&[]tokenEntities.Response{}, errors.New("test"))
+
+		handler := NewWorkspaceHandler(controllerMock, workspaceUseCases.NewWorkspaceUseCases(),
+			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases(), tokenUseCases.NewTokenUseCases())
+
+		r, _ := http.NewRequest(http.MethodGet, "test", bytes.NewReader(nil))
+		w := httptest.NewRecorder()
+
+		ctx := chi.NewRouteContext()
+		ctx.URLParams.Add("workspaceID", uuid.NewString())
+		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
+
+		handler.ListTokens(w, r)
+
+		assert.Equal(t, http.StatusInternalServerError, w.Code)
+	})
+
+	t.Run("should return 400 when invalid workspace id", func(t *testing.T) {
+		authGRPCMock := &proto.Mock{}
+		appConfigMock := &app.Mock{}
+		controllerMock := &workspaceController.Mock{}
+
+		handler := NewWorkspaceHandler(controllerMock, workspaceUseCases.NewWorkspaceUseCases(),
+			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases(), tokenUseCases.NewTokenUseCases())
+
+		r, _ := http.NewRequest(http.MethodGet, "test", bytes.NewReader(nil))
+		w := httptest.NewRecorder()
+
+		ctx := chi.NewRouteContext()
+		ctx.URLParams.Add("workspaceID", "test")
+		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
+
+		handler.ListTokens(w, r)
 
 		assert.Equal(t, http.StatusBadRequest, w.Code)
 	})

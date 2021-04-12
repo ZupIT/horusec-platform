@@ -488,3 +488,31 @@ func (h *Handler) getDeleteTokenData(r *http.Request) (*tokenEntities.Data, erro
 
 	return data.SetIDs(workspaceID, uuid.Nil, tokenIO), nil
 }
+
+// @Tags Workspace
+// @Description List all workspace tokens
+// @ID list-workspace-tokens
+// @Accept  json
+// @Produce  json
+// @Param workspaceID path string true "ID of the workspace"
+// @Success 201 {object} entities.Response
+// @Failure 400 {object} entities.Response
+// @Failure 401 {object} entities.Response
+// @Failure 500 {object} entities.Response
+// @Router /core/workspaces/{workspaceID}/tokens [get]
+// @Security ApiKeyAuth
+func (h *Handler) ListTokens(w http.ResponseWriter, r *http.Request) {
+	workspaceID, err := uuid.Parse(chi.URLParam(r, workspaceEnums.ID))
+	if err != nil {
+		httpUtil.StatusBadRequest(w, err)
+		return
+	}
+
+	tokens, err := h.controller.ListTokens(workspaceID)
+	if err != nil {
+		httpUtil.StatusInternalServerError(w, err)
+		return
+	}
+
+	httpUtil.StatusOK(w, tokens)
+}

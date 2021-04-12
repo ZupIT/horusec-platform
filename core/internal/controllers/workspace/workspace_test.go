@@ -620,3 +620,21 @@ func TestDeleteToken(t *testing.T) {
 		assert.NoError(t, controller.DeleteToken(&tokenEntities.Data{}))
 	})
 }
+
+func TestListTokens(t *testing.T) {
+	t.Run("should success list workspace tokens", func(t *testing.T) {
+		repositoryMock := &workspaceRepository.Mock{}
+		appConfig := &app.Mock{}
+
+		databaseMock := &database.Mock{}
+		databaseMock.On("Find").Return(&response.Response{})
+
+		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
+		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection, appConfig,
+			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock, tokenUseCases.NewTokenUseCases())
+
+		result, err := controller.ListTokens(uuid.New())
+		assert.NoError(t, err)
+		assert.NotNil(t, result)
+	})
+}

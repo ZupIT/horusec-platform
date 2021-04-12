@@ -80,3 +80,31 @@ func TestFilterRepositoryTokenByID(t *testing.T) {
 		})
 	})
 }
+
+func TestFilterListWorkspaceTokens(t *testing.T) {
+	t.Run("should success create a repository token filter by id", func(t *testing.T) {
+		useCases := NewTokenUseCases()
+		id := uuid.New()
+
+		filter := useCases.FilterListWorkspaceTokens(id)
+
+		assert.NotPanics(t, func() {
+			assert.Equal(t, id, filter["workspace_id"])
+			assert.Equal(t, nil, filter["repository_id"])
+		})
+	})
+}
+
+func TestFilterListRepositoryTokens(t *testing.T) {
+	t.Run("should success create a repository token filter by id", func(t *testing.T) {
+		useCases := NewTokenUseCases()
+		id := uuid.New()
+
+		filter := useCases.FilterListRepositoryTokens(id, id)
+
+		assert.NotPanics(t, func() {
+			assert.Equal(t, id, filter["workspace_id"])
+			assert.Equal(t, id, filter["repository_id"])
+		})
+	})
+}

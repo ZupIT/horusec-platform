@@ -34,6 +34,7 @@ type IController interface {
 	RemoveUser(data *roleEntities.Data) error
 	CreateToken(data *tokenEntities.Data) (string, error)
 	DeleteToken(data *tokenEntities.Data) error
+	ListTokens(workspaceID uuid.UUID) (*[]tokenEntities.Response, error)
 }
 
 type Controller struct {
@@ -175,5 +176,12 @@ func (c *Controller) CreateToken(data *tokenEntities.Data) (string, error) {
 
 func (c *Controller) DeleteToken(data *tokenEntities.Data) error {
 	return c.databaseWrite.Delete(c.tokenUseCases.FilterWorkspaceTokenByID(data.TokenID, data.WorkspaceID),
+		tokenEnums.DatabaseTokens).GetError()
+}
+
+func (c *Controller) ListTokens(workspaceID uuid.UUID) (*[]tokenEntities.Response, error) {
+	tokens := &[]tokenEntities.Response{}
+
+	return tokens, c.databaseRead.Find(tokens, c.tokenUseCases.FilterListWorkspaceTokens(workspaceID),
 		tokenEnums.DatabaseTokens).GetError()
 }

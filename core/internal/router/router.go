@@ -59,6 +59,7 @@ func (r *Router) workspaceRoutes() {
 		router.With(r.IsWorkspaceAdmin).Delete("/{workspaceID}/roles/{accountID}", r.workspaceHandler.RemoveUser)
 		router.With(r.IsWorkspaceAdmin).Post("/{workspaceID}/tokens", r.workspaceHandler.CreateToken)
 		router.With(r.IsWorkspaceAdmin).Delete("/{workspaceID}/tokens/{tokenID}", r.workspaceHandler.DeleteToken)
+		router.With(r.IsWorkspaceAdmin).Get("/{workspaceID}/tokens", r.workspaceHandler.ListTokens)
 	})
 }
 
