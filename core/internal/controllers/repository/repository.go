@@ -54,23 +54,28 @@ func NewRepositoryController(broker brokerService.IBroker, databaseConnection *d
 
 func (c *Controller) Create(data *repositoryEntities.Data) (*repositoryEntities.Response, error) {
 	_, err := c.repository.GetRepositoryByName(data.WorkspaceID, data.Name)
-	if c.useCases.IsNotFoundError(err) {
-		return c.createTransaction(data)
+	if !c.useCases.IsNotFoundError(err) {
+		return nil, repositoryEnums.ErrorRepositoryNameAlreadyInUse
 	}
 
-	return nil, repositoryEnums.ErrorRepositoryNameAlreadyInUse
+	workspace, err := c.repository.GetWorkspace(data.WorkspaceID)
+	if err != nil {
+		return nil, err
+	}
+
+	return c.createTransaction(data.AccountID, c.useCases.InheritWorkspaceGroups(data.ToRepository(), workspace))
 }
 
-func (c *Controller) createTransaction(data *repositoryEntities.Data) (*repositoryEntities.Response, error) {
+func (c *Controller) createTransaction(accountID uuid.UUID,
+	repository *repositoryEntities.Repository) (*repositoryEntities.Response, error) {
 	transaction := c.databaseWrite.StartTransaction()
-	repository := data.ToRepository()
 
 	if err := transaction.Create(repository, repositoryEnums.DatabaseRepositoryTable).GetError(); err != nil {
 		logger.LogError(repositoryEnums.ErrorRollbackCreate, transaction.RollbackTransaction().GetError())
 		return nil, err
 	}
 
-	if err := transaction.Create(repository.ToAccountRepository(data.AccountID, accountEnums.Admin),
+	if err := transaction.Create(repository.ToAccountRepository(accountID, accountEnums.Admin),
 		repositoryEnums.DatabaseAccountRepositoryTable).GetError(); err != nil {
 		logger.LogError(repositoryEnums.ErrorRollbackCreate, transaction.RollbackTransaction().GetError())
 		return nil, err

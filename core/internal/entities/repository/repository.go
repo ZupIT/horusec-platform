@@ -55,3 +55,11 @@ func (r *Repository) Update(data *Data) {
 	r.AuthzAdmin = data.AuthzAdmin
 	r.UpdatedAt = time.Now()
 }
+
+func (r *Repository) ContainsAllAuthzGroups() bool {
+	if len(r.AuthzAdmin) == 0 || len(r.AuthzMember) == 0 || len(r.AuthzSupervisor) == 0 {
+		return false
+	}
+
+	return true
+}

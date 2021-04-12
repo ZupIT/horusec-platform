@@ -14,7 +14,8 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth/proto"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/parser"
 
-	"github.com/ZupIT/horusec-platform/core/internal/entities/repository"
+	repositoryEntities "github.com/ZupIT/horusec-platform/core/internal/entities/repository"
+	workspaceEntities "github.com/ZupIT/horusec-platform/core/internal/entities/workspace"
 )
 
 func TestNewRepositoryUseCases(t *testing.T) {
@@ -27,7 +28,7 @@ func TestRepositoryDataFromIOReadCloser(t *testing.T) {
 	t.Run("should success get repository data from request body", func(t *testing.T) {
 		useCases := NewRepositoryUseCases()
 
-		data := &repository.Data{
+		data := &repositoryEntities.Data{
 			AccountID: uuid.New(),
 			Name:      "test",
 		}
@@ -59,7 +60,7 @@ func TestFilterRepositoryByName(t *testing.T) {
 		useCases := NewRepositoryUseCases()
 		id := uuid.New()
 
-		filter := useCases.FilterRepositoryByName(id, "test")
+		filter := useCases.FilterRepositoryByNameAndWorkspace(id, "test")
 
 		assert.NotPanics(t, func() {
 			assert.Equal(t, id, filter["workspace_id"])
@@ -149,5 +150,100 @@ func TestNewOrganizationInviteEmail(t *testing.T) {
 			assert.Equal(t, "test", data["username"])
 
 		})
+	})
+}
+
+func TestInheritWorkspaceGroups(t *testing.T) {
+	t.Run("should success inherit workspace groups", func(t *testing.T) {
+		useCases := NewRepositoryUseCases()
+
+		workspace := &workspaceEntities.Workspace{
+			AuthzMember: []string{"test"},
+			AuthzAdmin:  []string{"test"},
+		}
+
+		repository := &repositoryEntities.Repository{}
+		_ = useCases.InheritWorkspaceGroups(repository, workspace)
+
+		assert.Equal(t, workspace.AuthzAdmin, repository.AuthzAdmin)
+		assert.Equal(t, workspace.AuthzAdmin, repository.AuthzSupervisor)
+		assert.Equal(t, workspace.AuthzMember, repository.AuthzMember)
+	})
+
+	t.Run("should not inherit workspace groups", func(t *testing.T) {
+		useCases := NewRepositoryUseCases()
+
+		workspace := &workspaceEntities.Workspace{
+			AuthzMember: []string{"test"},
+			AuthzAdmin:  []string{"test"},
+		}
+
+		repository := &repositoryEntities.Repository{
+			AuthzMember:     []string{"test2"},
+			AuthzAdmin:      []string{"test2"},
+			AuthzSupervisor: []string{"test2"},
+		}
+		_ = useCases.InheritWorkspaceGroups(repository, workspace)
+
+		assert.NotEqual(t, workspace.AuthzAdmin, repository.AuthzAdmin)
+		assert.NotEqual(t, workspace.AuthzAdmin, repository.AuthzSupervisor)
+		assert.NotEqual(t, workspace.AuthzMember, repository.AuthzMember)
+	})
+
+	t.Run("should inherit workspace groups for authz member", func(t *testing.T) {
+		useCases := NewRepositoryUseCases()
+
+		workspace := &workspaceEntities.Workspace{
+			AuthzMember: []string{"test"},
+			AuthzAdmin:  []string{"test"},
+		}
+
+		repository := &repositoryEntities.Repository{
+			AuthzAdmin:      []string{"test2"},
+			AuthzSupervisor: []string{"test2"},
+		}
+		_ = useCases.InheritWorkspaceGroups(repository, workspace)
+
+		assert.NotEqual(t, workspace.AuthzAdmin, repository.AuthzAdmin)
+		assert.NotEqual(t, workspace.AuthzAdmin, repository.AuthzSupervisor)
+		assert.Equal(t, workspace.AuthzMember, repository.AuthzMember)
+	})
+
+	t.Run("should inherit workspace groups for authz supervisor", func(t *testing.T) {
+		useCases := NewRepositoryUseCases()
+
+		workspace := &workspaceEntities.Workspace{
+			AuthzMember: []string{"test"},
+			AuthzAdmin:  []string{"test"},
+		}
+
+		repository := &repositoryEntities.Repository{
+			AuthzMember: []string{"test2"},
+			AuthzAdmin:  []string{"test2"},
+		}
+		_ = useCases.InheritWorkspaceGroups(repository, workspace)
+
+		assert.NotEqual(t, workspace.AuthzAdmin, repository.AuthzAdmin)
+		assert.Equal(t, workspace.AuthzAdmin, repository.AuthzSupervisor)
+		assert.NotEqual(t, workspace.AuthzMember, repository.AuthzMember)
+	})
+
+	t.Run("should inherit workspace groups for authz admin", func(t *testing.T) {
+		useCases := NewRepositoryUseCases()
+
+		workspace := &workspaceEntities.Workspace{
+			AuthzMember: []string{"test"},
+			AuthzAdmin:  []string{"test"},
+		}
+
+		repository := &repositoryEntities.Repository{
+			AuthzMember:     []string{"test2"},
+			AuthzSupervisor: []string{"test2"},
+		}
+		_ = useCases.InheritWorkspaceGroups(repository, workspace)
+
+		assert.Equal(t, workspace.AuthzAdmin, repository.AuthzAdmin)
+		assert.NotEqual(t, workspace.AuthzAdmin, repository.AuthzSupervisor)
+		assert.NotEqual(t, workspace.AuthzMember, repository.AuthzMember)
 	})
 }

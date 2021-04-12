@@ -3,7 +3,9 @@ package repository
 import (
 	"errors"
 	"testing"
+	"time"
 
+	"github.com/lib/pq"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 
@@ -17,6 +19,7 @@ import (
 
 	repositoryEntities "github.com/ZupIT/horusec-platform/core/internal/entities/repository"
 	roleEntities "github.com/ZupIT/horusec-platform/core/internal/entities/role"
+	workspaceEntities "github.com/ZupIT/horusec-platform/core/internal/entities/workspace"
 	repositoryEnums "github.com/ZupIT/horusec-platform/core/internal/enums/repository"
 	repositoryRepository "github.com/ZupIT/horusec-platform/core/internal/repositories/repository"
 	repositoryUseCases "github.com/ZupIT/horusec-platform/core/internal/usecases/repository"
@@ -32,10 +35,52 @@ func TestCreate(t *testing.T) {
 		Permissions: []string{"test"},
 	}
 
+	workspace := &workspaceEntities.Workspace{
+		WorkspaceID: uuid.New(),
+		Name:        "test",
+		Description: "test",
+		AuthzMember: []string{"test2"},
+		AuthzAdmin:  []string{"test2"},
+		CreatedAt:   time.Now(),
+		UpdatedAt:   time.Now(),
+	}
+
 	t.Run("should success create a new repository", func(t *testing.T) {
+		appConfig := &app.Mock{}
+
 		repositoryMock := &repositoryRepository.Mock{}
 		repositoryMock.On("GetRepositoryByName").Return(
 			&repositoryEntities.Repository{}, databaseEnums.ErrorNotFoundRecords)
+		repositoryMock.On("GetWorkspace").Return(&workspaceEntities.Workspace{}, nil)
+
+		databaseMock := &database.Mock{}
+		databaseMock.On("Create").Return(&response.Response{})
+		databaseMock.On("StartTransaction").Return(databaseMock)
+		databaseMock.On("CommitTransaction").Return(&response.Response{})
+
+		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
+		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock)
+
+		result, err := controller.Create(data)
+		assert.NoError(t, err)
+		assert.NotNil(t, result)
+	})
+
+	t.Run("should success create a new repository with the workspace groups", func(t *testing.T) {
+		data := &repositoryEntities.Data{
+			AccountID:   uuid.New(),
+			Name:        "test",
+			Description: "test",
+			AuthzMember: []string{"test"},
+			AuthzAdmin:  []string{"test"},
+			Permissions: []string{"test"},
+		}
+
+		repositoryMock := &repositoryRepository.Mock{}
+		repositoryMock.On("GetRepositoryByName").Return(
+			&repositoryEntities.Repository{}, databaseEnums.ErrorNotFoundRecords)
+		repositoryMock.On("GetWorkspace").Return(workspace, nil)
 
 		databaseMock := &database.Mock{}
 		databaseMock.On("Create").Return(&response.Response{})
@@ -48,15 +93,23 @@ func TestCreate(t *testing.T) {
 		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
 			repositoryUseCases.NewRepositoryUseCases(), repositoryMock)
 
+		data.AuthzAdmin = []string{}
+		data.AuthzMember = []string{}
+		data.AuthzSupervisor = []string{}
+
 		result, err := controller.Create(data)
 		assert.NoError(t, err)
 		assert.NotNil(t, result)
+		assert.Equal(t, pq.StringArray([]string{"test2"}), result.AuthzAdmin)
+		assert.Equal(t, pq.StringArray([]string{"test2"}), result.AuthzMember)
+		assert.Equal(t, pq.StringArray([]string{"test2"}), result.AuthzSupervisor)
 	})
 
 	t.Run("should return error when creating account repository", func(t *testing.T) {
 		repositoryMock := &repositoryRepository.Mock{}
 		repositoryMock.On("GetRepositoryByName").Return(
 			&repositoryEntities.Repository{}, databaseEnums.ErrorNotFoundRecords)
+		repositoryMock.On("GetWorkspace").Return(&workspaceEntities.Workspace{}, nil)
 
 		databaseMock := &database.Mock{}
 		databaseMock.On("Create").Once().Return(&response.Response{})
@@ -79,6 +132,7 @@ func TestCreate(t *testing.T) {
 		repositoryMock := &repositoryRepository.Mock{}
 		repositoryMock.On("GetRepositoryByName").Return(
 			&repositoryEntities.Repository{}, databaseEnums.ErrorNotFoundRecords)
+		repositoryMock.On("GetWorkspace").Return(&workspaceEntities.Workspace{}, nil)
 
 		databaseMock := &database.Mock{}
 		databaseMock.On("Create").Return(
@@ -87,6 +141,23 @@ func TestCreate(t *testing.T) {
 		databaseMock.On("RollbackTransaction").Return(&response.Response{})
 
 		appConfig := &app.Mock{}
+
+		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
+		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock)
+
+		_, err := controller.Create(data)
+		assert.Error(t, err)
+	})
+
+	t.Run("should return error when failed to get workspace", func(t *testing.T) {
+		databaseMock := &database.Mock{}
+		appConfig := &app.Mock{}
+
+		repositoryMock := &repositoryRepository.Mock{}
+		repositoryMock.On("GetRepositoryByName").Return(
+			&repositoryEntities.Repository{}, databaseEnums.ErrorNotFoundRecords)
+		repositoryMock.On("GetWorkspace").Return(&workspaceEntities.Workspace{}, errors.New("test"))
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,

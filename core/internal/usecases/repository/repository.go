@@ -11,17 +11,21 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth/proto"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/parser"
 
-	"github.com/ZupIT/horusec-platform/core/internal/entities/repository"
+	repositoryEntities "github.com/ZupIT/horusec-platform/core/internal/entities/repository"
+	workspaceEntities "github.com/ZupIT/horusec-platform/core/internal/entities/workspace"
 )
 
 type IUseCases interface {
-	RepositoryDataFromIOReadCloser(body io.ReadCloser) (*repository.Data, error)
-	FilterRepositoryByName(workspaceID uuid.UUID, name string) map[string]interface{}
+	RepositoryDataFromIOReadCloser(body io.ReadCloser) (*repositoryEntities.Data, error)
+	FilterRepositoryByNameAndWorkspace(workspaceID uuid.UUID, name string) map[string]interface{}
 	IsNotFoundError(err error) bool
-	NewRepositoryData(repositoryID, workspaceID uuid.UUID, accountData *proto.GetAccountDataResponse) *repository.Data
+	NewRepositoryData(repositoryID, workspaceID uuid.UUID,
+		accountData *proto.GetAccountDataResponse) *repositoryEntities.Data
 	FilterRepositoryByID(repositoryID uuid.UUID) map[string]interface{}
 	FilterAccountRepositoryByID(accountID, repositoryID uuid.UUID) map[string]interface{}
 	NewRepositoryInviteEmail(email, username, repositoryName string) []byte
+	InheritWorkspaceGroups(repository *repositoryEntities.Repository,
+		workspace *workspaceEntities.Workspace) *repositoryEntities.Repository
 }
 
 type UseCases struct {
@@ -31,8 +35,8 @@ func NewRepositoryUseCases() IUseCases {
 	return &UseCases{}
 }
 
-func (u *UseCases) RepositoryDataFromIOReadCloser(body io.ReadCloser) (*repository.Data, error) {
-	data := &repository.Data{}
+func (u *UseCases) RepositoryDataFromIOReadCloser(body io.ReadCloser) (*repositoryEntities.Data, error) {
+	data := &repositoryEntities.Data{}
 
 	if err := parser.ParseBodyToEntity(body, data); err != nil {
 		return nil, err
@@ -41,7 +45,7 @@ func (u *UseCases) RepositoryDataFromIOReadCloser(body io.ReadCloser) (*reposito
 	return data, data.Validate()
 }
 
-func (u *UseCases) FilterRepositoryByName(workspaceID uuid.UUID, name string) map[string]interface{} {
+func (u *UseCases) FilterRepositoryByNameAndWorkspace(workspaceID uuid.UUID, name string) map[string]interface{} {
 	return map[string]interface{}{"workspace_id": workspaceID, "name": name}
 }
 
@@ -56,8 +60,8 @@ func (u *UseCases) IsNotFoundError(err error) bool {
 }
 
 func (u *UseCases) NewRepositoryData(repositoryID, workspaceID uuid.UUID,
-	accountData *proto.GetAccountDataResponse) *repository.Data {
-	return &repository.Data{
+	accountData *proto.GetAccountDataResponse) *repositoryEntities.Data {
+	return &repositoryEntities.Data{
 		RepositoryID: repositoryID,
 		WorkspaceID:  workspaceID,
 		AccountID:    parser.ParseStringToUUID(accountData.AccountID),
@@ -85,4 +89,23 @@ func (u *UseCases) NewRepositoryInviteEmail(email, username, repositoryName stri
 	}
 
 	return emailMessage.ToBytes()
+}
+
+func (u *UseCases) InheritWorkspaceGroups(repository *repositoryEntities.Repository,
+	workspace *workspaceEntities.Workspace) *repositoryEntities.Repository {
+	if !repository.ContainsAllAuthzGroups() {
+		repository.AuthzAdmin = u.replaceGroupsIfEmpty(repository.AuthzAdmin, workspace.AuthzAdmin)
+		repository.AuthzSupervisor = u.replaceGroupsIfEmpty(repository.AuthzSupervisor, workspace.AuthzAdmin)
+		repository.AuthzMember = u.replaceGroupsIfEmpty(repository.AuthzMember, workspace.AuthzMember)
+	}
+
+	return repository
+}
+
+func (u *UseCases) replaceGroupsIfEmpty(repositoryGroups, workspaceGroups []string) []string {
+	if len(repositoryGroups) == 0 {
+		return workspaceGroups
+	}
+
+	return repositoryGroups
 }

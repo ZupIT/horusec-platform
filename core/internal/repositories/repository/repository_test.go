@@ -174,3 +174,19 @@ func TestListAllRepositoryUsers(t *testing.T) {
 		assert.NotNil(t, result)
 	})
 }
+
+func TestGetWorkspace(t *testing.T) {
+	t.Run("should success get workspace", func(t *testing.T) {
+		databaseMock := &database.Mock{}
+
+		workspaceRepositoryMock := &workspaceRepository.Mock{}
+		workspaceRepositoryMock.On("GetWorkspace").Return(&workspaceEntities.Workspace{}, nil)
+
+		repository := NewRepositoryRepository(&database.Connection{Read: databaseMock, Write: databaseMock},
+			repositoryUseCases.NewRepositoryUseCases(), workspaceRepositoryMock)
+
+		result, err := repository.GetWorkspace(uuid.New())
+		assert.NoError(t, err)
+		assert.NotNil(t, result)
+	})
+}

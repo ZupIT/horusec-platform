@@ -11,6 +11,7 @@ import (
 
 	repositoryEntities "github.com/ZupIT/horusec-platform/core/internal/entities/repository"
 	roleEntities "github.com/ZupIT/horusec-platform/core/internal/entities/role"
+	workspaceEntities "github.com/ZupIT/horusec-platform/core/internal/entities/workspace"
 	repositoryEnums "github.com/ZupIT/horusec-platform/core/internal/enums/repository"
 	workspaceRepository "github.com/ZupIT/horusec-platform/core/internal/repositories/workspace"
 	repositoriesUseCases "github.com/ZupIT/horusec-platform/core/internal/usecases/repository"
@@ -24,6 +25,7 @@ type IRepository interface {
 	ListRepositoriesAuthTypeLdap(workspaceID uuid.UUID, permissions []string) (*[]repositoryEntities.Response, error)
 	IsNotMemberOfWorkspace(accountID, workspaceID uuid.UUID) bool
 	ListAllRepositoryUsers(repositoryID uuid.UUID) (*[]roleEntities.Response, error)
+	GetWorkspace(workspaceID uuid.UUID) (*workspaceEntities.Workspace, error)
 }
 
 type Repository struct {
@@ -46,7 +48,7 @@ func NewRepositoryRepository(databaseConnection *database.Connection,
 func (r *Repository) GetRepositoryByName(workspaceID uuid.UUID, name string) (*repositoryEntities.Repository, error) {
 	repository := &repositoryEntities.Repository{}
 
-	return repository, r.databaseRead.Find(repository, r.useCases.FilterRepositoryByName(workspaceID, name),
+	return repository, r.databaseRead.Find(repository, r.useCases.FilterRepositoryByNameAndWorkspace(workspaceID, name),
 		repositoryEnums.DatabaseRepositoryTable).GetError()
 }
 
@@ -189,4 +191,8 @@ func (r *Repository) queryListAllRepositoryUsers() string {
 			INNER JOIN account_repository AS ar ON ar.account_id = ac.account_id
 			WHERE ar.repository_id = ?
 	`
+}
+
+func (r *Repository) GetWorkspace(workspaceID uuid.UUID) (*workspaceEntities.Workspace, error) {
+	return r.workspaceRepository.GetWorkspace(workspaceID)
 }

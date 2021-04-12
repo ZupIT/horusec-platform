@@ -88,3 +88,42 @@ func TestUpdate(t *testing.T) {
 		assert.NotEqual(t, expectedTime, repository.UpdatedAt)
 	})
 }
+
+func TestContainsAllAuthzGroups(t *testing.T) {
+	t.Run("should return true when repository contains all groups", func(t *testing.T) {
+		repository := &Repository{
+			AuthzMember:     []string{"test"},
+			AuthzAdmin:      []string{"test"},
+			AuthzSupervisor: []string{"test"},
+		}
+
+		assert.True(t, repository.ContainsAllAuthzGroups())
+	})
+
+	t.Run("should return false when repository do not contains authz member", func(t *testing.T) {
+		repository := &Repository{
+			AuthzAdmin:      []string{"test"},
+			AuthzSupervisor: []string{"test"},
+		}
+
+		assert.False(t, repository.ContainsAllAuthzGroups())
+	})
+
+	t.Run("should return false when repository do not contains authz admin", func(t *testing.T) {
+		repository := &Repository{
+			AuthzMember:     []string{"test"},
+			AuthzSupervisor: []string{"test"},
+		}
+
+		assert.False(t, repository.ContainsAllAuthzGroups())
+	})
+
+	t.Run("should return false when repository do not contains authz supervisor", func(t *testing.T) {
+		repository := &Repository{
+			AuthzMember: []string{"test"},
+			AuthzAdmin:  []string{"test"},
+		}
+
+		assert.False(t, repository.ContainsAllAuthzGroups())
+	})
+}
