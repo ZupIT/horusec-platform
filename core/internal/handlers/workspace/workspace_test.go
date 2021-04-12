@@ -20,11 +20,11 @@ import (
 
 	workspaceController "github.com/ZupIT/horusec-platform/core/internal/controllers/workspace"
 	"github.com/ZupIT/horusec-platform/core/internal/entities/role"
+	tokenEntities "github.com/ZupIT/horusec-platform/core/internal/entities/token"
 	workspaceEntities "github.com/ZupIT/horusec-platform/core/internal/entities/workspace"
 	roleUseCases "github.com/ZupIT/horusec-platform/core/internal/usecases/role"
 	tokenUseCases "github.com/ZupIT/horusec-platform/core/internal/usecases/token"
 	workspaceUseCases "github.com/ZupIT/horusec-platform/core/internal/usecases/workspace"
-	tokenEntities "github.com/ZupIT/horusec-platform/core/internal/entities/token"
 )
 
 func TestNewWorkspaceHandler(t *testing.T) {
@@ -896,6 +896,95 @@ func TestCreateToken(t *testing.T) {
 		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
 
 		handler.CreateToken(w, r)
+
+		assert.Equal(t, http.StatusBadRequest, w.Code)
+	})
+}
+
+func TestDeleteToken(t *testing.T) {
+	t.Run("should return 204 when everything it is ok", func(t *testing.T) {
+		authGRPCMock := &proto.Mock{}
+		appConfigMock := &app.Mock{}
+
+		controllerMock := &workspaceController.Mock{}
+		controllerMock.On("DeleteToken").Return(nil)
+
+		handler := NewWorkspaceHandler(controllerMock, workspaceUseCases.NewWorkspaceUseCases(),
+			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases(), tokenUseCases.NewTokenUseCases())
+
+		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(nil))
+		w := httptest.NewRecorder()
+
+		ctx := chi.NewRouteContext()
+		ctx.URLParams.Add("workspaceID", uuid.NewString())
+		ctx.URLParams.Add("tokenID", uuid.NewString())
+		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
+
+		handler.DeleteToken(w, r)
+
+		assert.Equal(t, http.StatusNoContent, w.Code)
+	})
+
+	t.Run("should return 500 when something went wrong", func(t *testing.T) {
+		authGRPCMock := &proto.Mock{}
+		appConfigMock := &app.Mock{}
+
+		controllerMock := &workspaceController.Mock{}
+		controllerMock.On("DeleteToken").Return(errors.New("test"))
+
+		handler := NewWorkspaceHandler(controllerMock, workspaceUseCases.NewWorkspaceUseCases(),
+			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases(), tokenUseCases.NewTokenUseCases())
+
+		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(nil))
+		w := httptest.NewRecorder()
+
+		ctx := chi.NewRouteContext()
+		ctx.URLParams.Add("workspaceID", uuid.NewString())
+		ctx.URLParams.Add("tokenID", uuid.NewString())
+		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
+
+		handler.DeleteToken(w, r)
+
+		assert.Equal(t, http.StatusInternalServerError, w.Code)
+	})
+
+	t.Run("should return 400 when invalid token id", func(t *testing.T) {
+		authGRPCMock := &proto.Mock{}
+		appConfigMock := &app.Mock{}
+		controllerMock := &workspaceController.Mock{}
+
+		handler := NewWorkspaceHandler(controllerMock, workspaceUseCases.NewWorkspaceUseCases(),
+			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases(), tokenUseCases.NewTokenUseCases())
+
+		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(nil))
+		w := httptest.NewRecorder()
+
+		ctx := chi.NewRouteContext()
+		ctx.URLParams.Add("workspaceID", uuid.NewString())
+		ctx.URLParams.Add("tokenID", "test")
+		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
+
+		handler.DeleteToken(w, r)
+
+		assert.Equal(t, http.StatusBadRequest, w.Code)
+	})
+
+	t.Run("should return 400 when invalid workspace id", func(t *testing.T) {
+		authGRPCMock := &proto.Mock{}
+		appConfigMock := &app.Mock{}
+		controllerMock := &workspaceController.Mock{}
+
+		handler := NewWorkspaceHandler(controllerMock, workspaceUseCases.NewWorkspaceUseCases(),
+			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases(), tokenUseCases.NewTokenUseCases())
+
+		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(nil))
+		w := httptest.NewRecorder()
+
+		ctx := chi.NewRouteContext()
+		ctx.URLParams.Add("workspaceID", "test")
+		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
+
+		handler.DeleteToken(w, r)
 
 		assert.Equal(t, http.StatusBadRequest, w.Code)
 	})

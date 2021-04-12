@@ -16,16 +16,17 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/services/database/response"
 
 	"github.com/ZupIT/horusec-platform/core/internal/entities/role"
+	tokenEntities "github.com/ZupIT/horusec-platform/core/internal/entities/token"
 	workspaceEntities "github.com/ZupIT/horusec-platform/core/internal/entities/workspace"
 	workspaceRepository "github.com/ZupIT/horusec-platform/core/internal/repositories/workspace"
+	tokenUseCases "github.com/ZupIT/horusec-platform/core/internal/usecases/token"
 	workspaceUseCases "github.com/ZupIT/horusec-platform/core/internal/usecases/workspace"
-	tokenEntities "github.com/ZupIT/horusec-platform/core/internal/entities/token"
 )
 
 func TestNewWorkspaceController(t *testing.T) {
 	t.Run("should success create a new workspace controller", func(t *testing.T) {
-		assert.NotNil(t, NewWorkspaceController(&broker.Broker{}, &database.Connection{},
-			&app.Config{}, workspaceUseCases.NewWorkspaceUseCases(), &workspaceRepository.Repository{}))
+		assert.NotNil(t, NewWorkspaceController(&broker.Broker{}, &database.Connection{}, &app.Config{},
+			workspaceUseCases.NewWorkspaceUseCases(), &workspaceRepository.Repository{}, tokenUseCases.NewTokenUseCases()))
 	})
 }
 
@@ -51,7 +52,7 @@ func TestCreate(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection, appConfig,
-			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock)
+			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock, tokenUseCases.NewTokenUseCases())
 
 		result, err := controller.Create(workspaceData)
 		assert.NoError(t, err)
@@ -72,7 +73,7 @@ func TestCreate(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection, appConfig,
-			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock)
+			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock, tokenUseCases.NewTokenUseCases())
 
 		result, err := controller.Create(workspaceData)
 		assert.Error(t, err)
@@ -93,7 +94,7 @@ func TestCreate(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection, appConfig,
-			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock)
+			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock, tokenUseCases.NewTokenUseCases())
 
 		result, err := controller.Create(workspaceData)
 		assert.Error(t, err)
@@ -141,7 +142,7 @@ func TestGet(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection, appConfig,
-			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock)
+			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock, tokenUseCases.NewTokenUseCases())
 
 		result, err := controller.Get(workspaceData)
 		assert.NoError(t, err)
@@ -159,7 +160,7 @@ func TestGet(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection, appConfig,
-			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock)
+			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock, tokenUseCases.NewTokenUseCases())
 
 		_, err := controller.Get(workspaceData)
 		assert.Error(t, err)
@@ -176,7 +177,7 @@ func TestGet(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection, appConfig,
-			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock)
+			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock, tokenUseCases.NewTokenUseCases())
 
 		_, err := controller.Get(workspaceData)
 		assert.Error(t, err)
@@ -215,7 +216,7 @@ func TestUpdate(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection, appConfig,
-			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock)
+			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock, tokenUseCases.NewTokenUseCases())
 
 		result, err := controller.Update(workspaceData)
 		assert.NoError(t, err)
@@ -233,7 +234,7 @@ func TestUpdate(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection, appConfig,
-			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock)
+			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock, tokenUseCases.NewTokenUseCases())
 
 		_, err := controller.Update(workspaceData)
 		assert.Error(t, err)
@@ -251,7 +252,7 @@ func TestDelete(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection, appConfig,
-			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock)
+			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock, tokenUseCases.NewTokenUseCases())
 
 		assert.NoError(t, controller.Delete(uuid.New()))
 	})
@@ -291,7 +292,7 @@ func TestList(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection, appConfig,
-			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock)
+			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock, tokenUseCases.NewTokenUseCases())
 
 		result, err := controller.List(workspaceData)
 		assert.NoError(t, err)
@@ -309,7 +310,7 @@ func TestList(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection, appConfig,
-			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock)
+			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock, tokenUseCases.NewTokenUseCases())
 
 		result, err := controller.List(workspaceData)
 		assert.NoError(t, err)
@@ -328,7 +329,7 @@ func TestList(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection, appConfig,
-			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock)
+			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock, tokenUseCases.NewTokenUseCases())
 
 		_, err := controller.List(workspaceData)
 		assert.Error(t, err)
@@ -345,7 +346,7 @@ func TestList(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection, appConfig,
-			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock)
+			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock, tokenUseCases.NewTokenUseCases())
 
 		_, err := controller.List(workspaceData)
 		assert.Error(t, err)
@@ -376,7 +377,7 @@ func TestUpdateRole(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection, appConfig,
-			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock)
+			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock, tokenUseCases.NewTokenUseCases())
 
 		result, err := controller.UpdateRole(data)
 		assert.NoError(t, err)
@@ -392,7 +393,7 @@ func TestUpdateRole(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection, appConfig,
-			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock)
+			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock, tokenUseCases.NewTokenUseCases())
 
 		_, err := controller.UpdateRole(data)
 		assert.Error(t, err)
@@ -426,7 +427,7 @@ func TestInviteUser(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection, appConfig,
-			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock)
+			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock, tokenUseCases.NewTokenUseCases())
 
 		result, err := controller.InviteUser(data)
 		assert.NoError(t, err)
@@ -448,7 +449,7 @@ func TestInviteUser(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewWorkspaceController(brokerMock, databaseConnection, appConfig,
-			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock)
+			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock, tokenUseCases.NewTokenUseCases())
 
 		result, err := controller.InviteUser(data)
 		assert.NoError(t, err)
@@ -467,7 +468,7 @@ func TestInviteUser(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection, appConfig,
-			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock)
+			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock, tokenUseCases.NewTokenUseCases())
 
 		_, err := controller.InviteUser(data)
 		assert.Error(t, err)
@@ -482,7 +483,7 @@ func TestInviteUser(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection, appConfig,
-			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock)
+			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock, tokenUseCases.NewTokenUseCases())
 
 		_, err := controller.InviteUser(data)
 		assert.Error(t, err)
@@ -508,7 +509,7 @@ func TestGetUsers(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection, appConfig,
-			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock)
+			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock, tokenUseCases.NewTokenUseCases())
 
 		result, err := controller.GetUsers(uuid.New())
 		assert.NoError(t, err)
@@ -531,7 +532,7 @@ func TestRemoveUser(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection, appConfig,
-			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock)
+			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock, tokenUseCases.NewTokenUseCases())
 
 		assert.NoError(t, controller.RemoveUser(data))
 	})
@@ -547,7 +548,7 @@ func TestRemoveUser(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection, appConfig,
-			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock)
+			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock, tokenUseCases.NewTokenUseCases())
 
 		assert.Error(t, controller.RemoveUser(data))
 	})
@@ -562,7 +563,7 @@ func TestRemoveUser(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection, appConfig,
-			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock)
+			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock, tokenUseCases.NewTokenUseCases())
 
 		assert.Error(t, controller.RemoveUser(data))
 	})
@@ -580,7 +581,7 @@ func TestCreateToken(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection, appConfig,
-			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock)
+			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock, tokenUseCases.NewTokenUseCases())
 
 		result, err := controller.CreateToken(data)
 		assert.NoError(t, err)
@@ -597,9 +598,25 @@ func TestCreateToken(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection, appConfig,
-			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock)
+			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock, tokenUseCases.NewTokenUseCases())
 
 		_, err := controller.CreateToken(data)
 		assert.Error(t, err)
+	})
+}
+
+func TestDeleteToken(t *testing.T) {
+	t.Run("should success delete a workspace token ", func(t *testing.T) {
+		repositoryMock := &workspaceRepository.Mock{}
+		appConfig := &app.Mock{}
+
+		databaseMock := &database.Mock{}
+		databaseMock.On("Delete").Return(&response.Response{})
+
+		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
+		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection, appConfig,
+			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock, tokenUseCases.NewTokenUseCases())
+
+		assert.NoError(t, controller.DeleteToken(&tokenEntities.Data{}))
 	})
 }

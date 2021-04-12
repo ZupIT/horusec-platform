@@ -4,6 +4,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/ZupIT/horusec-devkit/pkg/utils/parser"
@@ -47,5 +48,35 @@ func TestWorkspaceDataFromIOReadCloser(t *testing.T) {
 		response, err := useCases.TokenDataFromIOReadCloser(readCloser)
 		assert.Error(t, err)
 		assert.Nil(t, response)
+	})
+}
+
+func TestFilterWorkspaceTokenByID(t *testing.T) {
+	t.Run("should success create a token workspace filter by id", func(t *testing.T) {
+		useCases := NewTokenUseCases()
+		id := uuid.New()
+
+		filter := useCases.FilterWorkspaceTokenByID(id, id)
+
+		assert.NotPanics(t, func() {
+			assert.Equal(t, id, filter["workspace_id"])
+			assert.Equal(t, id, filter["token_id"])
+			assert.Equal(t, nil, filter["repository_id"])
+		})
+	})
+}
+
+func TestFilterRepositoryTokenByID(t *testing.T) {
+	t.Run("should success create a repository token filter by id", func(t *testing.T) {
+		useCases := NewTokenUseCases()
+		id := uuid.New()
+
+		filter := useCases.FilterRepositoryTokenByID(id, id, id)
+
+		assert.NotPanics(t, func() {
+			assert.Equal(t, id, filter["workspace_id"])
+			assert.Equal(t, id, filter["repository_id"])
+			assert.Equal(t, id, filter["token_id"])
+		})
 	})
 }

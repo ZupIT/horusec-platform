@@ -18,9 +18,10 @@ import (
 	tokenEntities "github.com/ZupIT/horusec-platform/core/internal/entities/token"
 	workspaceEntities "github.com/ZupIT/horusec-platform/core/internal/entities/workspace"
 	roleEnums "github.com/ZupIT/horusec-platform/core/internal/enums/role"
+	tokenEnums "github.com/ZupIT/horusec-platform/core/internal/enums/token"
 	workspaceEnums "github.com/ZupIT/horusec-platform/core/internal/enums/workspace"
 	roleUseCases "github.com/ZupIT/horusec-platform/core/internal/usecases/role"
-	"github.com/ZupIT/horusec-platform/core/internal/usecases/token"
+	tokenUseCases "github.com/ZupIT/horusec-platform/core/internal/usecases/token"
 	workspaceUseCases "github.com/ZupIT/horusec-platform/core/internal/usecases/workspace"
 )
 
@@ -31,12 +32,12 @@ type Handler struct {
 	authGRPC      proto.AuthServiceClient
 	context       context.Context
 	appConfig     app.IConfig
-	tokenUseCases token.IUseCases
+	tokenUseCases tokenUseCases.IUseCases
 }
 
 func NewWorkspaceHandler(controller workspaceController.IController, useCases workspaceUseCases.IUseCases,
 	authGRPC proto.AuthServiceClient, appConfig app.IConfig, useCasesRole roleUseCases.IUseCases,
-	tokenUseCases token.IUseCases) *Handler {
+	useCasesToken tokenUseCases.IUseCases) *Handler {
 	return &Handler{
 		controller:    controller,
 		useCases:      useCases,
@@ -44,7 +45,7 @@ func NewWorkspaceHandler(controller workspaceController.IController, useCases wo
 		context:       context.Background(),
 		appConfig:     appConfig,
 		roleUseCases:  useCasesRole,
-		tokenUseCases: tokenUseCases,
+		tokenUseCases: useCasesToken,
 	}
 }
 
@@ -415,19 +416,19 @@ func (h *Handler) getRemoveUserData(r *http.Request) (*roleEntities.Data, error)
 // @Router /core/workspaces/{workspaceID}/tokens [post]
 // @Security ApiKeyAuth
 func (h *Handler) CreateToken(w http.ResponseWriter, r *http.Request) {
-	workspaceData, err := h.getCreateTokenData(r)
+	data, err := h.getCreateTokenData(r)
 	if err != nil {
 		httpUtil.StatusBadRequest(w, err)
 		return
 	}
 
-	workspace, err := h.controller.CreateToken(workspaceData)
+	token, err := h.controller.CreateToken(data)
 	if err != nil {
 		httpUtil.StatusInternalServerError(w, err)
 		return
 	}
 
-	httpUtil.StatusCreated(w, workspace)
+	httpUtil.StatusCreated(w, token)
 }
 
 func (h *Handler) getCreateTokenData(r *http.Request) (*tokenEntities.Data, error) {
@@ -442,4 +443,48 @@ func (h *Handler) getCreateTokenData(r *http.Request) (*tokenEntities.Data, erro
 	}
 
 	return data.SetWorkspaceID(workspaceID), nil
+}
+
+// @Tags Workspace
+// @Description Delete a workspace token
+// @ID delete-workspace-token
+// @Accept  json
+// @Produce  json
+// @Param workspaceID path string true "ID of the workspace"
+// @Param tokenID path string true "ID of the token"
+// @Success 204 {object} entities.Response
+// @Failure 400 {object} entities.Response
+// @Failure 401 {object} entities.Response
+// @Failure 500 {object} entities.Response
+// @Router /core/workspaces/{workspaceID}/tokens/{tokenID} [delete]
+// @Security ApiKeyAuth
+func (h *Handler) DeleteToken(w http.ResponseWriter, r *http.Request) {
+	data, err := h.getDeleteTokenData(r)
+	if err != nil {
+		httpUtil.StatusBadRequest(w, err)
+		return
+	}
+
+	if err := h.controller.DeleteToken(data); err != nil {
+		httpUtil.StatusInternalServerError(w, err)
+		return
+	}
+
+	httpUtil.StatusNoContent(w)
+}
+
+func (h *Handler) getDeleteTokenData(r *http.Request) (*tokenEntities.Data, error) {
+	data := &tokenEntities.Data{}
+
+	workspaceID, err := uuid.Parse(chi.URLParam(r, workspaceEnums.ID))
+	if err != nil {
+		return nil, err
+	}
+
+	tokenIO, err := uuid.Parse(chi.URLParam(r, tokenEnums.ID))
+	if err != nil {
+		return nil, err
+	}
+
+	return data.SetIDs(workspaceID, uuid.Nil, tokenIO), nil
 }

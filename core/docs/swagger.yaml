@@ -885,6 +885,46 @@ paths:
       - ApiKeyAuth: []
       tags:
       - Workspace
+  /core/workspaces/{workspaceID}/tokens/{tokenID}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a workspace token
+      operationId: delete-workspace-token
+      parameters:
+      - description: ID of the workspace
+        in: path
+        name: workspaceID
+        required: true
+        type: string
+      - description: ID of the token
+        in: path
+        name: tokenID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/entities.Response'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Workspace
 securityDefinitions:
   ApiKeyAuth:
     in: header

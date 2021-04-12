@@ -64,3 +64,8 @@ func (m *Mock) CreateToken(_ *tokenEntities.Data) (string, error) {
 	args := m.MethodCalled("CreateToken")
 	return args.Get(0).(string), mockUtils.ReturnNilOrError(args, 1)
 }
+
+func (m *Mock) DeleteToken(_ *tokenEntities.Data) error {
+	args := m.MethodCalled("DeleteToken")
+	return mockUtils.ReturnNilOrError(args, 0)
+}

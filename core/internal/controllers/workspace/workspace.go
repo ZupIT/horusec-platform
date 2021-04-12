@@ -18,6 +18,7 @@ import (
 	tokenEnums "github.com/ZupIT/horusec-platform/core/internal/enums/token"
 	workspaceEnums "github.com/ZupIT/horusec-platform/core/internal/enums/workspace"
 	workspaceRepository "github.com/ZupIT/horusec-platform/core/internal/repositories/workspace"
+	tokenUseCases "github.com/ZupIT/horusec-platform/core/internal/usecases/token"
 	workspaceUseCases "github.com/ZupIT/horusec-platform/core/internal/usecases/workspace"
 )
 
@@ -32,6 +33,7 @@ type IController interface {
 	GetUsers(workspaceID uuid.UUID) (*[]roleEntities.Response, error)
 	RemoveUser(data *roleEntities.Data) error
 	CreateToken(data *tokenEntities.Data) (string, error)
+	DeleteToken(data *tokenEntities.Data) error
 }
 
 type Controller struct {
@@ -41,11 +43,12 @@ type Controller struct {
 	appConfig     app.IConfig
 	useCases      workspaceUseCases.IUseCases
 	repository    workspaceRepository.IRepository
+	tokenUseCases tokenUseCases.IUseCases
 }
 
 func NewWorkspaceController(broker brokerService.IBroker, databaseConnection *database.Connection,
-	appConfig app.IConfig, useCases workspaceUseCases.IUseCases,
-	repository workspaceRepository.IRepository) IController {
+	appConfig app.IConfig, useCases workspaceUseCases.IUseCases, repository workspaceRepository.IRepository,
+	useCasesToken tokenUseCases.IUseCases) IController {
 	return &Controller{
 		broker:        broker,
 		databaseRead:  databaseConnection.Read,
@@ -53,6 +56,7 @@ func NewWorkspaceController(broker brokerService.IBroker, databaseConnection *da
 		appConfig:     appConfig,
 		useCases:      useCases,
 		repository:    repository,
+		tokenUseCases: useCasesToken,
 	}
 }
 
@@ -167,4 +171,9 @@ func (c *Controller) CreateToken(data *tokenEntities.Data) (string, error) {
 	token, tokenString := data.ToToken()
 
 	return tokenString, c.databaseWrite.Create(token, tokenEnums.DatabaseTokens).GetError()
+}
+
+func (c *Controller) DeleteToken(data *tokenEntities.Data) error {
+	return c.databaseWrite.Delete(c.tokenUseCases.FilterWorkspaceTokenByID(data.TokenID, data.WorkspaceID),
+		tokenEnums.DatabaseTokens).GetError()
 }

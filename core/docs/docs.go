@@ -1279,6 +1279,68 @@ var doc = `{
                     }
                 }
             }
+        },
+        "/core/workspaces/{workspaceID}/tokens/{tokenID}": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Delete a workspace token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Workspace"
+                ],
+                "operationId": "delete-workspace-token",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID of the workspace",
+                        "name": "workspaceID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "ID of the token",
+                        "name": "tokenID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content",
+                        "schema": {
+                            "$ref": "#/definitions/entities.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/entities.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/entities.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/entities.Response"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {

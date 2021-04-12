@@ -17,6 +17,7 @@ type Data struct {
 	Description  string    `json:"description"`
 	RepositoryID uuid.UUID `json:"repositoryID" swaggerignore:"true"`
 	WorkspaceID  uuid.UUID `json:"workspaceID" swaggerignore:"true"`
+	TokenID      uuid.UUID `json:"tokenID" swaggerignore:"true"`
 	IsExpirable  bool      `json:"isExpirable"`
 	ExpiresAt    time.Time `json:"expiresAt"`
 }
@@ -25,6 +26,7 @@ func (d *Data) Validate() error {
 	return validation.ValidateStruct(d,
 		validation.Field(&d.WorkspaceID, is.UUID),
 		validation.Field(&d.RepositoryID, is.UUID),
+		validation.Field(&d.TokenID, is.UUID),
 		validation.Field(&d.Description, validation.Required, validation.Length(1, 255)),
 		validation.Field(&d.ExpiresAt, validation.By(d.validateExpiresAt)),
 	)
@@ -44,9 +46,10 @@ func (d *Data) SetWorkspaceID(workspaceID uuid.UUID) *Data {
 	return d
 }
 
-func (d *Data) SetIDs(workspaceID, repositoryID uuid.UUID) *Data {
+func (d *Data) SetIDs(workspaceID, repositoryID, tokenID uuid.UUID) *Data {
 	d.WorkspaceID = workspaceID
 	d.RepositoryID = repositoryID
+	d.TokenID = tokenID
 
 	return d
 }

@@ -50,13 +50,14 @@ func TestSetWorkspaceID(t *testing.T) {
 }
 
 func TestSetIDs(t *testing.T) {
-	t.Run("should success set workspace and repository id", func(t *testing.T) {
+	t.Run("should success set workspace, repository and token id", func(t *testing.T) {
 		data := &Data{}
 		id := uuid.New()
 
-		_ = data.SetIDs(id, id)
+		_ = data.SetIDs(id, id, id)
 		assert.Equal(t, id, data.WorkspaceID)
 		assert.Equal(t, id, data.RepositoryID)
+		assert.Equal(t, id, data.TokenID)
 	})
 }
 
