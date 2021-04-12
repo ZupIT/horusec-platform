@@ -74,6 +74,9 @@ func (r *Router) repositoryRoutes() {
 		router.With(r.IsRepositoryAdmin).Patch("/{repositoryID}/roles/{accountID}", r.repositoryHandler.UpdateRole)
 		router.With(r.IsRepositoryAdmin).Get("/{repositoryID}/roles", r.repositoryHandler.GetUsers)
 		router.With(r.IsRepositoryAdmin).Delete("/{repositoryID}/roles/{accountID}", r.repositoryHandler.RemoveUser)
+		router.With(r.IsRepositoryAdmin).Post("/{repositoryID}/tokens", r.repositoryHandler.CreateToken)
+		router.With(r.IsRepositoryAdmin).Delete("/{repositoryID}/tokens/{tokenID}", r.repositoryHandler.DeleteToken)
+		router.With(r.IsRepositoryAdmin).Get("/{repositoryID}/tokens", r.repositoryHandler.ListTokens)
 	})
 }
 

@@ -17,31 +17,37 @@ import (
 	repositoryController "github.com/ZupIT/horusec-platform/core/internal/controllers/repository"
 	repositoryEntities "github.com/ZupIT/horusec-platform/core/internal/entities/repository"
 	roleEntities "github.com/ZupIT/horusec-platform/core/internal/entities/role"
+	tokenEntities "github.com/ZupIT/horusec-platform/core/internal/entities/token"
 	repositoryEnums "github.com/ZupIT/horusec-platform/core/internal/enums/repository"
 	roleEnums "github.com/ZupIT/horusec-platform/core/internal/enums/role"
+	tokenEnums "github.com/ZupIT/horusec-platform/core/internal/enums/token"
 	workspaceEnums "github.com/ZupIT/horusec-platform/core/internal/enums/workspace"
 	repositoryUseCases "github.com/ZupIT/horusec-platform/core/internal/usecases/repository"
 	roleUseCases "github.com/ZupIT/horusec-platform/core/internal/usecases/role"
+	tokenUseCases "github.com/ZupIT/horusec-platform/core/internal/usecases/token"
 )
 
 type Handler struct {
-	useCases     repositoryUseCases.IUseCases
-	controller   repositoryController.IController
-	appConfig    app.IConfig
-	authGRPC     proto.AuthServiceClient
-	context      context.Context
-	roleUseCases roleUseCases.IUseCases
+	useCases      repositoryUseCases.IUseCases
+	controller    repositoryController.IController
+	appConfig     app.IConfig
+	authGRPC      proto.AuthServiceClient
+	context       context.Context
+	roleUseCases  roleUseCases.IUseCases
+	tokenUseCases tokenUseCases.IUseCases
 }
 
 func NewRepositoryHandler(useCases repositoryUseCases.IUseCases, controller repositoryController.IController,
-	appConfig app.IConfig, authGRPC proto.AuthServiceClient, useCasesRole roleUseCases.IUseCases) *Handler {
+	appConfig app.IConfig, authGRPC proto.AuthServiceClient, useCasesRole roleUseCases.IUseCases,
+	useCasesToken tokenUseCases.IUseCases) *Handler {
 	return &Handler{
-		useCases:     useCases,
-		controller:   controller,
-		appConfig:    appConfig,
-		authGRPC:     authGRPC,
-		context:      context.Background(),
-		roleUseCases: useCasesRole,
+		useCases:      useCases,
+		controller:    controller,
+		appConfig:     appConfig,
+		authGRPC:      authGRPC,
+		context:       context.Background(),
+		roleUseCases:  useCasesRole,
+		tokenUseCases: useCasesToken,
 	}
 }
 
@@ -441,4 +447,127 @@ func (h *Handler) getRemoveUserData(r *http.Request) (*roleEntities.Data, error)
 
 	return h.roleUseCases.NewRoleData(accountID, parser.ParseStringToUUID(chi.URLParam(r, workspaceEnums.ID)),
 		parser.ParseStringToUUID(chi.URLParam(r, repositoryEnums.ID))), nil
+}
+
+// @Tags Repository
+// @Description Create a new repository token
+// @ID create-repository-token
+// @Accept  json
+// @Produce  json
+// @Param workspaceID path string true "ID of the workspace"
+// @Param repositoryID path string true "ID of the repository"
+// @Param Token body tokenEntities.Data true "create repository token data"
+// @Success 201 {object} entities.Response
+// @Failure 400 {object} entities.Response
+// @Failure 401 {object} entities.Response
+// @Failure 500 {object} entities.Response
+// @Router /core/workspaces/{workspaceID}/repositories/{repositoryID}/tokens [post]
+// @Security ApiKeyAuth
+func (h *Handler) CreateToken(w http.ResponseWriter, r *http.Request) {
+	data, err := h.getCreateTokenData(r)
+	if err != nil {
+		httpUtil.StatusBadRequest(w, err)
+		return
+	}
+
+	token, err := h.controller.CreateToken(data)
+	if err != nil {
+		httpUtil.StatusInternalServerError(w, err)
+		return
+	}
+
+	httpUtil.StatusCreated(w, token)
+}
+
+func (h *Handler) getCreateTokenData(r *http.Request) (*tokenEntities.Data, error) {
+	data, err := h.tokenUseCases.TokenDataFromIOReadCloser(r.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	return data.SetIDsString(uuid.Nil, chi.URLParam(r, workspaceEnums.ID), chi.URLParam(r, repositoryEnums.ID)), nil
+}
+
+// @Tags Repository
+// @Description Delete a repository token
+// @ID delete-repository-token
+// @Accept  json
+// @Produce  json
+// @Param workspaceID path string true "ID of the workspace"
+// @Param repositoryID path string true "ID of the repository"
+// @Param tokenID path string true "ID of the token"
+// @Success 204 {object} entities.Response
+// @Failure 400 {object} entities.Response
+// @Failure 401 {object} entities.Response
+// @Failure 500 {object} entities.Response
+// @Router /core/workspaces/{workspaceID}/repositories/{repositoryID}/tokens/{tokenID} [delete]
+// @Security ApiKeyAuth
+func (h *Handler) DeleteToken(w http.ResponseWriter, r *http.Request) {
+	data, err := h.getDeleteTokenData(r)
+	if err != nil {
+		httpUtil.StatusBadRequest(w, err)
+		return
+	}
+
+	if err := h.controller.DeleteToken(data); err != nil {
+		httpUtil.StatusInternalServerError(w, err)
+		return
+	}
+
+	httpUtil.StatusNoContent(w)
+}
+
+func (h *Handler) getDeleteTokenData(r *http.Request) (*tokenEntities.Data, error) {
+	tokenID, err := uuid.Parse(chi.URLParam(r, tokenEnums.ID))
+	if err != nil {
+		return nil, err
+	}
+
+	return h.tokenUseCases.NewTokenData(tokenID, chi.URLParam(r, workspaceEnums.ID),
+		chi.URLParam(r, repositoryEnums.ID)), nil
+}
+
+// @Tags Repository
+// @Description List all repository tokens
+// @ID list-repository-tokens
+// @Accept  json
+// @Produce  json
+// @Param workspaceID path string true "ID of the workspace"
+// @Param repositoryID path string true "ID of the repository"
+// @Success 201 {object} entities.Response
+// @Failure 400 {object} entities.Response
+// @Failure 401 {object} entities.Response
+// @Failure 500 {object} entities.Response
+// @Router /core/workspaces/{workspaceID}/repositories/{repositoryID}/tokens [get]
+// @Security ApiKeyAuth
+func (h *Handler) ListTokens(w http.ResponseWriter, r *http.Request) {
+	data, err := h.getListTokensData(r)
+	if err != nil {
+		httpUtil.StatusBadRequest(w, err)
+		return
+	}
+
+	tokens, err := h.controller.ListTokens(data)
+	if err != nil {
+		httpUtil.StatusInternalServerError(w, err)
+		return
+	}
+
+	httpUtil.StatusOK(w, tokens)
+}
+
+func (h *Handler) getListTokensData(r *http.Request) (*tokenEntities.Data, error) {
+	data := &tokenEntities.Data{}
+
+	workspaceID, err := uuid.Parse(chi.URLParam(r, workspaceEnums.ID))
+	if err != nil {
+		return nil, err
+	}
+
+	repositoryID, err := uuid.Parse(chi.URLParam(r, repositoryEnums.ID))
+	if err != nil {
+		return nil, err
+	}
+
+	return data.SetIDs(workspaceID, repositoryID, uuid.Nil), nil
 }

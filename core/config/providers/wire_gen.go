@@ -58,8 +58,8 @@ func Initialize(string2 string) (router.IRouter, error) {
 	handler := workspace4.NewWorkspaceHandler(iController, iUseCases, authServiceClient, appIConfig, roleIUseCases, tokenIUseCases)
 	repositoryIUseCases := repository.NewRepositoryUseCases()
 	repositoryIRepository := repository2.NewRepositoryRepository(connection, repositoryIUseCases, iRepository)
-	repositoryIController := repository3.NewRepositoryController(iBroker, connection, appIConfig, repositoryIUseCases, repositoryIRepository)
-	repositoryHandler := repository4.NewRepositoryHandler(repositoryIUseCases, repositoryIController, appIConfig, authServiceClient, roleIUseCases)
+	repositoryIController := repository3.NewRepositoryController(iBroker, connection, appIConfig, repositoryIUseCases, repositoryIRepository, tokenIUseCases)
+	repositoryHandler := repository4.NewRepositoryHandler(repositoryIUseCases, repositoryIController, appIConfig, authServiceClient, roleIUseCases, tokenIUseCases)
 	routerIRouter := router.NewHTTPRouter(iRouter, iAuthzMiddleware, handler, repositoryHandler)
 	return routerIRouter, nil
 }

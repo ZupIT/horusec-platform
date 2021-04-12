@@ -23,6 +23,7 @@ import (
 	repositoryEnums "github.com/ZupIT/horusec-platform/core/internal/enums/repository"
 	repositoryRepository "github.com/ZupIT/horusec-platform/core/internal/repositories/repository"
 	repositoryUseCases "github.com/ZupIT/horusec-platform/core/internal/usecases/repository"
+	tokenUseCases "github.com/ZupIT/horusec-platform/core/internal/usecases/token"
 )
 
 func TestCreate(t *testing.T) {
@@ -60,7 +61,7 @@ func TestCreate(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
-			repositoryUseCases.NewRepositoryUseCases(), repositoryMock)
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{})
 
 		result, err := controller.Create(data)
 		assert.NoError(t, err)
@@ -91,7 +92,7 @@ func TestCreate(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
-			repositoryUseCases.NewRepositoryUseCases(), repositoryMock)
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{})
 
 		data.AuthzAdmin = []string{}
 		data.AuthzMember = []string{}
@@ -122,7 +123,7 @@ func TestCreate(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
-			repositoryUseCases.NewRepositoryUseCases(), repositoryMock)
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{})
 
 		_, err := controller.Create(data)
 		assert.Error(t, err)
@@ -144,7 +145,7 @@ func TestCreate(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
-			repositoryUseCases.NewRepositoryUseCases(), repositoryMock)
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{})
 
 		_, err := controller.Create(data)
 		assert.Error(t, err)
@@ -161,7 +162,7 @@ func TestCreate(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
-			repositoryUseCases.NewRepositoryUseCases(), repositoryMock)
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{})
 
 		_, err := controller.Create(data)
 		assert.Error(t, err)
@@ -177,7 +178,7 @@ func TestCreate(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
-			repositoryUseCases.NewRepositoryUseCases(), repositoryMock)
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{})
 
 		_, err := controller.Create(data)
 		assert.Error(t, err)
@@ -200,7 +201,7 @@ func TestGet(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
-			repositoryUseCases.NewRepositoryUseCases(), repositoryMock)
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{})
 
 		result, err := controller.Get(data)
 		assert.NoError(t, err)
@@ -217,7 +218,7 @@ func TestGet(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
-			repositoryUseCases.NewRepositoryUseCases(), repositoryMock)
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{})
 
 		_, err := controller.Get(data)
 		assert.Error(t, err)
@@ -233,7 +234,7 @@ func TestGet(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
-			repositoryUseCases.NewRepositoryUseCases(), repositoryMock)
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{})
 
 		_, err := controller.Get(data)
 		assert.Error(t, err)
@@ -264,7 +265,7 @@ func TestUpdate(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
-			repositoryUseCases.NewRepositoryUseCases(), repositoryMock)
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{})
 
 		result, err := controller.Update(data)
 		assert.NoError(t, err)
@@ -284,7 +285,7 @@ func TestUpdate(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
-			repositoryUseCases.NewRepositoryUseCases(), repositoryMock)
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{})
 
 		_, err := controller.Update(data)
 		assert.Error(t, err)
@@ -301,7 +302,7 @@ func TestUpdate(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
-			repositoryUseCases.NewRepositoryUseCases(), repositoryMock)
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{})
 
 		_, err := controller.Update(data)
 		assert.Error(t, err)
@@ -318,7 +319,7 @@ func TestDelete(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
-			repositoryUseCases.NewRepositoryUseCases(), repositoryMock)
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{})
 
 		assert.NoError(t, controller.Delete(uuid.New()))
 	})
@@ -342,7 +343,7 @@ func TestList(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
-			repositoryUseCases.NewRepositoryUseCases(), repositoryMock)
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{})
 
 		result, err := controller.List(data)
 		assert.NoError(t, err)
@@ -360,7 +361,7 @@ func TestList(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
-			repositoryUseCases.NewRepositoryUseCases(), repositoryMock)
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{})
 
 		result, err := controller.List(data)
 		assert.NoError(t, err)
@@ -388,7 +389,7 @@ func TestUpdateRole(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
-			repositoryUseCases.NewRepositoryUseCases(), repositoryMock)
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{})
 
 		result, err := controller.UpdateRole(data)
 		assert.NoError(t, err)
@@ -408,7 +409,7 @@ func TestUpdateRole(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
-			repositoryUseCases.NewRepositoryUseCases(), repositoryMock)
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{})
 
 		_, err := controller.UpdateRole(data)
 		assert.Error(t, err)
@@ -425,7 +426,7 @@ func TestUpdateRole(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
-			repositoryUseCases.NewRepositoryUseCases(), repositoryMock)
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{})
 
 		result, err := controller.UpdateRole(data)
 		assert.Error(t, err)
@@ -441,7 +442,7 @@ func TestUpdateRole(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
-			repositoryUseCases.NewRepositoryUseCases(), repositoryMock)
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{})
 
 		result, err := controller.UpdateRole(data)
 		assert.Error(t, err)
@@ -474,7 +475,7 @@ func TestInviteUser(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewRepositoryController(brokerMock, databaseConnection, appConfig,
-			repositoryUseCases.NewRepositoryUseCases(), repositoryMock)
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{})
 
 		result, err := controller.InviteUser(data)
 		assert.NoError(t, err)
@@ -494,7 +495,7 @@ func TestInviteUser(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
-			repositoryUseCases.NewRepositoryUseCases(), repositoryMock)
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{})
 
 		result, err := controller.InviteUser(data)
 		assert.NoError(t, err)
@@ -514,7 +515,7 @@ func TestInviteUser(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
-			repositoryUseCases.NewRepositoryUseCases(), repositoryMock)
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{})
 
 		result, err := controller.InviteUser(data)
 		assert.Error(t, err)
@@ -531,7 +532,7 @@ func TestInviteUser(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
-			repositoryUseCases.NewRepositoryUseCases(), repositoryMock)
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{})
 
 		result, err := controller.InviteUser(data)
 		assert.Error(t, err)
@@ -547,7 +548,7 @@ func TestInviteUser(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
-			repositoryUseCases.NewRepositoryUseCases(), repositoryMock)
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{})
 
 		result, err := controller.InviteUser(data)
 		assert.Error(t, err)
@@ -566,7 +567,7 @@ func TestGetUsers(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
-			repositoryUseCases.NewRepositoryUseCases(), repositoryMock)
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{})
 
 		result, err := controller.GetUsers(uuid.New())
 		assert.NoError(t, err)
@@ -591,7 +592,7 @@ func TestRemoveUser(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
-			repositoryUseCases.NewRepositoryUseCases(), repositoryMock)
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{})
 
 		assert.NoError(t, controller.RemoveUser(data))
 	})

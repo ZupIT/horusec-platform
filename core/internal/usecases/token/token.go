@@ -16,6 +16,7 @@ type IUseCases interface {
 	FilterRepositoryTokenByID(tokenID, workspaceID, repositoryID uuid.UUID) map[string]interface{}
 	FilterListWorkspaceTokens(workspaceID uuid.UUID) map[string]interface{}
 	FilterListRepositoryTokens(workspaceID, repositoryID uuid.UUID) map[string]interface{}
+	NewTokenData(tokenID uuid.UUID, workspaceID, repositoryID string) *tokenEntities.Data
 }
 
 type UseCases struct {
@@ -49,4 +50,12 @@ func (u *UseCases) FilterListWorkspaceTokens(workspaceID uuid.UUID) map[string]i
 
 func (u *UseCases) FilterListRepositoryTokens(workspaceID, repositoryID uuid.UUID) map[string]interface{} {
 	return map[string]interface{}{"workspace_id": workspaceID, "repository_id": repositoryID}
+}
+
+func (u *UseCases) NewTokenData(tokenID uuid.UUID, workspaceID, repositoryID string) *tokenEntities.Data {
+	return &tokenEntities.Data{
+		RepositoryID: parser.ParseStringToUUID(repositoryID),
+		WorkspaceID:  parser.ParseStringToUUID(workspaceID),
+		TokenID:      tokenID,
+	}
 }

@@ -108,3 +108,16 @@ func TestFilterListRepositoryTokens(t *testing.T) {
 		})
 	})
 }
+
+func TestNewTokenData(t *testing.T) {
+	t.Run("should success create a new token data", func(t *testing.T) {
+		useCases := NewTokenUseCases()
+		id := uuid.New()
+
+		data := useCases.NewTokenData(id, id.String(), id.String())
+
+		assert.Equal(t, id, data.TokenID)
+		assert.Equal(t, id, data.RepositoryID)
+		assert.Equal(t, id, data.WorkspaceID)
+	})
+}

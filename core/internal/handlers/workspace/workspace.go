@@ -408,7 +408,7 @@ func (h *Handler) getRemoveUserData(r *http.Request) (*roleEntities.Data, error)
 // @Accept  json
 // @Produce  json
 // @Param workspaceID path string true "ID of the workspace"
-// @Param Workspace body tokenEntities.Data true "create workspace token data"
+// @Param Token body tokenEntities.Data true "create workspace token data"
 // @Success 201 {object} entities.Response
 // @Failure 400 {object} entities.Response
 // @Failure 401 {object} entities.Response

@@ -13,9 +13,12 @@ import (
 
 	repositoryEntities "github.com/ZupIT/horusec-platform/core/internal/entities/repository"
 	roleEntities "github.com/ZupIT/horusec-platform/core/internal/entities/role"
+	tokenEntities "github.com/ZupIT/horusec-platform/core/internal/entities/token"
 	repositoryEnums "github.com/ZupIT/horusec-platform/core/internal/enums/repository"
+	tokenEnums "github.com/ZupIT/horusec-platform/core/internal/enums/token"
 	repositoryRepository "github.com/ZupIT/horusec-platform/core/internal/repositories/repository"
 	repositoriesUseCases "github.com/ZupIT/horusec-platform/core/internal/usecases/repository"
+	tokenUseCases "github.com/ZupIT/horusec-platform/core/internal/usecases/token"
 )
 
 type IController interface {
@@ -28,6 +31,9 @@ type IController interface {
 	InviteUser(data *roleEntities.UserData) (*roleEntities.Response, error)
 	GetUsers(repositoryID uuid.UUID) (*[]roleEntities.Response, error)
 	RemoveUser(data *roleEntities.Data) error
+	CreateToken(data *tokenEntities.Data) (string, error)
+	DeleteToken(data *tokenEntities.Data) error
+	ListTokens(data *tokenEntities.Data) (*[]tokenEntities.Response, error)
 }
 
 type Controller struct {
@@ -37,11 +43,12 @@ type Controller struct {
 	appConfig     app.IConfig
 	useCases      repositoriesUseCases.IUseCases
 	repository    repositoryRepository.IRepository
+	tokenUseCases tokenUseCases.IUseCases
 }
 
 func NewRepositoryController(broker brokerService.IBroker, databaseConnection *database.Connection,
-	appConfig app.IConfig, useCases repositoriesUseCases.IUseCases,
-	repository repositoryRepository.IRepository) IController {
+	appConfig app.IConfig, useCases repositoriesUseCases.IUseCases, repository repositoryRepository.IRepository,
+	useCasesToken tokenUseCases.IUseCases) IController {
 	return &Controller{
 		databaseRead:  databaseConnection.Read,
 		databaseWrite: databaseConnection.Write,
@@ -49,6 +56,7 @@ func NewRepositoryController(broker brokerService.IBroker, databaseConnection *d
 		useCases:      useCases,
 		repository:    repository,
 		broker:        broker,
+		tokenUseCases: useCasesToken,
 	}
 }
 
@@ -184,4 +192,22 @@ func (c *Controller) GetUsers(repositoryID uuid.UUID) (*[]roleEntities.Response,
 func (c *Controller) RemoveUser(data *roleEntities.Data) error {
 	return c.databaseWrite.Delete(c.useCases.FilterAccountRepositoryByID(data.AccountID, data.RepositoryID),
 		repositoryEnums.DatabaseAccountRepositoryTable).GetError()
+}
+
+func (c *Controller) CreateToken(data *tokenEntities.Data) (string, error) {
+	token, tokenString := data.ToToken()
+
+	return tokenString, c.databaseWrite.Create(token, tokenEnums.DatabaseTokens).GetError()
+}
+
+func (c *Controller) DeleteToken(data *tokenEntities.Data) error {
+	return c.databaseWrite.Delete(c.tokenUseCases.FilterRepositoryTokenByID(
+		data.TokenID, data.WorkspaceID, data.RepositoryID), tokenEnums.DatabaseTokens).GetError()
+}
+
+func (c *Controller) ListTokens(data *tokenEntities.Data) (*[]tokenEntities.Response, error) {
+	tokens := &[]tokenEntities.Response{}
+
+	return tokens, c.databaseRead.Find(tokens, c.tokenUseCases.FilterListRepositoryTokens(
+		data.WorkspaceID, data.RepositoryID), tokenEnums.DatabaseTokens).GetError()
 }

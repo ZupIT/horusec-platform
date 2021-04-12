@@ -9,6 +9,7 @@ import (
 	"github.com/google/uuid"
 
 	"github.com/ZupIT/horusec-devkit/pkg/utils/crypto"
+	"github.com/ZupIT/horusec-devkit/pkg/utils/parser"
 
 	tokenEnums "github.com/ZupIT/horusec-platform/core/internal/enums/token"
 )
@@ -90,4 +91,12 @@ func (d *Data) ToByes() []byte {
 	bytes, _ := json.Marshal(d)
 
 	return bytes
+}
+
+func (d *Data) SetIDsString(tokenID uuid.UUID, workspaceID, repositoryID string) *Data {
+	d.WorkspaceID = parser.ParseStringToUUID(workspaceID)
+	d.RepositoryID = parser.ParseStringToUUID(repositoryID)
+	d.TokenID = tokenID
+
+	return d
 }

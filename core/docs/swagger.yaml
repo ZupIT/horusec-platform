@@ -668,6 +668,136 @@ paths:
       - ApiKeyAuth: []
       tags:
       - Repository
+  /core/workspaces/{workspaceID}/repositories/{repositoryID}/tokens:
+    get:
+      consumes:
+      - application/json
+      description: List all repository tokens
+      operationId: list-repository-tokens
+      parameters:
+      - description: ID of the workspace
+        in: path
+        name: workspaceID
+        required: true
+        type: string
+      - description: ID of the repository
+        in: path
+        name: repositoryID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/entities.Response'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Repository
+    post:
+      consumes:
+      - application/json
+      description: Create a new repository token
+      operationId: create-repository-token
+      parameters:
+      - description: ID of the workspace
+        in: path
+        name: workspaceID
+        required: true
+        type: string
+      - description: ID of the repository
+        in: path
+        name: repositoryID
+        required: true
+        type: string
+      - description: create repository token data
+        in: body
+        name: Token
+        required: true
+        schema:
+          $ref: '#/definitions/token.Data'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/entities.Response'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Repository
+  /core/workspaces/{workspaceID}/repositories/{repositoryID}/tokens/{tokenID}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a repository token
+      operationId: delete-repository-token
+      parameters:
+      - description: ID of the workspace
+        in: path
+        name: workspaceID
+        required: true
+        type: string
+      - description: ID of the repository
+        in: path
+        name: repositoryID
+        required: true
+        type: string
+      - description: ID of the token
+        in: path
+        name: tokenID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/entities.Response'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Repository
   /core/workspaces/{workspaceID}/roles:
     get:
       consumes:
@@ -892,7 +1022,7 @@ paths:
         type: string
       - description: create workspace token data
         in: body
-        name: Workspace
+        name: Token
         required: true
         schema:
           $ref: '#/definitions/token.Data'
