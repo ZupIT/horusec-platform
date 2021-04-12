@@ -1,7 +1,7 @@
 name: HorusecApiPipeline
 
 on:
-  pull_request:
+  push:
     paths: [
         "api/**",
         ".github/workflows/api-pipeline.yml",

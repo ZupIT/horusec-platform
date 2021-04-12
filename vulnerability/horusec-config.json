@@ -30,7 +30,7 @@
     "*tmp*",
     "**/.vscode/**",
     "**/*_test.go",
-    "deployments/**"
+    "**/deployments/**"
   ],
   "horusecCliFilterPath": "",
   "horusecCliHeaders": {},
