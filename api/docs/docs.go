@@ -454,7 +454,7 @@ var SwaggerInfo = swaggerInfo{
 	BasePath:    "",
 	Schemes:     []string{},
 	Title:       "Horusec-API",
-	Description: "Service responsible for workspace, repositories and token operations.",
+	Description: "Service responsible for analysis operations from Horusec-CLI.",
 }
 
 type s struct{}
