@@ -2,7 +2,7 @@ name: HorusecApiPipeline
 
 on:
   pull_request:
-    branches: [ "**" ]
+    paths: [ "api/**" ]
 
 jobs:
   install-build-test-fmt-lint:

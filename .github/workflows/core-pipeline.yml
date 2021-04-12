@@ -2,7 +2,7 @@ name: HorusecCorePipeline
 
 on:
   pull_request:
-    branches: [ "**" ]
+    paths: [ "core/**" ]
 
 jobs:
   install-build-test-fmt-lint:
