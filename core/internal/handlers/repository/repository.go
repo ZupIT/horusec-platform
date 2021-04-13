@@ -1,4 +1,4 @@
-package workspace
+package repository
 
 import (
 	"context"
@@ -12,38 +12,40 @@ import (
 	httpUtil "github.com/ZupIT/horusec-devkit/pkg/utils/http"
 	_ "github.com/ZupIT/horusec-devkit/pkg/utils/http/entities" // swagger import
 	"github.com/ZupIT/horusec-devkit/pkg/utils/jwt/enums"
+	"github.com/ZupIT/horusec-devkit/pkg/utils/parser"
 
-	workspaceController "github.com/ZupIT/horusec-platform/core/internal/controllers/workspace"
+	repositoryController "github.com/ZupIT/horusec-platform/core/internal/controllers/repository"
+	repositoryEntities "github.com/ZupIT/horusec-platform/core/internal/entities/repository"
 	roleEntities "github.com/ZupIT/horusec-platform/core/internal/entities/role"
 	tokenEntities "github.com/ZupIT/horusec-platform/core/internal/entities/token"
-	workspaceEntities "github.com/ZupIT/horusec-platform/core/internal/entities/workspace"
+	repositoryEnums "github.com/ZupIT/horusec-platform/core/internal/enums/repository"
 	roleEnums "github.com/ZupIT/horusec-platform/core/internal/enums/role"
 	tokenEnums "github.com/ZupIT/horusec-platform/core/internal/enums/token"
 	workspaceEnums "github.com/ZupIT/horusec-platform/core/internal/enums/workspace"
+	repositoryUseCases "github.com/ZupIT/horusec-platform/core/internal/usecases/repository"
 	roleUseCases "github.com/ZupIT/horusec-platform/core/internal/usecases/role"
 	tokenUseCases "github.com/ZupIT/horusec-platform/core/internal/usecases/token"
-	workspaceUseCases "github.com/ZupIT/horusec-platform/core/internal/usecases/workspace"
 )
 
 type Handler struct {
-	controller    workspaceController.IController
-	useCases      workspaceUseCases.IUseCases
-	roleUseCases  roleUseCases.IUseCases
+	useCases      repositoryUseCases.IUseCases
+	controller    repositoryController.IController
+	appConfig     app.IConfig
 	authGRPC      proto.AuthServiceClient
 	context       context.Context
-	appConfig     app.IConfig
+	roleUseCases  roleUseCases.IUseCases
 	tokenUseCases tokenUseCases.IUseCases
 }
 
-func NewWorkspaceHandler(controller workspaceController.IController, useCases workspaceUseCases.IUseCases,
-	authGRPC proto.AuthServiceClient, appConfig app.IConfig, useCasesRole roleUseCases.IUseCases,
+func NewRepositoryHandler(useCases repositoryUseCases.IUseCases, controller repositoryController.IController,
+	appConfig app.IConfig, authGRPC proto.AuthServiceClient, useCasesRole roleUseCases.IUseCases,
 	useCasesToken tokenUseCases.IUseCases) *Handler {
 	return &Handler{
-		controller:    controller,
 		useCases:      useCases,
+		controller:    controller,
+		appConfig:     appConfig,
 		authGRPC:      authGRPC,
 		context:       context.Background(),
-		appConfig:     appConfig,
 		roleUseCases:  useCasesRole,
 		tokenUseCases: useCasesToken,
 	}
@@ -53,17 +55,18 @@ func (h *Handler) getAccountData(r *http.Request) (*proto.GetAccountDataResponse
 	return h.authGRPC.GetAccountInfo(h.context, &proto.GetAccountData{Token: r.Header.Get(enums.HorusecJWTHeader)})
 }
 
-// @Tags Workspace
-// @Description Create a new workspace
-// @ID create-workspace
+// @Tags Repository
+// @Description Create a new repository
+// @ID create-repository
 // @Accept  json
 // @Produce  json
-// @Param Workspace body workspaceEntities.Data true "create workspace data"
+// @Param workspaceID path string true "ID of the workspace"
+// @Param Repository body repositoryEntities.Data true "create repository data"
 // @Success 201 {object} entities.Response
 // @Failure 400 {object} entities.Response
 // @Failure 401 {object} entities.Response
 // @Failure 500 {object} entities.Response
-// @Router /core/workspaces [post]
+// @Router /core/workspaces/{workspaceID}/repositories [post]
 // @Security ApiKeyAuth
 func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	workspaceData, err := h.getCreateData(r)
@@ -74,39 +77,50 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 
 	workspace, err := h.controller.Create(workspaceData)
 	if err != nil {
-		httpUtil.StatusInternalServerError(w, err)
+		h.checkCreateRepositoryErrors(w, err)
 		return
 	}
 
 	httpUtil.StatusCreated(w, workspace)
 }
 
-func (h *Handler) getCreateData(r *http.Request) (*workspaceEntities.Data, error) {
+func (h *Handler) getCreateData(r *http.Request) (*repositoryEntities.Data, error) {
 	accountData, err := h.getAccountData(r)
 	if err != nil {
 		return nil, err
 	}
 
-	workspaceData, err := h.useCases.WorkspaceDataFromIOReadCloser(r.Body)
+	data, err := h.useCases.RepositoryDataFromIOReadCloser(r.Body)
 	if err != nil {
 		return nil, err
 	}
 
-	return workspaceData.SetAccountData(accountData), workspaceData.CheckLdapGroups(h.appConfig.GetAuthorizationType())
+	return data.SetWorkspaceIDAndAccountData(parser.ParseStringToUUID(
+		chi.URLParam(r, workspaceEnums.ID)), accountData), data.CheckLdapGroups(h.appConfig.GetAuthorizationType())
 }
 
-// @Tags Workspace
-// @Description Search for a existing workspace by id
-// @ID get-workspace
+func (h *Handler) checkCreateRepositoryErrors(w http.ResponseWriter, err error) {
+	if err == repositoryEnums.ErrorRepositoryNameAlreadyInUse {
+		httpUtil.StatusBadRequest(w, err)
+		return
+	}
+
+	httpUtil.StatusInternalServerError(w, err)
+}
+
+// @Tags Repository
+// @Description Search for a existing repository by id
+// @ID get-repository
 // @Accept  json
 // @Produce  json
 // @Param workspaceID path string true "ID of the workspace"
+// @Param repositoryID path string true "ID of the repository"
 // @Success 200 {object} entities.Response
 // @Failure 400 {object} entities.Response
 // @Failure 401 {object} entities.Response
 // @Failure 404 {object} entities.Response
 // @Failure 500 {object} entities.Response
-// @Router /core/workspaces/{workspaceID} [get]
+// @Router /core/workspaces/{workspaceID}/repositories/{repositoryID} [get]
 // @Security ApiKeyAuth
 func (h *Handler) Get(w http.ResponseWriter, r *http.Request) {
 	data, err := h.getByIDData(r)
@@ -115,17 +129,17 @@ func (h *Handler) Get(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	workspace, err := h.controller.Get(data)
+	repository, err := h.controller.Get(data)
 	if err != nil {
 		httpUtil.StatusInternalServerError(w, err)
 		return
 	}
 
-	httpUtil.StatusOK(w, workspace)
+	httpUtil.StatusOK(w, repository)
 }
 
-func (h *Handler) getByIDData(r *http.Request) (*workspaceEntities.Data, error) {
-	workspaceID, err := uuid.Parse(chi.URLParam(r, workspaceEnums.ID))
+func (h *Handler) getByIDData(r *http.Request) (*repositoryEntities.Data, error) {
+	repositoryID, err := uuid.Parse(chi.URLParam(r, repositoryEnums.ID))
 	if err != nil {
 		return nil, err
 	}
@@ -135,22 +149,24 @@ func (h *Handler) getByIDData(r *http.Request) (*workspaceEntities.Data, error) 
 		return nil, err
 	}
 
-	return h.useCases.NewWorkspaceData(workspaceID, accountData), nil
+	return h.useCases.NewRepositoryData(repositoryID, parser.ParseStringToUUID(
+		chi.URLParam(r, workspaceEnums.ID)), accountData), nil
 }
 
-// @Tags Workspace
-// @Description Updates a existing workspace by id
-// @ID update-workspace
+// @Tags Repository
+// @Description Updates a existing repository by id
+// @ID update-repository
 // @Accept  json
 // @Produce  json
 // @Param workspaceID path string true "ID of the workspace"
-// @Param Workspace body workspaceEntities.Data true "update workspace data"
+// @Param repositoryID path string true "ID of the repository"
+// @Param Repository body repositoryEntities.Data true "update repository data"
 // @Success 200 {object} entities.Response
 // @Failure 400 {object} entities.Response
 // @Failure 401 {object} entities.Response
 // @Failure 404 {object} entities.Response
 // @Failure 500 {object} entities.Response
-// @Router /core/workspaces/{workspaceID} [patch]
+// @Router /core/workspaces/{workspaceID}/repositories/{repositoryID} [patch]
 // @Security ApiKeyAuth
 func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 	data, err := h.getUpdateData(r)
@@ -159,17 +175,17 @@ func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	workspace, err := h.controller.Update(data)
+	repository, err := h.controller.Update(data)
 	if err != nil {
-		httpUtil.StatusInternalServerError(w, err)
+		h.checkUpdateRepositoryErrors(w, err)
 		return
 	}
 
-	httpUtil.StatusOK(w, workspace)
+	httpUtil.StatusOK(w, repository)
 }
 
-func (h *Handler) getUpdateData(r *http.Request) (*workspaceEntities.Data, error) {
-	workspaceID, err := uuid.Parse(chi.URLParam(r, workspaceEnums.ID))
+func (h *Handler) getUpdateData(r *http.Request) (*repositoryEntities.Data, error) {
+	repositoryID, err := uuid.Parse(chi.URLParam(r, repositoryEnums.ID))
 	if err != nil {
 		return nil, err
 	}
@@ -179,30 +195,41 @@ func (h *Handler) getUpdateData(r *http.Request) (*workspaceEntities.Data, error
 		return nil, err
 	}
 
-	return data.SetWorkspaceID(workspaceID), data.CheckLdapGroups(h.appConfig.GetAuthorizationType())
+	return data.SetWorkspaceAndRepositoryID(parser.ParseStringToUUID(chi.URLParam(r, workspaceEnums.ID)),
+		repositoryID), data.CheckLdapGroups(h.appConfig.GetAuthorizationType())
 }
 
-// @Tags Workspace
-// @Description Delete a workspace by id
-// @ID delete-workspace
+func (h *Handler) checkUpdateRepositoryErrors(w http.ResponseWriter, err error) {
+	if err == repositoryEnums.ErrorRepositoryNameAlreadyInUse {
+		httpUtil.StatusBadRequest(w, err)
+		return
+	}
+
+	httpUtil.StatusInternalServerError(w, err)
+}
+
+// @Tags Repository
+// @Description Delete a repository by id
+// @ID delete-repository
 // @Accept  json
 // @Produce  json
 // @Param workspaceID path string true "ID of the workspace"
+// @Param repositoryID path string true "ID of the repository"
 // @Success 204 {object} entities.Response
 // @Failure 400 {object} entities.Response
 // @Failure 401 {object} entities.Response
 // @Failure 404 {object} entities.Response
 // @Failure 500 {object} entities.Response
-// @Router /core/workspaces/{workspaceID} [delete]
+// @Router /core/workspaces/{workspaceID}/repositories/{repositoryID} [delete]
 // @Security ApiKeyAuth
 func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
-	workspaceID, err := uuid.Parse(chi.URLParam(r, workspaceEnums.ID))
+	repositoryID, err := uuid.Parse(chi.URLParam(r, repositoryEnums.ID))
 	if err != nil {
 		httpUtil.StatusBadRequest(w, err)
 		return
 	}
 
-	if err = h.controller.Delete(workspaceID); err != nil {
+	if err = h.controller.Delete(repositoryID); err != nil {
 		httpUtil.StatusInternalServerError(w, err)
 		return
 	}
@@ -210,16 +237,17 @@ func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
 	httpUtil.StatusNoContent(w)
 }
 
-// @Tags Workspace
-// @Description List all workspaces of an account
-// @ID list-workspace
+// @Tags Repository
+// @Description List all repositories of an account in a workspace
+// @ID list-repositories
 // @Accept  json
 // @Produce  json
+// @Param workspaceID path string true "ID of the workspace"
 // @Success 200 {object} entities.Response
 // @Failure 400 {object} entities.Response
 // @Failure 401 {object} entities.Response
 // @Failure 500 {object} entities.Response
-// @Router /core/workspaces [get]
+// @Router /core/workspaces/{workspaceID}/repositories [get]
 // @Security ApiKeyAuth
 func (h *Handler) List(w http.ResponseWriter, r *http.Request) {
 	data, err := h.getListData(r)
@@ -228,38 +256,40 @@ func (h *Handler) List(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	workspaces, err := h.controller.List(data)
+	repositories, err := h.controller.List(data)
 	if err != nil {
 		httpUtil.StatusInternalServerError(w, err)
 		return
 	}
 
-	httpUtil.StatusOK(w, workspaces)
+	httpUtil.StatusOK(w, repositories)
 }
 
-func (h *Handler) getListData(r *http.Request) (*workspaceEntities.Data, error) {
+func (h *Handler) getListData(r *http.Request) (*repositoryEntities.Data, error) {
 	accountData, err := h.getAccountData(r)
 	if err != nil {
 		return nil, err
 	}
 
-	return h.useCases.NewWorkspaceData(uuid.Nil, accountData), nil
+	return h.useCases.NewRepositoryData(uuid.Nil, parser.ParseStringToUUID(
+		chi.URLParam(r, workspaceEnums.ID)), accountData), nil
 }
 
-// @Tags Workspace
-// @Description Update an account role of a workspace
-// @ID update-workspace-role
+// @Tags Repository
+// @Description Update an account role of a repository
+// @ID update-repository-role
 // @Accept  json
 // @Produce  json
 // @Param workspaceID path string true "ID of the workspace"
 // @Param accountID path string true "ID of the account"
-// @Param Workspace body roleEntities.Data true "update role of a account in a specific workspace"
+// @Param repositoryID path string true "ID of the repository"
+// @Param Role body roleEntities.Data true "update role of a account in a specific workspace"
 // @Success 200 {object} entities.Response
 // @Failure 400 {object} entities.Response
 // @Failure 401 {object} entities.Response
 // @Failure 404 {object} entities.Response
 // @Failure 500 {object} entities.Response
-// @Router /core/workspaces/{workspaceID}/roles/{accountID} [patch]
+// @Router /core/workspaces/{workspaceID}/repositories/{repositoryID}/roles/{accountID} [patch]
 // @Security ApiKeyAuth
 func (h *Handler) UpdateRole(w http.ResponseWriter, r *http.Request) {
 	data, err := h.getUpdateRoleData(r)
@@ -270,7 +300,7 @@ func (h *Handler) UpdateRole(w http.ResponseWriter, r *http.Request) {
 
 	role, err := h.controller.UpdateRole(data)
 	if err != nil {
-		httpUtil.StatusInternalServerError(w, err)
+		h.checkUpdateRoleErrors(w, err)
 		return
 	}
 
@@ -288,22 +318,32 @@ func (h *Handler) getUpdateRoleData(r *http.Request) (*roleEntities.Data, error)
 		return nil, err
 	}
 
-	return data.SetDataIDs(accountID, chi.URLParam(r, workspaceEnums.ID), ""), nil
+	return data.SetDataIDs(accountID, chi.URLParam(r, workspaceEnums.ID), chi.URLParam(r, repositoryEnums.ID)), nil
 }
 
-// @Tags Workspace
-// @Description Invite a user to a workspace
-// @ID invite-user-workspace
+func (h *Handler) checkUpdateRoleErrors(w http.ResponseWriter, err error) {
+	if err == repositoryEnums.ErrorUserDoesNotBelongToWorkspace {
+		httpUtil.StatusBadRequest(w, err)
+		return
+	}
+
+	httpUtil.StatusInternalServerError(w, err)
+}
+
+// @Tags Repository
+// @Description Invite a user to a repository
+// @ID invite-user-repository
 // @Accept  json
 // @Produce  json
 // @Param workspaceID path string true "ID of the workspace"
-// @Param Workspace body roleEntities.UserData true "user account data"
+// @Param repositoryID path string true "ID of the repository"
+// @Param User Data body roleEntities.UserData true "user account data"
 // @Success 200 {object} entities.Response
 // @Failure 400 {object} entities.Response
 // @Failure 401 {object} entities.Response
 // @Failure 404 {object} entities.Response
 // @Failure 500 {object} entities.Response
-// @Router /core/workspaces/{workspaceID}/roles [post]
+// @Router /core/workspaces/{workspaceID}/repositories/{repositoryID}/roles [post]
 // @Security ApiKeyAuth
 func (h *Handler) InviteUser(w http.ResponseWriter, r *http.Request) {
 	data, err := h.getInviteUserData(r)
@@ -314,7 +354,7 @@ func (h *Handler) InviteUser(w http.ResponseWriter, r *http.Request) {
 
 	role, err := h.controller.InviteUser(data)
 	if err != nil {
-		httpUtil.StatusInternalServerError(w, err)
+		h.checkInviteUserErrors(w, err)
 		return
 	}
 
@@ -327,30 +367,40 @@ func (h *Handler) getInviteUserData(r *http.Request) (*roleEntities.UserData, er
 		return nil, err
 	}
 
-	return data.SetIDs(chi.URLParam(r, workspaceEnums.ID), ""), nil
+	return data.SetIDs(chi.URLParam(r, workspaceEnums.ID), chi.URLParam(r, repositoryEnums.ID)), nil
 }
 
-// @Tags Workspace
-// @Description Get all users of a workspace
-// @ID get-workspace-users
+func (h *Handler) checkInviteUserErrors(w http.ResponseWriter, err error) {
+	if err == repositoryEnums.ErrorUserDoesNotBelongToWorkspace {
+		httpUtil.StatusBadRequest(w, err)
+		return
+	}
+
+	httpUtil.StatusInternalServerError(w, err)
+}
+
+// @Tags Repository
+// @Description Get all users of a repository
+// @ID get-repository-users
 // @Accept  json
 // @Produce  json
 // @Param workspaceID path string true "ID of the workspace"
+// @Param repositoryID path string true "ID of the repository"
 // @Success 200 {object} entities.Response
 // @Failure 400 {object} entities.Response
 // @Failure 401 {object} entities.Response
 // @Failure 404 {object} entities.Response
 // @Failure 500 {object} entities.Response
-// @Router /core/workspaces/{workspaceID}/roles [get]
+// @Router /core/workspaces/{workspaceID}/repositories/{repositoryID}/roles [get]
 // @Security ApiKeyAuth
 func (h *Handler) GetUsers(w http.ResponseWriter, r *http.Request) {
-	workspaceID, err := uuid.Parse(chi.URLParam(r, workspaceEnums.ID))
+	repositoryID, err := uuid.Parse(chi.URLParam(r, repositoryEnums.ID))
 	if err != nil {
 		httpUtil.StatusBadRequest(w, err)
 		return
 	}
 
-	users, err := h.controller.GetUsers(workspaceID)
+	users, err := h.controller.GetUsers(repositoryID)
 	if err != nil {
 		httpUtil.StatusInternalServerError(w, err)
 		return
@@ -359,19 +409,20 @@ func (h *Handler) GetUsers(w http.ResponseWriter, r *http.Request) {
 	httpUtil.StatusOK(w, users)
 }
 
-// @Tags Workspace
-// @Description Remove a user from a workspace
-// @ID remove-workspace-user
+// @Tags Repository
+// @Description Remove a user from a repository
+// @ID remove-repository-user
 // @Accept  json
 // @Produce  json
 // @Param workspaceID path string true "ID of the workspace"
+// @Param repositoryID path string true "ID of the repository"
 // @Param accountID path string true "ID of the account"
 // @Success 200 {object} entities.Response
 // @Failure 400 {object} entities.Response
 // @Failure 401 {object} entities.Response
 // @Failure 404 {object} entities.Response
 // @Failure 500 {object} entities.Response
-// @Router /core/workspaces/{workspaceID}/roles/{accountID} [delete]
+// @Router /core/workspaces/{workspaceID}/repositories/{repositoryID}/roles/{accountID} [delete]
 // @Security ApiKeyAuth
 func (h *Handler) RemoveUser(w http.ResponseWriter, r *http.Request) {
 	data, err := h.getRemoveUserData(r)
@@ -389,31 +440,28 @@ func (h *Handler) RemoveUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) getRemoveUserData(r *http.Request) (*roleEntities.Data, error) {
-	workspaceID, err := uuid.Parse(chi.URLParam(r, workspaceEnums.ID))
-	if err != nil {
-		return nil, err
-	}
-
 	accountID, err := uuid.Parse(chi.URLParam(r, roleEnums.AccountID))
 	if err != nil {
 		return nil, err
 	}
 
-	return h.roleUseCases.NewRoleData(accountID, workspaceID, uuid.Nil), nil
+	return h.roleUseCases.NewRoleData(accountID, parser.ParseStringToUUID(chi.URLParam(r, workspaceEnums.ID)),
+		parser.ParseStringToUUID(chi.URLParam(r, repositoryEnums.ID))), nil
 }
 
-// @Tags Workspace
-// @Description Create a new workspace token
-// @ID create-workspace-token
+// @Tags Repository
+// @Description Create a new repository token
+// @ID create-repository-token
 // @Accept  json
 // @Produce  json
 // @Param workspaceID path string true "ID of the workspace"
-// @Param Token body tokenEntities.Data true "create workspace token data"
+// @Param repositoryID path string true "ID of the repository"
+// @Param Token body tokenEntities.Data true "create repository token data"
 // @Success 201 {object} entities.Response
 // @Failure 400 {object} entities.Response
 // @Failure 401 {object} entities.Response
 // @Failure 500 {object} entities.Response
-// @Router /core/workspaces/{workspaceID}/tokens [post]
+// @Router /core/workspaces/{workspaceID}/repositories/{repositoryID}/tokens [post]
 // @Security ApiKeyAuth
 func (h *Handler) CreateToken(w http.ResponseWriter, r *http.Request) {
 	data, err := h.getCreateTokenData(r)
@@ -432,31 +480,27 @@ func (h *Handler) CreateToken(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) getCreateTokenData(r *http.Request) (*tokenEntities.Data, error) {
-	workspaceID, err := uuid.Parse(chi.URLParam(r, workspaceEnums.ID))
-	if err != nil {
-		return nil, err
-	}
-
 	data, err := h.tokenUseCases.TokenDataFromIOReadCloser(r.Body)
 	if err != nil {
 		return nil, err
 	}
 
-	return data.SetWorkspaceID(workspaceID), nil
+	return data.SetIDsString(uuid.Nil, chi.URLParam(r, workspaceEnums.ID), chi.URLParam(r, repositoryEnums.ID)), nil
 }
 
-// @Tags Workspace
-// @Description Delete a workspace token
-// @ID delete-workspace-token
+// @Tags Repository
+// @Description Delete a repository token
+// @ID delete-repository-token
 // @Accept  json
 // @Produce  json
 // @Param workspaceID path string true "ID of the workspace"
+// @Param repositoryID path string true "ID of the repository"
 // @Param tokenID path string true "ID of the token"
 // @Success 204 {object} entities.Response
 // @Failure 400 {object} entities.Response
 // @Failure 401 {object} entities.Response
 // @Failure 500 {object} entities.Response
-// @Router /core/workspaces/{workspaceID}/tokens/{tokenID} [delete]
+// @Router /core/workspaces/{workspaceID}/repositories/{repositoryID}/tokens/{tokenID} [delete]
 // @Security ApiKeyAuth
 func (h *Handler) DeleteToken(w http.ResponseWriter, r *http.Request) {
 	data, err := h.getDeleteTokenData(r)
@@ -474,6 +518,45 @@ func (h *Handler) DeleteToken(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) getDeleteTokenData(r *http.Request) (*tokenEntities.Data, error) {
+	tokenID, err := uuid.Parse(chi.URLParam(r, tokenEnums.ID))
+	if err != nil {
+		return nil, err
+	}
+
+	return h.tokenUseCases.NewTokenData(tokenID, chi.URLParam(r, workspaceEnums.ID),
+		chi.URLParam(r, repositoryEnums.ID)), nil
+}
+
+// @Tags Repository
+// @Description List all repository tokens
+// @ID list-repository-tokens
+// @Accept  json
+// @Produce  json
+// @Param workspaceID path string true "ID of the workspace"
+// @Param repositoryID path string true "ID of the repository"
+// @Success 201 {object} entities.Response
+// @Failure 400 {object} entities.Response
+// @Failure 401 {object} entities.Response
+// @Failure 500 {object} entities.Response
+// @Router /core/workspaces/{workspaceID}/repositories/{repositoryID}/tokens [get]
+// @Security ApiKeyAuth
+func (h *Handler) ListTokens(w http.ResponseWriter, r *http.Request) {
+	data, err := h.getListTokensData(r)
+	if err != nil {
+		httpUtil.StatusBadRequest(w, err)
+		return
+	}
+
+	tokens, err := h.controller.ListTokens(data)
+	if err != nil {
+		httpUtil.StatusInternalServerError(w, err)
+		return
+	}
+
+	httpUtil.StatusOK(w, tokens)
+}
+
+func (h *Handler) getListTokensData(r *http.Request) (*tokenEntities.Data, error) {
 	data := &tokenEntities.Data{}
 
 	workspaceID, err := uuid.Parse(chi.URLParam(r, workspaceEnums.ID))
@@ -481,38 +564,10 @@ func (h *Handler) getDeleteTokenData(r *http.Request) (*tokenEntities.Data, erro
 		return nil, err
 	}
 
-	tokenIO, err := uuid.Parse(chi.URLParam(r, tokenEnums.ID))
+	repositoryID, err := uuid.Parse(chi.URLParam(r, repositoryEnums.ID))
 	if err != nil {
 		return nil, err
 	}
 
-	return data.SetIDs(workspaceID, uuid.Nil, tokenIO), nil
-}
-
-// @Tags Workspace
-// @Description List all workspace tokens
-// @ID list-workspace-tokens
-// @Accept  json
-// @Produce  json
-// @Param workspaceID path string true "ID of the workspace"
-// @Success 201 {object} entities.Response
-// @Failure 400 {object} entities.Response
-// @Failure 401 {object} entities.Response
-// @Failure 500 {object} entities.Response
-// @Router /core/workspaces/{workspaceID}/tokens [get]
-// @Security ApiKeyAuth
-func (h *Handler) ListTokens(w http.ResponseWriter, r *http.Request) {
-	workspaceID, err := uuid.Parse(chi.URLParam(r, workspaceEnums.ID))
-	if err != nil {
-		httpUtil.StatusBadRequest(w, err)
-		return
-	}
-
-	tokens, err := h.controller.ListTokens(workspaceID)
-	if err != nil {
-		httpUtil.StatusInternalServerError(w, err)
-		return
-	}
-
-	httpUtil.StatusOK(w, tokens)
+	return data.SetIDs(workspaceID, repositoryID, uuid.Nil), nil
 }
