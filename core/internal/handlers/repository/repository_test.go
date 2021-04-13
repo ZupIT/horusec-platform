@@ -21,11 +21,11 @@ import (
 	repositoryController "github.com/ZupIT/horusec-platform/core/internal/controllers/repository"
 	repositoryEntities "github.com/ZupIT/horusec-platform/core/internal/entities/repository"
 	"github.com/ZupIT/horusec-platform/core/internal/entities/role"
+	tokenEntities "github.com/ZupIT/horusec-platform/core/internal/entities/token"
 	repositoryEnums "github.com/ZupIT/horusec-platform/core/internal/enums/repository"
 	repositoryUseCases "github.com/ZupIT/horusec-platform/core/internal/usecases/repository"
 	roleUseCases "github.com/ZupIT/horusec-platform/core/internal/usecases/role"
 	tokenUseCases "github.com/ZupIT/horusec-platform/core/internal/usecases/token"
-	tokenEntities "github.com/ZupIT/horusec-platform/core/internal/entities/token"
 )
 
 func TestCreate(t *testing.T) {
