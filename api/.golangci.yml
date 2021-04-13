@@ -9,7 +9,7 @@ linters-settings:
     lines: 15
     statements: 10
   gci:
-    local-prefixes: github.com/ZupIT/horusec-devkit
+    local-prefixes: github.com/ZupIT/horusec-platform/api
   goconst:
     min-len: 2
     min-occurrences: 2
@@ -30,7 +30,7 @@ linters-settings:
   gocyclo:
     min-complexity: 5
   goimports:
-    local-prefixes: github.com/ZupIT/horusec-devkit
+    local-prefixes: github.com/ZupIT/horusec-platform/api
   golint:
     min-confidence: 0
   gomnd:

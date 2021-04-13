@@ -3,7 +3,7 @@ GOFMT ?= gofmt
 GO_FILES ?= $$(find . -name '*.go' | grep -v vendor)
 GOLANG_CI_LINT ?= ./bin/golangci-lint
 GO_IMPORTS ?= goimports
-GO_IMPORTS_LOCAL ?= github.com/ZupIT/horusec-devkit
+GO_IMPORTS_LOCAL ?= github.com/ZupIT/horusec-platform/api
 HORUSEC ?= horusec
 DOCKER_COMPOSE ?= docker-compose
 

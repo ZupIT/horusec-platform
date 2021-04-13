@@ -3,9 +3,10 @@ package token
 import (
 	"testing"
 
-	"github.com/ZupIT/horusec-platform/api/internal/entities/token"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/ZupIT/horusec-platform/api/internal/entities/token"
 
 	"github.com/ZupIT/horusec-devkit/pkg/services/database"
 	"github.com/ZupIT/horusec-devkit/pkg/services/database/enums"

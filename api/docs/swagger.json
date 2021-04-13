@@ -284,31 +284,44 @@
                     }
                 },
                 "createdAt": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "2021-12-30T23:59:59Z"
                 },
                 "errors": {
                     "type": "string"
                 },
                 "finishedAt": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "2021-12-30T23:59:59Z"
                 },
                 "id": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "00000000-0000-0000-0000-000000000000"
                 },
                 "repositoryID": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "00000000-0000-0000-0000-000000000000"
                 },
                 "repositoryName": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "my-project"
                 },
                 "status": {
-                    "type": "string"
+                    "type": "string",
+                    "enum": [
+                        "running",
+                        "success",
+                        "error"
+                    ],
+                    "example": "success"
                 },
                 "workspaceID": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "00000000-0000-0000-0000-000000000000"
                 },
                 "workspaceName": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "my-workspace"
                 }
             }
         },
@@ -316,16 +329,19 @@
             "type": "object",
             "properties": {
                 "analysisID": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "00000000-0000-0000-0000-000000000000"
                 },
                 "createdAt": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "2021-12-30T23:59:59Z"
                 },
                 "vulnerabilities": {
                     "$ref": "#/definitions/vulnerability.Vulnerability"
                 },
                 "vulnerabilityID": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "00000000-0000-0000-0000-000000000000"
                 }
             }
         },
@@ -358,55 +374,129 @@
             "type": "object",
             "properties": {
                 "code": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "-----BEGIN RSA PRIVATE KEY-----"
                 },
                 "column": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "1"
                 },
                 "commitAuthor": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "horusec"
                 },
                 "commitDate": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "2021-12-30"
                 },
                 "commitEmail": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "horusec@zup.com.br"
                 },
                 "commitHash": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "a21fa164c00a15f3e91f5ee6659cb6a793b39a8d"
                 },
                 "commitMessage": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Initial commit"
                 },
                 "confidence": {
-                    "type": "string"
+                    "type": "string",
+                    "enum": [
+                        "HIGH",
+                        "MEDIUM",
+                        "LOW"
+                    ],
+                    "example": "HIGH"
                 },
                 "details": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Asymmetric Private Key Found SSH and/or x.509 Cerficates among the files of your project, make sure you want this kind of information inside your Git repo, since it can be missused by someone with access to any kind of copy.  For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory."
                 },
                 "file": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "/deployments/cert.pem"
                 },
                 "language": {
-                    "type": "string"
+                    "type": "string",
+                    "enum": [
+                        "Go",
+                        "C#",
+                        "Dart",
+                        "Ruby",
+                        "Python",
+                        "Java",
+                        "Kotlin",
+                        "Javascript",
+                        "Typescript",
+                        "Leaks",
+                        "HCL",
+                        "C",
+                        "PHP",
+                        "HTML",
+                        "Generic",
+                        "YAML",
+                        "Elixir",
+                        "Shell"
+                    ],
+                    "example": "Leaks"
                 },
                 "line": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "1"
                 },
                 "securityTool": {
-                    "type": "string"
+                    "type": "string",
+                    "enum": [
+                        "HorusecEngine",
+                        "GoSec",
+                        "SecurityCodeScan",
+                        "Brakeman",
+                        "Safety",
+                        "Bandit",
+                        "NpmAudit",
+                        "YarnAudit",
+                        "GitLeaks",
+                        "TfSec",
+                        "Semgrep",
+                        "Flawfinder",
+                        "PhpCS",
+                        "MixAudit",
+                        "Sobelow",
+                        "ShellCheck",
+                        "BundlerAudit"
+                    ],
+                    "example": "HorusecEngine"
                 },
                 "severity": {
-                    "type": "string"
+                    "type": "string",
+                    "enum": [
+                        "CRITICAL",
+                        " HIGH",
+                        " MEDIUM",
+                        " LOW",
+                        " INFO"
+                    ],
+                    "example": "CRITICAL"
                 },
                 "type": {
-                    "type": "string"
+                    "type": "string",
+                    "enum": [
+                        "Vulnerability",
+                        " Accepted",
+                        " Positive",
+                        " Corrected"
+                    ],
+                    "example": "Vulnerability"
                 },
                 "vulnHash": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "8bcac7908eb950419537b91e19adc83ce2c9cbfdacf4f81157fdadfec11f7017"
                 },
                 "vulnerabilityID": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "00000000-0000-0000-0000-000000000000"
                 }
             }
         }

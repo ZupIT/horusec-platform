@@ -1,8 +1,9 @@
 package analysis
 
 import (
-	"github.com/ZupIT/horusec-platform/api/internal/repositories/analysis/enums"
 	"github.com/google/uuid"
+
+	"github.com/ZupIT/horusec-platform/api/internal/repositories/analysis/enums"
 
 	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 	"github.com/ZupIT/horusec-devkit/pkg/entities/vulnerability"

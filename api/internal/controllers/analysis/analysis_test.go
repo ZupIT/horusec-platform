@@ -5,10 +5,11 @@ import (
 	"testing"
 	"time"
 
-	repoAnalysis "github.com/ZupIT/horusec-platform/api/internal/repositories/analysis"
-	"github.com/ZupIT/horusec-platform/api/internal/repositories/repository"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
+
+	repoAnalysis "github.com/ZupIT/horusec-platform/api/internal/repositories/analysis"
+	"github.com/ZupIT/horusec-platform/api/internal/repositories/repository"
 
 	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 	"github.com/ZupIT/horusec-devkit/pkg/entities/vulnerability"

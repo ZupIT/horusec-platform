@@ -6,33 +6,48 @@ definitions:
           $ref: '#/definitions/analysis.AnalysisVulnerabilities'
         type: array
       createdAt:
+        example: "2021-12-30T23:59:59Z"
         type: string
       errors:
         type: string
       finishedAt:
+        example: "2021-12-30T23:59:59Z"
         type: string
       id:
+        example: 00000000-0000-0000-0000-000000000000
         type: string
       repositoryID:
+        example: 00000000-0000-0000-0000-000000000000
         type: string
       repositoryName:
+        example: my-project
         type: string
       status:
+        enum:
+        - running
+        - success
+        - error
+        example: success
         type: string
       workspaceID:
+        example: 00000000-0000-0000-0000-000000000000
         type: string
       workspaceName:
+        example: my-workspace
         type: string
     type: object
   analysis.AnalysisVulnerabilities:
     properties:
       analysisID:
+        example: 00000000-0000-0000-0000-000000000000
         type: string
       createdAt:
+        example: "2021-12-30T23:59:59Z"
         type: string
       vulnerabilities:
         $ref: '#/definitions/vulnerability.Vulnerability'
       vulnerabilityID:
+        example: 00000000-0000-0000-0000-000000000000
         type: string
     type: object
   cli.AnalysisData:
@@ -54,38 +69,111 @@ definitions:
   vulnerability.Vulnerability:
     properties:
       code:
+        example: '-----BEGIN RSA PRIVATE KEY-----'
         type: string
       column:
+        example: "1"
         type: string
       commitAuthor:
+        example: horusec
         type: string
       commitDate:
+        example: "2021-12-30"
         type: string
       commitEmail:
+        example: horusec@zup.com.br
         type: string
       commitHash:
+        example: a21fa164c00a15f3e91f5ee6659cb6a793b39a8d
         type: string
       commitMessage:
+        example: Initial commit
         type: string
       confidence:
+        enum:
+        - HIGH
+        - MEDIUM
+        - LOW
+        example: HIGH
         type: string
       details:
+        example: Asymmetric Private Key Found SSH and/or x.509 Cerficates among the
+          files of your project, make sure you want this kind of information inside
+          your Git repo, since it can be missused by someone with access to any kind
+          of copy.  For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html)
+          advisory.
         type: string
       file:
+        example: /deployments/cert.pem
         type: string
       language:
+        enum:
+        - Go
+        - C#
+        - Dart
+        - Ruby
+        - Python
+        - Java
+        - Kotlin
+        - Javascript
+        - Typescript
+        - Leaks
+        - HCL
+        - C
+        - PHP
+        - HTML
+        - Generic
+        - YAML
+        - Elixir
+        - Shell
+        example: Leaks
         type: string
       line:
+        example: "1"
         type: string
       securityTool:
+        enum:
+        - HorusecEngine
+        - GoSec
+        - SecurityCodeScan
+        - Brakeman
+        - Safety
+        - Bandit
+        - NpmAudit
+        - YarnAudit
+        - GitLeaks
+        - TfSec
+        - Semgrep
+        - Flawfinder
+        - PhpCS
+        - MixAudit
+        - Sobelow
+        - ShellCheck
+        - BundlerAudit
+        example: HorusecEngine
         type: string
       severity:
+        enum:
+        - CRITICAL
+        - ' HIGH'
+        - ' MEDIUM'
+        - ' LOW'
+        - ' INFO'
+        example: CRITICAL
         type: string
       type:
+        enum:
+        - Vulnerability
+        - ' Accepted'
+        - ' Positive'
+        - ' Corrected'
+        example: Vulnerability
         type: string
       vulnHash:
+        example: 8bcac7908eb950419537b91e19adc83ce2c9cbfdacf4f81157fdadfec11f7017
         type: string
       vulnerabilityID:
+        example: 00000000-0000-0000-0000-000000000000
         type: string
     type: object
 info:

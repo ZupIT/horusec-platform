@@ -3,11 +3,12 @@ package router
 import (
 	"testing"
 
+	"github.com/go-chi/cors"
+	"github.com/stretchr/testify/assert"
+
 	analysisHandler "github.com/ZupIT/horusec-platform/api/internal/handlers/analysis"
 	healthHandler "github.com/ZupIT/horusec-platform/api/internal/handlers/health"
 	"github.com/ZupIT/horusec-platform/api/internal/middelwares/token"
-	"github.com/go-chi/cors"
-	"github.com/stretchr/testify/assert"
 
 	"github.com/ZupIT/horusec-devkit/pkg/services/http"
 )
