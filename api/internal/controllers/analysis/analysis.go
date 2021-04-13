@@ -15,41 +15,131 @@
 package analysis
 
 import (
+	"time"
+
+	repoAnalysis "github.com/ZupIT/horusec-platform/api/internal/repositories/analysis"
+	"github.com/ZupIT/horusec-platform/api/internal/repositories/repository"
 	"github.com/google/uuid"
 
 	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
-	"github.com/ZupIT/horusec-devkit/pkg/entities/cli"
+	"github.com/ZupIT/horusec-devkit/pkg/enums/queues"
+	appConfiguration "github.com/ZupIT/horusec-devkit/pkg/services/app"
 	brokerService "github.com/ZupIT/horusec-devkit/pkg/services/broker"
-	brokerConfig "github.com/ZupIT/horusec-devkit/pkg/services/broker/config"
-	"github.com/ZupIT/horusec-devkit/pkg/services/database"
+	"github.com/ZupIT/horusec-devkit/pkg/services/database/enums"
 )
 
 type IController interface {
-	SaveAnalysis(analysisData *cli.AnalysisData) (uuid.UUID, error)
 	GetAnalysis(analysisID uuid.UUID) (*analysis.Analysis, error)
+	SaveAnalysis(analysisEntity *analysis.Analysis) (uuid.UUID, error)
 }
 
 type Controller struct {
-	broker        brokerService.IBroker
-	databaseRead  database.IDatabaseRead
-	databaseWrite database.IDatabaseWrite
-	brokerConfig  brokerConfig.IConfig
+	broker         brokerService.IBroker
+	repoRepository repository.IRepository
+	repoAnalysis   repoAnalysis.IAnalysis
+	appConfig      appConfiguration.IConfig
 }
 
-func NewAnalysisController(broker brokerService.IBroker, brokerConfiguration brokerConfig.IConfig,
-	databaseConnection *database.Connection) IController {
+func NewAnalysisController(broker brokerService.IBroker, appConfig appConfiguration.IConfig,
+	repositoriesRepository repository.IRepository, repositoriesAnalysis repoAnalysis.IAnalysis) IController {
 	return &Controller{
-		broker:        broker,
-		brokerConfig:  brokerConfiguration,
-		databaseRead:  databaseConnection.Read,
-		databaseWrite: databaseConnection.Write,
+		repoRepository: repositoriesRepository,
+		repoAnalysis:   repositoriesAnalysis,
+		appConfig:      appConfig,
+		broker:         broker,
 	}
 }
 
-func (c *Controller) SaveAnalysis(analysisData *cli.AnalysisData) (uuid.UUID, error) {
-	panic("implement me")
+func (c *Controller) GetAnalysis(analysisID uuid.UUID) (*analysis.Analysis, error) {
+	response := c.repoAnalysis.FindAnalysisByID(analysisID)
+	if response.GetError() != nil {
+		return nil, response.GetError()
+	}
+	if response.GetData() == nil {
+		return nil, enums.ErrorNotFoundRecords
+	}
+
+	return response.GetData().(*analysis.Analysis), nil
 }
 
-func (c *Controller) GetAnalysis(analysisID uuid.UUID) (*analysis.Analysis, error) {
-	panic("implement me")
+func (c *Controller) SaveAnalysis(analysisEntity *analysis.Analysis) (uuid.UUID, error) {
+	if err := c.createRepositoryIfNotExists(analysisEntity); err != nil {
+		return uuid.Nil, err
+	}
+	analysisDecorated, err := c.decorateAnalysisEntityAndSaveOnDatabase(analysisEntity)
+	if err != nil {
+		return uuid.Nil, err
+	}
+	if err := c.publishToWebhookAnalysis(analysisDecorated); err != nil {
+		return uuid.Nil, err
+	}
+	return analysisDecorated.ID, nil
+}
+
+func (c *Controller) createRepositoryIfNotExists(analysisEntity *analysis.Analysis) error {
+	if analysisEntity.RepositoryID == uuid.Nil {
+		analysisEntity.RepositoryID = uuid.New()
+		return c.repoRepository.
+			CreateRepository(analysisEntity.RepositoryID, analysisEntity.WorkspaceID, analysisEntity.RepositoryName)
+	}
+	return nil
+}
+
+func (c *Controller) decorateAnalysisEntityAndSaveOnDatabase(
+	analysisEntity *analysis.Analysis) (*analysis.Analysis, error) {
+	analysisDecorated := c.decoratorAnalysisToSave(analysisEntity)
+	return analysisDecorated, c.createNewAnalysis(analysisDecorated)
+}
+
+func (c *Controller) decoratorAnalysisToSave(analysisEntity *analysis.Analysis) *analysis.Analysis {
+	newAnalysis := c.extractBaseOfTheAnalysis(analysisEntity)
+	for keyObservable := range analysisEntity.AnalysisVulnerabilities {
+		observable := analysisEntity.AnalysisVulnerabilities[keyObservable]
+		if !c.hasDuplicatedHash(newAnalysis, &observable) {
+			newAnalysis.AnalysisVulnerabilities = append(newAnalysis.AnalysisVulnerabilities,
+				analysis.AnalysisVulnerabilities{
+					VulnerabilityID: observable.Vulnerability.VulnerabilityID,
+					AnalysisID:      newAnalysis.ID,
+					CreatedAt:       time.Now(),
+					Vulnerability:   observable.Vulnerability,
+				})
+		}
+	}
+	return newAnalysis
+}
+
+func (c *Controller) createNewAnalysis(newAnalysis *analysis.Analysis) error {
+	return c.repoAnalysis.CreateFullAnalysis(newAnalysis)
+}
+
+func (c *Controller) extractBaseOfTheAnalysis(analysisEntity *analysis.Analysis) *analysis.Analysis {
+	return &analysis.Analysis{
+		ID:             uuid.New(),
+		RepositoryID:   analysisEntity.RepositoryID,
+		RepositoryName: analysisEntity.RepositoryName,
+		WorkspaceID:    analysisEntity.WorkspaceID,
+		WorkspaceName:  analysisEntity.WorkspaceName,
+		Status:         analysisEntity.Status,
+		Errors:         analysisEntity.Errors,
+		CreatedAt:      analysisEntity.CreatedAt,
+		FinishedAt:     analysisEntity.FinishedAt,
+	}
+}
+
+func (c *Controller) hasDuplicatedHash(
+	newAnalysis *analysis.Analysis, observable *analysis.AnalysisVulnerabilities) bool {
+	for keyCurrent := range newAnalysis.AnalysisVulnerabilities {
+		current := newAnalysis.AnalysisVulnerabilities[keyCurrent]
+		if observable.Vulnerability.VulnHash == current.Vulnerability.VulnHash {
+			return true
+		}
+	}
+	return false
+}
+
+func (c *Controller) publishToWebhookAnalysis(analysisData *analysis.Analysis) error {
+	if !c.appConfig.IsBrokerDisabled() {
+		return c.broker.Publish(queues.HorusecWebhookDispatch.ToString(), "", "", analysisData.ToBytes())
+	}
+	return nil
 }

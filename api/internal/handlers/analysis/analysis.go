@@ -18,14 +18,19 @@ import (
 	netHTTP "net/http"
 
 	analysisController "github.com/ZupIT/horusec-platform/api/internal/controllers/analysis"
+	handlersEnums "github.com/ZupIT/horusec-platform/api/internal/handlers/analysis/enums"
+	tokenMiddlewareEnum "github.com/ZupIT/horusec-platform/api/internal/middelwares/token/enums"
 	analysisUseCases "github.com/ZupIT/horusec-platform/api/internal/usecases/analysis"
 	"github.com/go-chi/chi"
 	"github.com/google/uuid"
 
-	"github.com/ZupIT/horusec-devkit/pkg/entities/cli"
 	"github.com/ZupIT/horusec-devkit/pkg/services/database/enums"
-	middlewaresEnums "github.com/ZupIT/horusec-devkit/pkg/services/middlewares/enums"
 	httpUtil "github.com/ZupIT/horusec-devkit/pkg/utils/http"
+
+	analysisEntities "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
+
+	_ "github.com/ZupIT/horusec-devkit/pkg/entities/cli"        // [swagger-import]
+	_ "github.com/ZupIT/horusec-devkit/pkg/utils/http/entities" // [swagger-import]
 )
 
 type Handler struct {
@@ -44,53 +49,90 @@ func (h *Handler) Options(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
 	httpUtil.StatusNoContent(w)
 }
 
+// @Tags Analysis
+// @Security ApiKeyAuth
+// @Description Start new analysis
+// @ID start-new-analysis
+// @Accept  json
+// @Produce  json
+// @Param SendNewAnalysis body cli.AnalysisData true "send new analysis info"
+// @Success 201 {object} entities.Response{content=string} "CREATED"
+// @Success 400 {object} entities.Response{content=string} "BAD REQUEST"
+// @Success 404 {object} entities.Response{content=string} "NOT FOUND"
+// @Failure 500 {object} entities.Response{content=string} "INTERNAL SERVER ERROR"
+// @Router /api/analysis [post]
 func (h *Handler) Post(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	analysisData, err := h.useCases.DecodeAnalysisDataFromIoRead(r.Body)
 	if err != nil {
 		httpUtil.StatusBadRequest(w, err)
 		return
 	}
-	companyID, repositoryID, err := h.getCompanyIDAndRepositoryIDInCxt(r)
+	analysisEntity := h.decoratorAnalysisFromContext(analysisData.Analysis, r)
+	analysisEntity, err = h.decoratorAnalysisToRepositoryName(analysisEntity, analysisData.RepositoryName)
 	if err != nil {
-		httpUtil.StatusUnauthorized(w, err)
+		httpUtil.StatusBadRequest(w, err)
 		return
 	}
-	analysisData = h.setCompanyIDRepositoryIDInAnalysis(analysisData, companyID, repositoryID)
-	h.saveAnalysis(w, analysisData)
+	h.saveAnalysis(w, analysisEntity)
 }
 
-func (h *Handler) setCompanyIDRepositoryIDInAnalysis(
-	analysisData *cli.AnalysisData, companyID uuid.UUID, repositoryID uuid.UUID) *cli.AnalysisData {
-	analysisData.Analysis.CompanyID = companyID
-	analysisData.Analysis.RepositoryID = repositoryID
-	return analysisData
+func (h *Handler) decoratorAnalysisFromContext(
+	analysisEntity *analysisEntities.Analysis, r *netHTTP.Request) *analysisEntities.Analysis {
+	analysisEntity.WorkspaceID = r.Context().Value(tokenMiddlewareEnum.WorkspaceID).(uuid.UUID)
+	analysisEntity.WorkspaceName = r.Context().Value(tokenMiddlewareEnum.WorkspaceName).(string)
+	analysisEntity.RepositoryID = r.Context().Value(tokenMiddlewareEnum.RepositoryID).(uuid.UUID)
+	analysisEntity.RepositoryName = r.Context().Value(tokenMiddlewareEnum.RepositoryName).(string)
+	return analysisEntity
 }
 
-func (h *Handler) saveAnalysis(w netHTTP.ResponseWriter, analysisData *cli.AnalysisData) {
-	analysisID, err := h.controller.SaveAnalysis(analysisData)
+func (h *Handler) decoratorAnalysisToRepositoryName(
+	analysisEntity *analysisEntities.Analysis, repositoryName string) (*analysisEntities.Analysis, error) {
+	if h.isInvalidWorkspaceToCreateAnalysis(analysisEntity) {
+		return nil, handlersEnums.ErrorWorkspaceNotSelected
+	}
+	if h.isValidRepositoryToCreateAnalysis(analysisEntity, repositoryName) {
+		return nil, handlersEnums.ErrorRepositoryNotSelected
+	}
+	if h.isToCreateNewRepository(analysisEntity) {
+		analysisEntity.RepositoryName = repositoryName
+	}
+	return analysisEntity, nil
+}
+
+func (h *Handler) isInvalidWorkspaceToCreateAnalysis(analysisEntity *analysisEntities.Analysis) bool {
+	return analysisEntity.WorkspaceName == "" || analysisEntity.WorkspaceID == uuid.Nil
+}
+
+func (h *Handler) isValidRepositoryToCreateAnalysis(
+	analysisEntity *analysisEntities.Analysis, repositoryName string) bool {
+	return repositoryName == "" && analysisEntity.RepositoryName == ""
+}
+
+func (h *Handler) isToCreateNewRepository(analysisEntity *analysisEntities.Analysis) bool {
+	return analysisEntity.RepositoryName == "" && analysisEntity.RepositoryID == uuid.Nil
+}
+
+func (h *Handler) saveAnalysis(w netHTTP.ResponseWriter, analysisEntity *analysisEntities.Analysis) {
+	analysisID, err := h.controller.SaveAnalysis(analysisEntity)
 	if err != nil {
-		if err == enums.ErrorNotFoundRecords {
-			httpUtil.StatusNotFound(w, err)
-			return
-		}
 		httpUtil.StatusInternalServerError(w, err)
 		return
 	}
 	httpUtil.StatusCreated(w, analysisID)
 }
 
-func (h *Handler) getCompanyIDAndRepositoryIDInCxt(r *netHTTP.Request) (uuid.UUID, uuid.UUID, error) {
-	companyIDCtx := r.Context().Value(middlewaresEnums.CompanyID)
-	if companyIDCtx == nil {
-		return uuid.Nil, uuid.Nil, middlewaresEnums.ErrorUnauthorized
-	}
-	repositoryIDCtx := r.Context().Value(middlewaresEnums.RepositoryID)
-	if repositoryIDCtx == nil {
-		return companyIDCtx.(uuid.UUID), uuid.Nil, nil
-	}
-	return companyIDCtx.(uuid.UUID), repositoryIDCtx.(uuid.UUID), nil
-}
-
+// @Tags Analysis
+// @Security ApiKeyAuth
+// @Description Get analysis on database
+// @ID get-one-analysis
+// @Accept  json
+// @Produce  json
+// @Param analysisID path string true "analysisID of the analysis"
+// @Success 200 {object} entities.Response{content=analysisEntities.Analysis} "OK"
+// @Success 400 {object} entities.Response{content=string} "BAD REQUEST"
+// @Success 404 {object} entities.Response{content=string} "NOT FOUND"
+// @Failure 500 {object} entities.Response{content=string} "INTERNAL SERVER ERROR"
+// @Router /api/analysis/{analysisID} [get]
 func (h *Handler) Get(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	analysisID, err := uuid.Parse(chi.URLParam(r, "analysisID"))
 	if err != nil || analysisID == uuid.Nil {

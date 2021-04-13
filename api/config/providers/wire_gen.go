@@ -7,17 +7,23 @@ package providers
 
 import (
 	"github.com/ZupIT/horusec-platform/api/config/cors"
-	"github.com/ZupIT/horusec-platform/api/internal/controllers/analysis"
-	analysis2 "github.com/ZupIT/horusec-platform/api/internal/handlers/analysis"
+	analysis2 "github.com/ZupIT/horusec-platform/api/internal/controllers/analysis"
+	analysis3 "github.com/ZupIT/horusec-platform/api/internal/handlers/analysis"
 	"github.com/ZupIT/horusec-platform/api/internal/handlers/health"
+	token2 "github.com/ZupIT/horusec-platform/api/internal/middelwares/token"
+	"github.com/ZupIT/horusec-platform/api/internal/repositories/analysis"
+	"github.com/ZupIT/horusec-platform/api/internal/repositories/repository"
+	"github.com/ZupIT/horusec-platform/api/internal/repositories/token"
 	"github.com/ZupIT/horusec-platform/api/internal/router"
 	"github.com/google/wire"
 
+	"github.com/ZupIT/horusec-devkit/pkg/services/app"
 	"github.com/ZupIT/horusec-devkit/pkg/services/broker"
-	"github.com/ZupIT/horusec-devkit/pkg/services/broker/config"
+	config2 "github.com/ZupIT/horusec-devkit/pkg/services/broker/config"
 	"github.com/ZupIT/horusec-devkit/pkg/services/database"
-	config2 "github.com/ZupIT/horusec-devkit/pkg/services/database/config"
+	"github.com/ZupIT/horusec-devkit/pkg/services/database/config"
 	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth"
+	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth/proto"
 	"github.com/ZupIT/horusec-devkit/pkg/services/http"
 )
 
@@ -26,24 +32,30 @@ import (
 func Initialize(defaultPort string) (router.IRouter, error) {
 	options := cors.NewCorsConfig()
 	iRouter := http.NewHTTPRouter(options, defaultPort)
-	iConfig := config.NewBrokerConfig()
-	iBroker, err := broker.NewBroker(iConfig)
+	iConfig := config.NewDatabaseConfig()
+	connection, err := database.NewDatabaseReadAndWrite(iConfig)
 	if err != nil {
 		return nil, err
 	}
-	configIConfig := config2.NewDatabaseConfig()
-	connection, err := database.NewDatabaseReadAndWrite(configIConfig)
+	iToken := token.NewRepositoriesToken(connection)
+	iTokenAuthz := token2.NewTokenAuthz(iToken)
+	configIConfig := config2.NewBrokerConfig()
+	clientConnInterface := auth.NewAuthGRPCConnection()
+	authServiceClient := proto.NewAuthServiceClient(clientConnInterface)
+	appIConfig := app.NewAppConfig(authServiceClient)
+	iBroker, err := broker.NewBroker(configIConfig, appIConfig)
 	if err != nil {
 		return nil, err
 	}
-	iController := analysis.NewAnalysisController(iBroker, iConfig, connection)
-	handler := analysis2.NewAnalysisHandler(iController)
-	clientConn := auth.NewAuthGRPCConnection()
-	healthHandler := health.NewHealthHandler(iBroker, iConfig, connection, clientConn)
-	routerIRouter := router.NewHTTPRouter(iRouter, handler, healthHandler)
+	iRepository := repository.NewRepositoriesRepository(connection)
+	iAnalysis := analysis.NewRepositoriesAnalysis(connection)
+	iController := analysis2.NewAnalysisController(iBroker, appIConfig, iRepository, iAnalysis)
+	handler := analysis3.NewAnalysisHandler(iController)
+	healthHandler := health.NewHealthHandler(iBroker, configIConfig, connection, clientConnInterface, appIConfig)
+	routerIRouter := router.NewHTTPRouter(iRouter, iTokenAuthz, handler, healthHandler)
 	return routerIRouter, nil
 }
 
 // wire.go:
 
-var providers = wire.NewSet(config.NewBrokerConfig, broker.NewBroker, config2.NewDatabaseConfig, database.NewDatabaseReadAndWrite, auth.NewAuthGRPCConnection, cors.NewCorsConfig, http.NewHTTPRouter, router.NewHTTPRouter, analysis.NewAnalysisController, analysis2.NewAnalysisHandler, health.NewHealthHandler)
+var providers = wire.NewSet(config2.NewBrokerConfig, broker.NewBroker, config.NewDatabaseConfig, database.NewDatabaseReadAndWrite, auth.NewAuthGRPCConnection, proto.NewAuthServiceClient, token2.NewTokenAuthz, analysis.NewRepositoriesAnalysis, repository.NewRepositoriesRepository, token.NewRepositoriesToken, cors.NewCorsConfig, http.NewHTTPRouter, app.NewAppConfig, analysis2.NewAnalysisController, analysis3.NewAnalysisHandler, health.NewHealthHandler, router.NewHTTPRouter)
