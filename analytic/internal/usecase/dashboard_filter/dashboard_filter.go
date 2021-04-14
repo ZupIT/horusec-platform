@@ -29,7 +29,7 @@ func NewUseCaseDashboard() IUseCaseDashboard {
 func (u *UseCaseDashboard) ExtractFilterDashboardByWorkspace(r *netHTTP.Request) (*dashboard.FilterDashboard, error) {
 	workspaceID, err := uuid.Parse(chi.URLParam(r, "workspaceID"))
 	if err != nil {
-		return nil, enums.ErrorWrongRepositoryID
+		return nil, enums.ErrorWrongWorkspaceID
 	}
 	page, _ := strconv.Atoi(r.URL.Query().Get("page"))
 	size, _ := strconv.Atoi(r.URL.Query().Get("size"))

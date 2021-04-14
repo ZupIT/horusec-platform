@@ -48,6 +48,7 @@ func (r *Router) setRoutes() IRouter {
 	r.routerHealth()
 	r.routerSwagger()
 	r.routerDashboardWorkspace()
+	r.routerDashboardRepository()
 	return r
 }
 
