@@ -164,8 +164,8 @@ definitions:
       type:
         enum:
         - Vulnerability
-        - ' Accepted'
-        - ' Positive'
+        - ' Risk Accepted'
+        - ' False Positive'
         - ' Corrected'
         example: Vulnerability
         type: string
@@ -239,8 +239,6 @@ paths:
               type: object
       security:
       - ApiKeyAuth: []
-      tags:
-      - Analysis
   /api/analysis/{analysisID}:
     get:
       consumes:
@@ -294,8 +292,6 @@ paths:
               type: object
       security:
       - ApiKeyAuth: []
-      tags:
-      - Analysis
   /api/health:
     get:
       consumes:

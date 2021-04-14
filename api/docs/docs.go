@@ -43,9 +43,6 @@ var doc = `{
                 "produces": [
                     "application/json"
                 ],
-                "tags": [
-                    "Analysis"
-                ],
                 "operationId": "start-new-analysis",
                 "parameters": [
                     {
@@ -147,9 +144,6 @@ var doc = `{
                 ],
                 "produces": [
                     "application/json"
-                ],
-                "tags": [
-                    "Analysis"
                 ],
                 "operationId": "get-one-analysis",
                 "parameters": [
@@ -502,8 +496,8 @@ var doc = `{
                     "type": "string",
                     "enum": [
                         "Vulnerability",
-                        " Accepted",
-                        " Positive",
+                        " Risk Accepted",
+                        " False Positive",
                         " Corrected"
                     ],
                     "example": "Vulnerability"

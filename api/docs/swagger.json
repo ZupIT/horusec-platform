@@ -25,9 +25,6 @@
                 "produces": [
                     "application/json"
                 ],
-                "tags": [
-                    "Analysis"
-                ],
                 "operationId": "start-new-analysis",
                 "parameters": [
                     {
@@ -129,9 +126,6 @@
                 ],
                 "produces": [
                     "application/json"
-                ],
-                "tags": [
-                    "Analysis"
                 ],
                 "operationId": "get-one-analysis",
                 "parameters": [
@@ -484,8 +478,8 @@
                     "type": "string",
                     "enum": [
                         "Vulnerability",
-                        " Accepted",
-                        " Positive",
+                        " Risk Accepted",
+                        " False Positive",
                         " Corrected"
                     ],
                     "example": "Vulnerability"
