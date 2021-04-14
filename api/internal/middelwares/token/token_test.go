@@ -7,10 +7,11 @@ import (
 	"testing"
 	"time"
 
-	entityToken "github.com/ZupIT/horusec-platform/api/internal/entities/token"
-	"github.com/ZupIT/horusec-platform/api/internal/repositories/token"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
+
+	entityToken "github.com/ZupIT/horusec-platform/api/internal/entities/token"
+	"github.com/ZupIT/horusec-platform/api/internal/repositories/token"
 
 	"github.com/ZupIT/horusec-devkit/pkg/services/database/response"
 )

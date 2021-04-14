@@ -1,8 +1,9 @@
 package analysis
 
 import (
-	"github.com/ZupIT/horusec-platform/api/internal/repositories/analysis/enums"
 	"github.com/google/uuid"
+
+	"github.com/ZupIT/horusec-platform/api/internal/repositories/analysis/enums"
 
 	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 	"github.com/ZupIT/horusec-devkit/pkg/entities/vulnerability"
@@ -69,7 +70,7 @@ func (a *Analysis) createAnalysis(newAnalysis *analysis.Analysis) error {
 func (a *Analysis) createManyToManyAnalysisAndVulnerabilities(newAnalysis *analysis.Analysis) error {
 	for index := range newAnalysis.AnalysisVulnerabilities {
 		manyToMany := newAnalysis.AnalysisVulnerabilities[index]
-		vulnerabilityID, err := a.createVulnerabilityIfNotExists(&manyToMany.Vulnerability)
+		vulnerabilityID, err := a.createVulnerabilityIfNotExists(&manyToMany.Vulnerability, newAnalysis.WorkspaceID)
 		if err != nil {
 			return err
 		}
@@ -81,8 +82,9 @@ func (a *Analysis) createManyToManyAnalysisAndVulnerabilities(newAnalysis *analy
 	return nil
 }
 
-func (a *Analysis) createVulnerabilityIfNotExists(vuln *vulnerability.Vulnerability) (uuid.UUID, error) {
-	res := a.findVulnerabilityByHash(vuln.VulnHash)
+func (a *Analysis) createVulnerabilityIfNotExists(
+	vuln *vulnerability.Vulnerability, workspaceID uuid.UUID) (uuid.UUID, error) {
+	res := a.findVulnerabilityByHashInWorkspace(vuln.VulnHash, workspaceID)
 	exists, err := a.checkIfAlreadyExistsVulnerability(res)
 	if err == nil {
 		if !exists {
@@ -112,11 +114,14 @@ func (a *Analysis) createManyToMany(manyToMany *analysis.AnalysisVulnerabilities
 	return a.databaseWrite.Create(manyToManyForCreate, manyToManyForCreate.GetTable()).GetError()
 }
 
-func (a *Analysis) findVulnerabilityByHash(vulnHash string) response.IResponse {
+func (a *Analysis) findVulnerabilityByHashInWorkspace(vulnHash string, workspaceID uuid.UUID) response.IResponse {
 	query := `
 		SELECT vulnerabilities.vulnerability_id as vulnerability_id
 		FROM vulnerabilities
+		INNER JOIN analysis_vulnerabilities ON vulnerabilities.vulnerability_id = analysis_vulnerabilities.vulnerability_id 
+		INNER JOIN analysis ON analysis_vulnerabilities.analysis_id = analysis.analysis_id 
 		WHERE vulnerabilities.vuln_hash = ?
+		AND analysis.workspaceID = ?
 	`
-	return a.databaseRead.Raw(query, map[string]interface{}{}, vulnHash)
+	return a.databaseRead.Raw(query, map[string]interface{}{}, vulnHash, workspaceID)
 }

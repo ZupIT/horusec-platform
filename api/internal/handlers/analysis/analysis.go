@@ -17,12 +17,13 @@ package analysis
 import (
 	netHTTP "net/http"
 
+	"github.com/go-chi/chi"
+	"github.com/google/uuid"
+
 	analysisController "github.com/ZupIT/horusec-platform/api/internal/controllers/analysis"
 	handlersEnums "github.com/ZupIT/horusec-platform/api/internal/handlers/analysis/enums"
 	tokenMiddlewareEnum "github.com/ZupIT/horusec-platform/api/internal/middelwares/token/enums"
 	analysisUseCases "github.com/ZupIT/horusec-platform/api/internal/usecases/analysis"
-	"github.com/go-chi/chi"
-	"github.com/google/uuid"
 
 	"github.com/ZupIT/horusec-devkit/pkg/services/database/enums"
 	httpUtil "github.com/ZupIT/horusec-devkit/pkg/utils/http"
@@ -49,7 +50,7 @@ func (h *Handler) Options(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
 	httpUtil.StatusNoContent(w)
 }
 
-// @Tags Analysis
+// Post @Tags Analysis
 // @Security ApiKeyAuth
 // @Description Start new analysis
 // @ID start-new-analysis
@@ -121,7 +122,7 @@ func (h *Handler) saveAnalysis(w netHTTP.ResponseWriter, analysisEntity *analysi
 	httpUtil.StatusCreated(w, analysisID)
 }
 
-// @Tags Analysis
+// Get @Tags Analysis
 // @Security ApiKeyAuth
 // @Description Get analysis on database
 // @ID get-one-analysis
