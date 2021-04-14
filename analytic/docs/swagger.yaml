@@ -1,0 +1,52 @@
+definitions:
+  entities.Response:
+    properties:
+      code:
+        type: integer
+      content:
+        type: object
+      status:
+        type: string
+    type: object
+info:
+  contact:
+    email: horusec@zup.com.br
+    name: Horusec
+    url: https://github.com/ZupIT/horusec-platform
+  description: Service responsible for managing vulnerabilities.
+  termsOfService: http://swagger.io/terms/
+  title: Horusec-Analytic
+paths:
+  /analytic/health:
+    get:
+      consumes:
+      - application/json
+      description: Check if Health of service it's OK!
+      operationId: health
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/entities.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "500":
+          description: INTERNAL SERVER ERROR
+          schema:
+            allOf:
+            - $ref: '#/definitions/entities.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: X-Horusec-Authorization
+    type: apiKey
+swagger: "2.0"
