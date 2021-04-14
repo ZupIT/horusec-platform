@@ -1,12 +1,17 @@
 package authentication
 
-import "time"
+import (
+	"time"
+
+	"github.com/google/uuid"
+)
 
 type LoginResponse struct {
-	AccessToken        string    `json:"accessToken omitempty"`
-	RefreshToken       string    `json:"refreshToken omitempty"`
-	Username           string    `json:"username omitempty"`
-	Email              string    `json:"email omitempty"`
-	ExpiresAt          time.Time `json:"expiresAt omitempty"`
-	IsApplicationAdmin bool      `json:"isApplicationAdmin omitempty"`
+	AccountID          uuid.UUID `json:"accountID"`
+	AccessToken        string    `json:"accessToken"`
+	RefreshToken       string    `json:"refreshToken"`
+	Username           string    `json:"username"`
+	Email              string    `json:"email"`
+	ExpiresAt          time.Time `json:"expiresAt"`
+	IsApplicationAdmin bool      `json:"isApplicationAdmin"`
 }

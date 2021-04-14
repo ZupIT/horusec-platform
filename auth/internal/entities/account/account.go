@@ -4,6 +4,10 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+
+	tokenEntities "github.com/ZupIT/horusec-devkit/pkg/utils/jwt/entities"
+
+	authEntities "github.com/ZupIT/horusec-platform/auth/internal/entities/authentication"
 )
 
 type Account struct {
@@ -31,4 +35,24 @@ func (a *Account) ToResponse() *Response {
 
 func (a *Account) IsNotConfirmed() bool {
 	return !a.IsConfirmed
+}
+
+func (a *Account) ToTokenData() *tokenEntities.TokenData {
+	return &tokenEntities.TokenData{
+		Email:     a.Email,
+		Username:  a.Username,
+		AccountID: a.AccountID,
+	}
+}
+
+func (a *Account) ToLoginResponse(accessToken, refreshToken string, expiresAt time.Time) *authEntities.LoginResponse {
+	return &authEntities.LoginResponse{
+		AccessToken:        accessToken,
+		RefreshToken:       refreshToken,
+		ExpiresAt:          expiresAt,
+		AccountID:          a.AccountID,
+		Username:           a.Username,
+		Email:              a.Email,
+		IsApplicationAdmin: a.IsApplicationAdmin,
+	}
 }

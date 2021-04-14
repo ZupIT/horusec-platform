@@ -1,9 +1,10 @@
 package authentication
 
 import (
-	"github.com/ZupIT/horusec-devkit/pkg/utils/crypto"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/go-ozzo/ozzo-validation/v4/is"
+
+	"github.com/ZupIT/horusec-devkit/pkg/utils/crypto"
 )
 
 type LoginCredentials struct {
@@ -18,8 +19,8 @@ func (l *LoginCredentials) Validate() error {
 	)
 }
 
-func (l *LoginCredentials) CheckPassword(password, hash string) bool {
-	return crypto.CheckPasswordHashBcrypt(password, hash)
+func (l *LoginCredentials) CheckInvalidPassword(password, hash string) bool {
+	return !crypto.CheckPasswordHashBcrypt(password, hash)
 }
 
 func (l *LoginCredentials) IsInvalidUsernameEmail() bool {

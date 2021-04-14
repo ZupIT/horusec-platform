@@ -3,28 +3,44 @@ package authentication
 import (
 	"net/http"
 
-	"github.com/ZupIT/horusec-platform/auth/internal/entities/authentication"
-
 	authTypes "github.com/ZupIT/horusec-devkit/pkg/enums/auth"
 	databaseEnums "github.com/ZupIT/horusec-devkit/pkg/services/database/enums"
 	httpUtil "github.com/ZupIT/horusec-devkit/pkg/utils/http"
 
 	"github.com/ZupIT/horusec-platform/auth/config/app"
 	authController "github.com/ZupIT/horusec-platform/auth/internal/controllers/authentication"
+	"github.com/ZupIT/horusec-platform/auth/internal/entities/authentication"
 	authEnums "github.com/ZupIT/horusec-platform/auth/internal/enums/authentication"
-	accountUseCases "github.com/ZupIT/horusec-platform/auth/internal/usecases/account"
+	authUseCases "github.com/ZupIT/horusec-platform/auth/internal/usecases/authentication"
 )
 
 type Handler struct {
-	useCases   accountUseCases.IUseCases
+	useCases   authUseCases.IUseCases
 	appConfig  app.IConfig
 	controller authController.IController
 }
 
-func NewAuthenticationHandler() *Handler {
-	return &Handler{}
+func NewAuthenticationHandler(appConfig app.IConfig, useCases authUseCases.IUseCases,
+	controller authController.IController) *Handler {
+	return &Handler{
+		useCases:   useCases,
+		appConfig:  appConfig,
+		controller: controller,
+	}
 }
 
+// @Tags Authenticate
+// @Description Login in into a horusec account
+// @ID login
+// @Accept  json
+// @Produce  json
+// @Param Credentials body authentication.LoginCredentials true "login data"
+// @Success 200 {object} entities.Response
+// @Failure 400 {object} entities.Response
+// @Failure 403 {object} entities.Response
+// @Failure 500 {object} entities.Response
+// @Router /auth/authenticate/login [post]
+// @Security ApiKeyAuth
 func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
 	credentials, err := h.getLoginCredentials(r)
 	if err != nil {

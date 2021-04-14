@@ -8,12 +8,12 @@ import (
 	"google.golang.org/grpc/credentials"
 	healthGRPC "google.golang.org/grpc/health/grpc_health_v1"
 
-	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth/proto"
 	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/health"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/env"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 
 	"github.com/ZupIT/horusec-platform/auth/config/grpc/enums"
+	authHandler "github.com/ZupIT/horusec-platform/auth/internal/handlers/authentication"
 )
 
 type IAuthGRPCServer interface {
@@ -21,13 +21,15 @@ type IAuthGRPCServer interface {
 }
 
 type AuthGRPCServer struct {
-	Port       int
-	GRPCServer *grpc.Server
+	Port        int
+	GRPCServer  *grpc.Server
+	authHandler *authHandler.Handler
 }
 
-func NewAuthGRPCServer() IAuthGRPCServer {
+func NewAuthGRPCServer(handlerAuth *authHandler.Handler) IAuthGRPCServer {
 	server := &AuthGRPCServer{
-		Port: env.GetEnvOrDefaultInt(enums.EnvGRPCPort, 8007),
+		Port:        env.GetEnvOrDefaultInt(enums.EnvGRPCPort, 8007),
+		authHandler: handlerAuth,
 	}
 
 	return server.setup()
@@ -81,7 +83,7 @@ func (a *AuthGRPCServer) getNetListener() net.Listener {
 
 func (a *AuthGRPCServer) registerServices() {
 	healthGRPC.RegisterHealthServer(a.GRPCServer, health.NewHealthCheckGrpcServer())
-	proto.RegisterAuthServiceServer(a.GRPCServer, nil) //TODO CONTROLLER
+	//proto.RegisterAuthServiceServer(a.GRPCServer, a.authController)
 }
 
 func (a *AuthGRPCServer) listeningMessage() {
