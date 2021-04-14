@@ -47,7 +47,8 @@ func (h *Handler) Options(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
 	httpUtil.StatusNoContent(w)
 }
 
-// Get @Tags Health
+// Get
+// @Tags Health
 // @Description Check if Health of service it's OK!
 // @ID health
 // @Accept  json

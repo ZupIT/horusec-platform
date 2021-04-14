@@ -12,11 +12,12 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth/proto"
 	"github.com/ZupIT/horusec-devkit/pkg/services/http"
 	"github.com/ZupIT/horusec-devkit/pkg/services/middlewares"
-	"github.com/google/wire"
-
 	"github.com/ZupIT/horusec-platform/analytic/config/cors"
+	"github.com/ZupIT/horusec-platform/analytic/internal/handlers/dashboard_repository"
+	"github.com/ZupIT/horusec-platform/analytic/internal/handlers/dashboard_workspace"
 	"github.com/ZupIT/horusec-platform/analytic/internal/handlers/health"
 	"github.com/ZupIT/horusec-platform/analytic/internal/router"
+	"github.com/google/wire"
 )
 
 // Injectors from wire.go:
@@ -32,10 +33,12 @@ func Initialize(defaultPort string) (router.IRouter, error) {
 		return nil, err
 	}
 	handler := health.NewHealthHandler(connection, clientConnInterface)
-	routerIRouter := router.NewHTTPRouter(iRouter, iAuthzMiddleware, handler)
+	dashboardworkspaceHandler := dashboardworkspace.NewDashboardWorkspaceHandler()
+	dashboardrepositoryHandler := dashboardrepository.NewDashboardRepositoryHandler()
+	routerIRouter := router.NewHTTPRouter(iRouter, iAuthzMiddleware, handler, dashboardworkspaceHandler, dashboardrepositoryHandler)
 	return routerIRouter, nil
 }
 
 // wire.go:
 
-var providers = wire.NewSet(config.NewDatabaseConfig, database.NewDatabaseReadAndWrite, auth.NewAuthGRPCConnection, proto.NewAuthServiceClient, cors.NewCorsConfig, http.NewHTTPRouter, middlewares.NewAuthzMiddleware, health.NewHealthHandler, router.NewHTTPRouter)
+var providers = wire.NewSet(config.NewDatabaseConfig, database.NewDatabaseReadAndWrite, auth.NewAuthGRPCConnection, proto.NewAuthServiceClient, cors.NewCorsConfig, http.NewHTTPRouter, middlewares.NewAuthzMiddleware, health.NewHealthHandler, dashboardworkspace.NewDashboardWorkspaceHandler, dashboardrepository.NewDashboardRepositoryHandler, router.NewHTTPRouter)

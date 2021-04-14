@@ -17,6 +17,809 @@ info:
   termsOfService: http://swagger.io/terms/
   title: Horusec-Analytic
 paths:
+  /analytic/dashboard/{workspaceID}/{repositoryID}/details:
+    get:
+      consumes:
+      - application/json
+      description: Get all vulnerabilities by details by range date in repository
+      operationId: get-vulnerabilities-by-details-repository
+      parameters:
+      - description: workspaceID of the workspace
+        in: path
+        name: workspaceID
+        required: true
+        type: string
+      - description: repositoryID of the repository
+        in: path
+        name: repositoryID
+        required: true
+        type: string
+      - description: initialDate query string
+        in: query
+        name: initialDate
+        type: string
+      - description: finalDate query string
+        in: query
+        name: finalDate
+        type: string
+      - description: page query string
+        in: query
+        name: page
+        type: string
+      - description: size query string
+        in: query
+        name: size
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/entities.Response'
+            - properties:
+                content:
+                  type: object
+              type: object
+        "400":
+          description: BAD REQUEST
+          schema:
+            allOf:
+            - $ref: '#/definitions/entities.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "500":
+          description: INTERNAL SERVER ERROR
+          schema:
+            allOf:
+            - $ref: '#/definitions/entities.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - DashboardByRepository
+  /analytic/dashboard/{workspaceID}/{repositoryID}/total-developers:
+    get:
+      consumes:
+      - application/json
+      description: Get count total vulnerabilities by range date in repository
+      operationId: get-total-developers-repository
+      parameters:
+      - description: workspaceID of the workspace
+        in: path
+        name: workspaceID
+        required: true
+        type: string
+      - description: repositoryID of the repository
+        in: path
+        name: repositoryID
+        required: true
+        type: string
+      - description: initialDate query string
+        in: query
+        name: initialDate
+        type: string
+      - description: finalDate query string
+        in: query
+        name: finalDate
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/entities.Response'
+            - properties:
+                content:
+                  type: integer
+              type: object
+        "400":
+          description: BAD REQUEST
+          schema:
+            allOf:
+            - $ref: '#/definitions/entities.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "500":
+          description: INTERNAL SERVER ERROR
+          schema:
+            allOf:
+            - $ref: '#/definitions/entities.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - DashboardByRepository
+  /analytic/dashboard/{workspaceID}/{repositoryID}/vulnerabilities-by-developer:
+    get:
+      consumes:
+      - application/json
+      description: Get all vulnerabilities by top 5 developer by range date in repository
+      operationId: get-vulnerabilities-by-top-5-developers-repository
+      parameters:
+      - description: workspaceID of the workspace
+        in: path
+        name: workspaceID
+        required: true
+        type: string
+      - description: repositoryID of the repository
+        in: path
+        name: repositoryID
+        required: true
+        type: string
+      - description: initialDate query string
+        in: query
+        name: initialDate
+        type: string
+      - description: finalDate query string
+        in: query
+        name: finalDate
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/entities.Response'
+            - properties:
+                content:
+                  type: object
+              type: object
+        "400":
+          description: BAD REQUEST
+          schema:
+            allOf:
+            - $ref: '#/definitions/entities.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "500":
+          description: INTERNAL SERVER ERROR
+          schema:
+            allOf:
+            - $ref: '#/definitions/entities.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - DashboardByRepository
+  /analytic/dashboard/{workspaceID}/{repositoryID}/vulnerabilities-by-languages:
+    get:
+      consumes:
+      - application/json
+      description: Get all vulnerabilities by top 5 languages by range date in repository
+      operationId: get-vulnerabilities-by-top-5-languages-repository
+      parameters:
+      - description: workspaceID of the workspace
+        in: path
+        name: workspaceID
+        required: true
+        type: string
+      - description: repositoryID of the repository
+        in: path
+        name: repositoryID
+        required: true
+        type: string
+      - description: initialDate query string
+        in: query
+        name: initialDate
+        type: string
+      - description: finalDate query string
+        in: query
+        name: finalDate
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/entities.Response'
+            - properties:
+                content:
+                  type: object
+              type: object
+        "400":
+          description: BAD REQUEST
+          schema:
+            allOf:
+            - $ref: '#/definitions/entities.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "500":
+          description: INTERNAL SERVER ERROR
+          schema:
+            allOf:
+            - $ref: '#/definitions/entities.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - DashboardByRepository
+  /analytic/dashboard/{workspaceID}/{repositoryID}/vulnerabilities-by-severities:
+    get:
+      consumes:
+      - application/json
+      description: Get all vulnerabilities by severities by range date in repository
+      operationId: get-vulnerabilities-by-severity-repository
+      parameters:
+      - description: workspaceID of the workspace
+        in: path
+        name: workspaceID
+        required: true
+        type: string
+      - description: repositoryID of the repository
+        in: path
+        name: repositoryID
+        required: true
+        type: string
+      - description: initialDate query string
+        in: query
+        name: initialDate
+        type: string
+      - description: finalDate query string
+        in: query
+        name: finalDate
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/entities.Response'
+            - properties:
+                content:
+                  type: object
+              type: object
+        "400":
+          description: BAD REQUEST
+          schema:
+            allOf:
+            - $ref: '#/definitions/entities.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "500":
+          description: INTERNAL SERVER ERROR
+          schema:
+            allOf:
+            - $ref: '#/definitions/entities.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - DashboardByRepository
+  /analytic/dashboard/{workspaceID}/{repositoryID}/vulnerabilities-by-time:
+    get:
+      consumes:
+      - application/json
+      description: Get count vulnerabilities by time by range date in repository
+      operationId: get-vulnerabilities-by-time-repository
+      parameters:
+      - description: workspaceID of the workspace
+        in: path
+        name: workspaceID
+        required: true
+        type: string
+      - description: repositoryID of the repository
+        in: path
+        name: repositoryID
+        required: true
+        type: string
+      - description: initialDate query string
+        in: query
+        name: initialDate
+        type: string
+      - description: finalDate query string
+        in: query
+        name: finalDate
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/entities.Response'
+            - properties:
+                content:
+                  type: object
+              type: object
+        "400":
+          description: BAD REQUEST
+          schema:
+            allOf:
+            - $ref: '#/definitions/entities.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "500":
+          description: INTERNAL SERVER ERROR
+          schema:
+            allOf:
+            - $ref: '#/definitions/entities.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - DashboardByRepository
+  /analytic/dashboard/{workspaceID}/details:
+    get:
+      consumes:
+      - application/json
+      description: Get all vulnerabilities by details by range date in workspace
+      operationId: get-vulnerabilities-by-details-workspace
+      parameters:
+      - description: workspaceID of the workspace
+        in: path
+        name: workspaceID
+        required: true
+        type: string
+      - description: initialDate query string
+        in: query
+        name: initialDate
+        type: string
+      - description: finalDate query string
+        in: query
+        name: finalDate
+        type: string
+      - description: page query string
+        in: query
+        name: page
+        type: string
+      - description: size query string
+        in: query
+        name: size
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/entities.Response'
+            - properties:
+                content:
+                  type: object
+              type: object
+        "400":
+          description: BAD REQUEST
+          schema:
+            allOf:
+            - $ref: '#/definitions/entities.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "500":
+          description: INTERNAL SERVER ERROR
+          schema:
+            allOf:
+            - $ref: '#/definitions/entities.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - DashboardByWorkspace
+  /analytic/dashboard/{workspaceID}/total-developers:
+    get:
+      consumes:
+      - application/json
+      description: Get count total vulnerabilities by range date in workspace
+      operationId: get-total-developers-workspace
+      parameters:
+      - description: workspaceID of the workspace
+        in: path
+        name: workspaceID
+        required: true
+        type: string
+      - description: initialDate query string
+        in: query
+        name: initialDate
+        type: string
+      - description: finalDate query string
+        in: query
+        name: finalDate
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/entities.Response'
+            - properties:
+                content:
+                  type: integer
+              type: object
+        "400":
+          description: BAD REQUEST
+          schema:
+            allOf:
+            - $ref: '#/definitions/entities.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "500":
+          description: INTERNAL SERVER ERROR
+          schema:
+            allOf:
+            - $ref: '#/definitions/entities.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - DashboardByWorkspace
+  /analytic/dashboard/{workspaceID}/total-repositories:
+    get:
+      consumes:
+      - application/json
+      description: Get count total repositories by range date in workspace
+      operationId: get-total-repositories-workspace
+      parameters:
+      - description: workspaceID of the workspace
+        in: path
+        name: workspaceID
+        required: true
+        type: string
+      - description: initialDate query string
+        in: query
+        name: initialDate
+        type: string
+      - description: finalDate query string
+        in: query
+        name: finalDate
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/entities.Response'
+            - properties:
+                content:
+                  type: integer
+              type: object
+        "400":
+          description: BAD REQUEST
+          schema:
+            allOf:
+            - $ref: '#/definitions/entities.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "500":
+          description: INTERNAL SERVER ERROR
+          schema:
+            allOf:
+            - $ref: '#/definitions/entities.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - DashboardByWorkspace
+  /analytic/dashboard/{workspaceID}/vulnerabilities-by-developer:
+    get:
+      consumes:
+      - application/json
+      description: Get all vulnerabilities by top 5 developer by range date in workspace
+      operationId: get-vulnerabilities-by-top-5-developers-workspace
+      parameters:
+      - description: workspaceID of the workspace
+        in: path
+        name: workspaceID
+        required: true
+        type: string
+      - description: initialDate query string
+        in: query
+        name: initialDate
+        type: string
+      - description: finalDate query string
+        in: query
+        name: finalDate
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/entities.Response'
+            - properties:
+                content:
+                  type: object
+              type: object
+        "400":
+          description: BAD REQUEST
+          schema:
+            allOf:
+            - $ref: '#/definitions/entities.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "500":
+          description: INTERNAL SERVER ERROR
+          schema:
+            allOf:
+            - $ref: '#/definitions/entities.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - DashboardByWorkspace
+  /analytic/dashboard/{workspaceID}/vulnerabilities-by-languages:
+    get:
+      consumes:
+      - application/json
+      description: Get all vulnerabilities by top 5 languages by range date in workspace
+      operationId: get-vulnerabilities-by-top-5-languages-workspace
+      parameters:
+      - description: workspaceID of the workspace
+        in: path
+        name: workspaceID
+        required: true
+        type: string
+      - description: initialDate query string
+        in: query
+        name: initialDate
+        type: string
+      - description: finalDate query string
+        in: query
+        name: finalDate
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/entities.Response'
+            - properties:
+                content:
+                  type: object
+              type: object
+        "400":
+          description: BAD REQUEST
+          schema:
+            allOf:
+            - $ref: '#/definitions/entities.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "500":
+          description: INTERNAL SERVER ERROR
+          schema:
+            allOf:
+            - $ref: '#/definitions/entities.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - DashboardByWorkspace
+  /analytic/dashboard/{workspaceID}/vulnerabilities-by-repositories:
+    get:
+      consumes:
+      - application/json
+      description: Get all vulnerabilities by top 5 repositories by range date in
+        workspace
+      operationId: get-vulnerabilities-by-top-5-repositories-workspace
+      parameters:
+      - description: workspaceID of the workspace
+        in: path
+        name: workspaceID
+        required: true
+        type: string
+      - description: initialDate query string
+        in: query
+        name: initialDate
+        type: string
+      - description: finalDate query string
+        in: query
+        name: finalDate
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/entities.Response'
+            - properties:
+                content:
+                  type: object
+              type: object
+        "400":
+          description: BAD REQUEST
+          schema:
+            allOf:
+            - $ref: '#/definitions/entities.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "500":
+          description: INTERNAL SERVER ERROR
+          schema:
+            allOf:
+            - $ref: '#/definitions/entities.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - DashboardByWorkspace
+  /analytic/dashboard/{workspaceID}/vulnerabilities-by-severities:
+    get:
+      consumes:
+      - application/json
+      description: Get all vulnerabilities by severities by range date in workspace
+      operationId: get-vulnerabilities-by-severity-workspace
+      parameters:
+      - description: workspaceID of the workspace
+        in: path
+        name: workspaceID
+        required: true
+        type: string
+      - description: initialDate query string
+        in: query
+        name: initialDate
+        type: string
+      - description: finalDate query string
+        in: query
+        name: finalDate
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/entities.Response'
+            - properties:
+                content:
+                  type: object
+              type: object
+        "400":
+          description: BAD REQUEST
+          schema:
+            allOf:
+            - $ref: '#/definitions/entities.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "500":
+          description: INTERNAL SERVER ERROR
+          schema:
+            allOf:
+            - $ref: '#/definitions/entities.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - DashboardByWorkspace
+  /analytic/dashboard/{workspaceID}/vulnerabilities-by-time:
+    get:
+      consumes:
+      - application/json
+      description: Get count vulnerabilities by time by range date in workspace
+      operationId: get-vulnerabilities-by-time-workspace
+      parameters:
+      - description: workspaceID of the workspace
+        in: path
+        name: workspaceID
+        required: true
+        type: string
+      - description: initialDate query string
+        in: query
+        name: initialDate
+        type: string
+      - description: finalDate query string
+        in: query
+        name: finalDate
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/entities.Response'
+            - properties:
+                content:
+                  type: object
+              type: object
+        "400":
+          description: BAD REQUEST
+          schema:
+            allOf:
+            - $ref: '#/definitions/entities.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "500":
+          description: INTERNAL SERVER ERROR
+          schema:
+            allOf:
+            - $ref: '#/definitions/entities.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - DashboardByWorkspace
   /analytic/health:
     get:
       consumes:
@@ -44,6 +847,8 @@ paths:
                 content:
                   type: string
               type: object
+      tags:
+      - Health
 securityDefinitions:
   ApiKeyAuth:
     in: header

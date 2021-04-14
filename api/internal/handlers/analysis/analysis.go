@@ -50,7 +50,8 @@ func (h *Handler) Options(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
 	httpUtil.StatusNoContent(w)
 }
 
-// Post @Tags Analysis
+// Post
+// @Tags Analysis
 // @Security ApiKeyAuth
 // @Description Start new analysis
 // @ID start-new-analysis
@@ -122,7 +123,8 @@ func (h *Handler) saveAnalysis(w netHTTP.ResponseWriter, analysisEntity *analysi
 	httpUtil.StatusCreated(w, analysisID)
 }
 
-// Get @Tags Analysis
+// Get
+// @Tags Analysis
 // @Security ApiKeyAuth
 // @Description Get analysis on database
 // @ID get-one-analysis
