@@ -2,6 +2,7 @@ package router
 
 import (
 	"github.com/ZupIT/horusec-devkit/pkg/services/middlewares"
+
 	dashboardRepository "github.com/ZupIT/horusec-platform/analytic/internal/handlers/dashboard_repository"
 	dashboardWorkspace "github.com/ZupIT/horusec-platform/analytic/internal/handlers/dashboard_workspace"
 
@@ -10,7 +11,7 @@ import (
 
 	"github.com/go-chi/chi"
 
-	"github.com/ZupIT/horusec-platform/analytic/internal/router/enums"
+	"github.com/ZupIT/horusec-platform/analytic/internal/enums"
 
 	"github.com/ZupIT/horusec-devkit/pkg/services/swagger"
 
@@ -25,18 +26,18 @@ type Router struct {
 	http.IRouter
 	swagger.ISwagger
 	middlewares.IAuthzMiddleware
-	healthHandler *health.Handler
-	dashboardWorkspaceHandler *dashboardWorkspace.Handler
+	healthHandler              *health.Handler
+	dashboardWorkspaceHandler  *dashboardWorkspace.Handler
 	dashboardRepositoryHandler *dashboardRepository.Handler
 }
 
 func NewHTTPRouter(router http.IRouter, authzMiddleware middlewares.IAuthzMiddleware, healthHandler *health.Handler,
 	dashboardWorkspaceHandler *dashboardWorkspace.Handler, dashboardRepositoryHandler *dashboardRepository.Handler) IRouter {
 	routes := &Router{
-		IRouter:          router,
-		IAuthzMiddleware: authzMiddleware,
-		ISwagger:         swagger.NewSwagger(router.GetMux(), enums.DefaultPort),
-		healthHandler:    healthHandler,
+		IRouter:                    router,
+		IAuthzMiddleware:           authzMiddleware,
+		ISwagger:                   swagger.NewSwagger(router.GetMux(), enums.DefaultPort),
+		healthHandler:              healthHandler,
 		dashboardWorkspaceHandler:  dashboardWorkspaceHandler,
 		dashboardRepositoryHandler: dashboardRepositoryHandler,
 	}

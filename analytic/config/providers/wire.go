@@ -3,9 +3,13 @@
 package providers
 
 import (
+	"github.com/google/wire"
+
+	controllerDashboard "github.com/ZupIT/horusec-platform/analytic/internal/controllers/dashboard"
+	repoDashboard "github.com/ZupIT/horusec-platform/analytic/internal/repositories/dashboard"
+
 	dashboardrepository "github.com/ZupIT/horusec-platform/analytic/internal/handlers/dashboard_repository"
 	dashboardworkspace "github.com/ZupIT/horusec-platform/analytic/internal/handlers/dashboard_workspace"
-	"github.com/google/wire"
 
 	"github.com/ZupIT/horusec-platform/analytic/internal/handlers/health"
 
@@ -31,6 +35,10 @@ var providers = wire.NewSet(
 	cors.NewCorsConfig,
 	http.NewHTTPRouter,
 	middlewares.NewAuthzMiddleware,
+
+	repoDashboard.NewRepoDashboard,
+
+	controllerDashboard.NewControllerDashboard,
 
 	health.NewHealthHandler,
 	dashboardworkspace.NewDashboardWorkspaceHandler,

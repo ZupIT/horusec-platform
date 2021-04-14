@@ -1,15 +1,23 @@
 package dashboardworkspace
 
 import (
-	httpUtil "github.com/ZupIT/horusec-devkit/pkg/utils/http"
 	netHTTP "net/http"
+
+	"github.com/ZupIT/horusec-platform/analytic/internal/controllers/dashboard"
+	dashboardfilter "github.com/ZupIT/horusec-platform/analytic/internal/usecase/dashboard_filter"
+
+	httpUtil "github.com/ZupIT/horusec-devkit/pkg/utils/http"
 )
 
 type Handler struct {
+	controller dashboard.IController
+	useCase    dashboardfilter.IUseCaseDashboard
 }
 
-func NewDashboardWorkspaceHandler() *Handler {
+func NewDashboardWorkspaceHandler(controller dashboard.IController) *Handler {
 	return &Handler{
+		controller: controller,
+		useCase:    dashboardfilter.NewUseCaseDashboard(),
 	}
 }
 
@@ -31,8 +39,18 @@ func (h *Handler) Options(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
 // @Failure 400 {object} entities.Response{content=string} "BAD REQUEST"
 // @Failure 500 {object} entities.Response{content=string} "INTERNAL SERVER ERROR"
 // @Router /analytic/dashboard/{workspaceID}/total-developers [get]
-func (h *Handler) GetTotalDevelopers(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
-	httpUtil.StatusNoContent(w)
+func (h *Handler) GetTotalDevelopers(w netHTTP.ResponseWriter, r *netHTTP.Request) {
+	filter, err := h.useCase.ExtractFilterDashboardByWorkspace(r)
+	if err != nil {
+		httpUtil.StatusBadRequest(w, err)
+		return
+	}
+	result, err := h.controller.GetTotalDevelopers(filter)
+	if err != nil {
+		httpUtil.StatusInternalServerError(w, err)
+		return
+	}
+	httpUtil.StatusOK(w, result)
 }
 
 // GetTotalRepositories
@@ -49,8 +67,18 @@ func (h *Handler) GetTotalDevelopers(w netHTTP.ResponseWriter, _ *netHTTP.Reques
 // @Failure 400 {object} entities.Response{content=string} "BAD REQUEST"
 // @Failure 500 {object} entities.Response{content=string} "INTERNAL SERVER ERROR"
 // @Router /analytic/dashboard/{workspaceID}/total-repositories [get]
-func (h *Handler) GetTotalRepositories(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
-	httpUtil.StatusNoContent(w)
+func (h *Handler) GetTotalRepositories(w netHTTP.ResponseWriter, r *netHTTP.Request) {
+	filter, err := h.useCase.ExtractFilterDashboardByWorkspace(r)
+	if err != nil {
+		httpUtil.StatusBadRequest(w, err)
+		return
+	}
+	result, err := h.controller.GetTotalRepositories(filter)
+	if err != nil {
+		httpUtil.StatusInternalServerError(w, err)
+		return
+	}
+	httpUtil.StatusOK(w, result)
 }
 
 // GetVulnBySeverity
@@ -67,8 +95,18 @@ func (h *Handler) GetTotalRepositories(w netHTTP.ResponseWriter, _ *netHTTP.Requ
 // @Failure 400 {object} entities.Response{content=string} "BAD REQUEST"
 // @Failure 500 {object} entities.Response{content=string} "INTERNAL SERVER ERROR"
 // @Router /analytic/dashboard/{workspaceID}/vulnerabilities-by-severities [get]
-func (h *Handler) GetVulnBySeverity(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
-	httpUtil.StatusNoContent(w)
+func (h *Handler) GetVulnBySeverity(w netHTTP.ResponseWriter, r *netHTTP.Request) {
+	filter, err := h.useCase.ExtractFilterDashboardByWorkspace(r)
+	if err != nil {
+		httpUtil.StatusBadRequest(w, err)
+		return
+	}
+	result, err := h.controller.GetVulnBySeverity(filter)
+	if err != nil {
+		httpUtil.StatusInternalServerError(w, err)
+		return
+	}
+	httpUtil.StatusOK(w, result)
 }
 
 // GetVulnByDeveloper
@@ -85,8 +123,18 @@ func (h *Handler) GetVulnBySeverity(w netHTTP.ResponseWriter, _ *netHTTP.Request
 // @Failure 400 {object} entities.Response{content=string} "BAD REQUEST"
 // @Failure 500 {object} entities.Response{content=string} "INTERNAL SERVER ERROR"
 // @Router /analytic/dashboard/{workspaceID}/vulnerabilities-by-developer [get]
-func (h *Handler) GetVulnByDeveloper(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
-	httpUtil.StatusNoContent(w)
+func (h *Handler) GetVulnByDeveloper(w netHTTP.ResponseWriter, r *netHTTP.Request) {
+	filter, err := h.useCase.ExtractFilterDashboardByWorkspace(r)
+	if err != nil {
+		httpUtil.StatusBadRequest(w, err)
+		return
+	}
+	result, err := h.controller.GetVulnByDeveloper(filter)
+	if err != nil {
+		httpUtil.StatusInternalServerError(w, err)
+		return
+	}
+	httpUtil.StatusOK(w, result)
 }
 
 // GetVulnByRepository
@@ -103,8 +151,18 @@ func (h *Handler) GetVulnByDeveloper(w netHTTP.ResponseWriter, _ *netHTTP.Reques
 // @Failure 400 {object} entities.Response{content=string} "BAD REQUEST"
 // @Failure 500 {object} entities.Response{content=string} "INTERNAL SERVER ERROR"
 // @Router /analytic/dashboard/{workspaceID}/vulnerabilities-by-repositories [get]
-func (h *Handler) GetVulnByRepository(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
-	httpUtil.StatusNoContent(w)
+func (h *Handler) GetVulnByRepository(w netHTTP.ResponseWriter, r *netHTTP.Request) {
+	filter, err := h.useCase.ExtractFilterDashboardByWorkspace(r)
+	if err != nil {
+		httpUtil.StatusBadRequest(w, err)
+		return
+	}
+	result, err := h.controller.GetVulnByRepository(filter)
+	if err != nil {
+		httpUtil.StatusInternalServerError(w, err)
+		return
+	}
+	httpUtil.StatusOK(w, result)
 }
 
 // GetVulnByLanguage
@@ -121,8 +179,18 @@ func (h *Handler) GetVulnByRepository(w netHTTP.ResponseWriter, _ *netHTTP.Reque
 // @Failure 400 {object} entities.Response{content=string} "BAD REQUEST"
 // @Failure 500 {object} entities.Response{content=string} "INTERNAL SERVER ERROR"
 // @Router /analytic/dashboard/{workspaceID}/vulnerabilities-by-languages [get]
-func (h *Handler) GetVulnByLanguage(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
-	httpUtil.StatusNoContent(w)
+func (h *Handler) GetVulnByLanguage(w netHTTP.ResponseWriter, r *netHTTP.Request) {
+	filter, err := h.useCase.ExtractFilterDashboardByWorkspace(r)
+	if err != nil {
+		httpUtil.StatusBadRequest(w, err)
+		return
+	}
+	result, err := h.controller.GetVulnByLanguage(filter)
+	if err != nil {
+		httpUtil.StatusInternalServerError(w, err)
+		return
+	}
+	httpUtil.StatusOK(w, result)
 }
 
 // GetVulnByTime
@@ -139,8 +207,18 @@ func (h *Handler) GetVulnByLanguage(w netHTTP.ResponseWriter, _ *netHTTP.Request
 // @Failure 400 {object} entities.Response{content=string} "BAD REQUEST"
 // @Failure 500 {object} entities.Response{content=string} "INTERNAL SERVER ERROR"
 // @Router /analytic/dashboard/{workspaceID}/vulnerabilities-by-time [get]
-func (h *Handler) GetVulnByTime(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
-	httpUtil.StatusNoContent(w)
+func (h *Handler) GetVulnByTime(w netHTTP.ResponseWriter, r *netHTTP.Request) {
+	filter, err := h.useCase.ExtractFilterDashboardByWorkspace(r)
+	if err != nil {
+		httpUtil.StatusBadRequest(w, err)
+		return
+	}
+	result, err := h.controller.GetVulnByTime(filter)
+	if err != nil {
+		httpUtil.StatusInternalServerError(w, err)
+		return
+	}
+	httpUtil.StatusOK(w, result)
 }
 
 // GetVulnDetails
@@ -159,6 +237,16 @@ func (h *Handler) GetVulnByTime(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
 // @Failure 400 {object} entities.Response{content=string} "BAD REQUEST"
 // @Failure 500 {object} entities.Response{content=string} "INTERNAL SERVER ERROR"
 // @Router /analytic/dashboard/{workspaceID}/details [get]
-func (h *Handler) GetVulnDetails(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
-	httpUtil.StatusNoContent(w)
+func (h *Handler) GetVulnDetails(w netHTTP.ResponseWriter, r *netHTTP.Request) {
+	filter, err := h.useCase.ExtractFilterDashboardByWorkspace(r)
+	if err != nil {
+		httpUtil.StatusBadRequest(w, err)
+		return
+	}
+	result, err := h.controller.GetVulnDetails(filter)
+	if err != nil {
+		httpUtil.StatusInternalServerError(w, err)
+		return
+	}
+	httpUtil.StatusOK(w, result)
 }
