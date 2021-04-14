@@ -3,6 +3,8 @@ package authentication
 import (
 	"io"
 
+	"github.com/google/uuid"
+
 	"github.com/ZupIT/horusec-devkit/pkg/utils/parser"
 
 	accountEntities "github.com/ZupIT/horusec-platform/auth/internal/entities/account"
@@ -13,6 +15,9 @@ import (
 type IUseCases interface {
 	CheckLoginData(credentials *authEntities.LoginCredentials, account *accountEntities.Account) error
 	LoginCredentialsFromIOReadCloser(body io.ReadCloser) (*authEntities.LoginCredentials, error)
+	SetLdapAccountData(userData map[string]string) *accountEntities.Account
+	FilterWorkspaceByID(workspaceID uuid.UUID) map[string]interface{}
+	FilterRepositoryByID(repository uuid.UUID) map[string]interface{}
 }
 
 type UseCases struct {
@@ -43,4 +48,27 @@ func (u *UseCases) LoginCredentialsFromIOReadCloser(body io.ReadCloser) (*authEn
 	}
 
 	return credentials, credentials.Validate()
+}
+
+func (u *UseCases) SetLdapAccountData(userData map[string]string) *accountEntities.Account {
+	account := &accountEntities.Account{
+		Username: userData["sAMAccountName"],
+		Password: uuid.NewString(),
+	}
+
+	if userData["mail"] == "" {
+		account.Email = userData["sAMAccountName"]
+	} else {
+		account.Email = userData["mail"]
+	}
+
+	return account.SetNewAccountData()
+}
+
+func (u *UseCases) FilterWorkspaceByID(workspaceID uuid.UUID) map[string]interface{} {
+	return map[string]interface{}{"workspace_id": workspaceID}
+}
+
+func (u *UseCases) FilterRepositoryByID(repository uuid.UUID) map[string]interface{} {
+	return map[string]interface{}{"repository_id": repository}
 }

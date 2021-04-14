@@ -3,6 +3,8 @@ package account
 import (
 	"time"
 
+	"github.com/ZupIT/horusec-devkit/pkg/utils/crypto"
+
 	"github.com/google/uuid"
 
 	tokenEntities "github.com/ZupIT/horusec-devkit/pkg/utils/jwt/entities"
@@ -55,4 +57,18 @@ func (a *Account) ToLoginResponse(accessToken, refreshToken string, expiresAt ti
 		Email:              a.Email,
 		IsApplicationAdmin: a.IsApplicationAdmin,
 	}
+}
+
+func (a *Account) HashPassword() {
+	hash, _ := crypto.HashPasswordBcrypt(a.Password)
+	a.Password = hash
+}
+
+func (a *Account) SetNewAccountData() *Account {
+	a.HashPassword()
+	a.AccountID = uuid.New()
+	a.CreatedAt = time.Now()
+	a.UpdatedAt = time.Now()
+
+	return a
 }

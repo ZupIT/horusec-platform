@@ -55,5 +55,6 @@ func (r *Router) swaggerRoutes() {
 func (r *Router) authenticationRoutes() {
 	r.Route(routes.AuthenticationHandler, func(router chi.Router) {
 		router.Post("/login", r.authHandler.Login)
+		router.Get("/config", r.authHandler.GetConfig)
 	})
 }

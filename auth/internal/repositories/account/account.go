@@ -13,6 +13,8 @@ import (
 type IRepository interface {
 	GetAccount(accountID uuid.UUID) (*accountEntities.Account, error)
 	GetAccountByEmail(email string) (*accountEntities.Account, error)
+	GetAccountByUsername(username string) (*accountEntities.Account, error)
+	CreateAccount(account *accountEntities.Account) (*accountEntities.Account, error)
 }
 
 type Repository struct {
@@ -41,4 +43,15 @@ func (r *Repository) GetAccountByEmail(email string) (*accountEntities.Account, 
 
 	return account, r.databaseRead.Find(account, r.useCases.FilterAccountByEmail(email),
 		accountEnums.DatabaseTableAccount).GetError()
+}
+
+func (r *Repository) GetAccountByUsername(username string) (*accountEntities.Account, error) {
+	account := &accountEntities.Account{}
+
+	return account, r.databaseRead.Find(account, r.useCases.FilterAccountByUsername(username),
+		accountEnums.DatabaseTableAccount).GetError()
+}
+
+func (r *Repository) CreateAccount(account *accountEntities.Account) (*accountEntities.Account, error) {
+	return account, r.databaseWrite.Create(account, accountEnums.DatabaseTableAccount).GetError()
 }

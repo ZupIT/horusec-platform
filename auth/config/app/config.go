@@ -8,12 +8,14 @@ import (
 )
 
 type IConfig interface {
-	GetAuthType() auth.AuthorizationType
+	GetAuthType() auth.AuthenticationType
+	ToConfigResponse() map[string]interface{}
+	IsApplicationAdminEnabled() bool
 }
 
 type Config struct {
 	HorusecAuthURL         string
-	AuthType               auth.AuthorizationType
+	AuthType               auth.AuthenticationType
 	DisableBroker          bool
 	EnableApplicationAdmin bool
 	ApplicationAdminData   string
@@ -24,7 +26,7 @@ type Config struct {
 func NewAuthAppConfig() IConfig {
 	return &Config{
 		HorusecAuthURL:         env.GetEnvOrDefault(enums.EnvAuthURL, "http://localhost:8006"),
-		AuthType:               auth.AuthorizationType(env.GetEnvOrDefault(enums.EnvAuthType, auth.Horusec.ToString())),
+		AuthType:               auth.AuthenticationType(env.GetEnvOrDefault(enums.EnvAuthType, auth.Horusec.ToString())),
 		DisableBroker:          env.GetEnvOrDefaultBool(enums.EnvDisableBroker, false),
 		EnableApplicationAdmin: env.GetEnvOrDefaultBool(enums.EnvEnableApplicationAdmin, false),
 		ApplicationAdminData:   env.GetEnvOrDefault(enums.EnvApplicationAdminData, enums.ApplicationAdminDefaultData),
@@ -33,6 +35,18 @@ func NewAuthAppConfig() IConfig {
 	}
 }
 
-func (c *Config) GetAuthType() auth.AuthorizationType {
+func (c *Config) GetAuthType() auth.AuthenticationType {
 	return c.AuthType
+}
+
+func (c *Config) ToConfigResponse() map[string]interface{} {
+	return map[string]interface{}{
+		"enableApplicationAdmin": c.EnableApplicationAdmin,
+		"authType":               c.AuthType,
+		"disableBroker":          c.DisableBroker,
+	}
+}
+
+func (c *Config) IsApplicationAdminEnabled() bool {
+	return c.EnableApplicationAdmin
 }

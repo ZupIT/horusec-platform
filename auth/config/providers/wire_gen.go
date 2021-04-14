@@ -11,17 +11,20 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/services/database"
 	"github.com/ZupIT/horusec-devkit/pkg/services/database/config"
 	"github.com/ZupIT/horusec-devkit/pkg/services/http"
+	"github.com/google/wire"
+
 	"github.com/ZupIT/horusec-platform/auth/config/app"
 	"github.com/ZupIT/horusec-platform/auth/config/cors"
 	"github.com/ZupIT/horusec-platform/auth/config/grpc"
-	authentication2 "github.com/ZupIT/horusec-platform/auth/internal/controllers/authentication"
-	authentication3 "github.com/ZupIT/horusec-platform/auth/internal/handlers/authentication"
+	authentication3 "github.com/ZupIT/horusec-platform/auth/internal/controllers/authentication"
+	authentication4 "github.com/ZupIT/horusec-platform/auth/internal/handlers/authentication"
 	account2 "github.com/ZupIT/horusec-platform/auth/internal/repositories/account"
+	authentication2 "github.com/ZupIT/horusec-platform/auth/internal/repositories/authentication"
 	"github.com/ZupIT/horusec-platform/auth/internal/router"
 	"github.com/ZupIT/horusec-platform/auth/internal/services/authentication/horusec"
+	"github.com/ZupIT/horusec-platform/auth/internal/services/authentication/ldap"
 	"github.com/ZupIT/horusec-platform/auth/internal/usecases/account"
 	"github.com/ZupIT/horusec-platform/auth/internal/usecases/authentication"
-	"github.com/google/wire"
 )
 
 // Injectors from wire.go:
@@ -39,8 +42,10 @@ func Initialize(string2 string) (router.IRouter, error) {
 	accountIUseCases := account.NewAccountUseCases()
 	iRepository := account2.NewAccountRepository(connection, accountIUseCases)
 	iService := horusec.NewHorusecAuthenticationService(iRepository, iUseCases)
-	iController := authentication2.NewAuthenticationController(iConfig, iService)
-	handler := authentication3.NewAuthenticationHandler(iConfig, iUseCases, iController)
+	authenticationIRepository := authentication2.NewAuthenticationRepository(connection, iUseCases)
+	ldapIService := ldap.NewLDAPAuthenticationService(iRepository, iUseCases, iConfig, authenticationIRepository)
+	iController := authentication3.NewAuthenticationController(iConfig, iService, ldapIService)
+	handler := authentication4.NewAuthenticationHandler(iConfig, iUseCases, iController)
 	iAuthGRPCServer := grpc.NewAuthGRPCServer(handler)
 	routerIRouter := router.NewHTTPRouter(iRouter, iAuthGRPCServer, handler)
 	return routerIRouter, nil
@@ -52,12 +57,12 @@ var devKitProviders = wire.NewSet(http.NewHTTPRouter, config.NewDatabaseConfig, 
 
 var configProviders = wire.NewSet(grpc.NewAuthGRPCServer, cors.NewCorsConfig, router.NewHTTPRouter, app.NewAuthAppConfig)
 
-var controllerProviders = wire.NewSet(authentication2.NewAuthenticationController)
+var controllerProviders = wire.NewSet(authentication3.NewAuthenticationController)
 
-var handleProviders = wire.NewSet(authentication3.NewAuthenticationHandler)
+var handleProviders = wire.NewSet(authentication4.NewAuthenticationHandler)
 
 var useCasesProviders = wire.NewSet(authentication.NewAuthenticationUseCases, account.NewAccountUseCases)
 
-var repositoriesProviders = wire.NewSet(account2.NewAccountRepository)
+var repositoriesProviders = wire.NewSet(account2.NewAccountRepository, authentication2.NewAuthenticationRepository)
 
-var serviceProviders = wire.NewSet(horusec.NewHorusecAuthenticationService)
+var serviceProviders = wire.NewSet(horusec.NewHorusecAuthenticationService, ldap.NewLDAPAuthenticationService)

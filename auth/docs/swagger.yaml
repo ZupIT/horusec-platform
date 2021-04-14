@@ -18,6 +18,23 @@ definitions:
 info:
   contact: {}
 paths:
+  /auth/authenticate/config:
+    get:
+      consumes:
+      - application/json
+      description: Get auth config
+      operationId: get-config
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.Response'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Authenticate
   /auth/authenticate/login:
     post:
       consumes:

@@ -30,6 +30,18 @@ func NewAuthenticationHandler(appConfig app.IConfig, useCases authUseCases.IUseC
 }
 
 // @Tags Authenticate
+// @Description Get auth config
+// @ID get-config
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} entities.Response
+// @Router /auth/authenticate/config [get]
+// @Security ApiKeyAuth
+func (h *Handler) GetConfig(w http.ResponseWriter, _ *http.Request) {
+	httpUtil.StatusOK(w, h.appConfig.ToConfigResponse())
+}
+
+// @Tags Authenticate
 // @Description Login in into a horusec account
 // @ID login
 // @Accept  json
