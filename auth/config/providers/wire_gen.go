@@ -11,6 +11,8 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/services/database"
 	"github.com/ZupIT/horusec-devkit/pkg/services/database/config"
 	"github.com/ZupIT/horusec-devkit/pkg/services/http"
+	"github.com/google/wire"
+
 	"github.com/ZupIT/horusec-platform/auth/config/app"
 	"github.com/ZupIT/horusec-platform/auth/config/cors"
 	"github.com/ZupIT/horusec-platform/auth/config/grpc"
@@ -20,10 +22,10 @@ import (
 	authentication2 "github.com/ZupIT/horusec-platform/auth/internal/repositories/authentication"
 	"github.com/ZupIT/horusec-platform/auth/internal/router"
 	"github.com/ZupIT/horusec-platform/auth/internal/services/authentication/horusec"
+	"github.com/ZupIT/horusec-platform/auth/internal/services/authentication/keycloak"
 	"github.com/ZupIT/horusec-platform/auth/internal/services/authentication/ldap"
 	"github.com/ZupIT/horusec-platform/auth/internal/usecases/account"
 	"github.com/ZupIT/horusec-platform/auth/internal/usecases/authentication"
-	"github.com/google/wire"
 )
 
 // Injectors from wire.go:
@@ -64,4 +66,4 @@ var useCasesProviders = wire.NewSet(authentication.NewAuthenticationUseCases, ac
 
 var repositoriesProviders = wire.NewSet(account2.NewAccountRepository, authentication2.NewAuthenticationRepository)
 
-var serviceProviders = wire.NewSet(horusec.NewHorusecAuthenticationService, ldap.NewLDAPAuthenticationService)
+var serviceProviders = wire.NewSet(horusec.NewHorusecAuthenticationService, ldap.NewLDAPAuthenticationService, keycloak.NewKeycloakAuthenticationService)

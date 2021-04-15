@@ -5,9 +5,6 @@ package providers
 import (
 	"github.com/google/wire"
 
-	authRepository "github.com/ZupIT/horusec-platform/auth/internal/repositories/authentication"
-	"github.com/ZupIT/horusec-platform/auth/internal/services/authentication/ldap"
-
 	"github.com/ZupIT/horusec-devkit/pkg/services/broker"
 	brokerConfig "github.com/ZupIT/horusec-devkit/pkg/services/broker/config"
 	"github.com/ZupIT/horusec-devkit/pkg/services/database"
@@ -24,6 +21,9 @@ import (
 	"github.com/ZupIT/horusec-platform/auth/internal/services/authentication/horusec"
 	accountUseCases "github.com/ZupIT/horusec-platform/auth/internal/usecases/account"
 	authUseCases "github.com/ZupIT/horusec-platform/auth/internal/usecases/authentication"
+	"github.com/ZupIT/horusec-platform/auth/internal/services/authentication/keycloak"
+	authRepository "github.com/ZupIT/horusec-platform/auth/internal/repositories/authentication"
+	"github.com/ZupIT/horusec-platform/auth/internal/services/authentication/ldap"
 )
 
 var devKitProviders = wire.NewSet(
@@ -62,6 +62,7 @@ var repositoriesProviders = wire.NewSet(
 var serviceProviders = wire.NewSet(
 	horusec.NewHorusecAuthenticationService,
 	ldap.NewLDAPAuthenticationService,
+	keycloak.NewKeycloakAuthenticationService,
 )
 
 func Initialize(_ string) (router.IRouter, error) {

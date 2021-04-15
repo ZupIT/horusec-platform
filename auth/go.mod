@@ -3,6 +3,7 @@ module github.com/ZupIT/horusec-platform/auth
 go 1.16
 
 require (
+	github.com/Nerzal/gocloak/v7 v7.11.0
 	github.com/ZupIT/horusec-devkit v0.0.0-20210414180629-b6da02f3b0f4
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
 	github.com/go-chi/chi v4.1.2+incompatible

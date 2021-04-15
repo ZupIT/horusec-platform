@@ -13,5 +13,7 @@ type LoginResponse struct {
 	Username           string    `json:"username"`
 	Email              string    `json:"email"`
 	ExpiresAt          time.Time `json:"expiresAt"`
+	ExpiresIn          int       `json:"expiresIn"`
+	RefreshExpiresIn   int       `json:"refreshExpiresIn"`
 	IsApplicationAdmin bool      `json:"isApplicationAdmin"`
 }
