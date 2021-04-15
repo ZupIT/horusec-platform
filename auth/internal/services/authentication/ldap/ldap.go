@@ -7,14 +7,14 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/utils/env"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/jwt"
 
+	"github.com/ZupIT/horusec-platform/auth/config/app"
 	accountEntities "github.com/ZupIT/horusec-platform/auth/internal/entities/account"
 	authEntities "github.com/ZupIT/horusec-platform/auth/internal/entities/authentication"
+	ldapEnums "github.com/ZupIT/horusec-platform/auth/internal/enums/authentication/ldap"
 	accountRepository "github.com/ZupIT/horusec-platform/auth/internal/repositories/account"
+	authRepository "github.com/ZupIT/horusec-platform/auth/internal/repositories/authentication"
 	"github.com/ZupIT/horusec-platform/auth/internal/services/authentication/ldap/client"
 	authUseCases "github.com/ZupIT/horusec-platform/auth/internal/usecases/authentication"
-	"github.com/ZupIT/horusec-platform/auth/internal/enums/authentication/ldap"
-	authRepository "github.com/ZupIT/horusec-platform/auth/internal/repositories/authentication"
-	"github.com/ZupIT/horusec-platform/auth/config/app"
 )
 
 type IService interface {
@@ -56,11 +56,11 @@ func (s *Service) Login(credentials *authEntities.LoginCredentials) (*authEntiti
 }
 
 func (s *Service) verifyAuthenticateErrors(err error) error {
-	if err != nil && err == ldap.ErrorUserDoesNotExist {
+	if err != nil && err == ldapEnums.ErrorUserDoesNotExist {
 		return err
 	}
 
-	return ldap.ErrorLdapUnauthorized
+	return ldapEnums.ErrorLdapUnauthorized
 }
 
 func (s *Service) getAccountOrCreateIfNotExist(userData map[string]string) (*accountEntities.Account, error) {
@@ -95,10 +95,10 @@ func (s *Service) isApplicationAdmin(userGroups []string) bool {
 }
 
 func (s *Service) getApplicationAdminAuthzGroupName() ([]string, error) {
-	applicationAdminGroup := env.GetEnvOrDefault(ldap.EnvLdapAdminGroup, "")
+	applicationAdminGroup := env.GetEnvOrDefault(ldapEnums.EnvLdapAdminGroup, "")
 
 	if applicationAdminGroup == "" && s.appConfig.IsApplicationAdminEnabled() {
-		return []string{}, ldap.ErrorLdapApplicationAdminGroupNotSet
+		return []string{}, ldapEnums.ErrorLdapApplicationAdminGroupNotSet
 	}
 
 	return []string{applicationAdminGroup}, nil
@@ -149,13 +149,15 @@ func (s *Service) getUserGroupsFromJWT(tokenStr string) ([]string, error) {
 
 func (s *Service) getHorusecAuthzGroups(data *authEntities.AuthorizationData) ([]string, error) {
 	switch data.Type {
+	case auth.ApplicationAdmin:
+		return s.getGroupsByAuthorizationType(data)
 	case auth.WorkspaceAdmin, auth.WorkspaceMember:
 		return s.getWorkspaceAuthzGroups(data)
 	case auth.RepositoryAdmin, auth.RepositorySupervisor, auth.RepositoryMember:
 		return s.getRepositoryAuthzGroups(data)
 	}
 
-	return s.getGroupsByAuthorizationType(data)
+	return nil, ldapEnums.ErrorInvalidAuthorizationType
 }
 
 func (s *Service) getWorkspaceAuthzGroups(data *authEntities.AuthorizationData) ([]string, error) {
@@ -188,16 +190,32 @@ func (s *Service) getGroupsByAuthorizationType(data *authEntities.AuthorizationD
 		return nil, err
 	}
 
+	return s.getGroupsByType(appAdminAuthz, data), err
+}
+
+func (s *Service) getGroupsByType(appAdminAuthz []string, data *authEntities.AuthorizationData) (groups []string) {
 	switch data.Type {
 	case auth.ApplicationAdmin:
 		groups = appAdminAuthz
 	case auth.RepositoryAdmin, auth.WorkspaceAdmin:
-		groups = append(appAdminAuthz, data.AuthzAdmin...)
+		groups = s.appendAdmin(appAdminAuthz, data)
 	case auth.RepositorySupervisor:
-		groups = append(appAdminAuthz, append(data.AuthzAdmin, data.AuthzSupervisor...)...)
+		groups = s.appendSupervisor(appAdminAuthz, data)
 	case auth.RepositoryMember, auth.WorkspaceMember:
-		groups = append(appAdminAuthz, append(data.AuthzAdmin, append(data.AuthzSupervisor, data.AuthzMember...)...)...)
+		groups = s.appendMember(appAdminAuthz, data)
 	}
 
-	return groups, err
+	return groups
+}
+
+func (s *Service) appendAdmin(appAdminAuthz []string, data *authEntities.AuthorizationData) []string {
+	return append(appAdminAuthz, data.AuthzAdmin...)
+}
+
+func (s *Service) appendSupervisor(appAdminAuthz []string, data *authEntities.AuthorizationData) []string {
+	return append(appAdminAuthz, append(data.AuthzAdmin, data.AuthzSupervisor...)...)
+}
+
+func (s *Service) appendMember(appAdminAuthz []string, data *authEntities.AuthorizationData) []string {
+	return append(appAdminAuthz, append(data.AuthzAdmin, append(data.AuthzSupervisor, data.AuthzMember...)...)...)
 }

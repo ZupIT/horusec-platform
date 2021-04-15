@@ -61,6 +61,7 @@ func (l *LdapClient) Connect() error {
 	return l.dialWithoutSSL()
 }
 
+//nolint:gosec // false optional dial type
 func (l *LdapClient) dialWithoutSSL() error {
 	conn, err := ldap.Dial("tcp", l.getLdapURL())
 	if err != nil {
@@ -68,14 +69,13 @@ func (l *LdapClient) dialWithoutSSL() error {
 	}
 
 	if !l.SkipTLS {
-		if err = conn.StartTLS(&tls.Config{InsecureSkipVerify: true}); err != nil {
-			return err
-		}
+		err = conn.StartTLS(&tls.Config{InsecureSkipVerify: true})
 	}
 
 	return l.setLDAPServiceConnection(conn, err)
 }
 
+//nolint:gosec // false optional dial type
 func (l *LdapClient) dialWithSSL() error {
 	config := &tls.Config{
 		InsecureSkipVerify: l.InsecureSkipVerify,

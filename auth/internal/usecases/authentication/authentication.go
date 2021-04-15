@@ -8,8 +8,8 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/utils/parser"
 
 	accountEntities "github.com/ZupIT/horusec-platform/auth/internal/entities/account"
-	horusecAuthEnums "github.com/ZupIT/horusec-platform/auth/internal/enums/authentication/horusec"
 	authEntities "github.com/ZupIT/horusec-platform/auth/internal/entities/authentication"
+	horusecAuthEnums "github.com/ZupIT/horusec-platform/auth/internal/enums/authentication/horusec"
 )
 
 type IUseCases interface {

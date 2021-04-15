@@ -11,8 +11,6 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/services/database"
 	"github.com/ZupIT/horusec-devkit/pkg/services/database/config"
 	"github.com/ZupIT/horusec-devkit/pkg/services/http"
-	"github.com/google/wire"
-
 	"github.com/ZupIT/horusec-platform/auth/config/app"
 	"github.com/ZupIT/horusec-platform/auth/config/cors"
 	"github.com/ZupIT/horusec-platform/auth/config/grpc"
@@ -25,6 +23,7 @@ import (
 	"github.com/ZupIT/horusec-platform/auth/internal/services/authentication/ldap"
 	"github.com/ZupIT/horusec-platform/auth/internal/usecases/account"
 	"github.com/ZupIT/horusec-platform/auth/internal/usecases/authentication"
+	"github.com/google/wire"
 )
 
 // Injectors from wire.go:
@@ -41,8 +40,8 @@ func Initialize(string2 string) (router.IRouter, error) {
 	}
 	accountIUseCases := account.NewAccountUseCases()
 	iRepository := account2.NewAccountRepository(connection, accountIUseCases)
-	iService := horusec.NewHorusecAuthenticationService(iRepository, iUseCases)
 	authenticationIRepository := authentication2.NewAuthenticationRepository(connection, iUseCases)
+	iService := horusec.NewHorusecAuthenticationService(iRepository, iConfig, iUseCases, authenticationIRepository)
 	ldapIService := ldap.NewLDAPAuthenticationService(iRepository, iUseCases, iConfig, authenticationIRepository)
 	iController := authentication3.NewAuthenticationController(iConfig, iService, ldapIService)
 	handler := authentication4.NewAuthenticationHandler(iConfig, iUseCases, iController)

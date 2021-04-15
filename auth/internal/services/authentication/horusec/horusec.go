@@ -63,7 +63,7 @@ func (s *Service) setTokensAndResponse(account *accountEntities.Account) (*authE
 		return nil, err
 	}
 
-	if err = s.setRefreshTokenCache(account.AccountID.String(), refreshToken); err != nil {
+	if err := s.setRefreshTokenCache(account.AccountID.String(), refreshToken); err != nil {
 		return nil, err
 	}
 
@@ -198,7 +198,6 @@ func (s *Service) checkRepositoryRequestForWorkspaceAdmin(data *authEntities.Aut
 	isWorkspaceAdmin, workspaceErr := s.isWorkspaceAdmin(data)
 	if workspaceErr != nil {
 		return isWorkspaceAdmin, errors.Wrap(workspaceErr, err.Error())
-
 	}
 
 	return isWorkspaceAdmin, nil

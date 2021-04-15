@@ -7,10 +7,10 @@ import (
 	databaseEnums "github.com/ZupIT/horusec-devkit/pkg/services/database/enums"
 	httpUtil "github.com/ZupIT/horusec-devkit/pkg/utils/http"
 
-	horusecAuthEnums "github.com/ZupIT/horusec-platform/auth/internal/enums/authentication/horusec"
 	"github.com/ZupIT/horusec-platform/auth/config/app"
 	authController "github.com/ZupIT/horusec-platform/auth/internal/controllers/authentication"
 	"github.com/ZupIT/horusec-platform/auth/internal/entities/authentication"
+	horusecAuthEnums "github.com/ZupIT/horusec-platform/auth/internal/enums/authentication/horusec"
 	authUseCases "github.com/ZupIT/horusec-platform/auth/internal/usecases/authentication"
 )
 
