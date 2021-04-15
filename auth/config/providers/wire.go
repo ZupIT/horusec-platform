@@ -17,13 +17,13 @@ import (
 	authController "github.com/ZupIT/horusec-platform/auth/internal/controllers/authentication"
 	authHandler "github.com/ZupIT/horusec-platform/auth/internal/handlers/authentication"
 	accountRepository "github.com/ZupIT/horusec-platform/auth/internal/repositories/account"
+	authRepository "github.com/ZupIT/horusec-platform/auth/internal/repositories/authentication"
 	"github.com/ZupIT/horusec-platform/auth/internal/router"
 	"github.com/ZupIT/horusec-platform/auth/internal/services/authentication/horusec"
+	"github.com/ZupIT/horusec-platform/auth/internal/services/authentication/keycloak"
+	"github.com/ZupIT/horusec-platform/auth/internal/services/authentication/ldap"
 	accountUseCases "github.com/ZupIT/horusec-platform/auth/internal/usecases/account"
 	authUseCases "github.com/ZupIT/horusec-platform/auth/internal/usecases/authentication"
-	"github.com/ZupIT/horusec-platform/auth/internal/services/authentication/keycloak"
-	authRepository "github.com/ZupIT/horusec-platform/auth/internal/repositories/authentication"
-	"github.com/ZupIT/horusec-platform/auth/internal/services/authentication/ldap"
 )
 
 var devKitProviders = wire.NewSet(

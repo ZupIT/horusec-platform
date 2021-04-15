@@ -3,9 +3,8 @@ package keycloak
 import (
 	"github.com/Nerzal/gocloak/v7"
 	"github.com/google/uuid"
-	"github.com/patrickmn/go-cache"
 	"github.com/pkg/errors"
-	
+
 	accountEnums "github.com/ZupIT/horusec-devkit/pkg/enums/account"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/auth"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/jwt"
@@ -27,7 +26,6 @@ type IService interface {
 type Service struct {
 	accountRepository accountRepository.IRepository
 	authUseCases      authUseCases.IUseCases
-	cache             *cache.Cache
 	authRepository    authRepository.IRepository
 	appConfig         app.IConfig
 	keycloak          keycloak.IClient
