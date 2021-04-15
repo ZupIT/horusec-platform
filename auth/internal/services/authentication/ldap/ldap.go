@@ -3,21 +3,18 @@ package ldap
 import (
 	"strings"
 
-	authRepository "github.com/ZupIT/horusec-platform/auth/internal/repositories/authentication"
-
-	"github.com/ZupIT/horusec-platform/auth/config/app"
-
 	"github.com/ZupIT/horusec-devkit/pkg/enums/auth"
-
 	"github.com/ZupIT/horusec-devkit/pkg/utils/env"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/jwt"
 
 	accountEntities "github.com/ZupIT/horusec-platform/auth/internal/entities/account"
 	authEntities "github.com/ZupIT/horusec-platform/auth/internal/entities/authentication"
-	ldapEnums "github.com/ZupIT/horusec-platform/auth/internal/enums/ldap"
 	accountRepository "github.com/ZupIT/horusec-platform/auth/internal/repositories/account"
 	"github.com/ZupIT/horusec-platform/auth/internal/services/authentication/ldap/client"
 	authUseCases "github.com/ZupIT/horusec-platform/auth/internal/usecases/authentication"
+	"github.com/ZupIT/horusec-platform/auth/internal/enums/authentication/ldap"
+	authRepository "github.com/ZupIT/horusec-platform/auth/internal/repositories/authentication"
+	"github.com/ZupIT/horusec-platform/auth/config/app"
 )
 
 type IService interface {
@@ -59,11 +56,11 @@ func (s *Service) Login(credentials *authEntities.LoginCredentials) (*authEntiti
 }
 
 func (s *Service) verifyAuthenticateErrors(err error) error {
-	if err != nil && err == ldapEnums.ErrorUserDoesNotExist {
+	if err != nil && err == ldap.ErrorUserDoesNotExist {
 		return err
 	}
 
-	return ldapEnums.ErrorLdapUnauthorized
+	return ldap.ErrorLdapUnauthorized
 }
 
 func (s *Service) getAccountOrCreateIfNotExist(userData map[string]string) (*accountEntities.Account, error) {
@@ -98,10 +95,10 @@ func (s *Service) isApplicationAdmin(userGroups []string) bool {
 }
 
 func (s *Service) getApplicationAdminAuthzGroupName() ([]string, error) {
-	applicationAdminGroup := env.GetEnvOrDefault(ldapEnums.EnvLdapAdminGroup, "")
+	applicationAdminGroup := env.GetEnvOrDefault(ldap.EnvLdapAdminGroup, "")
 
 	if applicationAdminGroup == "" && s.appConfig.IsApplicationAdminEnabled() {
-		return []string{}, ldapEnums.ErrorLdapApplicationAdminGroupNotSet
+		return []string{}, ldap.ErrorLdapApplicationAdminGroupNotSet
 	}
 
 	return []string{applicationAdminGroup}, nil

@@ -8,8 +8,8 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/utils/parser"
 
 	accountEntities "github.com/ZupIT/horusec-platform/auth/internal/entities/account"
+	horusecAuthEnums "github.com/ZupIT/horusec-platform/auth/internal/enums/authentication/horusec"
 	authEntities "github.com/ZupIT/horusec-platform/auth/internal/entities/authentication"
-	authEnums "github.com/ZupIT/horusec-platform/auth/internal/enums/authentication"
 )
 
 type IUseCases interface {
@@ -18,6 +18,8 @@ type IUseCases interface {
 	SetLdapAccountData(userData map[string]string) *accountEntities.Account
 	FilterWorkspaceByID(workspaceID uuid.UUID) map[string]interface{}
 	FilterRepositoryByID(repository uuid.UUID) map[string]interface{}
+	FilterAccountWorkspaceByID(accountID, workspaceID uuid.UUID) map[string]interface{}
+	FilterAccountRepositoryByID(accountID, repository uuid.UUID) map[string]interface{}
 }
 
 type UseCases struct {
@@ -30,11 +32,11 @@ func NewAuthenticationUseCases() IUseCases {
 func (u *UseCases) CheckLoginData(credentials *authEntities.LoginCredentials, account *accountEntities.Account) error {
 	if credentials.CheckInvalidPassword(credentials.Password, account.Password) ||
 		credentials.IsInvalidUsernameEmail() {
-		return authEnums.ErrorWrongEmailOrPassword
+		return horusecAuthEnums.ErrorWrongEmailOrPassword
 	}
 
 	if account.IsNotConfirmed() {
-		return authEnums.ErrorAccountEmailNotConfirmed
+		return horusecAuthEnums.ErrorAccountEmailNotConfirmed
 	}
 
 	return nil
@@ -71,4 +73,12 @@ func (u *UseCases) FilterWorkspaceByID(workspaceID uuid.UUID) map[string]interfa
 
 func (u *UseCases) FilterRepositoryByID(repository uuid.UUID) map[string]interface{} {
 	return map[string]interface{}{"repository_id": repository}
+}
+
+func (u *UseCases) FilterAccountWorkspaceByID(accountID, workspaceID uuid.UUID) map[string]interface{} {
+	return map[string]interface{}{"account_id": accountID, "workspace_id": workspaceID}
+}
+
+func (u *UseCases) FilterAccountRepositoryByID(accountID, repository uuid.UUID) map[string]interface{} {
+	return map[string]interface{}{"account_id": accountID, "repository_id": repository}
 }

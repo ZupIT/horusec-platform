@@ -1,8 +1,10 @@
 package authentication
 
 import (
-	"github.com/ZupIT/horusec-devkit/pkg/services/database"
 	"github.com/google/uuid"
+
+	accountEnums "github.com/ZupIT/horusec-devkit/pkg/enums/account"
+	"github.com/ZupIT/horusec-devkit/pkg/services/database"
 
 	authEntities "github.com/ZupIT/horusec-platform/auth/internal/entities/authentication"
 	authEnums "github.com/ZupIT/horusec-platform/auth/internal/enums/authentication"
@@ -12,6 +14,8 @@ import (
 type IRepository interface {
 	GetWorkspaceGroups(workspaceID uuid.UUID) (*authEntities.AuthzGroups, error)
 	GetRepositoryGroups(repositoryID uuid.UUID) (*authEntities.AuthzGroups, error)
+	GetWorkspaceRole(accountID, workspaceID uuid.UUID) (accountEnums.Role, error)
+	GetRepositoryRole(accountID, repositoryID uuid.UUID) (accountEnums.Role, error)
 }
 
 type Repository struct {
@@ -40,4 +44,18 @@ func (r *Repository) GetRepositoryGroups(repositoryID uuid.UUID) (*authEntities.
 
 	return authzGroups, r.databaseRead.Find(authzGroups, r.useCases.FilterRepositoryByID(repositoryID),
 		authEnums.TableRepositories).GetError()
+}
+
+func (r *Repository) GetWorkspaceRole(accountID, workspaceID uuid.UUID) (accountEnums.Role, error) {
+	role := &authEntities.Role{}
+
+	return role.Role, r.databaseRead.Find(role, r.useCases.FilterAccountWorkspaceByID(accountID, workspaceID),
+		authEnums.TableAccountWorkspace).GetError()
+}
+
+func (r *Repository) GetRepositoryRole(accountID, repositoryID uuid.UUID) (accountEnums.Role, error) {
+	role := &authEntities.Role{}
+
+	return role.Role, r.databaseRead.Find(role, r.useCases.FilterAccountRepositoryByID(accountID, repositoryID),
+		authEnums.TableAccountRepository).GetError()
 }

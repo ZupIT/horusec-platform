@@ -7,10 +7,10 @@ import (
 	databaseEnums "github.com/ZupIT/horusec-devkit/pkg/services/database/enums"
 	httpUtil "github.com/ZupIT/horusec-devkit/pkg/utils/http"
 
+	horusecAuthEnums "github.com/ZupIT/horusec-platform/auth/internal/enums/authentication/horusec"
 	"github.com/ZupIT/horusec-platform/auth/config/app"
 	authController "github.com/ZupIT/horusec-platform/auth/internal/controllers/authentication"
 	"github.com/ZupIT/horusec-platform/auth/internal/entities/authentication"
-	authEnums "github.com/ZupIT/horusec-platform/auth/internal/enums/authentication"
 	authUseCases "github.com/ZupIT/horusec-platform/auth/internal/usecases/authentication"
 )
 
@@ -92,12 +92,12 @@ func (h *Handler) checkLoginErrors(w http.ResponseWriter, err error) {
 }
 
 func (h *Handler) checkLoginErrorsHorusec(w http.ResponseWriter, err error) {
-	if err == authEnums.ErrorWrongEmailOrPassword || err == databaseEnums.ErrorNotFoundRecords {
-		httpUtil.StatusForbidden(w, authEnums.ErrorWrongEmailOrPassword)
+	if err == horusecAuthEnums.ErrorWrongEmailOrPassword || err == databaseEnums.ErrorNotFoundRecords {
+		httpUtil.StatusForbidden(w, horusecAuthEnums.ErrorWrongEmailOrPassword)
 		return
 	}
 
-	if err == authEnums.ErrorAccountEmailNotConfirmed {
+	if err == horusecAuthEnums.ErrorAccountEmailNotConfirmed {
 		httpUtil.StatusForbidden(w, err)
 		return
 	}

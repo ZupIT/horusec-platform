@@ -19,10 +19,10 @@ import (
 	"errors"
 	"testing"
 
-	ldapEnums "github.com/ZupIT/horusec-platform/auth/internal/enums/ldap"
-
 	"github.com/go-ldap/ldap/v3"
 	"github.com/stretchr/testify/assert"
+
+	ldapEnums "github.com/ZupIT/horusec-platform/auth/internal/enums/authentication/ldap"
 )
 
 func TestNewLDAPClient(t *testing.T) {

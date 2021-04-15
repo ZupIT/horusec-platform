@@ -7,4 +7,6 @@ const (
 	TokenCheckExpiredDuration = time.Minute * 10
 	TableWorkspaces           = "workspaces"
 	TableRepositories         = "repositories"
+	TableAccountWorkspace     = "account_workspace"
+	TableAccountRepository    = "account_repository"
 )

@@ -9,7 +9,7 @@ import (
 
 	"github.com/ZupIT/horusec-devkit/pkg/utils/env"
 
-	ldapEnums "github.com/ZupIT/horusec-platform/auth/internal/enums/ldap"
+	ldapEnums "github.com/ZupIT/horusec-platform/auth/internal/enums/authentication/ldap"
 )
 
 type ILdapClient interface {
