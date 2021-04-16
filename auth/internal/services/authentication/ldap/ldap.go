@@ -50,7 +50,7 @@ func (s *Service) Login(credentials *authEntities.LoginCredentials) (*authEntiti
 
 	account, err := s.getAccountOrCreateIfNotExist(userData)
 	if err != nil {
-		return nil, s.verifyAuthenticateErrors(err)
+		return nil, err
 	}
 
 	defer s.ldap.Close()
