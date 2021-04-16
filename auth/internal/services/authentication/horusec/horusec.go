@@ -16,12 +16,9 @@ import (
 	horusecAuthEnums "github.com/ZupIT/horusec-platform/auth/internal/enums/authentication/horusec"
 	accountRepository "github.com/ZupIT/horusec-platform/auth/internal/repositories/account"
 	authRepository "github.com/ZupIT/horusec-platform/auth/internal/repositories/authentication"
+	"github.com/ZupIT/horusec-platform/auth/internal/services/authentication"
 	authUseCases "github.com/ZupIT/horusec-platform/auth/internal/usecases/authentication"
 )
-
-type IService interface {
-	Login(credentials *authEntities.LoginCredentials) (*authEntities.LoginResponse, error)
-}
 
 type Service struct {
 	accountRepository accountRepository.IRepository
@@ -32,7 +29,7 @@ type Service struct {
 }
 
 func NewHorusecAuthenticationService(repositoryAccount accountRepository.IRepository, appConfig app.IConfig,
-	useCasesAuth authUseCases.IUseCases, repositoryAuth authRepository.IRepository) IService {
+	useCasesAuth authUseCases.IUseCases, repositoryAuth authRepository.IRepository) authentication.IService {
 	return &Service{
 		cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
 		authUseCases:      useCasesAuth,
@@ -57,22 +54,16 @@ func (s *Service) Login(credentials *authEntities.LoginCredentials) (*authEntiti
 
 func (s *Service) setTokensAndResponse(account *accountEntities.Account) (*authEntities.LoginResponse, error) {
 	refreshToken := jwt.CreateRefreshToken()
+	accessToken, expireAt, _ := jwt.CreateToken(account.ToTokenData(), nil)
 
-	accessToken, expireAt, err := jwt.CreateToken(account.ToTokenData(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	if err := s.setRefreshTokenCache(account.AccountID.String(), refreshToken); err != nil {
-		return nil, err
-	}
+	s.setRefreshTokenCache(account.AccountID.String(), refreshToken)
 
 	return account.ToLoginResponse(accessToken, refreshToken, expireAt), nil
 }
 
-func (s *Service) setRefreshTokenCache(accountID, refreshToken string) error {
+func (s *Service) setRefreshTokenCache(accountID, refreshToken string) {
 	s.cache.Delete(accountID)
-	return s.cache.Add(accountID, refreshToken, authEnums.TokenDuration)
+	_ = s.cache.Add(accountID, refreshToken, authEnums.TokenDuration)
 }
 
 func (s *Service) IsAuthorized(data *authEntities.AuthorizationData) (bool, error) {
@@ -200,7 +191,7 @@ func (s *Service) checkRepositoryRequestForWorkspaceAdmin(data *authEntities.Aut
 		return isWorkspaceAdmin, errors.Wrap(workspaceErr, err.Error())
 	}
 
-	return isWorkspaceAdmin, nil
+	return isWorkspaceAdmin, err
 }
 
 func (s *Service) isApplicationAdmin(data *authEntities.AuthorizationData) (bool, error) {
