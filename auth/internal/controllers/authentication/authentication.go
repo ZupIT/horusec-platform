@@ -6,9 +6,7 @@ import (
 	"github.com/ZupIT/horusec-platform/auth/config/app"
 	authEntities "github.com/ZupIT/horusec-platform/auth/internal/entities/authentication"
 	authEnums "github.com/ZupIT/horusec-platform/auth/internal/enums/authentication"
-	"github.com/ZupIT/horusec-platform/auth/internal/services/authentication/horusec"
-	"github.com/ZupIT/horusec-platform/auth/internal/services/authentication/keycloak"
-	"github.com/ZupIT/horusec-platform/auth/internal/services/authentication/ldap"
+	"github.com/ZupIT/horusec-platform/auth/internal/services/authentication"
 )
 
 type IController interface {
@@ -17,13 +15,13 @@ type IController interface {
 
 type Controller struct {
 	appConfig    app.IConfig
-	horusecAuth  horusec.IService
-	keycloakAuth keycloak.IService
-	ldapAuth     ldap.IService
+	horusecAuth  authentication.IService
+	keycloakAuth authentication.IService
+	ldapAuth     authentication.IService
 }
 
-func NewAuthenticationController(appConfig app.IConfig, authHorusec horusec.IService,
-	ldapAuth ldap.IService, keycloakAuth keycloak.IService) IController {
+func NewAuthenticationController(appConfig app.IConfig, authHorusec authentication.IService,
+	ldapAuth authentication.IService, keycloakAuth authentication.IService) IController {
 	return &Controller{
 		appConfig:    appConfig,
 		horusecAuth:  authHorusec,

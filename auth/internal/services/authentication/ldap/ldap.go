@@ -3,6 +3,8 @@ package ldap
 import (
 	"strings"
 
+	"github.com/patrickmn/go-cache"
+
 	"github.com/ZupIT/horusec-devkit/pkg/enums/auth"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/env"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/jwt"
@@ -10,6 +12,7 @@ import (
 	"github.com/ZupIT/horusec-platform/auth/config/app"
 	accountEntities "github.com/ZupIT/horusec-platform/auth/internal/entities/account"
 	authEntities "github.com/ZupIT/horusec-platform/auth/internal/entities/authentication"
+	authEnums "github.com/ZupIT/horusec-platform/auth/internal/enums/authentication"
 	ldapEnums "github.com/ZupIT/horusec-platform/auth/internal/enums/authentication/ldap"
 	accountRepository "github.com/ZupIT/horusec-platform/auth/internal/repositories/account"
 	authRepository "github.com/ZupIT/horusec-platform/auth/internal/repositories/authentication"
@@ -24,11 +27,13 @@ type Service struct {
 	authRepository    authRepository.IRepository
 	authUseCases      authUseCases.IUseCases
 	appConfig         app.IConfig
+	cache             *cache.Cache
 }
 
 func NewLDAPAuthenticationService(repositoryAccount accountRepository.IRepository, useCasesAuth authUseCases.IUseCases,
 	appConfig app.IConfig, repositoryAuth authRepository.IRepository) authentication.IService {
 	return &Service{
+		cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
 		ldap:              client.NewLdapClient(),
 		accountRepository: repositoryAccount,
 		authUseCases:      useCasesAuth,
@@ -76,14 +81,28 @@ func (s *Service) setTokenAndResponse(account *accountEntities.Account,
 		return nil, err
 	}
 
+	return s.newLoginResponse(account, userGroups)
+}
+
+func (s *Service) newLoginResponse(account *accountEntities.Account,
+	userGroups []string) (*authEntities.LoginResponse, error) {
+	refreshToken := jwt.CreateRefreshToken()
+	s.setRefreshTokenCache(account.AccountID.String(), refreshToken)
+
 	accessToken, expiresAt, _ := jwt.CreateToken(account.ToTokenData(), userGroups)
 	return &authEntities.LoginResponse{
 		AccessToken:        accessToken,
+		RefreshToken:       refreshToken,
 		ExpiresAt:          expiresAt,
 		Username:           account.Username,
 		Email:              account.Email,
 		IsApplicationAdmin: s.isApplicationAdmin(userGroups),
 	}, nil
+}
+
+func (s *Service) setRefreshTokenCache(accountID, refreshToken string) {
+	s.cache.Delete(refreshToken)
+	_ = s.cache.Add(refreshToken, accountID, authEnums.TokenDuration)
 }
 
 func (s *Service) isApplicationAdmin(userGroups []string) bool {
