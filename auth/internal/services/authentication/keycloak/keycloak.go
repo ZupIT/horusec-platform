@@ -191,7 +191,7 @@ func (s *Service) checkRepositoryRequestForWorkspaceAdmin(data *authEntities.Aut
 		return isWorkspaceAdmin, errors.Wrap(workspaceErr, err.Error())
 	}
 
-	return isWorkspaceAdmin, nil
+	return isWorkspaceAdmin, err
 }
 
 func (s *Service) isApplicationAdmin(data *authEntities.AuthorizationData) (bool, error) {

@@ -62,8 +62,8 @@ func (s *Service) setTokensAndResponse(account *accountEntities.Account) (*authE
 }
 
 func (s *Service) setRefreshTokenCache(accountID, refreshToken string) {
-	s.cache.Delete(accountID)
-	_ = s.cache.Add(accountID, refreshToken, authEnums.TokenDuration)
+	s.cache.Delete(refreshToken)
+	_ = s.cache.Add(refreshToken, accountID, authEnums.TokenDuration)
 }
 
 func (s *Service) IsAuthorized(data *authEntities.AuthorizationData) (bool, error) {
