@@ -8,6 +8,8 @@ import (
 	accountEnums "github.com/ZupIT/horusec-devkit/pkg/enums/account"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/auth"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/jwt"
+	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth/proto"
+	"github.com/ZupIT/horusec-devkit/pkg/utils/parser"
 
 	"github.com/ZupIT/horusec-platform/auth/config/app"
 	accountEntities "github.com/ZupIT/horusec-platform/auth/internal/entities/account"
@@ -201,4 +203,18 @@ func (s *Service) isApplicationAdmin(data *authEntities.AuthorizationData) (bool
 	}
 
 	return s.checkForApplicationAdmin(accountID)
+}
+
+func (s *Service) GetAccountFromToken(token string) (*proto.GetAccountDataResponse, error) {
+	claims, err := jwt.DecodeToken(token)
+	if err != nil {
+		return nil, err
+	}
+
+	account, err := s.accountRepository.GetAccount(parser.ParseStringToUUID(claims.Subject))
+	if err != nil {
+		return nil, err
+	}
+
+	return account.ToGetAccountDataResponse(claims.Permissions), nil
 }

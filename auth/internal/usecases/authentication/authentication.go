@@ -6,6 +6,8 @@ import (
 	"github.com/google/uuid"
 
 	"github.com/ZupIT/horusec-devkit/pkg/utils/parser"
+	authorization "github.com/ZupIT/horusec-devkit/pkg/enums/auth"
+	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth/proto"
 
 	accountEntities "github.com/ZupIT/horusec-platform/auth/internal/entities/account"
 	authEntities "github.com/ZupIT/horusec-platform/auth/internal/entities/authentication"
@@ -20,6 +22,8 @@ type IUseCases interface {
 	FilterRepositoryByID(repository uuid.UUID) map[string]interface{}
 	FilterAccountWorkspaceByID(accountID, workspaceID uuid.UUID) map[string]interface{}
 	FilterAccountRepositoryByID(accountID, repository uuid.UUID) map[string]interface{}
+	NewAuthorizationDataFromGrpcData(data *proto.IsAuthorizedData) *authEntities.AuthorizationData
+	NewIsAuthorizedResponse(isAuthorized bool) *proto.IsAuthorizedResponse
 }
 
 type UseCases struct {
@@ -81,4 +85,19 @@ func (u *UseCases) FilterAccountWorkspaceByID(accountID, workspaceID uuid.UUID) 
 
 func (u *UseCases) FilterAccountRepositoryByID(accountID, repository uuid.UUID) map[string]interface{} {
 	return map[string]interface{}{"account_id": accountID, "repository_id": repository}
+}
+
+func (u *UseCases) NewAuthorizationDataFromGrpcData(data *proto.IsAuthorizedData) *authEntities.AuthorizationData {
+	return &authEntities.AuthorizationData{
+		Token:        data.Token,
+		Type:         authorization.AuthorizationType(data.Type),
+		WorkspaceID:  parser.ParseStringToUUID(data.WorkspaceID),
+		RepositoryID: parser.ParseStringToUUID(data.RepositoryID),
+	}
+}
+
+func (u *UseCases) NewIsAuthorizedResponse(isAuthorized bool) *proto.IsAuthorizedResponse {
+	return &proto.IsAuthorizedResponse{
+		IsAuthorized: isAuthorized,
+	}
 }

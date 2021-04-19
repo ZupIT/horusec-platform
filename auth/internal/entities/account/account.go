@@ -3,11 +3,11 @@ package account
 import (
 	"time"
 
-	"github.com/ZupIT/horusec-devkit/pkg/utils/crypto"
-
 	"github.com/google/uuid"
 
 	tokenEntities "github.com/ZupIT/horusec-devkit/pkg/utils/jwt/entities"
+	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth/proto"
+	"github.com/ZupIT/horusec-devkit/pkg/utils/crypto"
 
 	authEntities "github.com/ZupIT/horusec-platform/auth/internal/entities/authentication"
 )
@@ -71,4 +71,12 @@ func (a *Account) SetNewAccountData() *Account {
 	a.UpdatedAt = time.Now()
 
 	return a
+}
+
+func (a *Account) ToGetAccountDataResponse(permissions []string) *proto.GetAccountDataResponse {
+	return &proto.GetAccountDataResponse{
+		AccountID:          a.AccountID.String(),
+		IsApplicationAdmin: a.IsApplicationAdmin,
+		Permissions:        permissions,
+	}
 }

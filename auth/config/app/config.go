@@ -2,6 +2,7 @@ package app
 
 import (
 	"github.com/ZupIT/horusec-devkit/pkg/enums/auth"
+	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth/proto"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/env"
 
 	"github.com/ZupIT/horusec-platform/auth/config/app/enums"
@@ -11,6 +12,8 @@ type IConfig interface {
 	GetAuthType() auth.AuthenticationType
 	ToConfigResponse() map[string]interface{}
 	IsApplicationAdminEnabled() bool
+	IsDisableBroker() bool
+	ToGetAuthConfigResponse() *proto.GetAuthConfigResponse
 }
 
 type Config struct {
@@ -49,4 +52,16 @@ func (c *Config) ToConfigResponse() map[string]interface{} {
 
 func (c *Config) IsApplicationAdminEnabled() bool {
 	return c.EnableApplicationAdmin
+}
+
+func (c *Config) IsDisableBroker() bool {
+	return c.DisableBroker
+}
+
+func (c *Config) ToGetAuthConfigResponse() *proto.GetAuthConfigResponse {
+	return &proto.GetAuthConfigResponse{
+		EnableApplicationAdmin: c.EnableApplicationAdmin,
+		AuthType:               c.AuthType.ToString(),
+		DisableBroker:          c.DisableBroker,
+	}
 }

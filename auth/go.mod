@@ -4,7 +4,7 @@ go 1.16
 
 require (
 	github.com/Nerzal/gocloak/v7 v7.11.0
-	github.com/ZupIT/horusec-devkit v0.0.0-20210414180629-b6da02f3b0f4
+	github.com/ZupIT/horusec-devkit v0.0.0-20210419125829-b25b73da9d8d
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
 	github.com/go-chi/chi v4.1.2+incompatible
 	github.com/go-chi/cors v1.2.0

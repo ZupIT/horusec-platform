@@ -1,10 +1,12 @@
 package authentication
 
 import (
+	"context"
 	"net/http"
 
 	authTypes "github.com/ZupIT/horusec-devkit/pkg/enums/auth"
 	databaseEnums "github.com/ZupIT/horusec-devkit/pkg/services/database/enums"
+	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth/proto"
 	httpUtil "github.com/ZupIT/horusec-devkit/pkg/utils/http"
 
 	"github.com/ZupIT/horusec-platform/auth/config/app"
@@ -15,6 +17,7 @@ import (
 )
 
 type Handler struct {
+	proto.UnimplementedAuthServiceServer
 	useCases   authUseCases.IUseCases
 	appConfig  app.IConfig
 	controller authController.IController
@@ -103,4 +106,18 @@ func (h *Handler) checkLoginErrorsHorusec(w http.ResponseWriter, err error) {
 	}
 
 	httpUtil.StatusInternalServerError(w, err)
+}
+
+func (h *Handler) IsAuthorized(_ context.Context, data *proto.IsAuthorizedData) (*proto.IsAuthorizedResponse, error) {
+	isAuthorized, err := h.controller.IsAuthorized(h.useCases.NewAuthorizationDataFromGrpcData(data))
+
+	return h.useCases.NewIsAuthorizedResponse(isAuthorized), err
+}
+
+func (h *Handler) GetAccountInfo(_ context.Context, data *proto.GetAccountData) (*proto.GetAccountDataResponse, error) {
+	return h.controller.GetAccountInfo(data.Token)
+}
+
+func (h *Handler) GetAuthConfig(context.Context, *proto.GetAuthConfigData) (*proto.GetAuthConfigResponse, error) {
+	return h.appConfig.ToGetAuthConfigResponse(), nil
 }

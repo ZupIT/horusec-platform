@@ -11,6 +11,7 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/health"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/env"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
+	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth/proto"
 
 	"github.com/ZupIT/horusec-platform/auth/config/grpc/enums"
 	authHandler "github.com/ZupIT/horusec-platform/auth/internal/handlers/authentication"
@@ -83,7 +84,7 @@ func (a *AuthGRPCServer) getNetListener() net.Listener {
 
 func (a *AuthGRPCServer) registerServices() {
 	healthGRPC.RegisterHealthServer(a.GRPCServer, health.NewHealthCheckGrpcServer())
-	//proto.RegisterAuthServiceServer(a.GRPCServer, a.authController)
+	proto.RegisterAuthServiceServer(a.GRPCServer, a.authHandler)
 }
 
 func (a *AuthGRPCServer) listeningMessage() {
