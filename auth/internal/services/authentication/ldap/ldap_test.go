@@ -2,20 +2,25 @@ package ldap
 
 import (
 	"errors"
+	"os"
 	"testing"
 
+	"github.com/google/uuid"
 	"github.com/patrickmn/go-cache"
 	"github.com/stretchr/testify/assert"
+
+	authorization "github.com/ZupIT/horusec-devkit/pkg/enums/auth"
+	"github.com/ZupIT/horusec-devkit/pkg/utils/jwt"
 
 	"github.com/ZupIT/horusec-platform/auth/config/app"
 	accountEntities "github.com/ZupIT/horusec-platform/auth/internal/entities/account"
 	authEntities "github.com/ZupIT/horusec-platform/auth/internal/entities/authentication"
 	authEnums "github.com/ZupIT/horusec-platform/auth/internal/enums/authentication"
+	ldapEnums "github.com/ZupIT/horusec-platform/auth/internal/enums/authentication/ldap"
 	accountRepository "github.com/ZupIT/horusec-platform/auth/internal/repositories/account"
 	authRepository "github.com/ZupIT/horusec-platform/auth/internal/repositories/authentication"
 	"github.com/ZupIT/horusec-platform/auth/internal/services/authentication/ldap/client"
 	"github.com/ZupIT/horusec-platform/auth/internal/usecases/authentication"
-	ldapEnums "github.com/ZupIT/horusec-platform/auth/internal/enums/authentication/ldap"
 )
 
 func TestNewLDAPAuthenticationService(t *testing.T) {
@@ -208,5 +213,1011 @@ func TestLogin(t *testing.T) {
 		assert.Error(t, err)
 		assert.Equal(t, ldapEnums.ErrorLdapUnauthorized, err)
 		assert.Nil(t, result)
+	})
+}
+
+func TestIsAuthorizedApplicationAdmin(t *testing.T) {
+	t.Run("should should return true and no error when application admin", func(t *testing.T) {
+		_ = os.Setenv(ldapEnums.EnvLdapAdminGroup, "test")
+
+		accountRepositoryMock := &accountRepository.Mock{}
+		authRepositoryMock := &authRepository.Mock{}
+		ldapMock := &client.Mock{}
+
+		account := &accountEntities.Account{
+			Username:           "test",
+			Email:              "test@test.com",
+			IsApplicationAdmin: true,
+		}
+
+		appConfig := &app.Config{
+			EnableApplicationAdmin: true,
+		}
+
+		service := Service{
+			cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
+			ldap:              ldapMock,
+			accountRepository: accountRepositoryMock,
+			authRepository:    authRepositoryMock,
+			authUseCases:      authentication.NewAuthenticationUseCases(),
+			appConfig:         appConfig,
+		}
+
+		token, _, _ := jwt.CreateToken(account.ToTokenData(), []string{"test"})
+
+		data := &authEntities.AuthorizationData{
+			Token:        token,
+			Type:         authorization.ApplicationAdmin,
+			WorkspaceID:  uuid.New(),
+			RepositoryID: uuid.New(),
+		}
+
+		result, err := service.IsAuthorized(data)
+		assert.NoError(t, err)
+		assert.True(t, result)
+	})
+
+	t.Run("should should return false and no error when application admin group not check", func(t *testing.T) {
+		_ = os.Setenv(ldapEnums.EnvLdapAdminGroup, "test2")
+
+		authRepositoryMock := &authRepository.Mock{}
+		ldapMock := &client.Mock{}
+		accountRepositoryMock := &accountRepository.Mock{}
+
+		appConfig := &app.Config{
+			EnableApplicationAdmin: true,
+		}
+
+		account := &accountEntities.Account{
+			Username:           "test",
+			Email:              "test@test.com",
+			IsApplicationAdmin: true,
+		}
+
+		service := Service{
+			cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
+			ldap:              ldapMock,
+			accountRepository: accountRepositoryMock,
+			authRepository:    authRepositoryMock,
+			authUseCases:      authentication.NewAuthenticationUseCases(),
+			appConfig:         appConfig,
+		}
+
+		token, _, _ := jwt.CreateToken(account.ToTokenData(), []string{"test"})
+
+		data := &authEntities.AuthorizationData{
+			Token:        token,
+			Type:         authorization.ApplicationAdmin,
+			WorkspaceID:  uuid.New(),
+			RepositoryID: uuid.New(),
+		}
+
+		result, err := service.IsAuthorized(data)
+		assert.NoError(t, err)
+		assert.False(t, result)
+	})
+
+	t.Run("should should return false and error when application admin group not set", func(t *testing.T) {
+		_ = os.Setenv(ldapEnums.EnvLdapAdminGroup, "")
+
+		accountRepositoryMock := &accountRepository.Mock{}
+		authRepositoryMock := &authRepository.Mock{}
+		ldapMock := &client.Mock{}
+
+		appConfig := &app.Config{
+			EnableApplicationAdmin: true,
+		}
+
+		account := &accountEntities.Account{
+			Username:           "test",
+			Email:              "test@test.com",
+			IsApplicationAdmin: true,
+		}
+
+		service := Service{
+			cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
+			ldap:              ldapMock,
+			accountRepository: accountRepositoryMock,
+			authRepository:    authRepositoryMock,
+			authUseCases:      authentication.NewAuthenticationUseCases(),
+			appConfig:         appConfig,
+		}
+
+		token, _, _ := jwt.CreateToken(account.ToTokenData(), []string{"test"})
+
+		data := &authEntities.AuthorizationData{
+			Token:        token,
+			Type:         authorization.ApplicationAdmin,
+			WorkspaceID:  uuid.New(),
+			RepositoryID: uuid.New(),
+		}
+
+		result, err := service.IsAuthorized(data)
+		assert.False(t, result)
+		assert.Error(t, err)
+		assert.Equal(t, err, ldapEnums.ErrorLdapApplicationAdminGroupNotSet)
+	})
+
+	t.Run("should should return error when failed to get account id from token", func(t *testing.T) {
+		authRepositoryMock := &authRepository.Mock{}
+		ldapMock := &client.Mock{}
+		accountRepositoryMock := &accountRepository.Mock{}
+
+		appConfig := &app.Config{
+			EnableApplicationAdmin: false,
+		}
+
+		service := Service{
+			cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
+			ldap:              ldapMock,
+			accountRepository: accountRepositoryMock,
+			authRepository:    authRepositoryMock,
+			authUseCases:      authentication.NewAuthenticationUseCases(),
+			appConfig:         appConfig,
+		}
+
+		data := &authEntities.AuthorizationData{
+			Token:        "",
+			Type:         authorization.ApplicationAdmin,
+			WorkspaceID:  uuid.New(),
+			RepositoryID: uuid.New(),
+		}
+
+		result, err := service.IsAuthorized(data)
+		assert.False(t, result)
+		assert.Error(t, err)
+	})
+}
+
+func TestIsAuthorizedWorkspaceMember(t *testing.T) {
+	t.Run("should should true and no error for workspace member", func(t *testing.T) {
+		accountRepositoryMock := &accountRepository.Mock{}
+		ldapMock := &client.Mock{}
+		appConfig := &app.Config{}
+
+		account := &accountEntities.Account{
+			Username:           "test",
+			Email:              "test@test.com",
+			IsApplicationAdmin: true,
+		}
+
+		groups := &authEntities.AuthzGroups{AuthzMember: []string{"test"}}
+		authRepositoryMock := &authRepository.Mock{}
+		authRepositoryMock.On("GetWorkspaceGroups").Return(groups, nil)
+
+		service := Service{
+			cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
+			ldap:              ldapMock,
+			accountRepository: accountRepositoryMock,
+			authRepository:    authRepositoryMock,
+			authUseCases:      authentication.NewAuthenticationUseCases(),
+			appConfig:         appConfig,
+		}
+
+		token, _, _ := jwt.CreateToken(account.ToTokenData(), []string{"test"})
+
+		data := &authEntities.AuthorizationData{
+			Token:        token,
+			Type:         authorization.WorkspaceMember,
+			WorkspaceID:  uuid.New(),
+			RepositoryID: uuid.New(),
+		}
+
+		result, err := service.IsAuthorized(data)
+		assert.NoError(t, err)
+		assert.True(t, result)
+	})
+
+	t.Run("should should false and no error when groups not check", func(t *testing.T) {
+		accountRepositoryMock := &accountRepository.Mock{}
+		ldapMock := &client.Mock{}
+		appConfig := &app.Config{}
+
+		account := &accountEntities.Account{
+			Username:           "test",
+			Email:              "test@test.com",
+			IsApplicationAdmin: true,
+		}
+
+		groups := &authEntities.AuthzGroups{AuthzMember: []string{"test2"}}
+		authRepositoryMock := &authRepository.Mock{}
+		authRepositoryMock.On("GetWorkspaceGroups").Return(groups, nil)
+
+		service := Service{
+			cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
+			ldap:              ldapMock,
+			accountRepository: accountRepositoryMock,
+			authRepository:    authRepositoryMock,
+			authUseCases:      authentication.NewAuthenticationUseCases(),
+			appConfig:         appConfig,
+		}
+
+		token, _, _ := jwt.CreateToken(account.ToTokenData(), []string{"test"})
+
+		data := &authEntities.AuthorizationData{
+			Token:        token,
+			Type:         authorization.WorkspaceMember,
+			WorkspaceID:  uuid.New(),
+			RepositoryID: uuid.New(),
+		}
+
+		result, err := service.IsAuthorized(data)
+		assert.NoError(t, err)
+		assert.False(t, result)
+	})
+
+	t.Run("should should false and error when failed to get workspace groups", func(t *testing.T) {
+		accountRepositoryMock := &accountRepository.Mock{}
+		ldapMock := &client.Mock{}
+		appConfig := &app.Config{}
+
+		account := &accountEntities.Account{
+			Username:           "test",
+			Email:              "test@test.com",
+			IsApplicationAdmin: true,
+		}
+
+		groups := &authEntities.AuthzGroups{}
+		authRepositoryMock := &authRepository.Mock{}
+		authRepositoryMock.On("GetWorkspaceGroups").Return(groups, errors.New("test"))
+
+		service := Service{
+			cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
+			ldap:              ldapMock,
+			accountRepository: accountRepositoryMock,
+			authRepository:    authRepositoryMock,
+			authUseCases:      authentication.NewAuthenticationUseCases(),
+			appConfig:         appConfig,
+		}
+
+		token, _, _ := jwt.CreateToken(account.ToTokenData(), []string{"test"})
+
+		data := &authEntities.AuthorizationData{
+			Token:        token,
+			Type:         authorization.WorkspaceMember,
+			WorkspaceID:  uuid.New(),
+			RepositoryID: uuid.New(),
+		}
+
+		result, err := service.IsAuthorized(data)
+		assert.Error(t, err)
+		assert.False(t, result)
+	})
+
+	t.Run("should should error when failed to get groups from token", func(t *testing.T) {
+		accountRepositoryMock := &accountRepository.Mock{}
+		ldapMock := &client.Mock{}
+		appConfig := &app.Config{}
+		authRepositoryMock := &authRepository.Mock{}
+
+		service := Service{
+			cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
+			ldap:              ldapMock,
+			accountRepository: accountRepositoryMock,
+			authRepository:    authRepositoryMock,
+			authUseCases:      authentication.NewAuthenticationUseCases(),
+			appConfig:         appConfig,
+		}
+
+		data := &authEntities.AuthorizationData{
+			Token:        "",
+			Type:         authorization.WorkspaceMember,
+			WorkspaceID:  uuid.New(),
+			RepositoryID: uuid.New(),
+		}
+
+		result, err := service.IsAuthorized(data)
+		assert.Error(t, err)
+		assert.False(t, result)
+	})
+}
+
+func TestIsAuthorizedWorkspaceAdmin(t *testing.T) {
+	t.Run("should should true and no error for workspace admin", func(t *testing.T) {
+		accountRepositoryMock := &accountRepository.Mock{}
+		ldapMock := &client.Mock{}
+		appConfig := &app.Config{}
+
+		account := &accountEntities.Account{
+			Username:           "test",
+			Email:              "test@test.com",
+			IsApplicationAdmin: true,
+		}
+
+		groups := &authEntities.AuthzGroups{AuthzAdmin: []string{"test"}}
+		authRepositoryMock := &authRepository.Mock{}
+		authRepositoryMock.On("GetWorkspaceGroups").Return(groups, nil)
+
+		service := Service{
+			cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
+			ldap:              ldapMock,
+			accountRepository: accountRepositoryMock,
+			authRepository:    authRepositoryMock,
+			authUseCases:      authentication.NewAuthenticationUseCases(),
+			appConfig:         appConfig,
+		}
+
+		token, _, _ := jwt.CreateToken(account.ToTokenData(), []string{"test"})
+
+		data := &authEntities.AuthorizationData{
+			Token:        token,
+			Type:         authorization.WorkspaceAdmin,
+			WorkspaceID:  uuid.New(),
+			RepositoryID: uuid.New(),
+		}
+
+		result, err := service.IsAuthorized(data)
+		assert.NoError(t, err)
+		assert.True(t, result)
+	})
+
+	t.Run("should should false and no error when groups not check", func(t *testing.T) {
+		accountRepositoryMock := &accountRepository.Mock{}
+		ldapMock := &client.Mock{}
+		appConfig := &app.Config{}
+
+		account := &accountEntities.Account{
+			Username:           "test",
+			Email:              "test@test.com",
+			IsApplicationAdmin: true,
+		}
+
+		groups := &authEntities.AuthzGroups{AuthzAdmin: []string{"test2"}}
+		authRepositoryMock := &authRepository.Mock{}
+		authRepositoryMock.On("GetWorkspaceGroups").Return(groups, nil)
+
+		service := Service{
+			cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
+			ldap:              ldapMock,
+			accountRepository: accountRepositoryMock,
+			authRepository:    authRepositoryMock,
+			authUseCases:      authentication.NewAuthenticationUseCases(),
+			appConfig:         appConfig,
+		}
+
+		token, _, _ := jwt.CreateToken(account.ToTokenData(), []string{"test"})
+
+		data := &authEntities.AuthorizationData{
+			Token:        token,
+			Type:         authorization.WorkspaceAdmin,
+			WorkspaceID:  uuid.New(),
+			RepositoryID: uuid.New(),
+		}
+
+		result, err := service.IsAuthorized(data)
+		assert.NoError(t, err)
+		assert.False(t, result)
+	})
+
+	t.Run("should should false and error when failed to get workspace groups", func(t *testing.T) {
+		accountRepositoryMock := &accountRepository.Mock{}
+		ldapMock := &client.Mock{}
+		appConfig := &app.Config{}
+
+		account := &accountEntities.Account{
+			Username:           "test",
+			Email:              "test@test.com",
+			IsApplicationAdmin: true,
+		}
+
+		groups := &authEntities.AuthzGroups{}
+		authRepositoryMock := &authRepository.Mock{}
+		authRepositoryMock.On("GetWorkspaceGroups").Return(groups, errors.New("test"))
+
+		service := Service{
+			cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
+			ldap:              ldapMock,
+			accountRepository: accountRepositoryMock,
+			authRepository:    authRepositoryMock,
+			authUseCases:      authentication.NewAuthenticationUseCases(),
+			appConfig:         appConfig,
+		}
+
+		token, _, _ := jwt.CreateToken(account.ToTokenData(), []string{"test"})
+
+		data := &authEntities.AuthorizationData{
+			Token:        token,
+			Type:         authorization.WorkspaceAdmin,
+			WorkspaceID:  uuid.New(),
+			RepositoryID: uuid.New(),
+		}
+
+		result, err := service.IsAuthorized(data)
+		assert.Error(t, err)
+		assert.False(t, result)
+	})
+
+	t.Run("should should error when failed to get groups from token", func(t *testing.T) {
+		accountRepositoryMock := &accountRepository.Mock{}
+		ldapMock := &client.Mock{}
+		appConfig := &app.Config{}
+		authRepositoryMock := &authRepository.Mock{}
+
+		service := Service{
+			cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
+			ldap:              ldapMock,
+			accountRepository: accountRepositoryMock,
+			authRepository:    authRepositoryMock,
+			authUseCases:      authentication.NewAuthenticationUseCases(),
+			appConfig:         appConfig,
+		}
+
+		data := &authEntities.AuthorizationData{
+			Token:        "",
+			Type:         authorization.WorkspaceAdmin,
+			WorkspaceID:  uuid.New(),
+			RepositoryID: uuid.New(),
+		}
+
+		result, err := service.IsAuthorized(data)
+		assert.Error(t, err)
+		assert.False(t, result)
+	})
+}
+
+func TestIsAuthorizedRepositoryAdmin(t *testing.T) {
+	t.Run("should should true and no error for repository admin", func(t *testing.T) {
+		accountRepositoryMock := &accountRepository.Mock{}
+		ldapMock := &client.Mock{}
+		appConfig := &app.Config{}
+
+		account := &accountEntities.Account{
+			Username:           "test",
+			Email:              "test@test.com",
+			IsApplicationAdmin: true,
+		}
+
+		groups := &authEntities.AuthzGroups{AuthzAdmin: []string{"test"}}
+		authRepositoryMock := &authRepository.Mock{}
+		authRepositoryMock.On("GetWorkspaceGroups").Return(groups, nil)
+		authRepositoryMock.On("GetRepositoryGroups").Return(groups, nil)
+
+		service := Service{
+			cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
+			ldap:              ldapMock,
+			accountRepository: accountRepositoryMock,
+			authRepository:    authRepositoryMock,
+			authUseCases:      authentication.NewAuthenticationUseCases(),
+			appConfig:         appConfig,
+		}
+
+		token, _, _ := jwt.CreateToken(account.ToTokenData(), []string{"test"})
+
+		data := &authEntities.AuthorizationData{
+			Token:        token,
+			Type:         authorization.RepositoryAdmin,
+			WorkspaceID:  uuid.New(),
+			RepositoryID: uuid.New(),
+		}
+
+		result, err := service.IsAuthorized(data)
+		assert.NoError(t, err)
+		assert.True(t, result)
+	})
+
+	t.Run("should should false and no error when groups not check", func(t *testing.T) {
+		accountRepositoryMock := &accountRepository.Mock{}
+		ldapMock := &client.Mock{}
+		appConfig := &app.Config{}
+
+		account := &accountEntities.Account{
+			Username:           "test",
+			Email:              "test@test.com",
+			IsApplicationAdmin: true,
+		}
+
+		groups := &authEntities.AuthzGroups{AuthzAdmin: []string{"test2"}}
+		authRepositoryMock := &authRepository.Mock{}
+		authRepositoryMock.On("GetWorkspaceGroups").Return(groups, nil)
+		authRepositoryMock.On("GetRepositoryGroups").Return(groups, nil)
+
+		service := Service{
+			cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
+			ldap:              ldapMock,
+			accountRepository: accountRepositoryMock,
+			authRepository:    authRepositoryMock,
+			authUseCases:      authentication.NewAuthenticationUseCases(),
+			appConfig:         appConfig,
+		}
+
+		token, _, _ := jwt.CreateToken(account.ToTokenData(), []string{"test"})
+
+		data := &authEntities.AuthorizationData{
+			Token:        token,
+			Type:         authorization.RepositoryAdmin,
+			WorkspaceID:  uuid.New(),
+			RepositoryID: uuid.New(),
+		}
+
+		result, err := service.IsAuthorized(data)
+		assert.NoError(t, err)
+		assert.False(t, result)
+	})
+
+	t.Run("should should false and error when failed to get repository groups", func(t *testing.T) {
+		accountRepositoryMock := &accountRepository.Mock{}
+		ldapMock := &client.Mock{}
+		appConfig := &app.Config{}
+
+		account := &accountEntities.Account{
+			Username:           "test",
+			Email:              "test@test.com",
+			IsApplicationAdmin: true,
+		}
+
+		groups := &authEntities.AuthzGroups{AuthzAdmin: []string{"test"}}
+		authRepositoryMock := &authRepository.Mock{}
+		authRepositoryMock.On("GetWorkspaceGroups").Return(groups, nil)
+		authRepositoryMock.On("GetRepositoryGroups").Return(groups, errors.New("test"))
+
+		service := Service{
+			cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
+			ldap:              ldapMock,
+			accountRepository: accountRepositoryMock,
+			authRepository:    authRepositoryMock,
+			authUseCases:      authentication.NewAuthenticationUseCases(),
+			appConfig:         appConfig,
+		}
+
+		token, _, _ := jwt.CreateToken(account.ToTokenData(), []string{"test"})
+
+		data := &authEntities.AuthorizationData{
+			Token:        token,
+			Type:         authorization.RepositoryAdmin,
+			WorkspaceID:  uuid.New(),
+			RepositoryID: uuid.New(),
+		}
+
+		result, err := service.IsAuthorized(data)
+		assert.Error(t, err)
+		assert.False(t, result)
+	})
+
+	t.Run("should should false and error when failed to get workspace groups", func(t *testing.T) {
+		accountRepositoryMock := &accountRepository.Mock{}
+		ldapMock := &client.Mock{}
+		appConfig := &app.Config{}
+
+		account := &accountEntities.Account{
+			Username:           "test",
+			Email:              "test@test.com",
+			IsApplicationAdmin: true,
+		}
+
+		groups := &authEntities.AuthzGroups{}
+		authRepositoryMock := &authRepository.Mock{}
+		authRepositoryMock.On("GetWorkspaceGroups").Return(groups, errors.New("test"))
+
+		service := Service{
+			cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
+			ldap:              ldapMock,
+			accountRepository: accountRepositoryMock,
+			authRepository:    authRepositoryMock,
+			authUseCases:      authentication.NewAuthenticationUseCases(),
+			appConfig:         appConfig,
+		}
+
+		token, _, _ := jwt.CreateToken(account.ToTokenData(), []string{"test"})
+
+		data := &authEntities.AuthorizationData{
+			Token:        token,
+			Type:         authorization.RepositoryAdmin,
+			WorkspaceID:  uuid.New(),
+			RepositoryID: uuid.New(),
+		}
+
+		result, err := service.IsAuthorized(data)
+		assert.Error(t, err)
+		assert.False(t, result)
+	})
+
+	t.Run("should should error when failed to get groups from token", func(t *testing.T) {
+		accountRepositoryMock := &accountRepository.Mock{}
+		ldapMock := &client.Mock{}
+		appConfig := &app.Config{}
+		authRepositoryMock := &authRepository.Mock{}
+
+		service := Service{
+			cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
+			ldap:              ldapMock,
+			accountRepository: accountRepositoryMock,
+			authRepository:    authRepositoryMock,
+			authUseCases:      authentication.NewAuthenticationUseCases(),
+			appConfig:         appConfig,
+		}
+
+		data := &authEntities.AuthorizationData{
+			Token:        "",
+			Type:         authorization.RepositoryAdmin,
+			WorkspaceID:  uuid.New(),
+			RepositoryID: uuid.New(),
+		}
+
+		result, err := service.IsAuthorized(data)
+		assert.Error(t, err)
+		assert.False(t, result)
+	})
+}
+
+func TestIsAuthorizedRepositorySupervisor(t *testing.T) {
+	t.Run("should should true and no error for repository supervisor", func(t *testing.T) {
+		accountRepositoryMock := &accountRepository.Mock{}
+		ldapMock := &client.Mock{}
+		appConfig := &app.Config{}
+
+		account := &accountEntities.Account{
+			Username:           "test",
+			Email:              "test@test.com",
+			IsApplicationAdmin: true,
+		}
+
+		groups := &authEntities.AuthzGroups{AuthzAdmin: []string{"test"}}
+		authRepositoryMock := &authRepository.Mock{}
+		authRepositoryMock.On("GetWorkspaceGroups").Return(groups, nil)
+		authRepositoryMock.On("GetRepositoryGroups").Return(groups, nil)
+
+		service := Service{
+			cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
+			ldap:              ldapMock,
+			accountRepository: accountRepositoryMock,
+			authRepository:    authRepositoryMock,
+			authUseCases:      authentication.NewAuthenticationUseCases(),
+			appConfig:         appConfig,
+		}
+
+		token, _, _ := jwt.CreateToken(account.ToTokenData(), []string{"test"})
+
+		data := &authEntities.AuthorizationData{
+			Token:        token,
+			Type:         authorization.RepositorySupervisor,
+			WorkspaceID:  uuid.New(),
+			RepositoryID: uuid.New(),
+		}
+
+		result, err := service.IsAuthorized(data)
+		assert.NoError(t, err)
+		assert.True(t, result)
+	})
+
+	t.Run("should should false and no error when groups not check", func(t *testing.T) {
+		accountRepositoryMock := &accountRepository.Mock{}
+		ldapMock := &client.Mock{}
+		appConfig := &app.Config{}
+
+		account := &accountEntities.Account{
+			Username:           "test",
+			Email:              "test@test.com",
+			IsApplicationAdmin: true,
+		}
+
+		groups := &authEntities.AuthzGroups{AuthzAdmin: []string{"test2"}}
+		authRepositoryMock := &authRepository.Mock{}
+		authRepositoryMock.On("GetWorkspaceGroups").Return(groups, nil)
+		authRepositoryMock.On("GetRepositoryGroups").Return(groups, nil)
+
+		service := Service{
+			cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
+			ldap:              ldapMock,
+			accountRepository: accountRepositoryMock,
+			authRepository:    authRepositoryMock,
+			authUseCases:      authentication.NewAuthenticationUseCases(),
+			appConfig:         appConfig,
+		}
+
+		token, _, _ := jwt.CreateToken(account.ToTokenData(), []string{"test"})
+
+		data := &authEntities.AuthorizationData{
+			Token:        token,
+			Type:         authorization.RepositorySupervisor,
+			WorkspaceID:  uuid.New(),
+			RepositoryID: uuid.New(),
+		}
+
+		result, err := service.IsAuthorized(data)
+		assert.NoError(t, err)
+		assert.False(t, result)
+	})
+
+	t.Run("should should false and error when failed to get repository groups", func(t *testing.T) {
+		accountRepositoryMock := &accountRepository.Mock{}
+		ldapMock := &client.Mock{}
+		appConfig := &app.Config{}
+
+		account := &accountEntities.Account{
+			Username:           "test",
+			Email:              "test@test.com",
+			IsApplicationAdmin: true,
+		}
+
+		groups := &authEntities.AuthzGroups{AuthzAdmin: []string{"test"}}
+		authRepositoryMock := &authRepository.Mock{}
+		authRepositoryMock.On("GetWorkspaceGroups").Return(groups, nil)
+		authRepositoryMock.On("GetRepositoryGroups").Return(groups, errors.New("test"))
+
+		service := Service{
+			cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
+			ldap:              ldapMock,
+			accountRepository: accountRepositoryMock,
+			authRepository:    authRepositoryMock,
+			authUseCases:      authentication.NewAuthenticationUseCases(),
+			appConfig:         appConfig,
+		}
+
+		token, _, _ := jwt.CreateToken(account.ToTokenData(), []string{"test"})
+
+		data := &authEntities.AuthorizationData{
+			Token:        token,
+			Type:         authorization.RepositorySupervisor,
+			WorkspaceID:  uuid.New(),
+			RepositoryID: uuid.New(),
+		}
+
+		result, err := service.IsAuthorized(data)
+		assert.Error(t, err)
+		assert.False(t, result)
+	})
+
+	t.Run("should should false and error when failed to get workspace groups", func(t *testing.T) {
+		accountRepositoryMock := &accountRepository.Mock{}
+		ldapMock := &client.Mock{}
+		appConfig := &app.Config{}
+
+		account := &accountEntities.Account{
+			Username:           "test",
+			Email:              "test@test.com",
+			IsApplicationAdmin: true,
+		}
+
+		groups := &authEntities.AuthzGroups{}
+		authRepositoryMock := &authRepository.Mock{}
+		authRepositoryMock.On("GetWorkspaceGroups").Return(groups, errors.New("test"))
+
+		service := Service{
+			cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
+			ldap:              ldapMock,
+			accountRepository: accountRepositoryMock,
+			authRepository:    authRepositoryMock,
+			authUseCases:      authentication.NewAuthenticationUseCases(),
+			appConfig:         appConfig,
+		}
+
+		token, _, _ := jwt.CreateToken(account.ToTokenData(), []string{"test"})
+
+		data := &authEntities.AuthorizationData{
+			Token:        token,
+			Type:         authorization.RepositorySupervisor,
+			WorkspaceID:  uuid.New(),
+			RepositoryID: uuid.New(),
+		}
+
+		result, err := service.IsAuthorized(data)
+		assert.Error(t, err)
+		assert.False(t, result)
+	})
+
+	t.Run("should should error when failed to get groups from token", func(t *testing.T) {
+		accountRepositoryMock := &accountRepository.Mock{}
+		ldapMock := &client.Mock{}
+		appConfig := &app.Config{}
+		authRepositoryMock := &authRepository.Mock{}
+
+		service := Service{
+			cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
+			ldap:              ldapMock,
+			accountRepository: accountRepositoryMock,
+			authRepository:    authRepositoryMock,
+			authUseCases:      authentication.NewAuthenticationUseCases(),
+			appConfig:         appConfig,
+		}
+
+		data := &authEntities.AuthorizationData{
+			Token:        "",
+			Type:         authorization.RepositorySupervisor,
+			WorkspaceID:  uuid.New(),
+			RepositoryID: uuid.New(),
+		}
+
+		result, err := service.IsAuthorized(data)
+		assert.Error(t, err)
+		assert.False(t, result)
+	})
+}
+
+func TestIsAuthorizedRepositoryMember(t *testing.T) {
+	t.Run("should should true and no error for repository member", func(t *testing.T) {
+		accountRepositoryMock := &accountRepository.Mock{}
+		ldapMock := &client.Mock{}
+		appConfig := &app.Config{}
+
+		account := &accountEntities.Account{
+			Username:           "test",
+			Email:              "test@test.com",
+			IsApplicationAdmin: true,
+		}
+
+		groups := &authEntities.AuthzGroups{AuthzAdmin: []string{"test"}}
+		authRepositoryMock := &authRepository.Mock{}
+		authRepositoryMock.On("GetWorkspaceGroups").Return(groups, nil)
+		authRepositoryMock.On("GetRepositoryGroups").Return(groups, nil)
+
+		service := Service{
+			cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
+			ldap:              ldapMock,
+			accountRepository: accountRepositoryMock,
+			authRepository:    authRepositoryMock,
+			authUseCases:      authentication.NewAuthenticationUseCases(),
+			appConfig:         appConfig,
+		}
+
+		token, _, _ := jwt.CreateToken(account.ToTokenData(), []string{"test"})
+
+		data := &authEntities.AuthorizationData{
+			Token:        token,
+			Type:         authorization.RepositoryMember,
+			WorkspaceID:  uuid.New(),
+			RepositoryID: uuid.New(),
+		}
+
+		result, err := service.IsAuthorized(data)
+		assert.NoError(t, err)
+		assert.True(t, result)
+	})
+
+	t.Run("should should false and no error when groups not check", func(t *testing.T) {
+		accountRepositoryMock := &accountRepository.Mock{}
+		ldapMock := &client.Mock{}
+		appConfig := &app.Config{}
+
+		account := &accountEntities.Account{
+			Username:           "test",
+			Email:              "test@test.com",
+			IsApplicationAdmin: true,
+		}
+
+		groups := &authEntities.AuthzGroups{AuthzAdmin: []string{"test2"}}
+		authRepositoryMock := &authRepository.Mock{}
+		authRepositoryMock.On("GetWorkspaceGroups").Return(groups, nil)
+		authRepositoryMock.On("GetRepositoryGroups").Return(groups, nil)
+
+		service := Service{
+			cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
+			ldap:              ldapMock,
+			accountRepository: accountRepositoryMock,
+			authRepository:    authRepositoryMock,
+			authUseCases:      authentication.NewAuthenticationUseCases(),
+			appConfig:         appConfig,
+		}
+
+		token, _, _ := jwt.CreateToken(account.ToTokenData(), []string{"test"})
+
+		data := &authEntities.AuthorizationData{
+			Token:        token,
+			Type:         authorization.RepositoryMember,
+			WorkspaceID:  uuid.New(),
+			RepositoryID: uuid.New(),
+		}
+
+		result, err := service.IsAuthorized(data)
+		assert.NoError(t, err)
+		assert.False(t, result)
+	})
+
+	t.Run("should should false and error when failed to get repository groups", func(t *testing.T) {
+		accountRepositoryMock := &accountRepository.Mock{}
+		ldapMock := &client.Mock{}
+		appConfig := &app.Config{}
+
+		account := &accountEntities.Account{
+			Username:           "test",
+			Email:              "test@test.com",
+			IsApplicationAdmin: true,
+		}
+
+		groups := &authEntities.AuthzGroups{AuthzAdmin: []string{"test"}}
+		authRepositoryMock := &authRepository.Mock{}
+		authRepositoryMock.On("GetWorkspaceGroups").Return(groups, nil)
+		authRepositoryMock.On("GetRepositoryGroups").Return(groups, errors.New("test"))
+
+		service := Service{
+			cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
+			ldap:              ldapMock,
+			accountRepository: accountRepositoryMock,
+			authRepository:    authRepositoryMock,
+			authUseCases:      authentication.NewAuthenticationUseCases(),
+			appConfig:         appConfig,
+		}
+
+		token, _, _ := jwt.CreateToken(account.ToTokenData(), []string{"test"})
+
+		data := &authEntities.AuthorizationData{
+			Token:        token,
+			Type:         authorization.RepositoryMember,
+			WorkspaceID:  uuid.New(),
+			RepositoryID: uuid.New(),
+		}
+
+		result, err := service.IsAuthorized(data)
+		assert.Error(t, err)
+		assert.False(t, result)
+	})
+
+	t.Run("should should false and error when failed to get workspace groups", func(t *testing.T) {
+		accountRepositoryMock := &accountRepository.Mock{}
+		ldapMock := &client.Mock{}
+		appConfig := &app.Config{}
+
+		account := &accountEntities.Account{
+			Username:           "test",
+			Email:              "test@test.com",
+			IsApplicationAdmin: true,
+		}
+
+		groups := &authEntities.AuthzGroups{}
+		authRepositoryMock := &authRepository.Mock{}
+		authRepositoryMock.On("GetWorkspaceGroups").Return(groups, errors.New("test"))
+
+		service := Service{
+			cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
+			ldap:              ldapMock,
+			accountRepository: accountRepositoryMock,
+			authRepository:    authRepositoryMock,
+			authUseCases:      authentication.NewAuthenticationUseCases(),
+			appConfig:         appConfig,
+		}
+
+		token, _, _ := jwt.CreateToken(account.ToTokenData(), []string{"test"})
+
+		data := &authEntities.AuthorizationData{
+			Token:        token,
+			Type:         authorization.RepositoryMember,
+			WorkspaceID:  uuid.New(),
+			RepositoryID: uuid.New(),
+		}
+
+		result, err := service.IsAuthorized(data)
+		assert.Error(t, err)
+		assert.False(t, result)
+	})
+
+	t.Run("should should error when failed to get groups from token", func(t *testing.T) {
+		accountRepositoryMock := &accountRepository.Mock{}
+		ldapMock := &client.Mock{}
+		appConfig := &app.Config{}
+		authRepositoryMock := &authRepository.Mock{}
+
+		service := Service{
+			cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
+			ldap:              ldapMock,
+			accountRepository: accountRepositoryMock,
+			authRepository:    authRepositoryMock,
+			authUseCases:      authentication.NewAuthenticationUseCases(),
+			appConfig:         appConfig,
+		}
+
+		data := &authEntities.AuthorizationData{
+			Token:        "",
+			Type:         authorization.RepositoryMember,
+			WorkspaceID:  uuid.New(),
+			RepositoryID: uuid.New(),
+		}
+
+		result, err := service.IsAuthorized(data)
+		assert.Error(t, err)
+		assert.False(t, result)
+	})
+}
+
+func TestGetHorusecAuthzGroups(t *testing.T) {
+	t.Run("should error when invalid authorization type", func(t *testing.T) {
+		service := &Service{}
+
+		data := &authEntities.AuthorizationData{
+			Type: "test",
+		}
+
+		groups, err := service.getHorusecAuthzGroups(data)
+
+		assert.Nil(t, groups)
+		assert.Error(t, err)
 	})
 }
