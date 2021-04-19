@@ -11,7 +11,7 @@ import (
 )
 
 type IController interface {
-	Login(credentials *authEntities.LoginCredentials) (interface{}, error)
+	Login(credentials *authEntities.LoginCredentials) (*authEntities.LoginResponse, error)
 	IsAuthorized(data *authEntities.AuthorizationData) (bool, error)
 	GetAccountInfo(token string) (*proto.GetAccountDataResponse, error)
 }
@@ -33,7 +33,7 @@ func NewAuthenticationController(appConfig app.IConfig, authHorusec authenticati
 	}
 }
 
-func (c *Controller) Login(credentials *authEntities.LoginCredentials) (interface{}, error) {
+func (c *Controller) Login(credentials *authEntities.LoginCredentials) (*authEntities.LoginResponse, error) {
 	switch c.appConfig.GetAuthType() {
 	case authTypes.Horusec:
 		return c.horusecAuth.Login(credentials)

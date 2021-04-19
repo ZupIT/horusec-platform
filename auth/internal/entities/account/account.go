@@ -5,9 +5,9 @@ import (
 
 	"github.com/google/uuid"
 
-	tokenEntities "github.com/ZupIT/horusec-devkit/pkg/utils/jwt/entities"
 	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth/proto"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/crypto"
+	tokenEntities "github.com/ZupIT/horusec-devkit/pkg/utils/jwt/entities"
 
 	authEntities "github.com/ZupIT/horusec-platform/auth/internal/entities/authentication"
 )

@@ -19,8 +19,8 @@ func (l *LoginCredentials) Validate() error {
 	)
 }
 
-func (l *LoginCredentials) CheckInvalidPassword(password, hash string) bool {
-	return !crypto.CheckPasswordHashBcrypt(password, hash)
+func (l *LoginCredentials) CheckInvalidPassword(hash string) bool {
+	return !crypto.CheckPasswordHashBcrypt(l.Password, hash)
 }
 
 func (l *LoginCredentials) IsInvalidUsernameEmail() bool {

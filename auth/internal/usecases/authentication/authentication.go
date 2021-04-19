@@ -5,9 +5,9 @@ import (
 
 	"github.com/google/uuid"
 
-	"github.com/ZupIT/horusec-devkit/pkg/utils/parser"
 	authorization "github.com/ZupIT/horusec-devkit/pkg/enums/auth"
 	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth/proto"
+	"github.com/ZupIT/horusec-devkit/pkg/utils/parser"
 
 	accountEntities "github.com/ZupIT/horusec-platform/auth/internal/entities/account"
 	authEntities "github.com/ZupIT/horusec-platform/auth/internal/entities/authentication"
@@ -34,7 +34,7 @@ func NewAuthenticationUseCases() IUseCases {
 }
 
 func (u *UseCases) CheckLoginData(credentials *authEntities.LoginCredentials, account *accountEntities.Account) error {
-	if credentials.CheckInvalidPassword(credentials.Password, account.Password) ||
+	if credentials.CheckInvalidPassword(account.Password) ||
 		credentials.IsInvalidUsernameEmail() {
 		return horusecAuthEnums.ErrorWrongEmailOrPassword
 	}
