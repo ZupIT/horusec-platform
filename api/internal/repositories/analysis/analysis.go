@@ -2,6 +2,7 @@ package analysis
 
 import (
 	"github.com/google/uuid"
+	"time"
 
 	"github.com/ZupIT/horusec-platform/api/internal/repositories/analysis/enums"
 
@@ -109,7 +110,7 @@ func (a *Analysis) createManyToMany(manyToMany *analysis.AnalysisVulnerabilities
 	manyToManyForCreate := &analysis.AnalysisVulnerabilities{
 		VulnerabilityID: manyToMany.VulnerabilityID,
 		AnalysisID:      manyToMany.AnalysisID,
-		CreatedAt:       manyToMany.CreatedAt,
+		CreatedAt:       time.Now(),
 	}
 	return a.databaseWrite.Create(manyToManyForCreate, manyToManyForCreate.GetTable()).GetError()
 }
@@ -121,7 +122,7 @@ func (a *Analysis) findVulnerabilityByHashInWorkspace(vulnHash string, workspace
 		INNER JOIN analysis_vulnerabilities ON vulnerabilities.vulnerability_id = analysis_vulnerabilities.vulnerability_id 
 		INNER JOIN analysis ON analysis_vulnerabilities.analysis_id = analysis.analysis_id 
 		WHERE vulnerabilities.vuln_hash = ?
-		AND analysis.workspaceID = ?
+		AND analysis.workspace_id = ?
 	`
 	return a.databaseRead.Raw(query, map[string]interface{}{}, vulnHash, workspaceID)
 }

@@ -3,7 +3,7 @@ module github.com/ZupIT/horusec-platform/api
 go 1.16
 
 require (
-	github.com/ZupIT/horusec-devkit v0.0.0-20210414160257-b7b41e5ecb0a
+	github.com/ZupIT/horusec-devkit v0.0.0-20210416121958-b865c5603821
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
 	github.com/go-chi/chi v4.1.2+incompatible
 	github.com/go-chi/cors v1.2.0

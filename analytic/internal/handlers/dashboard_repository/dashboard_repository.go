@@ -39,7 +39,7 @@ func (h *Handler) Options(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
 // @Success 200 {object} entities.Response{content=int} "OK"
 // @Failure 400 {object} entities.Response{content=string} "BAD REQUEST"
 // @Failure 500 {object} entities.Response{content=string} "INTERNAL SERVER ERROR"
-// @Router /analytic/dashboard/{workspaceID}/{repositoryID}/total-developers [get]
+// @Router /analytic/dashboard/{workspaceID}/repository/{repositoryID}/total-developers [get]
 func (h *Handler) GetTotalDevelopers(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	filter, err := h.useCase.ExtractFilterDashboardByRepository(r)
 	if err != nil {
@@ -68,7 +68,7 @@ func (h *Handler) GetTotalDevelopers(w netHTTP.ResponseWriter, r *netHTTP.Reques
 // @Success 200 {object} entities.Response{content=object} "OK"
 // @Failure 400 {object} entities.Response{content=string} "BAD REQUEST"
 // @Failure 500 {object} entities.Response{content=string} "INTERNAL SERVER ERROR"
-// @Router /analytic/dashboard/{workspaceID}/{repositoryID}/vulnerabilities-by-severities [get]
+// @Router /analytic/dashboard/{workspaceID}/repository/{repositoryID}/vulnerabilities-by-severities [get]
 func (h *Handler) GetVulnBySeverity(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	filter, err := h.useCase.ExtractFilterDashboardByRepository(r)
 	if err != nil {
@@ -97,7 +97,7 @@ func (h *Handler) GetVulnBySeverity(w netHTTP.ResponseWriter, r *netHTTP.Request
 // @Success 200 {object} entities.Response{content=object} "OK"
 // @Failure 400 {object} entities.Response{content=string} "BAD REQUEST"
 // @Failure 500 {object} entities.Response{content=string} "INTERNAL SERVER ERROR"
-// @Router /analytic/dashboard/{workspaceID}/{repositoryID}/vulnerabilities-by-developer [get]
+// @Router /analytic/dashboard/{workspaceID}/repository/{repositoryID}/vulnerabilities-by-developer [get]
 func (h *Handler) GetVulnByDeveloper(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	filter, err := h.useCase.ExtractFilterDashboardByRepository(r)
 	if err != nil {
@@ -126,7 +126,7 @@ func (h *Handler) GetVulnByDeveloper(w netHTTP.ResponseWriter, r *netHTTP.Reques
 // @Success 200 {object} entities.Response{content=object} "OK"
 // @Failure 400 {object} entities.Response{content=string} "BAD REQUEST"
 // @Failure 500 {object} entities.Response{content=string} "INTERNAL SERVER ERROR"
-// @Router /analytic/dashboard/{workspaceID}/{repositoryID}/vulnerabilities-by-languages [get]
+// @Router /analytic/dashboard/{workspaceID}/repository/{repositoryID}/vulnerabilities-by-languages [get]
 func (h *Handler) GetVulnByLanguage(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	filter, err := h.useCase.ExtractFilterDashboardByRepository(r)
 	if err != nil {
@@ -155,7 +155,7 @@ func (h *Handler) GetVulnByLanguage(w netHTTP.ResponseWriter, r *netHTTP.Request
 // @Success 200 {object} entities.Response{content=object} "OK"
 // @Failure 400 {object} entities.Response{content=string} "BAD REQUEST"
 // @Failure 500 {object} entities.Response{content=string} "INTERNAL SERVER ERROR"
-// @Router /analytic/dashboard/{workspaceID}/{repositoryID}/vulnerabilities-by-time [get]
+// @Router /analytic/dashboard/{workspaceID}/repository/{repositoryID}/vulnerabilities-by-time [get]
 func (h *Handler) GetVulnByTime(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	filter, err := h.useCase.ExtractFilterDashboardByRepository(r)
 	if err != nil {
@@ -186,7 +186,7 @@ func (h *Handler) GetVulnByTime(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 // @Success 200 {object} entities.Response{content=object} "OK"
 // @Failure 400 {object} entities.Response{content=string} "BAD REQUEST"
 // @Failure 500 {object} entities.Response{content=string} "INTERNAL SERVER ERROR"
-// @Router /analytic/dashboard/{workspaceID}/{repositoryID}/details [get]
+// @Router /analytic/dashboard/{workspaceID}/repository/{repositoryID}/details [get]
 func (h *Handler) GetVulnDetails(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	filter, err := h.useCase.ExtractFilterDashboardByRepository(r)
 	if err != nil {

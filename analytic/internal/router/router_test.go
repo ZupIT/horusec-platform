@@ -1,9 +1,10 @@
 package router
 
 import (
+	"testing"
+
 	dashboardRepository "github.com/ZupIT/horusec-platform/analytic/internal/handlers/dashboard_repository"
 	dashboardWorkspace "github.com/ZupIT/horusec-platform/analytic/internal/handlers/dashboard_workspace"
-	"testing"
 
 	"github.com/ZupIT/horusec-devkit/pkg/services/middlewares"
 

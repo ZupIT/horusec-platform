@@ -32,7 +32,8 @@ type Router struct {
 }
 
 func NewHTTPRouter(router http.IRouter, authzMiddleware middlewares.IAuthzMiddleware, healthHandler *health.Handler,
-	dashboardWorkspaceHandler *dashboardWorkspace.Handler, dashboardRepositoryHandler *dashboardRepository.Handler) IRouter {
+	dashboardWorkspaceHandler *dashboardWorkspace.Handler,
+	dashboardRepositoryHandler *dashboardRepository.Handler) IRouter {
 	routes := &Router{
 		IRouter:                    router,
 		IAuthzMiddleware:           authzMiddleware,
@@ -80,12 +81,12 @@ func (r *Router) routerDashboardWorkspace() {
 
 func (r *Router) routerDashboardRepository() {
 	r.Route(enums.DashboardRepositoryRouter, func(router chi.Router) {
-		router.Options("/", r.dashboardWorkspaceHandler.Options)
-		router.Get("/total-developers", r.dashboardWorkspaceHandler.GetTotalDevelopers)
-		router.Get("/vulnerabilities-by-severities", r.dashboardWorkspaceHandler.GetVulnBySeverity)
-		router.Get("/vulnerabilities-by-developer", r.dashboardWorkspaceHandler.GetVulnByDeveloper)
-		router.Get("/vulnerabilities-by-languages", r.dashboardWorkspaceHandler.GetVulnByLanguage)
-		router.Get("/vulnerabilities-by-time", r.dashboardWorkspaceHandler.GetVulnByTime)
-		router.Get("/details", r.dashboardWorkspaceHandler.GetVulnDetails)
+		router.Options("/", r.dashboardRepositoryHandler.Options)
+		router.Get("/total-developers", r.dashboardRepositoryHandler.GetTotalDevelopers)
+		router.Get("/vulnerabilities-by-severities", r.dashboardRepositoryHandler.GetVulnBySeverity)
+		router.Get("/vulnerabilities-by-developer", r.dashboardRepositoryHandler.GetVulnByDeveloper)
+		router.Get("/vulnerabilities-by-languages", r.dashboardRepositoryHandler.GetVulnByLanguage)
+		router.Get("/vulnerabilities-by-time", r.dashboardRepositoryHandler.GetVulnByTime)
+		router.Get("/details", r.dashboardRepositoryHandler.GetVulnDetails)
 	})
 }

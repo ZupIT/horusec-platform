@@ -5,5 +5,5 @@ const (
 	BaseRouter                = "/analytic"
 	HealthRouter              = BaseRouter + "/health"
 	DashboardWorkspaceRouter  = BaseRouter + "/dashboard/{workspaceID}"
-	DashboardRepositoryRouter = DashboardWorkspaceRouter + "/{repositoryID}"
+	DashboardRepositoryRouter = DashboardWorkspaceRouter + "/repository/{repositoryID}"
 )

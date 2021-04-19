@@ -3,7 +3,7 @@ module github.com/ZupIT/horusec-platform/analytic
 go 1.16
 
 require (
-	github.com/ZupIT/horusec-devkit v0.0.0-20210414160257-b7b41e5ecb0a
+	github.com/ZupIT/horusec-devkit v0.0.0-20210416121958-b865c5603821
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
 	github.com/go-chi/chi v4.1.2+incompatible
 	github.com/go-chi/cors v1.2.0
@@ -20,10 +20,11 @@ require (
 	github.com/stretchr/objx v0.3.0 // indirect
 	github.com/stretchr/testify v1.7.0
 	github.com/swaggo/swag v1.7.0
-	golang.org/x/net v0.0.0-20210410081132-afb366fc7cd1 // indirect
-	golang.org/x/sys v0.0.0-20210414055047-fe65e336abe0 // indirect
+	golang.org/x/crypto v0.0.0-20210415154028-4f45737414dc // indirect
+	golang.org/x/net v0.0.0-20210415231046-e915ea6b2b7d // indirect
+	golang.org/x/sys v0.0.0-20210415045647-66c3f260301c // indirect
 	golang.org/x/tools v0.1.0 // indirect
-	google.golang.org/genproto v0.0.0-20210413151531-c14fb6ef47c3 // indirect
+	google.golang.org/genproto v0.0.0-20210416161957-9910b6c460de // indirect
 	google.golang.org/grpc v1.37.0
-	gorm.io/gorm v1.21.7 // indirect
+	gorm.io/gorm v1.21.8 // indirect
 )

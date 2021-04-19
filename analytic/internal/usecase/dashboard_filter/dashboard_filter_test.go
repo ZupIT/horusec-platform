@@ -3,12 +3,14 @@ package dashboardfilter
 import (
 	"context"
 	"fmt"
-	"github.com/ZupIT/horusec-platform/analytic/internal/enums"
+	"net/http"
+	"testing"
+
 	"github.com/go-chi/chi"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
-	"net/http"
-	"testing"
+
+	"github.com/ZupIT/horusec-platform/analytic/internal/enums"
 )
 
 func TestUseCaseDashboard_ExtractFilterDashboardByRepository(t *testing.T) {

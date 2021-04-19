@@ -3,6 +3,8 @@ package analysis
 import (
 	"io"
 
+	"github.com/ZupIT/horusec-devkit/pkg/enums/confidence"
+
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/go-ozzo/ozzo-validation/v4/is"
 
@@ -77,15 +79,12 @@ func (au *UseCases) validateVulnerabilities(
 
 func (au *UseCases) setupValidationVulnerabilities(vul *vulnerability.Vulnerability) error {
 	return validation.ValidateStruct(vul,
-		validation.Field(&vul.SecurityTool, validation.Required,
-			validation.In(au.sliceTools()...)),
+		validation.Field(&vul.SecurityTool, validation.Required, validation.In(au.sliceTools()...)),
 		validation.Field(&vul.VulnHash, validation.Required),
-		validation.Field(&vul.Language, validation.Required,
-			validation.In(au.sliceLanguages()...)),
-		validation.Field(&vul.Severity, validation.Required,
-			validation.In(au.sliceSeverities()...)),
-		validation.Field(&vul.Type, validation.Required,
-			validation.In(au.sliceVulnerabilitiesType()...)),
+		validation.Field(&vul.Confidence, validation.Required, validation.In(au.sliceConfidence()...)),
+		validation.Field(&vul.Language, validation.Required, validation.In(au.sliceLanguages()...)),
+		validation.Field(&vul.Severity, validation.Required, validation.In(au.sliceSeverities()...)),
+		validation.Field(&vul.Type, validation.Required, validation.In(au.sliceVulnerabilitiesType()...)),
 	)
 }
 
@@ -162,5 +161,13 @@ func (au *UseCases) sliceAnalysisStatus() []interface{} {
 		analysisEnum.Running,
 		analysisEnum.Success,
 		analysisEnum.Error,
+	}
+}
+
+func (au *UseCases) sliceConfidence() []interface{} {
+	return []interface{}{
+		confidence.High,
+		confidence.Medium,
+		confidence.Low,
 	}
 }

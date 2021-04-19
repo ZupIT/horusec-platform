@@ -64,7 +64,8 @@ func (c *Controller) GetAnalysis(analysisID uuid.UUID) (*analysis.Analysis, erro
 }
 
 func (c *Controller) SaveAnalysis(analysisEntity *analysis.Analysis) (uuid.UUID, error) {
-	if err := c.createRepositoryIfNotExists(analysisEntity); err != nil {
+	analysisEntity, err := c.createRepositoryIfNotExists(analysisEntity)
+	if err != nil {
 		return uuid.Nil, err
 	}
 	analysisDecorated, err := c.decorateAnalysisEntityAndSaveOnDatabase(analysisEntity)
@@ -77,13 +78,20 @@ func (c *Controller) SaveAnalysis(analysisEntity *analysis.Analysis) (uuid.UUID,
 	return analysisDecorated.ID, nil
 }
 
-func (c *Controller) createRepositoryIfNotExists(analysisEntity *analysis.Analysis) error {
+func (c *Controller) createRepositoryIfNotExists(analysisEntity *analysis.Analysis) (*analysis.Analysis, error) {
 	if analysisEntity.RepositoryID == uuid.Nil {
 		analysisEntity.RepositoryID = uuid.New()
-		return c.repoRepository.
-			CreateRepository(analysisEntity.RepositoryID, analysisEntity.WorkspaceID, analysisEntity.RepositoryName)
+		repositoryID, err := c.repoRepository.FindRepository(analysisEntity.WorkspaceID, analysisEntity.RepositoryName)
+		if err != nil {
+			if err == enums.ErrorNotFoundRecords {
+				return analysisEntity, c.repoRepository.CreateRepository(analysisEntity.RepositoryID,
+					analysisEntity.WorkspaceID, analysisEntity.RepositoryName)
+			}
+			return nil, err
+		}
+		analysisEntity.RepositoryID = repositoryID
 	}
-	return nil
+	return analysisEntity, nil
 }
 
 func (c *Controller) decorateAnalysisEntityAndSaveOnDatabase(

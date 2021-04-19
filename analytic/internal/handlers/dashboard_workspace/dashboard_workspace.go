@@ -3,21 +3,23 @@ package dashboardworkspace
 import (
 	netHTTP "net/http"
 
-	"github.com/ZupIT/horusec-platform/analytic/internal/controllers/dashboard"
-	dashboardfilter "github.com/ZupIT/horusec-platform/analytic/internal/usecase/dashboard_filter"
+	_ "github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard" // [swagger-usage]
+
+	controller "github.com/ZupIT/horusec-platform/analytic/internal/controllers/dashboard"
+	useCase "github.com/ZupIT/horusec-platform/analytic/internal/usecase/dashboard_filter"
 
 	httpUtil "github.com/ZupIT/horusec-devkit/pkg/utils/http"
 )
 
 type Handler struct {
-	controller dashboard.IController
-	useCase    dashboardfilter.IUseCaseDashboard
+	controller controller.IController
+	useCase    useCase.IUseCaseDashboard
 }
 
-func NewDashboardWorkspaceHandler(controller dashboard.IController) *Handler {
+func NewDashboardWorkspaceHandler(dashboardController controller.IController) *Handler {
 	return &Handler{
-		controller: controller,
-		useCase:    dashboardfilter.NewUseCaseDashboard(),
+		controller: dashboardController,
+		useCase:    useCase.NewUseCaseDashboard(),
 	}
 }
 
@@ -91,7 +93,7 @@ func (h *Handler) GetTotalRepositories(w netHTTP.ResponseWriter, r *netHTTP.Requ
 // @Param workspaceID path string true "workspaceID of the workspace"
 // @Param initialDate query string false "initialDate query string"
 // @Param finalDate query string false "finalDate query string"
-// @Success 200 {object} entities.Response{content=object} "OK"
+// @Success 200 {object} entities.Response{content=dashboard.VulnerabilityBySeverity} "OK"
 // @Failure 400 {object} entities.Response{content=string} "BAD REQUEST"
 // @Failure 500 {object} entities.Response{content=string} "INTERNAL SERVER ERROR"
 // @Router /analytic/dashboard/{workspaceID}/vulnerabilities-by-severities [get]
@@ -119,7 +121,7 @@ func (h *Handler) GetVulnBySeverity(w netHTTP.ResponseWriter, r *netHTTP.Request
 // @Param workspaceID path string true "workspaceID of the workspace"
 // @Param initialDate query string false "initialDate query string"
 // @Param finalDate query string false "finalDate query string"
-// @Success 200 {object} entities.Response{content=object} "OK"
+// @Success 200 {object} entities.Response{content=[]dashboard.VulnerabilityByDeveloper} "OK"
 // @Failure 400 {object} entities.Response{content=string} "BAD REQUEST"
 // @Failure 500 {object} entities.Response{content=string} "INTERNAL SERVER ERROR"
 // @Router /analytic/dashboard/{workspaceID}/vulnerabilities-by-developer [get]
@@ -147,7 +149,7 @@ func (h *Handler) GetVulnByDeveloper(w netHTTP.ResponseWriter, r *netHTTP.Reques
 // @Param workspaceID path string true "workspaceID of the workspace"
 // @Param initialDate query string false "initialDate query string"
 // @Param finalDate query string false "finalDate query string"
-// @Success 200 {object} entities.Response{content=object} "OK"
+// @Success 200 {object} entities.Response{content=[]dashboard.VulnerabilityByRepository} "OK"
 // @Failure 400 {object} entities.Response{content=string} "BAD REQUEST"
 // @Failure 500 {object} entities.Response{content=string} "INTERNAL SERVER ERROR"
 // @Router /analytic/dashboard/{workspaceID}/vulnerabilities-by-repositories [get]
@@ -175,7 +177,7 @@ func (h *Handler) GetVulnByRepository(w netHTTP.ResponseWriter, r *netHTTP.Reque
 // @Param workspaceID path string true "workspaceID of the workspace"
 // @Param initialDate query string false "initialDate query string"
 // @Param finalDate query string false "finalDate query string"
-// @Success 200 {object} entities.Response{content=object} "OK"
+// @Success 200 {object} entities.Response{content=[]dashboard.VulnerabilityByLanguage} "OK"
 // @Failure 400 {object} entities.Response{content=string} "BAD REQUEST"
 // @Failure 500 {object} entities.Response{content=string} "INTERNAL SERVER ERROR"
 // @Router /analytic/dashboard/{workspaceID}/vulnerabilities-by-languages [get]
@@ -203,7 +205,7 @@ func (h *Handler) GetVulnByLanguage(w netHTTP.ResponseWriter, r *netHTTP.Request
 // @Param workspaceID path string true "workspaceID of the workspace"
 // @Param initialDate query string false "initialDate query string"
 // @Param finalDate query string false "finalDate query string"
-// @Success 200 {object} entities.Response{content=object} "OK"
+// @Success 200 {object} entities.Response{content=[]dashboard.VulnerabilityByTime} "OK"
 // @Failure 400 {object} entities.Response{content=string} "BAD REQUEST"
 // @Failure 500 {object} entities.Response{content=string} "INTERNAL SERVER ERROR"
 // @Router /analytic/dashboard/{workspaceID}/vulnerabilities-by-time [get]
@@ -233,7 +235,7 @@ func (h *Handler) GetVulnByTime(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 // @Param finalDate query string false "finalDate query string"
 // @Param page query string false "page query string"
 // @Param size query string false "size query string"
-// @Success 200 {object} entities.Response{content=object} "OK"
+// @Success 200 {object} entities.Response{content=[]dashboard.VulnerabilityDetails} "OK"
 // @Failure 400 {object} entities.Response{content=string} "BAD REQUEST"
 // @Failure 500 {object} entities.Response{content=string} "INTERNAL SERVER ERROR"
 // @Router /analytic/dashboard/{workspaceID}/details [get]

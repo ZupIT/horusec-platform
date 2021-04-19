@@ -1,4 +1,132 @@
 definitions:
+  dashboard.VulnerabilityByDeveloper:
+    properties:
+      critical:
+        $ref: '#/definitions/dashboard.VulnerabilityCount'
+      developerEmail:
+        type: string
+      high:
+        $ref: '#/definitions/dashboard.VulnerabilityCount'
+      info:
+        $ref: '#/definitions/dashboard.VulnerabilityCount'
+      low:
+        $ref: '#/definitions/dashboard.VulnerabilityCount'
+      medium:
+        $ref: '#/definitions/dashboard.VulnerabilityCount'
+      unknown:
+        $ref: '#/definitions/dashboard.VulnerabilityCount'
+    type: object
+  dashboard.VulnerabilityByLanguage:
+    properties:
+      critical:
+        $ref: '#/definitions/dashboard.VulnerabilityCount'
+      high:
+        $ref: '#/definitions/dashboard.VulnerabilityCount'
+      info:
+        $ref: '#/definitions/dashboard.VulnerabilityCount'
+      language:
+        enum:
+        - Go
+        - C#
+        - Dart
+        - Ruby
+        - Python
+        - Java
+        - Kotlin
+        - Javascript
+        - Typescript
+        - Leaks
+        - HCL
+        - C
+        - PHP
+        - HTML
+        - Generic
+        - YAML
+        - Elixir
+        - Shell
+        example: Leaks
+        type: string
+      low:
+        $ref: '#/definitions/dashboard.VulnerabilityCount'
+      medium:
+        $ref: '#/definitions/dashboard.VulnerabilityCount'
+      unknown:
+        $ref: '#/definitions/dashboard.VulnerabilityCount'
+    type: object
+  dashboard.VulnerabilityByRepository:
+    properties:
+      critical:
+        $ref: '#/definitions/dashboard.VulnerabilityCount'
+      high:
+        $ref: '#/definitions/dashboard.VulnerabilityCount'
+      info:
+        $ref: '#/definitions/dashboard.VulnerabilityCount'
+      low:
+        $ref: '#/definitions/dashboard.VulnerabilityCount'
+      medium:
+        $ref: '#/definitions/dashboard.VulnerabilityCount'
+      repository:
+        type: string
+      unknown:
+        $ref: '#/definitions/dashboard.VulnerabilityCount'
+    type: object
+  dashboard.VulnerabilityBySeverity:
+    properties:
+      critical:
+        $ref: '#/definitions/dashboard.VulnerabilityCount'
+      high:
+        $ref: '#/definitions/dashboard.VulnerabilityCount'
+      info:
+        $ref: '#/definitions/dashboard.VulnerabilityCount'
+      low:
+        $ref: '#/definitions/dashboard.VulnerabilityCount'
+      medium:
+        $ref: '#/definitions/dashboard.VulnerabilityCount'
+      unknown:
+        $ref: '#/definitions/dashboard.VulnerabilityCount'
+    type: object
+  dashboard.VulnerabilityByTime:
+    properties:
+      critical:
+        $ref: '#/definitions/dashboard.VulnerabilityCount'
+      high:
+        $ref: '#/definitions/dashboard.VulnerabilityCount'
+      info:
+        $ref: '#/definitions/dashboard.VulnerabilityCount'
+      low:
+        $ref: '#/definitions/dashboard.VulnerabilityCount'
+      medium:
+        $ref: '#/definitions/dashboard.VulnerabilityCount'
+      time:
+        type: string
+      unknown:
+        $ref: '#/definitions/dashboard.VulnerabilityCount'
+    type: object
+  dashboard.VulnerabilityCount:
+    properties:
+      count:
+        type: integer
+      types:
+        $ref: '#/definitions/dashboard.VulnerabilityTypes'
+    type: object
+  dashboard.VulnerabilityDetails:
+    properties:
+      totalItems:
+        type: integer
+      vulnerabilities:
+        $ref: '#/definitions/vulnerability.Vulnerability'
+    type: object
+  dashboard.VulnerabilityTypes:
+    properties:
+      corrected:
+        type: integer
+      falsePositive:
+        type: integer
+      riskAccept:
+        type: integer
+      vulnerability:
+        type: integer
+    type: object
   entities.Response:
     properties:
       code:
@@ -6,6 +134,116 @@ definitions:
       content:
         type: object
       status:
+        type: string
+    type: object
+  vulnerability.Vulnerability:
+    properties:
+      code:
+        example: '-----BEGIN RSA PRIVATE KEY-----'
+        type: string
+      column:
+        example: "1"
+        type: string
+      commitAuthor:
+        example: horusec
+        type: string
+      commitDate:
+        example: "2021-12-30"
+        type: string
+      commitEmail:
+        example: horusec@zup.com.br
+        type: string
+      commitHash:
+        example: a21fa164c00a15f3e91f5ee6659cb6a793b39a8d
+        type: string
+      commitMessage:
+        example: Initial commit
+        type: string
+      confidence:
+        enum:
+        - HIGH
+        - MEDIUM
+        - LOW
+        example: HIGH
+        type: string
+      details:
+        example: Asymmetric Private Key Found SSH and/or x.509 Cerficates among the
+          files of your project, make sure you want this kind of information inside
+          your Git repo, since it can be missused by someone with access to any kind
+          of copy.  For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html)
+          advisory.
+        type: string
+      file:
+        example: /deployments/cert.pem
+        type: string
+      language:
+        enum:
+        - Go
+        - C#
+        - Dart
+        - Ruby
+        - Python
+        - Java
+        - Kotlin
+        - Javascript
+        - Typescript
+        - Leaks
+        - HCL
+        - C
+        - PHP
+        - HTML
+        - Generic
+        - YAML
+        - Elixir
+        - Shell
+        example: Leaks
+        type: string
+      line:
+        example: "1"
+        type: string
+      securityTool:
+        enum:
+        - HorusecEngine
+        - GoSec
+        - SecurityCodeScan
+        - Brakeman
+        - Safety
+        - Bandit
+        - NpmAudit
+        - YarnAudit
+        - GitLeaks
+        - TfSec
+        - Semgrep
+        - Flawfinder
+        - PhpCS
+        - MixAudit
+        - Sobelow
+        - ShellCheck
+        - BundlerAudit
+        example: HorusecEngine
+        type: string
+      severity:
+        enum:
+        - CRITICAL
+        - ' HIGH'
+        - ' MEDIUM'
+        - ' LOW'
+        - ' INFO'
+        example: CRITICAL
+        type: string
+      type:
+        enum:
+        - Vulnerability
+        - ' Risk Accepted'
+        - ' False Positive'
+        - ' Corrected'
+        example: Vulnerability
+        type: string
+      vulnHash:
+        example: 8bcac7908eb950419537b91e19adc83ce2c9cbfdacf4f81157fdadfec11f7017
+        type: string
+      vulnerabilityID:
+        example: 00000000-0000-0000-0000-000000000000
         type: string
     type: object
 info:
@@ -17,7 +255,71 @@ info:
   termsOfService: http://swagger.io/terms/
   title: Horusec-Analytic
 paths:
-  /analytic/dashboard/{workspaceID}/{repositoryID}/details:
+  /analytic/dashboard/{workspaceID}/details:
+    get:
+      consumes:
+      - application/json
+      description: Get all vulnerabilities by details by range date in workspace
+      operationId: get-vulnerabilities-by-details-workspace
+      parameters:
+      - description: workspaceID of the workspace
+        in: path
+        name: workspaceID
+        required: true
+        type: string
+      - description: initialDate query string
+        in: query
+        name: initialDate
+        type: string
+      - description: finalDate query string
+        in: query
+        name: finalDate
+        type: string
+      - description: page query string
+        in: query
+        name: page
+        type: string
+      - description: size query string
+        in: query
+        name: size
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/entities.Response'
+            - properties:
+                content:
+                  items:
+                    $ref: '#/definitions/dashboard.VulnerabilityDetails'
+                  type: array
+              type: object
+        "400":
+          description: BAD REQUEST
+          schema:
+            allOf:
+            - $ref: '#/definitions/entities.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "500":
+          description: INTERNAL SERVER ERROR
+          schema:
+            allOf:
+            - $ref: '#/definitions/entities.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - DashboardByWorkspace
+  /analytic/dashboard/{workspaceID}/repository/{repositoryID}/details:
     get:
       consumes:
       - application/json
@@ -84,7 +386,7 @@ paths:
       - ApiKeyAuth: []
       tags:
       - DashboardByRepository
-  /analytic/dashboard/{workspaceID}/{repositoryID}/total-developers:
+  /analytic/dashboard/{workspaceID}/repository/{repositoryID}/total-developers:
     get:
       consumes:
       - application/json
@@ -143,7 +445,7 @@ paths:
       - ApiKeyAuth: []
       tags:
       - DashboardByRepository
-  /analytic/dashboard/{workspaceID}/{repositoryID}/vulnerabilities-by-developer:
+  /analytic/dashboard/{workspaceID}/repository/{repositoryID}/vulnerabilities-by-developer:
     get:
       consumes:
       - application/json
@@ -202,7 +504,7 @@ paths:
       - ApiKeyAuth: []
       tags:
       - DashboardByRepository
-  /analytic/dashboard/{workspaceID}/{repositoryID}/vulnerabilities-by-languages:
+  /analytic/dashboard/{workspaceID}/repository/{repositoryID}/vulnerabilities-by-languages:
     get:
       consumes:
       - application/json
@@ -261,7 +563,7 @@ paths:
       - ApiKeyAuth: []
       tags:
       - DashboardByRepository
-  /analytic/dashboard/{workspaceID}/{repositoryID}/vulnerabilities-by-severities:
+  /analytic/dashboard/{workspaceID}/repository/{repositoryID}/vulnerabilities-by-severities:
     get:
       consumes:
       - application/json
@@ -320,7 +622,7 @@ paths:
       - ApiKeyAuth: []
       tags:
       - DashboardByRepository
-  /analytic/dashboard/{workspaceID}/{repositoryID}/vulnerabilities-by-time:
+  /analytic/dashboard/{workspaceID}/repository/{repositoryID}/vulnerabilities-by-time:
     get:
       consumes:
       - application/json
@@ -379,68 +681,6 @@ paths:
       - ApiKeyAuth: []
       tags:
       - DashboardByRepository
-  /analytic/dashboard/{workspaceID}/details:
-    get:
-      consumes:
-      - application/json
-      description: Get all vulnerabilities by details by range date in workspace
-      operationId: get-vulnerabilities-by-details-workspace
-      parameters:
-      - description: workspaceID of the workspace
-        in: path
-        name: workspaceID
-        required: true
-        type: string
-      - description: initialDate query string
-        in: query
-        name: initialDate
-        type: string
-      - description: finalDate query string
-        in: query
-        name: finalDate
-        type: string
-      - description: page query string
-        in: query
-        name: page
-        type: string
-      - description: size query string
-        in: query
-        name: size
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/entities.Response'
-            - properties:
-                content:
-                  type: object
-              type: object
-        "400":
-          description: BAD REQUEST
-          schema:
-            allOf:
-            - $ref: '#/definitions/entities.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-        "500":
-          description: INTERNAL SERVER ERROR
-          schema:
-            allOf:
-            - $ref: '#/definitions/entities.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-      security:
-      - ApiKeyAuth: []
-      tags:
-      - DashboardByWorkspace
   /analytic/dashboard/{workspaceID}/total-developers:
     get:
       consumes:
@@ -579,7 +819,9 @@ paths:
             - $ref: '#/definitions/entities.Response'
             - properties:
                 content:
-                  type: object
+                  items:
+                    $ref: '#/definitions/dashboard.VulnerabilityByDeveloper'
+                  type: array
               type: object
         "400":
           description: BAD REQUEST
@@ -633,7 +875,9 @@ paths:
             - $ref: '#/definitions/entities.Response'
             - properties:
                 content:
-                  type: object
+                  items:
+                    $ref: '#/definitions/dashboard.VulnerabilityByLanguage'
+                  type: array
               type: object
         "400":
           description: BAD REQUEST
@@ -688,7 +932,9 @@ paths:
             - $ref: '#/definitions/entities.Response'
             - properties:
                 content:
-                  type: object
+                  items:
+                    $ref: '#/definitions/dashboard.VulnerabilityByRepository'
+                  type: array
               type: object
         "400":
           description: BAD REQUEST
@@ -742,7 +988,7 @@ paths:
             - $ref: '#/definitions/entities.Response'
             - properties:
                 content:
-                  type: object
+                  $ref: '#/definitions/dashboard.VulnerabilityBySeverity'
               type: object
         "400":
           description: BAD REQUEST
@@ -796,7 +1042,9 @@ paths:
             - $ref: '#/definitions/entities.Response'
             - properties:
                 content:
-                  type: object
+                  items:
+                    $ref: '#/definitions/dashboard.VulnerabilityByTime'
+                  type: array
               type: object
         "400":
           description: BAD REQUEST
