@@ -779,3 +779,98 @@ func TestIsAuthorizedRepositoryAdmin(t *testing.T) {
 		assert.False(t, result)
 	})
 }
+
+func TestGetAccountDataFromToken(t *testing.T) {
+	t.Run("should return account data without errors", func(t *testing.T) {
+		authRepositoryMock := &authRepository.Mock{}
+		appConfig := &app.Config{}
+
+		account := &accountEntities.Account{
+			AccountID:          uuid.New(),
+			IsConfirmed:        true,
+			Email:              "test",
+			Username:           "test",
+			IsApplicationAdmin: true,
+		}
+
+		sub := uuid.NewString()
+		userInfo := &gocloak.UserInfo{Sub: &sub}
+
+		keycloakMock := &keycloak.Mock{}
+		keycloakMock.On("GetUserInfo").Return(userInfo, nil)
+
+		accountRepositoryMock := &accountRepository.Mock{}
+		accountRepositoryMock.On("GetAccount").Return(account, nil)
+
+		service := Service{
+			accountRepository: accountRepositoryMock,
+			authUseCases:      authentication.NewAuthenticationUseCases(),
+			authRepository:    authRepositoryMock,
+			appConfig:         appConfig,
+			keycloak:          keycloakMock,
+		}
+
+		result, err := service.GetAccountDataFromToken("test")
+		assert.NoError(t, err)
+		assert.Equal(t, account.AccountID.String(), result.AccountID)
+		assert.Equal(t, account.IsApplicationAdmin, result.IsApplicationAdmin)
+	})
+
+	t.Run("should return error when failed to get account", func(t *testing.T) {
+		authRepositoryMock := &authRepository.Mock{}
+		appConfig := &app.Config{}
+
+		account := &accountEntities.Account{
+			AccountID:          uuid.New(),
+			IsConfirmed:        true,
+			Email:              "test",
+			Username:           "test",
+			IsApplicationAdmin: true,
+		}
+
+		sub := uuid.NewString()
+		userInfo := &gocloak.UserInfo{Sub: &sub}
+
+		keycloakMock := &keycloak.Mock{}
+		keycloakMock.On("GetUserInfo").Return(userInfo, nil)
+
+		accountRepositoryMock := &accountRepository.Mock{}
+		accountRepositoryMock.On("GetAccount").Return(account, errors.New("test"))
+
+		service := Service{
+			accountRepository: accountRepositoryMock,
+			authUseCases:      authentication.NewAuthenticationUseCases(),
+			authRepository:    authRepositoryMock,
+			appConfig:         appConfig,
+			keycloak:          keycloakMock,
+		}
+
+		result, err := service.GetAccountDataFromToken("test")
+		assert.Error(t, err)
+		assert.Nil(t, result)
+	})
+
+	t.Run("should return error when failed to get user info", func(t *testing.T) {
+		authRepositoryMock := &authRepository.Mock{}
+		appConfig := &app.Config{}
+		accountRepositoryMock := &accountRepository.Mock{}
+
+		sub := uuid.NewString()
+		userInfo := &gocloak.UserInfo{Sub: &sub}
+
+		keycloakMock := &keycloak.Mock{}
+		keycloakMock.On("GetUserInfo").Return(userInfo, errors.New("test"))
+
+		service := Service{
+			accountRepository: accountRepositoryMock,
+			authUseCases:      authentication.NewAuthenticationUseCases(),
+			authRepository:    authRepositoryMock,
+			appConfig:         appConfig,
+			keycloak:          keycloakMock,
+		}
+
+		result, err := service.GetAccountDataFromToken("test")
+		assert.Error(t, err)
+		assert.Nil(t, result)
+	})
+}

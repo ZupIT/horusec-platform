@@ -62,11 +62,11 @@ func (c *Controller) IsAuthorized(data *authEntities.AuthorizationData) (bool, e
 func (c *Controller) GetAccountInfo(token string) (*proto.GetAccountDataResponse, error) {
 	switch c.appConfig.GetAuthType() {
 	case authTypes.Horusec:
-		return c.horusecAuth.GetAccountFromToken(token)
+		return c.horusecAuth.GetAccountDataFromToken(token)
 	case authTypes.Keycloak:
-		return c.keycloakAuth.GetAccountFromToken(token)
+		return c.keycloakAuth.GetAccountDataFromToken(token)
 	case authTypes.Ldap:
-		return c.ldapAuth.GetAccountFromToken(token)
+		return c.ldapAuth.GetAccountDataFromToken(token)
 	}
 
 	return nil, authEnums.ErrorAuthTypeInvalid

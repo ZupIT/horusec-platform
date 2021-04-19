@@ -23,7 +23,7 @@ func (m *Mock) IsAuthorized(_ *authEntities.AuthorizationData) (bool, error) {
 	return args.Get(0).(bool), mockUtils.ReturnNilOrError(args, 1)
 }
 
-func (m *Mock) GetAccountFromToken(_ string) (*proto.GetAccountDataResponse, error) {
-	args := m.MethodCalled("GetAccountFromToken")
+func (m *Mock) GetAccountDataFromToken(_ string) (*proto.GetAccountDataResponse, error) {
+	args := m.MethodCalled("GetAccountDataFromToken")
 	return args.Get(0).(*proto.GetAccountDataResponse), mockUtils.ReturnNilOrError(args, 1)
 }

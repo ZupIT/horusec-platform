@@ -205,7 +205,7 @@ func (s *Service) isApplicationAdmin(data *authEntities.AuthorizationData) (bool
 	return s.checkForApplicationAdmin(accountID)
 }
 
-func (s *Service) GetAccountFromToken(token string) (*proto.GetAccountDataResponse, error) {
+func (s *Service) GetAccountDataFromToken(token string) (*proto.GetAccountDataResponse, error) {
 	claims, err := jwt.DecodeToken(token)
 	if err != nil {
 		return nil, err

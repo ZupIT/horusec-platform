@@ -728,3 +728,95 @@ func TestIsAuthorizedRepositoryAdmin(t *testing.T) {
 		assert.False(t, result)
 	})
 }
+
+func TestGetAccountDataFromToken(t *testing.T) {
+	t.Run("should return account data without errors", func(t *testing.T) {
+		authRepositoryMock := &authRepository.Mock{}
+		appConfig := &app.Config{}
+
+		account := &accountEntities.Account{
+			AccountID:          uuid.New(),
+			IsConfirmed:        true,
+			Email:              "test",
+			Username:           "test",
+			IsApplicationAdmin: true,
+		}
+
+		accountRepositoryMock := &accountRepository.Mock{}
+		accountRepositoryMock.On("GetAccount").Return(account, nil)
+
+		service := NewHorusecAuthenticationService(accountRepositoryMock, appConfig,
+			authentication.NewAuthenticationUseCases(), authRepositoryMock)
+
+		token, _, _ := jwt.CreateToken(account.ToTokenData(), []string{"test"})
+
+		result, err := service.GetAccountDataFromToken(token)
+		assert.NoError(t, err)
+		assert.Equal(t, account.AccountID.String(), result.AccountID)
+		assert.Equal(t, account.IsApplicationAdmin, result.IsApplicationAdmin)
+		assert.Equal(t, []string{"test"}, result.Permissions)
+	})
+
+	t.Run("should return error when failed to get account", func(t *testing.T) {
+		authRepositoryMock := &authRepository.Mock{}
+		appConfig := &app.Config{}
+
+		account := &accountEntities.Account{
+			AccountID:          uuid.New(),
+			IsConfirmed:        true,
+			Email:              "test",
+			Username:           "test",
+			IsApplicationAdmin: true,
+		}
+
+		accountRepositoryMock := &accountRepository.Mock{}
+		accountRepositoryMock.On("GetAccount").Return(account, errors.New("test"))
+
+		service := NewHorusecAuthenticationService(accountRepositoryMock, appConfig,
+			authentication.NewAuthenticationUseCases(), authRepositoryMock)
+
+		token, _, _ := jwt.CreateToken(account.ToTokenData(), []string{"test"})
+
+		result, err := service.GetAccountDataFromToken(token)
+		assert.Error(t, err)
+		assert.Nil(t, result)
+	})
+
+	t.Run("should return error when failed to get account", func(t *testing.T) {
+		authRepositoryMock := &authRepository.Mock{}
+		appConfig := &app.Config{}
+
+		account := &accountEntities.Account{
+			AccountID:          uuid.New(),
+			IsConfirmed:        true,
+			Email:              "test",
+			Username:           "test",
+			IsApplicationAdmin: true,
+		}
+
+		accountRepositoryMock := &accountRepository.Mock{}
+		accountRepositoryMock.On("GetAccount").Return(account, errors.New("test"))
+
+		service := NewHorusecAuthenticationService(accountRepositoryMock, appConfig,
+			authentication.NewAuthenticationUseCases(), authRepositoryMock)
+
+		token, _, _ := jwt.CreateToken(account.ToTokenData(), []string{"test"})
+
+		result, err := service.GetAccountDataFromToken(token)
+		assert.Error(t, err)
+		assert.Nil(t, result)
+	})
+
+	t.Run("should return error when failed to decode token", func(t *testing.T) {
+		authRepositoryMock := &authRepository.Mock{}
+		appConfig := &app.Config{}
+		accountRepositoryMock := &accountRepository.Mock{}
+
+		service := NewHorusecAuthenticationService(accountRepositoryMock, appConfig,
+			authentication.NewAuthenticationUseCases(), authRepositoryMock)
+
+		result, err := service.GetAccountDataFromToken("")
+		assert.Error(t, err)
+		assert.Nil(t, result)
+	})
+}

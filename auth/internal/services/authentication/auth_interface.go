@@ -9,5 +9,5 @@ import (
 type IService interface {
 	Login(credentials *authEntities.LoginCredentials) (*authEntities.LoginResponse, error)
 	IsAuthorized(data *authEntities.AuthorizationData) (bool, error)
-	GetAccountFromToken(token string) (*proto.GetAccountDataResponse, error)
+	GetAccountDataFromToken(token string) (*proto.GetAccountDataResponse, error)
 }

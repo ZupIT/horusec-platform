@@ -238,7 +238,7 @@ func (s *Service) appendMember(appAdminAuthz []string, data *authEntities.Author
 	return append(appAdminAuthz, append(data.AuthzAdmin, append(data.AuthzSupervisor, data.AuthzMember...)...)...)
 }
 
-func (s *Service) GetAccountFromToken(token string) (*proto.GetAccountDataResponse, error) {
+func (s *Service) GetAccountDataFromToken(token string) (*proto.GetAccountDataResponse, error) {
 	claims, err := jwt.DecodeToken(token)
 	if err != nil {
 		return nil, err
