@@ -4,13 +4,13 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stretchr/testify/assert"
 	"github.com/google/uuid"
+	"github.com/stretchr/testify/assert"
 
 	authorization "github.com/ZupIT/horusec-devkit/pkg/enums/auth"
 	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth/proto"
-	"github.com/ZupIT/horusec-devkit/pkg/utils/parser"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/crypto"
+	"github.com/ZupIT/horusec-devkit/pkg/utils/parser"
 
 	accountEntities "github.com/ZupIT/horusec-platform/auth/internal/entities/account"
 	authEntities "github.com/ZupIT/horusec-platform/auth/internal/entities/authentication"
