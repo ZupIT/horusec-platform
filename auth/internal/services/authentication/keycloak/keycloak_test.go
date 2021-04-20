@@ -15,6 +15,7 @@ import (
 	"github.com/ZupIT/horusec-platform/auth/config/app"
 	accountEntities "github.com/ZupIT/horusec-platform/auth/internal/entities/account"
 	authEntities "github.com/ZupIT/horusec-platform/auth/internal/entities/authentication"
+	keycloakEnums "github.com/ZupIT/horusec-platform/auth/internal/enums/authentication/keycloak"
 	accountRepository "github.com/ZupIT/horusec-platform/auth/internal/repositories/account"
 	authRepository "github.com/ZupIT/horusec-platform/auth/internal/repositories/authentication"
 	keycloak "github.com/ZupIT/horusec-platform/auth/internal/services/authentication/keycloak/client"
@@ -870,6 +871,80 @@ func TestGetAccountDataFromToken(t *testing.T) {
 		}
 
 		result, err := service.GetAccountDataFromToken("test")
+		assert.Error(t, err)
+		assert.Nil(t, result)
+	})
+}
+
+func TestGetUserInfo(t *testing.T) {
+	t.Run("should success get user info", func(t *testing.T) {
+		authRepositoryMock := &authRepository.Mock{}
+		appConfig := &app.Config{}
+		accountRepositoryMock := &accountRepository.Mock{}
+
+		test := "test"
+		userInfo := &gocloak.UserInfo{
+			Sub:   &test,
+			Email: &test,
+		}
+
+		keycloakMock := &keycloak.Mock{}
+		keycloakMock.On("GetUserInfo").Return(userInfo, nil)
+
+		service := Service{
+			accountRepository: accountRepositoryMock,
+			authUseCases:      authentication.NewAuthenticationUseCases(),
+			authRepository:    authRepositoryMock,
+			appConfig:         appConfig,
+			keycloak:          keycloakMock,
+		}
+
+		result, err := service.GetUserInfo("test")
+		assert.NoError(t, err)
+		assert.NotNil(t, result)
+	})
+
+	t.Run("should return error when missing username or email", func(t *testing.T) {
+		authRepositoryMock := &authRepository.Mock{}
+		appConfig := &app.Config{}
+		accountRepositoryMock := &accountRepository.Mock{}
+
+		userInfo := &gocloak.UserInfo{}
+		keycloakMock := &keycloak.Mock{}
+		keycloakMock.On("GetUserInfo").Return(userInfo, nil)
+
+		service := Service{
+			accountRepository: accountRepositoryMock,
+			authUseCases:      authentication.NewAuthenticationUseCases(),
+			authRepository:    authRepositoryMock,
+			appConfig:         appConfig,
+			keycloak:          keycloakMock,
+		}
+
+		result, err := service.GetUserInfo("test")
+		assert.Error(t, err)
+		assert.Equal(t, keycloakEnums.ErrorKeycloakMissingUsernameOrSub, err)
+		assert.Nil(t, result)
+	})
+
+	t.Run("should return error when missing username or email", func(t *testing.T) {
+		authRepositoryMock := &authRepository.Mock{}
+		appConfig := &app.Config{}
+		accountRepositoryMock := &accountRepository.Mock{}
+
+		userInfo := &gocloak.UserInfo{}
+		keycloakMock := &keycloak.Mock{}
+		keycloakMock.On("GetUserInfo").Return(userInfo, errors.New("test"))
+
+		service := Service{
+			accountRepository: accountRepositoryMock,
+			authUseCases:      authentication.NewAuthenticationUseCases(),
+			authRepository:    authRepositoryMock,
+			appConfig:         appConfig,
+			keycloak:          keycloakMock,
+		}
+
+		result, err := service.GetUserInfo("test")
 		assert.Error(t, err)
 		assert.Nil(t, result)
 	})

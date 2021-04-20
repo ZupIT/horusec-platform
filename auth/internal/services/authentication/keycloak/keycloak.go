@@ -15,6 +15,7 @@ import (
 	accountEntities "github.com/ZupIT/horusec-platform/auth/internal/entities/account"
 	authEntities "github.com/ZupIT/horusec-platform/auth/internal/entities/authentication"
 	horusecAuthEnums "github.com/ZupIT/horusec-platform/auth/internal/enums/authentication/horusec"
+	keycloakEnums "github.com/ZupIT/horusec-platform/auth/internal/enums/authentication/keycloak"
 	accountRepository "github.com/ZupIT/horusec-platform/auth/internal/repositories/account"
 	authRepository "github.com/ZupIT/horusec-platform/auth/internal/repositories/authentication"
 	keycloak "github.com/ZupIT/horusec-platform/auth/internal/services/authentication/keycloak/client"
@@ -226,5 +227,14 @@ func (s *Service) GetAccountDataFromToken(token string) (*proto.GetAccountDataRe
 }
 
 func (s *Service) GetUserInfo(token string) (*gocloak.UserInfo, error) {
-	return s.keycloak.GetUserInfo(token)
+	userInfo, err := s.keycloak.GetUserInfo(token)
+	if err != nil {
+		return nil, err
+	}
+
+	if userInfo.Email == nil || userInfo.Sub == nil {
+		return nil, keycloakEnums.ErrorKeycloakMissingUsernameOrSub
+	}
+
+	return userInfo, nil
 }

@@ -1,6 +1,7 @@
 package account
 
 import (
+	"io"
 	"strings"
 	"time"
 
@@ -19,6 +20,7 @@ type IUseCases interface {
 	FilterAccountByUsername(username string) map[string]interface{}
 	NewAccountFromKeycloakUserInfo(userInfo *gocloak.UserInfo) *accountEntities.Account
 	CheckCreateAccountErrors(err error) error
+	AccessTokenFromIOReadCloser(body io.ReadCloser) (string, error)
 }
 
 type UseCases struct {
@@ -74,4 +76,14 @@ func (u *UseCases) CheckCreateAccountErrors(err error) error {
 
 func (u *UseCases) contains(err error, check string) bool {
 	return strings.Contains(strings.ToLower(err.Error()), check)
+}
+
+func (u *UseCases) AccessTokenFromIOReadCloser(body io.ReadCloser) (string, error) {
+	var accessToken string
+
+	if err := parser.ParseBodyToEntity(body, accessToken); err != nil {
+		return "", err
+	}
+
+	return accessToken, nil
 }

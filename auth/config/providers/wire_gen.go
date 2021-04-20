@@ -16,7 +16,9 @@ import (
 	"github.com/ZupIT/horusec-platform/auth/config/app"
 	"github.com/ZupIT/horusec-platform/auth/config/cors"
 	"github.com/ZupIT/horusec-platform/auth/config/grpc"
+	account3 "github.com/ZupIT/horusec-platform/auth/internal/controllers/account"
 	authentication3 "github.com/ZupIT/horusec-platform/auth/internal/controllers/authentication"
+	account4 "github.com/ZupIT/horusec-platform/auth/internal/handlers/account"
 	authentication4 "github.com/ZupIT/horusec-platform/auth/internal/handlers/authentication"
 	account2 "github.com/ZupIT/horusec-platform/auth/internal/repositories/account"
 	authentication2 "github.com/ZupIT/horusec-platform/auth/internal/repositories/authentication"
@@ -59,9 +61,9 @@ var devKitProviders = wire.NewSet(http.NewHTTPRouter, config.NewDatabaseConfig, 
 
 var configProviders = wire.NewSet(grpc.NewAuthGRPCServer, cors.NewCorsConfig, router.NewHTTPRouter, app.NewAuthAppConfig)
 
-var controllerProviders = wire.NewSet(authentication3.NewAuthenticationController)
+var controllerProviders = wire.NewSet(authentication3.NewAuthenticationController, account3.NewAccountController)
 
-var handleProviders = wire.NewSet(authentication4.NewAuthenticationHandler)
+var handleProviders = wire.NewSet(authentication4.NewAuthenticationHandler, account4.NewAccountHandler)
 
 var useCasesProviders = wire.NewSet(authentication.NewAuthenticationUseCases, account.NewAccountUseCases)
 

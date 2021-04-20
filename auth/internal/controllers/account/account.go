@@ -1,14 +1,14 @@
 package account
 
 import (
-	keycloakEnums "github.com/ZupIT/horusec-platform/auth/internal/enums/authentication/keycloak"
+	accountEntities "github.com/ZupIT/horusec-platform/auth/internal/entities/account"
 	accountRepository "github.com/ZupIT/horusec-platform/auth/internal/repositories/account"
 	"github.com/ZupIT/horusec-platform/auth/internal/services/authentication/keycloak"
 	accountUseCases "github.com/ZupIT/horusec-platform/auth/internal/usecases/account"
 )
 
 type IController interface {
-	CreateAccountKeycloak(token string) error
+	CreateAccountKeycloak(token string) (*accountEntities.Response, error)
 }
 
 type Controller struct {
@@ -23,16 +23,17 @@ func NewAccountController(repositoryAccount accountRepository.IRepository) ICont
 	}
 }
 
-func (c *Controller) CreateAccountKeycloak(token string) error {
+func (c *Controller) CreateAccountKeycloak(token string) (*accountEntities.Response, error) {
 	userInfo, err := c.keycloakAuth.GetUserInfo(token)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	if userInfo.Email == nil || userInfo.Sub == nil {
-		return keycloakEnums.ErrorKeycloakMissingUsernameOrSub
+	account, err := c.accountRepository.CreateAccount(c.accountUseCases.NewAccountFromKeycloakUserInfo(userInfo))
+	if err != nil {
+		return c.accountUseCases.NewAccountFromKeycloakUserInfo(userInfo).ToResponse(),
+			c.accountUseCases.CheckCreateAccountErrors(err)
 	}
 
-	_, err = c.accountRepository.CreateAccount(c.accountUseCases.NewAccountFromKeycloakUserInfo(userInfo))
-	return c.accountUseCases.CheckCreateAccountErrors(err)
+	return account.ToResponse(), nil
 }
