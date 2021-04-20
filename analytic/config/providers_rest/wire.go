@@ -1,15 +1,14 @@
 //+build wireinject
 
-package providers
+package providersrest
 
 import (
 	"github.com/google/wire"
 
+	"github.com/ZupIT/horusec-platform/analytic/internal/handlers/dashboard"
+
 	controllerDashboard "github.com/ZupIT/horusec-platform/analytic/internal/controllers/dashboard"
 	repoDashboard "github.com/ZupIT/horusec-platform/analytic/internal/repositories/dashboard"
-
-	dashboardrepository "github.com/ZupIT/horusec-platform/analytic/internal/handlers/dashboard_repository"
-	dashboardworkspace "github.com/ZupIT/horusec-platform/analytic/internal/handlers/dashboard_workspace"
 
 	"github.com/ZupIT/horusec-platform/analytic/internal/handlers/health"
 
@@ -38,11 +37,10 @@ var providers = wire.NewSet(
 
 	repoDashboard.NewRepoDashboard,
 
-	controllerDashboard.NewControllerDashboard,
+	controllerDashboard.NewControllerDashboardRead,
 
 	health.NewHealthHandler,
-	dashboardworkspace.NewDashboardWorkspaceHandler,
-	dashboardrepository.NewDashboardRepositoryHandler,
+	dashboard.NewDashboardHandler,
 
 	router.NewHTTPRouter,
 )

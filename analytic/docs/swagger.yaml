@@ -1,128 +1,128 @@
 definitions:
-  dashboard.VulnerabilityByDeveloper:
+  dashboard.Response:
     properties:
-      critical:
-        $ref: '#/definitions/dashboard.VulnerabilityCount'
-      developerEmail:
-        type: string
-      high:
-        $ref: '#/definitions/dashboard.VulnerabilityCount'
-      info:
-        $ref: '#/definitions/dashboard.VulnerabilityCount'
-      low:
-        $ref: '#/definitions/dashboard.VulnerabilityCount'
-      medium:
-        $ref: '#/definitions/dashboard.VulnerabilityCount'
-      unknown:
-        $ref: '#/definitions/dashboard.VulnerabilityCount'
+      totalAuthors:
+        type: integer
+      totalRepositories:
+        type: integer
+      vulnerabilitiesByAuthor:
+        items:
+          $ref: '#/definitions/dashboard.ResponseByAuthor'
+        type: array
+      vulnerabilitiesByLanguage:
+        items:
+          $ref: '#/definitions/dashboard.ResponseByLanguage'
+        type: array
+      vulnerabilitiesByRepository:
+        items:
+          $ref: '#/definitions/dashboard.ResponseByRepository'
+        type: array
+      vulnerabilityBySeverity:
+        $ref: '#/definitions/dashboard.ResponseSeverity'
+      vulnerabilityByTime:
+        items:
+          $ref: '#/definitions/dashboard.ResponseByTime'
+        type: array
     type: object
-  dashboard.VulnerabilityByLanguage:
+  dashboard.ResponseByAuthor:
+    properties:
+      author:
+        type: string
+      critical:
+        $ref: '#/definitions/dashboard.ResponseSeverityContAndTypes'
+      high:
+        $ref: '#/definitions/dashboard.ResponseSeverityContAndTypes'
+      info:
+        $ref: '#/definitions/dashboard.ResponseSeverityContAndTypes'
+      low:
+        $ref: '#/definitions/dashboard.ResponseSeverityContAndTypes'
+      medium:
+        $ref: '#/definitions/dashboard.ResponseSeverityContAndTypes'
+      unknown:
+        $ref: '#/definitions/dashboard.ResponseSeverityContAndTypes'
+    type: object
+  dashboard.ResponseByLanguage:
     properties:
       critical:
-        $ref: '#/definitions/dashboard.VulnerabilityCount'
+        $ref: '#/definitions/dashboard.ResponseSeverityContAndTypes'
       high:
-        $ref: '#/definitions/dashboard.VulnerabilityCount'
+        $ref: '#/definitions/dashboard.ResponseSeverityContAndTypes'
       info:
-        $ref: '#/definitions/dashboard.VulnerabilityCount'
+        $ref: '#/definitions/dashboard.ResponseSeverityContAndTypes'
       language:
-        enum:
-        - Go
-        - C#
-        - Dart
-        - Ruby
-        - Python
-        - Java
-        - Kotlin
-        - Javascript
-        - Typescript
-        - Leaks
-        - HCL
-        - C
-        - PHP
-        - HTML
-        - Generic
-        - YAML
-        - Elixir
-        - Shell
-        example: Leaks
         type: string
       low:
-        $ref: '#/definitions/dashboard.VulnerabilityCount'
+        $ref: '#/definitions/dashboard.ResponseSeverityContAndTypes'
       medium:
-        $ref: '#/definitions/dashboard.VulnerabilityCount'
+        $ref: '#/definitions/dashboard.ResponseSeverityContAndTypes'
       unknown:
-        $ref: '#/definitions/dashboard.VulnerabilityCount'
+        $ref: '#/definitions/dashboard.ResponseSeverityContAndTypes'
     type: object
-  dashboard.VulnerabilityByRepository:
+  dashboard.ResponseByRepository:
     properties:
       critical:
-        $ref: '#/definitions/dashboard.VulnerabilityCount'
+        $ref: '#/definitions/dashboard.ResponseSeverityContAndTypes'
       high:
-        $ref: '#/definitions/dashboard.VulnerabilityCount'
+        $ref: '#/definitions/dashboard.ResponseSeverityContAndTypes'
       info:
-        $ref: '#/definitions/dashboard.VulnerabilityCount'
+        $ref: '#/definitions/dashboard.ResponseSeverityContAndTypes'
       low:
-        $ref: '#/definitions/dashboard.VulnerabilityCount'
+        $ref: '#/definitions/dashboard.ResponseSeverityContAndTypes'
       medium:
-        $ref: '#/definitions/dashboard.VulnerabilityCount'
-      repository:
+        $ref: '#/definitions/dashboard.ResponseSeverityContAndTypes'
+      repositoryName:
         type: string
       unknown:
-        $ref: '#/definitions/dashboard.VulnerabilityCount'
+        $ref: '#/definitions/dashboard.ResponseSeverityContAndTypes'
     type: object
-  dashboard.VulnerabilityBySeverity:
+  dashboard.ResponseByTime:
     properties:
       critical:
-        $ref: '#/definitions/dashboard.VulnerabilityCount'
+        $ref: '#/definitions/dashboard.ResponseSeverityContAndTypes'
       high:
-        $ref: '#/definitions/dashboard.VulnerabilityCount'
+        $ref: '#/definitions/dashboard.ResponseSeverityContAndTypes'
       info:
-        $ref: '#/definitions/dashboard.VulnerabilityCount'
+        $ref: '#/definitions/dashboard.ResponseSeverityContAndTypes'
       low:
-        $ref: '#/definitions/dashboard.VulnerabilityCount'
+        $ref: '#/definitions/dashboard.ResponseSeverityContAndTypes'
       medium:
-        $ref: '#/definitions/dashboard.VulnerabilityCount'
-      unknown:
-        $ref: '#/definitions/dashboard.VulnerabilityCount'
-    type: object
-  dashboard.VulnerabilityByTime:
-    properties:
-      critical:
-        $ref: '#/definitions/dashboard.VulnerabilityCount'
-      high:
-        $ref: '#/definitions/dashboard.VulnerabilityCount'
-      info:
-        $ref: '#/definitions/dashboard.VulnerabilityCount'
-      low:
-        $ref: '#/definitions/dashboard.VulnerabilityCount'
-      medium:
-        $ref: '#/definitions/dashboard.VulnerabilityCount'
+        $ref: '#/definitions/dashboard.ResponseSeverityContAndTypes'
       time:
         type: string
       unknown:
-        $ref: '#/definitions/dashboard.VulnerabilityCount'
+        $ref: '#/definitions/dashboard.ResponseSeverityContAndTypes'
     type: object
-  dashboard.VulnerabilityCount:
+  dashboard.ResponseSeverity:
+    properties:
+      critical:
+        $ref: '#/definitions/dashboard.ResponseSeverityContAndTypes'
+      high:
+        $ref: '#/definitions/dashboard.ResponseSeverityContAndTypes'
+      info:
+        $ref: '#/definitions/dashboard.ResponseSeverityContAndTypes'
+      low:
+        $ref: '#/definitions/dashboard.ResponseSeverityContAndTypes'
+      medium:
+        $ref: '#/definitions/dashboard.ResponseSeverityContAndTypes'
+      unknown:
+        $ref: '#/definitions/dashboard.ResponseSeverityContAndTypes'
+    type: object
+  dashboard.ResponseSeverityContAndTypes:
     properties:
       count:
         type: integer
       types:
-        $ref: '#/definitions/dashboard.VulnerabilityTypes'
+        $ref: '#/definitions/dashboard.ResponseVulnTypes'
     type: object
-  dashboard.VulnerabilityDetails:
-    properties:
-      totalItems:
-        type: integer
-      vulnerabilities:
-        $ref: '#/definitions/vulnerability.Vulnerability'
-    type: object
-  dashboard.VulnerabilityTypes:
+  dashboard.ResponseVulnTypes:
     properties:
       corrected:
         type: integer
       falsePositive:
         type: integer
-      riskAccept:
+      riskAccepted:
+        type: integer
+      unknown:
         type: integer
       vulnerability:
         type: integer
@@ -136,116 +136,6 @@ definitions:
       status:
         type: string
     type: object
-  vulnerability.Vulnerability:
-    properties:
-      code:
-        example: '-----BEGIN RSA PRIVATE KEY-----'
-        type: string
-      column:
-        example: "1"
-        type: string
-      commitAuthor:
-        example: horusec
-        type: string
-      commitDate:
-        example: "2021-12-30"
-        type: string
-      commitEmail:
-        example: horusec@zup.com.br
-        type: string
-      commitHash:
-        example: a21fa164c00a15f3e91f5ee6659cb6a793b39a8d
-        type: string
-      commitMessage:
-        example: Initial commit
-        type: string
-      confidence:
-        enum:
-        - HIGH
-        - MEDIUM
-        - LOW
-        example: HIGH
-        type: string
-      details:
-        example: Asymmetric Private Key Found SSH and/or x.509 Cerficates among the
-          files of your project, make sure you want this kind of information inside
-          your Git repo, since it can be missused by someone with access to any kind
-          of copy.  For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html)
-          advisory.
-        type: string
-      file:
-        example: /deployments/cert.pem
-        type: string
-      language:
-        enum:
-        - Go
-        - C#
-        - Dart
-        - Ruby
-        - Python
-        - Java
-        - Kotlin
-        - Javascript
-        - Typescript
-        - Leaks
-        - HCL
-        - C
-        - PHP
-        - HTML
-        - Generic
-        - YAML
-        - Elixir
-        - Shell
-        example: Leaks
-        type: string
-      line:
-        example: "1"
-        type: string
-      securityTool:
-        enum:
-        - HorusecEngine
-        - GoSec
-        - SecurityCodeScan
-        - Brakeman
-        - Safety
-        - Bandit
-        - NpmAudit
-        - YarnAudit
-        - GitLeaks
-        - TfSec
-        - Semgrep
-        - Flawfinder
-        - PhpCS
-        - MixAudit
-        - Sobelow
-        - ShellCheck
-        - BundlerAudit
-        example: HorusecEngine
-        type: string
-      severity:
-        enum:
-        - CRITICAL
-        - ' HIGH'
-        - ' MEDIUM'
-        - ' LOW'
-        - ' INFO'
-        example: CRITICAL
-        type: string
-      type:
-        enum:
-        - Vulnerability
-        - ' Risk Accepted'
-        - ' False Positive'
-        - ' Corrected'
-        example: Vulnerability
-        type: string
-      vulnHash:
-        example: 8bcac7908eb950419537b91e19adc83ce2c9cbfdacf4f81157fdadfec11f7017
-        type: string
-      vulnerabilityID:
-        example: 00000000-0000-0000-0000-000000000000
-        type: string
-    type: object
 info:
   contact:
     email: horusec@zup.com.br
@@ -255,437 +145,11 @@ info:
   termsOfService: http://swagger.io/terms/
   title: Horusec-Analytic
 paths:
-  /analytic/dashboard/{workspaceID}/details:
+  /analytic/dashboard/{workspaceID}/dashboard-charts:
     get:
       consumes:
       - application/json
-      description: Get all vulnerabilities by details by range date in workspace
-      operationId: get-vulnerabilities-by-details-workspace
-      parameters:
-      - description: workspaceID of the workspace
-        in: path
-        name: workspaceID
-        required: true
-        type: string
-      - description: initialDate query string
-        in: query
-        name: initialDate
-        type: string
-      - description: finalDate query string
-        in: query
-        name: finalDate
-        type: string
-      - description: page query string
-        in: query
-        name: page
-        type: string
-      - description: size query string
-        in: query
-        name: size
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/entities.Response'
-            - properties:
-                content:
-                  items:
-                    $ref: '#/definitions/dashboard.VulnerabilityDetails'
-                  type: array
-              type: object
-        "400":
-          description: BAD REQUEST
-          schema:
-            allOf:
-            - $ref: '#/definitions/entities.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-        "500":
-          description: INTERNAL SERVER ERROR
-          schema:
-            allOf:
-            - $ref: '#/definitions/entities.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-      security:
-      - ApiKeyAuth: []
-      tags:
-      - DashboardByWorkspace
-  /analytic/dashboard/{workspaceID}/repository/{repositoryID}/details:
-    get:
-      consumes:
-      - application/json
-      description: Get all vulnerabilities by details by range date in repository
-      operationId: get-vulnerabilities-by-details-repository
-      parameters:
-      - description: workspaceID of the workspace
-        in: path
-        name: workspaceID
-        required: true
-        type: string
-      - description: repositoryID of the repository
-        in: path
-        name: repositoryID
-        required: true
-        type: string
-      - description: initialDate query string
-        in: query
-        name: initialDate
-        type: string
-      - description: finalDate query string
-        in: query
-        name: finalDate
-        type: string
-      - description: page query string
-        in: query
-        name: page
-        type: string
-      - description: size query string
-        in: query
-        name: size
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/entities.Response'
-            - properties:
-                content:
-                  type: object
-              type: object
-        "400":
-          description: BAD REQUEST
-          schema:
-            allOf:
-            - $ref: '#/definitions/entities.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-        "500":
-          description: INTERNAL SERVER ERROR
-          schema:
-            allOf:
-            - $ref: '#/definitions/entities.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-      security:
-      - ApiKeyAuth: []
-      tags:
-      - DashboardByRepository
-  /analytic/dashboard/{workspaceID}/repository/{repositoryID}/total-developers:
-    get:
-      consumes:
-      - application/json
-      description: Get count total vulnerabilities by range date in repository
-      operationId: get-total-developers-repository
-      parameters:
-      - description: workspaceID of the workspace
-        in: path
-        name: workspaceID
-        required: true
-        type: string
-      - description: repositoryID of the repository
-        in: path
-        name: repositoryID
-        required: true
-        type: string
-      - description: initialDate query string
-        in: query
-        name: initialDate
-        type: string
-      - description: finalDate query string
-        in: query
-        name: finalDate
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/entities.Response'
-            - properties:
-                content:
-                  type: integer
-              type: object
-        "400":
-          description: BAD REQUEST
-          schema:
-            allOf:
-            - $ref: '#/definitions/entities.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-        "500":
-          description: INTERNAL SERVER ERROR
-          schema:
-            allOf:
-            - $ref: '#/definitions/entities.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-      security:
-      - ApiKeyAuth: []
-      tags:
-      - DashboardByRepository
-  /analytic/dashboard/{workspaceID}/repository/{repositoryID}/vulnerabilities-by-developer:
-    get:
-      consumes:
-      - application/json
-      description: Get all vulnerabilities by top 5 developer by range date in repository
-      operationId: get-vulnerabilities-by-top-5-developers-repository
-      parameters:
-      - description: workspaceID of the workspace
-        in: path
-        name: workspaceID
-        required: true
-        type: string
-      - description: repositoryID of the repository
-        in: path
-        name: repositoryID
-        required: true
-        type: string
-      - description: initialDate query string
-        in: query
-        name: initialDate
-        type: string
-      - description: finalDate query string
-        in: query
-        name: finalDate
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/entities.Response'
-            - properties:
-                content:
-                  type: object
-              type: object
-        "400":
-          description: BAD REQUEST
-          schema:
-            allOf:
-            - $ref: '#/definitions/entities.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-        "500":
-          description: INTERNAL SERVER ERROR
-          schema:
-            allOf:
-            - $ref: '#/definitions/entities.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-      security:
-      - ApiKeyAuth: []
-      tags:
-      - DashboardByRepository
-  /analytic/dashboard/{workspaceID}/repository/{repositoryID}/vulnerabilities-by-languages:
-    get:
-      consumes:
-      - application/json
-      description: Get all vulnerabilities by top 5 languages by range date in repository
-      operationId: get-vulnerabilities-by-top-5-languages-repository
-      parameters:
-      - description: workspaceID of the workspace
-        in: path
-        name: workspaceID
-        required: true
-        type: string
-      - description: repositoryID of the repository
-        in: path
-        name: repositoryID
-        required: true
-        type: string
-      - description: initialDate query string
-        in: query
-        name: initialDate
-        type: string
-      - description: finalDate query string
-        in: query
-        name: finalDate
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/entities.Response'
-            - properties:
-                content:
-                  type: object
-              type: object
-        "400":
-          description: BAD REQUEST
-          schema:
-            allOf:
-            - $ref: '#/definitions/entities.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-        "500":
-          description: INTERNAL SERVER ERROR
-          schema:
-            allOf:
-            - $ref: '#/definitions/entities.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-      security:
-      - ApiKeyAuth: []
-      tags:
-      - DashboardByRepository
-  /analytic/dashboard/{workspaceID}/repository/{repositoryID}/vulnerabilities-by-severities:
-    get:
-      consumes:
-      - application/json
-      description: Get all vulnerabilities by severities by range date in repository
-      operationId: get-vulnerabilities-by-severity-repository
-      parameters:
-      - description: workspaceID of the workspace
-        in: path
-        name: workspaceID
-        required: true
-        type: string
-      - description: repositoryID of the repository
-        in: path
-        name: repositoryID
-        required: true
-        type: string
-      - description: initialDate query string
-        in: query
-        name: initialDate
-        type: string
-      - description: finalDate query string
-        in: query
-        name: finalDate
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/entities.Response'
-            - properties:
-                content:
-                  type: object
-              type: object
-        "400":
-          description: BAD REQUEST
-          schema:
-            allOf:
-            - $ref: '#/definitions/entities.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-        "500":
-          description: INTERNAL SERVER ERROR
-          schema:
-            allOf:
-            - $ref: '#/definitions/entities.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-      security:
-      - ApiKeyAuth: []
-      tags:
-      - DashboardByRepository
-  /analytic/dashboard/{workspaceID}/repository/{repositoryID}/vulnerabilities-by-time:
-    get:
-      consumes:
-      - application/json
-      description: Get count vulnerabilities by time by range date in repository
-      operationId: get-vulnerabilities-by-time-repository
-      parameters:
-      - description: workspaceID of the workspace
-        in: path
-        name: workspaceID
-        required: true
-        type: string
-      - description: repositoryID of the repository
-        in: path
-        name: repositoryID
-        required: true
-        type: string
-      - description: initialDate query string
-        in: query
-        name: initialDate
-        type: string
-      - description: finalDate query string
-        in: query
-        name: finalDate
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/entities.Response'
-            - properties:
-                content:
-                  type: object
-              type: object
-        "400":
-          description: BAD REQUEST
-          schema:
-            allOf:
-            - $ref: '#/definitions/entities.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-        "500":
-          description: INTERNAL SERVER ERROR
-          schema:
-            allOf:
-            - $ref: '#/definitions/entities.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-      security:
-      - ApiKeyAuth: []
-      tags:
-      - DashboardByRepository
-  /analytic/dashboard/{workspaceID}/total-developers:
-    get:
-      consumes:
-      - application/json
-      description: Get count total vulnerabilities by range date in workspace
+      description: Get all charts of dashboard screen
       operationId: get-total-developers-workspace
       parameters:
       - description: workspaceID of the workspace
@@ -693,59 +157,9 @@ paths:
         name: workspaceID
         required: true
         type: string
-      - description: initialDate query string
+      - description: repositoryID query string
         in: query
-        name: initialDate
-        type: string
-      - description: finalDate query string
-        in: query
-        name: finalDate
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/entities.Response'
-            - properties:
-                content:
-                  type: integer
-              type: object
-        "400":
-          description: BAD REQUEST
-          schema:
-            allOf:
-            - $ref: '#/definitions/entities.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-        "500":
-          description: INTERNAL SERVER ERROR
-          schema:
-            allOf:
-            - $ref: '#/definitions/entities.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-      security:
-      - ApiKeyAuth: []
-      tags:
-      - DashboardByWorkspace
-  /analytic/dashboard/{workspaceID}/total-repositories:
-    get:
-      consumes:
-      - application/json
-      description: Get count total repositories by range date in workspace
-      operationId: get-total-repositories-workspace
-      parameters:
-      - description: workspaceID of the workspace
-        in: path
-        name: workspaceID
-        required: true
+        name: repositoryID
         type: string
       - description: initialDate query string
         in: query
@@ -765,286 +179,7 @@ paths:
             - $ref: '#/definitions/entities.Response'
             - properties:
                 content:
-                  type: integer
-              type: object
-        "400":
-          description: BAD REQUEST
-          schema:
-            allOf:
-            - $ref: '#/definitions/entities.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-        "500":
-          description: INTERNAL SERVER ERROR
-          schema:
-            allOf:
-            - $ref: '#/definitions/entities.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-      security:
-      - ApiKeyAuth: []
-      tags:
-      - DashboardByWorkspace
-  /analytic/dashboard/{workspaceID}/vulnerabilities-by-developer:
-    get:
-      consumes:
-      - application/json
-      description: Get all vulnerabilities by top 5 developer by range date in workspace
-      operationId: get-vulnerabilities-by-top-5-developers-workspace
-      parameters:
-      - description: workspaceID of the workspace
-        in: path
-        name: workspaceID
-        required: true
-        type: string
-      - description: initialDate query string
-        in: query
-        name: initialDate
-        type: string
-      - description: finalDate query string
-        in: query
-        name: finalDate
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/entities.Response'
-            - properties:
-                content:
-                  items:
-                    $ref: '#/definitions/dashboard.VulnerabilityByDeveloper'
-                  type: array
-              type: object
-        "400":
-          description: BAD REQUEST
-          schema:
-            allOf:
-            - $ref: '#/definitions/entities.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-        "500":
-          description: INTERNAL SERVER ERROR
-          schema:
-            allOf:
-            - $ref: '#/definitions/entities.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-      security:
-      - ApiKeyAuth: []
-      tags:
-      - DashboardByWorkspace
-  /analytic/dashboard/{workspaceID}/vulnerabilities-by-languages:
-    get:
-      consumes:
-      - application/json
-      description: Get all vulnerabilities by top 5 languages by range date in workspace
-      operationId: get-vulnerabilities-by-top-5-languages-workspace
-      parameters:
-      - description: workspaceID of the workspace
-        in: path
-        name: workspaceID
-        required: true
-        type: string
-      - description: initialDate query string
-        in: query
-        name: initialDate
-        type: string
-      - description: finalDate query string
-        in: query
-        name: finalDate
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/entities.Response'
-            - properties:
-                content:
-                  items:
-                    $ref: '#/definitions/dashboard.VulnerabilityByLanguage'
-                  type: array
-              type: object
-        "400":
-          description: BAD REQUEST
-          schema:
-            allOf:
-            - $ref: '#/definitions/entities.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-        "500":
-          description: INTERNAL SERVER ERROR
-          schema:
-            allOf:
-            - $ref: '#/definitions/entities.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-      security:
-      - ApiKeyAuth: []
-      tags:
-      - DashboardByWorkspace
-  /analytic/dashboard/{workspaceID}/vulnerabilities-by-repositories:
-    get:
-      consumes:
-      - application/json
-      description: Get all vulnerabilities by top 5 repositories by range date in
-        workspace
-      operationId: get-vulnerabilities-by-top-5-repositories-workspace
-      parameters:
-      - description: workspaceID of the workspace
-        in: path
-        name: workspaceID
-        required: true
-        type: string
-      - description: initialDate query string
-        in: query
-        name: initialDate
-        type: string
-      - description: finalDate query string
-        in: query
-        name: finalDate
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/entities.Response'
-            - properties:
-                content:
-                  items:
-                    $ref: '#/definitions/dashboard.VulnerabilityByRepository'
-                  type: array
-              type: object
-        "400":
-          description: BAD REQUEST
-          schema:
-            allOf:
-            - $ref: '#/definitions/entities.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-        "500":
-          description: INTERNAL SERVER ERROR
-          schema:
-            allOf:
-            - $ref: '#/definitions/entities.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-      security:
-      - ApiKeyAuth: []
-      tags:
-      - DashboardByWorkspace
-  /analytic/dashboard/{workspaceID}/vulnerabilities-by-severities:
-    get:
-      consumes:
-      - application/json
-      description: Get all vulnerabilities by severities by range date in workspace
-      operationId: get-vulnerabilities-by-severity-workspace
-      parameters:
-      - description: workspaceID of the workspace
-        in: path
-        name: workspaceID
-        required: true
-        type: string
-      - description: initialDate query string
-        in: query
-        name: initialDate
-        type: string
-      - description: finalDate query string
-        in: query
-        name: finalDate
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/entities.Response'
-            - properties:
-                content:
-                  $ref: '#/definitions/dashboard.VulnerabilityBySeverity'
-              type: object
-        "400":
-          description: BAD REQUEST
-          schema:
-            allOf:
-            - $ref: '#/definitions/entities.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-        "500":
-          description: INTERNAL SERVER ERROR
-          schema:
-            allOf:
-            - $ref: '#/definitions/entities.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-      security:
-      - ApiKeyAuth: []
-      tags:
-      - DashboardByWorkspace
-  /analytic/dashboard/{workspaceID}/vulnerabilities-by-time:
-    get:
-      consumes:
-      - application/json
-      description: Get count vulnerabilities by time by range date in workspace
-      operationId: get-vulnerabilities-by-time-workspace
-      parameters:
-      - description: workspaceID of the workspace
-        in: path
-        name: workspaceID
-        required: true
-        type: string
-      - description: initialDate query string
-        in: query
-        name: initialDate
-        type: string
-      - description: finalDate query string
-        in: query
-        name: finalDate
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/entities.Response'
-            - properties:
-                content:
-                  items:
-                    $ref: '#/definitions/dashboard.VulnerabilityByTime'
-                  type: array
+                  $ref: '#/definitions/dashboard.Response'
               type: object
         "400":
           description: BAD REQUEST

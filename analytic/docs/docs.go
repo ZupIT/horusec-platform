@@ -29,762 +29,14 @@ var doc = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/analytic/dashboard/{workspaceID}/details": {
+        "/analytic/dashboard/{workspaceID}/dashboard-charts": {
             "get": {
                 "security": [
                     {
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Get all vulnerabilities by details by range date in workspace",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "DashboardByWorkspace"
-                ],
-                "operationId": "get-vulnerabilities-by-details-workspace",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "workspaceID of the workspace",
-                        "name": "workspaceID",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "initialDate query string",
-                        "name": "initialDate",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "finalDate query string",
-                        "name": "finalDate",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "page query string",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "size query string",
-                        "name": "size",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/entities.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "content": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/dashboard.VulnerabilityDetails"
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "BAD REQUEST",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/entities.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "content": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "500": {
-                        "description": "INTERNAL SERVER ERROR",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/entities.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "content": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/analytic/dashboard/{workspaceID}/repository/{repositoryID}/details": {
-            "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "description": "Get all vulnerabilities by details by range date in repository",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "DashboardByRepository"
-                ],
-                "operationId": "get-vulnerabilities-by-details-repository",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "workspaceID of the workspace",
-                        "name": "workspaceID",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "repositoryID of the repository",
-                        "name": "repositoryID",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "initialDate query string",
-                        "name": "initialDate",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "finalDate query string",
-                        "name": "finalDate",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "page query string",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "size query string",
-                        "name": "size",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/entities.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "content": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "BAD REQUEST",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/entities.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "content": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "500": {
-                        "description": "INTERNAL SERVER ERROR",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/entities.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "content": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/analytic/dashboard/{workspaceID}/repository/{repositoryID}/total-developers": {
-            "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "description": "Get count total vulnerabilities by range date in repository",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "DashboardByRepository"
-                ],
-                "operationId": "get-total-developers-repository",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "workspaceID of the workspace",
-                        "name": "workspaceID",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "repositoryID of the repository",
-                        "name": "repositoryID",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "initialDate query string",
-                        "name": "initialDate",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "finalDate query string",
-                        "name": "finalDate",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/entities.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "content": {
-                                            "type": "integer"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "BAD REQUEST",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/entities.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "content": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "500": {
-                        "description": "INTERNAL SERVER ERROR",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/entities.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "content": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/analytic/dashboard/{workspaceID}/repository/{repositoryID}/vulnerabilities-by-developer": {
-            "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "description": "Get all vulnerabilities by top 5 developer by range date in repository",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "DashboardByRepository"
-                ],
-                "operationId": "get-vulnerabilities-by-top-5-developers-repository",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "workspaceID of the workspace",
-                        "name": "workspaceID",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "repositoryID of the repository",
-                        "name": "repositoryID",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "initialDate query string",
-                        "name": "initialDate",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "finalDate query string",
-                        "name": "finalDate",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/entities.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "content": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "BAD REQUEST",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/entities.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "content": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "500": {
-                        "description": "INTERNAL SERVER ERROR",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/entities.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "content": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/analytic/dashboard/{workspaceID}/repository/{repositoryID}/vulnerabilities-by-languages": {
-            "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "description": "Get all vulnerabilities by top 5 languages by range date in repository",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "DashboardByRepository"
-                ],
-                "operationId": "get-vulnerabilities-by-top-5-languages-repository",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "workspaceID of the workspace",
-                        "name": "workspaceID",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "repositoryID of the repository",
-                        "name": "repositoryID",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "initialDate query string",
-                        "name": "initialDate",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "finalDate query string",
-                        "name": "finalDate",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/entities.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "content": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "BAD REQUEST",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/entities.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "content": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "500": {
-                        "description": "INTERNAL SERVER ERROR",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/entities.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "content": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/analytic/dashboard/{workspaceID}/repository/{repositoryID}/vulnerabilities-by-severities": {
-            "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "description": "Get all vulnerabilities by severities by range date in repository",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "DashboardByRepository"
-                ],
-                "operationId": "get-vulnerabilities-by-severity-repository",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "workspaceID of the workspace",
-                        "name": "workspaceID",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "repositoryID of the repository",
-                        "name": "repositoryID",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "initialDate query string",
-                        "name": "initialDate",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "finalDate query string",
-                        "name": "finalDate",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/entities.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "content": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "BAD REQUEST",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/entities.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "content": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "500": {
-                        "description": "INTERNAL SERVER ERROR",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/entities.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "content": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/analytic/dashboard/{workspaceID}/repository/{repositoryID}/vulnerabilities-by-time": {
-            "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "description": "Get count vulnerabilities by time by range date in repository",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "DashboardByRepository"
-                ],
-                "operationId": "get-vulnerabilities-by-time-repository",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "workspaceID of the workspace",
-                        "name": "workspaceID",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "repositoryID of the repository",
-                        "name": "repositoryID",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "initialDate query string",
-                        "name": "initialDate",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "finalDate query string",
-                        "name": "finalDate",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/entities.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "content": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "BAD REQUEST",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/entities.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "content": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "500": {
-                        "description": "INTERNAL SERVER ERROR",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/entities.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "content": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/analytic/dashboard/{workspaceID}/total-developers": {
-            "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "description": "Get count total vulnerabilities by range date in workspace",
+                "description": "Get all charts of dashboard screen",
                 "consumes": [
                     "application/json"
                 ],
@@ -805,100 +57,9 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "description": "initialDate query string",
-                        "name": "initialDate",
+                        "description": "repositoryID query string",
+                        "name": "repositoryID",
                         "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "finalDate query string",
-                        "name": "finalDate",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/entities.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "content": {
-                                            "type": "integer"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "BAD REQUEST",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/entities.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "content": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "500": {
-                        "description": "INTERNAL SERVER ERROR",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/entities.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "content": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/analytic/dashboard/{workspaceID}/total-repositories": {
-            "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "description": "Get count total repositories by range date in workspace",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "DashboardByWorkspace"
-                ],
-                "operationId": "get-total-repositories-workspace",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "workspaceID of the workspace",
-                        "name": "workspaceID",
-                        "in": "path",
-                        "required": true
                     },
                     {
                         "type": "string",
@@ -925,504 +86,7 @@ var doc = `{
                                     "type": "object",
                                     "properties": {
                                         "content": {
-                                            "type": "integer"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "BAD REQUEST",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/entities.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "content": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "500": {
-                        "description": "INTERNAL SERVER ERROR",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/entities.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "content": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/analytic/dashboard/{workspaceID}/vulnerabilities-by-developer": {
-            "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "description": "Get all vulnerabilities by top 5 developer by range date in workspace",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "DashboardByWorkspace"
-                ],
-                "operationId": "get-vulnerabilities-by-top-5-developers-workspace",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "workspaceID of the workspace",
-                        "name": "workspaceID",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "initialDate query string",
-                        "name": "initialDate",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "finalDate query string",
-                        "name": "finalDate",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/entities.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "content": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/dashboard.VulnerabilityByDeveloper"
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "BAD REQUEST",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/entities.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "content": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "500": {
-                        "description": "INTERNAL SERVER ERROR",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/entities.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "content": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/analytic/dashboard/{workspaceID}/vulnerabilities-by-languages": {
-            "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "description": "Get all vulnerabilities by top 5 languages by range date in workspace",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "DashboardByWorkspace"
-                ],
-                "operationId": "get-vulnerabilities-by-top-5-languages-workspace",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "workspaceID of the workspace",
-                        "name": "workspaceID",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "initialDate query string",
-                        "name": "initialDate",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "finalDate query string",
-                        "name": "finalDate",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/entities.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "content": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/dashboard.VulnerabilityByLanguage"
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "BAD REQUEST",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/entities.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "content": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "500": {
-                        "description": "INTERNAL SERVER ERROR",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/entities.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "content": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/analytic/dashboard/{workspaceID}/vulnerabilities-by-repositories": {
-            "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "description": "Get all vulnerabilities by top 5 repositories by range date in workspace",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "DashboardByWorkspace"
-                ],
-                "operationId": "get-vulnerabilities-by-top-5-repositories-workspace",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "workspaceID of the workspace",
-                        "name": "workspaceID",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "initialDate query string",
-                        "name": "initialDate",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "finalDate query string",
-                        "name": "finalDate",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/entities.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "content": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/dashboard.VulnerabilityByRepository"
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "BAD REQUEST",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/entities.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "content": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "500": {
-                        "description": "INTERNAL SERVER ERROR",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/entities.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "content": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/analytic/dashboard/{workspaceID}/vulnerabilities-by-severities": {
-            "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "description": "Get all vulnerabilities by severities by range date in workspace",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "DashboardByWorkspace"
-                ],
-                "operationId": "get-vulnerabilities-by-severity-workspace",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "workspaceID of the workspace",
-                        "name": "workspaceID",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "initialDate query string",
-                        "name": "initialDate",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "finalDate query string",
-                        "name": "finalDate",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/entities.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "content": {
-                                            "$ref": "#/definitions/dashboard.VulnerabilityBySeverity"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "BAD REQUEST",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/entities.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "content": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "500": {
-                        "description": "INTERNAL SERVER ERROR",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/entities.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "content": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/analytic/dashboard/{workspaceID}/vulnerabilities-by-time": {
-            "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "description": "Get count vulnerabilities by time by range date in workspace",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "DashboardByWorkspace"
-                ],
-                "operationId": "get-vulnerabilities-by-time-workspace",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "workspaceID of the workspace",
-                        "name": "workspaceID",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "initialDate query string",
-                        "name": "initialDate",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "finalDate query string",
-                        "name": "finalDate",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/entities.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "content": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/dashboard.VulnerabilityByTime"
-                                            }
+                                            "$ref": "#/definitions/dashboard.Response"
                                         }
                                     }
                                 }
@@ -1523,177 +187,183 @@ var doc = `{
         }
     },
     "definitions": {
-        "dashboard.VulnerabilityByDeveloper": {
+        "dashboard.Response": {
             "type": "object",
             "properties": {
-                "critical": {
-                    "$ref": "#/definitions/dashboard.VulnerabilityCount"
+                "totalAuthors": {
+                    "type": "integer"
                 },
-                "developerEmail": {
-                    "type": "string"
+                "totalRepositories": {
+                    "type": "integer"
                 },
-                "high": {
-                    "$ref": "#/definitions/dashboard.VulnerabilityCount"
+                "vulnerabilitiesByAuthor": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dashboard.ResponseByAuthor"
+                    }
                 },
-                "info": {
-                    "$ref": "#/definitions/dashboard.VulnerabilityCount"
+                "vulnerabilitiesByLanguage": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dashboard.ResponseByLanguage"
+                    }
                 },
-                "low": {
-                    "$ref": "#/definitions/dashboard.VulnerabilityCount"
+                "vulnerabilitiesByRepository": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dashboard.ResponseByRepository"
+                    }
                 },
-                "medium": {
-                    "$ref": "#/definitions/dashboard.VulnerabilityCount"
+                "vulnerabilityBySeverity": {
+                    "$ref": "#/definitions/dashboard.ResponseSeverity"
                 },
-                "unknown": {
-                    "$ref": "#/definitions/dashboard.VulnerabilityCount"
+                "vulnerabilityByTime": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dashboard.ResponseByTime"
+                    }
                 }
             }
         },
-        "dashboard.VulnerabilityByLanguage": {
+        "dashboard.ResponseByAuthor": {
+            "type": "object",
+            "properties": {
+                "author": {
+                    "type": "string"
+                },
+                "critical": {
+                    "$ref": "#/definitions/dashboard.ResponseSeverityContAndTypes"
+                },
+                "high": {
+                    "$ref": "#/definitions/dashboard.ResponseSeverityContAndTypes"
+                },
+                "info": {
+                    "$ref": "#/definitions/dashboard.ResponseSeverityContAndTypes"
+                },
+                "low": {
+                    "$ref": "#/definitions/dashboard.ResponseSeverityContAndTypes"
+                },
+                "medium": {
+                    "$ref": "#/definitions/dashboard.ResponseSeverityContAndTypes"
+                },
+                "unknown": {
+                    "$ref": "#/definitions/dashboard.ResponseSeverityContAndTypes"
+                }
+            }
+        },
+        "dashboard.ResponseByLanguage": {
             "type": "object",
             "properties": {
                 "critical": {
-                    "$ref": "#/definitions/dashboard.VulnerabilityCount"
+                    "$ref": "#/definitions/dashboard.ResponseSeverityContAndTypes"
                 },
                 "high": {
-                    "$ref": "#/definitions/dashboard.VulnerabilityCount"
+                    "$ref": "#/definitions/dashboard.ResponseSeverityContAndTypes"
                 },
                 "info": {
-                    "$ref": "#/definitions/dashboard.VulnerabilityCount"
+                    "$ref": "#/definitions/dashboard.ResponseSeverityContAndTypes"
                 },
                 "language": {
-                    "type": "string",
-                    "enum": [
-                        "Go",
-                        "C#",
-                        "Dart",
-                        "Ruby",
-                        "Python",
-                        "Java",
-                        "Kotlin",
-                        "Javascript",
-                        "Typescript",
-                        "Leaks",
-                        "HCL",
-                        "C",
-                        "PHP",
-                        "HTML",
-                        "Generic",
-                        "YAML",
-                        "Elixir",
-                        "Shell"
-                    ],
-                    "example": "Leaks"
+                    "type": "string"
                 },
                 "low": {
-                    "$ref": "#/definitions/dashboard.VulnerabilityCount"
+                    "$ref": "#/definitions/dashboard.ResponseSeverityContAndTypes"
                 },
                 "medium": {
-                    "$ref": "#/definitions/dashboard.VulnerabilityCount"
+                    "$ref": "#/definitions/dashboard.ResponseSeverityContAndTypes"
                 },
                 "unknown": {
-                    "$ref": "#/definitions/dashboard.VulnerabilityCount"
+                    "$ref": "#/definitions/dashboard.ResponseSeverityContAndTypes"
                 }
             }
         },
-        "dashboard.VulnerabilityByRepository": {
+        "dashboard.ResponseByRepository": {
             "type": "object",
             "properties": {
                 "critical": {
-                    "$ref": "#/definitions/dashboard.VulnerabilityCount"
+                    "$ref": "#/definitions/dashboard.ResponseSeverityContAndTypes"
                 },
                 "high": {
-                    "$ref": "#/definitions/dashboard.VulnerabilityCount"
+                    "$ref": "#/definitions/dashboard.ResponseSeverityContAndTypes"
                 },
                 "info": {
-                    "$ref": "#/definitions/dashboard.VulnerabilityCount"
+                    "$ref": "#/definitions/dashboard.ResponseSeverityContAndTypes"
                 },
                 "low": {
-                    "$ref": "#/definitions/dashboard.VulnerabilityCount"
+                    "$ref": "#/definitions/dashboard.ResponseSeverityContAndTypes"
                 },
                 "medium": {
-                    "$ref": "#/definitions/dashboard.VulnerabilityCount"
+                    "$ref": "#/definitions/dashboard.ResponseSeverityContAndTypes"
                 },
-                "repository": {
+                "repositoryName": {
                     "type": "string"
                 },
                 "unknown": {
-                    "$ref": "#/definitions/dashboard.VulnerabilityCount"
+                    "$ref": "#/definitions/dashboard.ResponseSeverityContAndTypes"
                 }
             }
         },
-        "dashboard.VulnerabilityBySeverity": {
+        "dashboard.ResponseByTime": {
             "type": "object",
             "properties": {
                 "critical": {
-                    "$ref": "#/definitions/dashboard.VulnerabilityCount"
+                    "$ref": "#/definitions/dashboard.ResponseSeverityContAndTypes"
                 },
                 "high": {
-                    "$ref": "#/definitions/dashboard.VulnerabilityCount"
+                    "$ref": "#/definitions/dashboard.ResponseSeverityContAndTypes"
                 },
                 "info": {
-                    "$ref": "#/definitions/dashboard.VulnerabilityCount"
+                    "$ref": "#/definitions/dashboard.ResponseSeverityContAndTypes"
                 },
                 "low": {
-                    "$ref": "#/definitions/dashboard.VulnerabilityCount"
+                    "$ref": "#/definitions/dashboard.ResponseSeverityContAndTypes"
                 },
                 "medium": {
-                    "$ref": "#/definitions/dashboard.VulnerabilityCount"
-                },
-                "unknown": {
-                    "$ref": "#/definitions/dashboard.VulnerabilityCount"
-                }
-            }
-        },
-        "dashboard.VulnerabilityByTime": {
-            "type": "object",
-            "properties": {
-                "critical": {
-                    "$ref": "#/definitions/dashboard.VulnerabilityCount"
-                },
-                "high": {
-                    "$ref": "#/definitions/dashboard.VulnerabilityCount"
-                },
-                "info": {
-                    "$ref": "#/definitions/dashboard.VulnerabilityCount"
-                },
-                "low": {
-                    "$ref": "#/definitions/dashboard.VulnerabilityCount"
-                },
-                "medium": {
-                    "$ref": "#/definitions/dashboard.VulnerabilityCount"
+                    "$ref": "#/definitions/dashboard.ResponseSeverityContAndTypes"
                 },
                 "time": {
                     "type": "string"
                 },
                 "unknown": {
-                    "$ref": "#/definitions/dashboard.VulnerabilityCount"
+                    "$ref": "#/definitions/dashboard.ResponseSeverityContAndTypes"
                 }
             }
         },
-        "dashboard.VulnerabilityCount": {
+        "dashboard.ResponseSeverity": {
+            "type": "object",
+            "properties": {
+                "critical": {
+                    "$ref": "#/definitions/dashboard.ResponseSeverityContAndTypes"
+                },
+                "high": {
+                    "$ref": "#/definitions/dashboard.ResponseSeverityContAndTypes"
+                },
+                "info": {
+                    "$ref": "#/definitions/dashboard.ResponseSeverityContAndTypes"
+                },
+                "low": {
+                    "$ref": "#/definitions/dashboard.ResponseSeverityContAndTypes"
+                },
+                "medium": {
+                    "$ref": "#/definitions/dashboard.ResponseSeverityContAndTypes"
+                },
+                "unknown": {
+                    "$ref": "#/definitions/dashboard.ResponseSeverityContAndTypes"
+                }
+            }
+        },
+        "dashboard.ResponseSeverityContAndTypes": {
             "type": "object",
             "properties": {
                 "count": {
                     "type": "integer"
                 },
                 "types": {
-                    "$ref": "#/definitions/dashboard.VulnerabilityTypes"
+                    "$ref": "#/definitions/dashboard.ResponseVulnTypes"
                 }
             }
         },
-        "dashboard.VulnerabilityDetails": {
-            "type": "object",
-            "properties": {
-                "totalItems": {
-                    "type": "integer"
-                },
-                "vulnerabilities": {
-                    "$ref": "#/definitions/vulnerability.Vulnerability"
-                }
-            }
-        },
-        "dashboard.VulnerabilityTypes": {
+        "dashboard.ResponseVulnTypes": {
             "type": "object",
             "properties": {
                 "corrected": {
@@ -1702,7 +372,10 @@ var doc = `{
                 "falsePositive": {
                     "type": "integer"
                 },
-                "riskAccept": {
+                "riskAccepted": {
+                    "type": "integer"
+                },
+                "unknown": {
                     "type": "integer"
                 },
                 "vulnerability": {
@@ -1721,136 +394,6 @@ var doc = `{
                 },
                 "status": {
                     "type": "string"
-                }
-            }
-        },
-        "vulnerability.Vulnerability": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "string",
-                    "example": "-----BEGIN RSA PRIVATE KEY-----"
-                },
-                "column": {
-                    "type": "string",
-                    "example": "1"
-                },
-                "commitAuthor": {
-                    "type": "string",
-                    "example": "horusec"
-                },
-                "commitDate": {
-                    "type": "string",
-                    "example": "2021-12-30"
-                },
-                "commitEmail": {
-                    "type": "string",
-                    "example": "horusec@zup.com.br"
-                },
-                "commitHash": {
-                    "type": "string",
-                    "example": "a21fa164c00a15f3e91f5ee6659cb6a793b39a8d"
-                },
-                "commitMessage": {
-                    "type": "string",
-                    "example": "Initial commit"
-                },
-                "confidence": {
-                    "type": "string",
-                    "enum": [
-                        "HIGH",
-                        "MEDIUM",
-                        "LOW"
-                    ],
-                    "example": "HIGH"
-                },
-                "details": {
-                    "type": "string",
-                    "example": "Asymmetric Private Key Found SSH and/or x.509 Cerficates among the files of your project, make sure you want this kind of information inside your Git repo, since it can be missused by someone with access to any kind of copy.  For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory."
-                },
-                "file": {
-                    "type": "string",
-                    "example": "/deployments/cert.pem"
-                },
-                "language": {
-                    "type": "string",
-                    "enum": [
-                        "Go",
-                        "C#",
-                        "Dart",
-                        "Ruby",
-                        "Python",
-                        "Java",
-                        "Kotlin",
-                        "Javascript",
-                        "Typescript",
-                        "Leaks",
-                        "HCL",
-                        "C",
-                        "PHP",
-                        "HTML",
-                        "Generic",
-                        "YAML",
-                        "Elixir",
-                        "Shell"
-                    ],
-                    "example": "Leaks"
-                },
-                "line": {
-                    "type": "string",
-                    "example": "1"
-                },
-                "securityTool": {
-                    "type": "string",
-                    "enum": [
-                        "HorusecEngine",
-                        "GoSec",
-                        "SecurityCodeScan",
-                        "Brakeman",
-                        "Safety",
-                        "Bandit",
-                        "NpmAudit",
-                        "YarnAudit",
-                        "GitLeaks",
-                        "TfSec",
-                        "Semgrep",
-                        "Flawfinder",
-                        "PhpCS",
-                        "MixAudit",
-                        "Sobelow",
-                        "ShellCheck",
-                        "BundlerAudit"
-                    ],
-                    "example": "HorusecEngine"
-                },
-                "severity": {
-                    "type": "string",
-                    "enum": [
-                        "CRITICAL",
-                        " HIGH",
-                        " MEDIUM",
-                        " LOW",
-                        " INFO"
-                    ],
-                    "example": "CRITICAL"
-                },
-                "type": {
-                    "type": "string",
-                    "enum": [
-                        "Vulnerability",
-                        " Risk Accepted",
-                        " False Positive",
-                        " Corrected"
-                    ],
-                    "example": "Vulnerability"
-                },
-                "vulnHash": {
-                    "type": "string",
-                    "example": "8bcac7908eb950419537b91e19adc83ce2c9cbfdacf4f81157fdadfec11f7017"
-                },
-                "vulnerabilityID": {
-                    "type": "string",
-                    "example": "00000000-0000-0000-0000-000000000000"
                 }
             }
         }

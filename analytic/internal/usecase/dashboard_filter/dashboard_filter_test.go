@@ -94,7 +94,7 @@ func TestUseCaseDashboard_ExtractFilterDashboardByRepository(t *testing.T) {
 		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
 
 		_, err := NewUseCaseDashboard().ExtractFilterDashboardByWorkspace(r)
-		assert.Contains(t, err.Error(), "InitialDate: cannot be blank.")
+		assert.Contains(t, err.Error(), "StartTime: cannot be blank.")
 	})
 	t.Run("Should get filter of dashboard from workspace with error from finalDate blank", func(t *testing.T) {
 		workspaceID := uuid.New()
@@ -107,7 +107,7 @@ func TestUseCaseDashboard_ExtractFilterDashboardByRepository(t *testing.T) {
 		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
 
 		_, err := NewUseCaseDashboard().ExtractFilterDashboardByWorkspace(r)
-		assert.Contains(t, err.Error(), "FinalDate: cannot be blank.")
+		assert.Contains(t, err.Error(), "EndTime: cannot be blank.")
 	})
 	t.Run("Should get filter of dashboard from repository without error", func(t *testing.T) {
 		workspaceID := uuid.New()

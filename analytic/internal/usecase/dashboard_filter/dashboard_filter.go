@@ -17,8 +17,7 @@ import (
 const DefaultSize = 10
 
 type IUseCaseDashboard interface {
-	ExtractFilterDashboardByWorkspace(r *netHTTP.Request) (*dashboard.FilterDashboard, error)
-	ExtractFilterDashboardByRepository(r *netHTTP.Request) (*dashboard.FilterDashboard, error)
+	ExtractFilterDashboard(r *netHTTP.Request) (*dashboard.FilterDashboard, error)
 }
 type UseCaseDashboard struct{}
 
@@ -26,7 +25,21 @@ func NewUseCaseDashboard() IUseCaseDashboard {
 	return &UseCaseDashboard{}
 }
 
-func (u *UseCaseDashboard) ExtractFilterDashboardByWorkspace(r *netHTTP.Request) (*dashboard.FilterDashboard, error) {
+func (u *UseCaseDashboard) ExtractFilterDashboard(r *netHTTP.Request) (*dashboard.FilterDashboard, error) {
+	filter, err := u.extractFilterDashboardByWorkspace(r)
+	if err != nil {
+		return nil, err
+	}
+	if r.URL.Query().Get("repositoryID") != "" {
+		filter.RepositoryID, err = uuid.Parse(r.URL.Query().Get("repositoryID"))
+		if err != nil {
+			return nil, enums.ErrorWrongRepositoryID
+		}
+	}
+	return filter, u.validateFilterDashboard(filter, true)
+}
+
+func (u *UseCaseDashboard) extractFilterDashboardByWorkspace(r *netHTTP.Request) (*dashboard.FilterDashboard, error) {
 	workspaceID, err := uuid.Parse(chi.URLParam(r, "workspaceID"))
 	if err != nil {
 		return nil, enums.ErrorWrongWorkspaceID
@@ -37,21 +50,8 @@ func (u *UseCaseDashboard) ExtractFilterDashboardByWorkspace(r *netHTTP.Request)
 	if err != nil {
 		return nil, err
 	}
-	entity := u.buildFilterDasboard(workspaceID, uuid.Nil, initialDate, finalDate, page, u.getSizeOrMin(size))
+	entity := u.buildFilterDasboard(workspaceID, initialDate, finalDate, page, u.getSizeOrMin(size))
 	return entity, u.validateFilterDashboard(entity, false)
-}
-
-func (u *UseCaseDashboard) ExtractFilterDashboardByRepository(r *netHTTP.Request) (*dashboard.FilterDashboard, error) {
-	repositoryID, err := uuid.Parse(chi.URLParam(r, "repositoryID"))
-	if err != nil {
-		return nil, enums.ErrorWrongRepositoryID
-	}
-	filter, err := u.ExtractFilterDashboardByWorkspace(r)
-	if err != nil {
-		return nil, err
-	}
-	filter.RepositoryID = repositoryID
-	return filter, u.validateFilterDashboard(filter, true)
 }
 
 func (u *UseCaseDashboard) getSizeOrMin(size int) int {
@@ -89,21 +89,20 @@ func (u *UseCaseDashboard) validateFilterDashboard(
 	return validation.ValidateStruct(entity,
 		validation.Field(&entity.WorkspaceID, validation.Required, validation.NotIn(uuid.Nil)),
 		validation.Field(&entity.RepositoryID, validation.When(isFilterFromRepository, validation.NotIn(uuid.Nil))),
-		validation.Field(&entity.InitialDate, validation.Required),
-		validation.Field(&entity.FinalDate, validation.Required),
+		validation.Field(&entity.StartTime, validation.Required),
+		validation.Field(&entity.EndTime, validation.Required),
 		validation.Field(&entity.Page, validation.Min(0)),
 		validation.Field(&entity.Size, validation.Min(DefaultSize)),
 	)
 }
 
-func (u *UseCaseDashboard) buildFilterDasboard(workspaceID, repositoryID uuid.UUID, initialDate, finalDate time.Time,
+func (u *UseCaseDashboard) buildFilterDasboard(workspaceID uuid.UUID, initialDate, finalDate time.Time,
 	page int, size int) *dashboard.FilterDashboard {
 	return &dashboard.FilterDashboard{
-		WorkspaceID:  workspaceID,
-		RepositoryID: repositoryID,
-		InitialDate:  initialDate,
-		FinalDate:    finalDate,
-		Page:         page,
-		Size:         size,
+		WorkspaceID: workspaceID,
+		StartTime:   initialDate,
+		EndTime:     finalDate,
+		Page:        page,
+		Size:        size,
 	}
 }

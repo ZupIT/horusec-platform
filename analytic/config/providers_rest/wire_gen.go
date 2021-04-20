@@ -3,7 +3,7 @@
 //go:generate go run github.com/google/wire/cmd/wire
 //+build !wireinject
 
-package providers
+package providersrest
 
 import (
 	"github.com/ZupIT/horusec-devkit/pkg/services/database"
@@ -12,15 +12,13 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth/proto"
 	"github.com/ZupIT/horusec-devkit/pkg/services/http"
 	"github.com/ZupIT/horusec-devkit/pkg/services/middlewares"
-	"github.com/google/wire"
-
 	"github.com/ZupIT/horusec-platform/analytic/config/cors"
 	dashboard2 "github.com/ZupIT/horusec-platform/analytic/internal/controllers/dashboard"
-	dashboardrepository "github.com/ZupIT/horusec-platform/analytic/internal/handlers/dashboard_repository"
-	dashboardworkspace "github.com/ZupIT/horusec-platform/analytic/internal/handlers/dashboard_workspace"
+	dashboard3 "github.com/ZupIT/horusec-platform/analytic/internal/handlers/dashboard"
 	"github.com/ZupIT/horusec-platform/analytic/internal/handlers/health"
 	"github.com/ZupIT/horusec-platform/analytic/internal/repositories/dashboard"
 	"github.com/ZupIT/horusec-platform/analytic/internal/router"
+	"github.com/google/wire"
 )
 
 // Injectors from wire.go:
@@ -37,13 +35,12 @@ func Initialize(defaultPort string) (router.IRouter, error) {
 	}
 	handler := health.NewHealthHandler(connection, clientConnInterface)
 	iRepoDashboard := dashboard.NewRepoDashboard(connection)
-	iController := dashboard2.NewControllerDashboard(iRepoDashboard)
-	dashboardworkspaceHandler := dashboardworkspace.NewDashboardWorkspaceHandler(iController)
-	dashboardrepositoryHandler := dashboardrepository.NewDashboardRepositoryHandler(iController)
-	routerIRouter := router.NewHTTPRouter(iRouter, iAuthzMiddleware, handler, dashboardworkspaceHandler, dashboardrepositoryHandler)
+	iController := dashboard2.NewControllerDashboardRead(iRepoDashboard)
+	dashboardHandler := dashboard3.NewDashboardHandler(iController)
+	routerIRouter := router.NewHTTPRouter(iRouter, iAuthzMiddleware, handler, dashboardHandler)
 	return routerIRouter, nil
 }
 
 // wire.go:
 
-var providers = wire.NewSet(config.NewDatabaseConfig, database.NewDatabaseReadAndWrite, auth.NewAuthGRPCConnection, proto.NewAuthServiceClient, cors.NewCorsConfig, http.NewHTTPRouter, middlewares.NewAuthzMiddleware, dashboard.NewRepoDashboard, dashboard2.NewControllerDashboard, health.NewHealthHandler, dashboardworkspace.NewDashboardWorkspaceHandler, dashboardrepository.NewDashboardRepositoryHandler, router.NewHTTPRouter)
+var providers = wire.NewSet(config.NewDatabaseConfig, database.NewDatabaseReadAndWrite, auth.NewAuthGRPCConnection, proto.NewAuthServiceClient, cors.NewCorsConfig, http.NewHTTPRouter, middlewares.NewAuthzMiddleware, dashboard.NewRepoDashboard, dashboard2.NewControllerDashboardRead, health.NewHealthHandler, dashboard3.NewDashboardHandler, router.NewHTTPRouter)

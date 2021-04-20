@@ -43,10 +43,12 @@ security:
 		$(HORUSEC) start -p="./" -e="true"
     endif
 
-build:
-	$(GO) build -o "./tmp/bin/analytic" ./cmd/app/main.go
+build-rest:
+	$(GO) build -o "./tmp/bin/analytic" ./cmd/app_rest/main.go
+build-broker:
+	$(GO) build -o "./tmp/bin/analytic" ./cmd/app_broker/main.go
 
 pipeline: fmt fix-imports lint test coverage build security
 
 update-swagger:
-	curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec-devkit/develop/scripts/update-swagger.sh | bash
+	curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec-devkit/develop/scripts/update-swagger.sh | bash -s "./cmd/app_rest/main.go" .
