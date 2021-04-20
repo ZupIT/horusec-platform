@@ -1,13 +1,24 @@
 package account
 
 import (
+	"strings"
+	"time"
+
+	"github.com/Nerzal/gocloak/v7"
 	"github.com/google/uuid"
+
+	"github.com/ZupIT/horusec-devkit/pkg/utils/parser"
+
+	accountEntities "github.com/ZupIT/horusec-platform/auth/internal/entities/account"
+	accountEnums "github.com/ZupIT/horusec-platform/auth/internal/enums/account"
 )
 
 type IUseCases interface {
 	FilterAccountByID(accountID uuid.UUID) map[string]interface{}
 	FilterAccountByEmail(email string) map[string]interface{}
 	FilterAccountByUsername(username string) map[string]interface{}
+	NewAccountFromKeycloakUserInfo(userInfo *gocloak.UserInfo) *accountEntities.Account
+	CheckCreateAccountErrors(err error) error
 }
 
 type UseCases struct {
@@ -27,4 +38,40 @@ func (u *UseCases) FilterAccountByEmail(email string) map[string]interface{} {
 
 func (u *UseCases) FilterAccountByUsername(username string) map[string]interface{} {
 	return map[string]interface{}{"username": username}
+}
+
+func (u *UseCases) NewAccountFromKeycloakUserInfo(userInfo *gocloak.UserInfo) *accountEntities.Account {
+	username := *userInfo.PreferredUsername
+	if username == "" {
+		username = *userInfo.Name
+	}
+
+	return &accountEntities.Account{
+		AccountID:   parser.ParseStringToUUID(*userInfo.Sub),
+		Email:       *userInfo.Email,
+		Username:    username,
+		IsConfirmed: true,
+		CreatedAt:   time.Now(),
+		UpdatedAt:   time.Now(),
+	}
+}
+
+func (u *UseCases) CheckCreateAccountErrors(err error) error {
+	if u.contains(err, accountEnums.DuplicatedConstraintEmail) {
+		return accountEnums.ErrorEmailAlreadyInUse
+	}
+
+	if u.contains(err, accountEnums.DuplicatedConstraintUsername) {
+		return accountEnums.ErrorUsernameAlreadyInUse
+	}
+
+	if u.contains(err, accountEnums.DuplicatedConstraintPrimaryKey) {
+		return accountEnums.ErrorUsernameAlreadyInUse
+	}
+
+	return err
+}
+
+func (u *UseCases) contains(err error, check string) bool {
+	return strings.Contains(strings.ToLower(err.Error()), check)
 }

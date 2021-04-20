@@ -1,6 +1,7 @@
 package authentication
 
 import (
+	"github.com/Nerzal/gocloak/v7"
 	"github.com/stretchr/testify/mock"
 
 	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth/proto"
@@ -26,4 +27,9 @@ func (m *Mock) IsAuthorized(_ *authEntities.AuthorizationData) (bool, error) {
 func (m *Mock) GetAccountDataFromToken(_ string) (*proto.GetAccountDataResponse, error) {
 	args := m.MethodCalled("GetAccountDataFromToken")
 	return args.Get(0).(*proto.GetAccountDataResponse), mockUtils.ReturnNilOrError(args, 1)
+}
+
+func (m *Mock) GetUserInfo(_ string) (*gocloak.UserInfo, error) {
+	args := m.MethodCalled("GetUserInfo")
+	return args.Get(0).(*gocloak.UserInfo), mockUtils.ReturnNilOrError(args, 1)
 }

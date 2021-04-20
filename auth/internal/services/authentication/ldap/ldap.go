@@ -18,7 +18,6 @@ import (
 	ldapEnums "github.com/ZupIT/horusec-platform/auth/internal/enums/authentication/ldap"
 	accountRepository "github.com/ZupIT/horusec-platform/auth/internal/repositories/account"
 	authRepository "github.com/ZupIT/horusec-platform/auth/internal/repositories/authentication"
-	"github.com/ZupIT/horusec-platform/auth/internal/services/authentication"
 	"github.com/ZupIT/horusec-platform/auth/internal/services/authentication/ldap/client"
 	authUseCases "github.com/ZupIT/horusec-platform/auth/internal/usecases/authentication"
 )
@@ -32,8 +31,14 @@ type Service struct {
 	cache             *cache.Cache
 }
 
+type IService interface {
+	Login(credentials *authEntities.LoginCredentials) (*authEntities.LoginResponse, error)
+	IsAuthorized(data *authEntities.AuthorizationData) (bool, error)
+	GetAccountDataFromToken(token string) (*proto.GetAccountDataResponse, error)
+}
+
 func NewLDAPAuthenticationService(repositoryAccount accountRepository.IRepository, useCasesAuth authUseCases.IUseCases,
-	appConfig app.IConfig, repositoryAuth authRepository.IRepository) authentication.IService {
+	appConfig app.IConfig, repositoryAuth authRepository.IRepository) IService {
 	return &Service{
 		cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
 		ldap:              client.NewLdapClient(),

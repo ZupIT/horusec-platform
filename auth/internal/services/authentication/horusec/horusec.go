@@ -18,9 +18,14 @@ import (
 	horusecAuthEnums "github.com/ZupIT/horusec-platform/auth/internal/enums/authentication/horusec"
 	accountRepository "github.com/ZupIT/horusec-platform/auth/internal/repositories/account"
 	authRepository "github.com/ZupIT/horusec-platform/auth/internal/repositories/authentication"
-	"github.com/ZupIT/horusec-platform/auth/internal/services/authentication"
 	authUseCases "github.com/ZupIT/horusec-platform/auth/internal/usecases/authentication"
 )
+
+type IService interface {
+	Login(credentials *authEntities.LoginCredentials) (*authEntities.LoginResponse, error)
+	IsAuthorized(data *authEntities.AuthorizationData) (bool, error)
+	GetAccountDataFromToken(token string) (*proto.GetAccountDataResponse, error)
+}
 
 type Service struct {
 	accountRepository accountRepository.IRepository
@@ -31,7 +36,7 @@ type Service struct {
 }
 
 func NewHorusecAuthenticationService(repositoryAccount accountRepository.IRepository, appConfig app.IConfig,
-	useCasesAuth authUseCases.IUseCases, repositoryAuth authRepository.IRepository) authentication.IService {
+	useCasesAuth authUseCases.IUseCases, repositoryAuth authRepository.IRepository) IService {
 	return &Service{
 		cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
 		authUseCases:      useCasesAuth,
