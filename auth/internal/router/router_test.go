@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	grpcService "google.golang.org/grpc"
 
 	"github.com/ZupIT/horusec-devkit/pkg/services/http"
 
@@ -15,9 +16,10 @@ import (
 func TestNewHTTPRouter(t *testing.T) {
 	t.Run("should success create a new http router and set routes", func(t *testing.T) {
 		routerService := http.NewHTTPRouter(cors.NewCorsConfig(), "9999")
+		authGRPCServer := &grpc.AuthGRPCServer{Port: 9998, GRPCServer: grpcService.NewServer()}
 
 		assert.NotPanics(t, func() {
-			assert.NotNil(t, NewHTTPRouter(routerService, &grpc.AuthGRPCServer{}, &authHandler.Handler{}))
+			assert.NotNil(t, NewHTTPRouter(routerService, authGRPCServer, &authHandler.Handler{}))
 		})
 	})
 }

@@ -47,7 +47,7 @@ func NewLDAPAuthenticationService(repositoryAccount accountRepository.IRepositor
 func (s *Service) Login(credentials *authEntities.LoginCredentials) (*authEntities.LoginResponse, error) {
 	isAuthenticated, userData, err := s.ldap.Authenticate(credentials.Username, credentials.Password)
 	if err != nil || !isAuthenticated {
-		return nil, s.verifyAuthenticateErrors(err)
+		return nil, s.verifyAuthenticateErrors(err, isAuthenticated)
 	}
 
 	account, err := s.getAccountOrCreateIfNotExist(userData)
@@ -59,12 +59,12 @@ func (s *Service) Login(credentials *authEntities.LoginCredentials) (*authEntiti
 	return s.setTokenAndResponse(account, userData["dn"])
 }
 
-func (s *Service) verifyAuthenticateErrors(err error) error {
-	if err != nil && err == ldapEnums.ErrorUserDoesNotExist {
-		return err
+func (s *Service) verifyAuthenticateErrors(err error, isAuthenticated bool) error {
+	if err == nil && !isAuthenticated {
+		return ldapEnums.ErrorLdapUnauthorized
 	}
 
-	return ldapEnums.ErrorLdapUnauthorized
+	return err
 }
 
 func (s *Service) getAccountOrCreateIfNotExist(userData map[string]string) (*accountEntities.Account, error) {

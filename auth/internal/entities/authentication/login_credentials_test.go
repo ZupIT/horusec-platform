@@ -69,3 +69,14 @@ func TestIsInvalidUsernameEmail(t *testing.T) {
 		assert.False(t, credentials.IsInvalidUsernameEmail())
 	})
 }
+
+func TestToBytes(t *testing.T) {
+	t.Run("should success parse to bytes", func(t *testing.T) {
+		credentials := &LoginCredentials{
+			Username: "test",
+			Password: "test",
+		}
+
+		assert.NotEmpty(t, credentials.ToBytes())
+	})
+}

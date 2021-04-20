@@ -214,6 +214,39 @@ func TestLogin(t *testing.T) {
 		assert.Equal(t, ldapEnums.ErrorLdapUnauthorized, err)
 		assert.Nil(t, result)
 	})
+
+	t.Run("should return error ldap unauthorized", func(t *testing.T) {
+		appConfig := &app.Config{}
+		authRepositoryMock := &authRepository.Mock{}
+
+		account := &accountEntities.Account{
+			Username: "test",
+			Email:    "test@test.com",
+		}
+
+		accountRepositoryMock := &accountRepository.Mock{}
+		accountRepositoryMock.On("GetAccountByUsername").Return(account, errors.New("test"))
+		accountRepositoryMock.On("CreateAccount").Return(account, nil)
+
+		ldapMock := &client.Mock{}
+		ldapMock.On("Authenticate").Return(false, map[string]string{}, nil)
+		ldapMock.On("GetUserGroups").Return([]string{}, nil)
+		ldapMock.On("Close")
+
+		service := Service{
+			cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
+			ldap:              ldapMock,
+			accountRepository: accountRepositoryMock,
+			authRepository:    authRepositoryMock,
+			authUseCases:      authentication.NewAuthenticationUseCases(),
+			appConfig:         appConfig,
+		}
+
+		result, err := service.Login(&authEntities.LoginCredentials{})
+		assert.Error(t, err)
+		assert.Equal(t, ldapEnums.ErrorLdapUnauthorized, err)
+		assert.Nil(t, result)
+	})
 }
 
 func TestIsAuthorizedApplicationAdmin(t *testing.T) {

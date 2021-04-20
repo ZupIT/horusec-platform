@@ -13,6 +13,7 @@ import (
 	authController "github.com/ZupIT/horusec-platform/auth/internal/controllers/authentication"
 	"github.com/ZupIT/horusec-platform/auth/internal/entities/authentication"
 	horusecAuthEnums "github.com/ZupIT/horusec-platform/auth/internal/enums/authentication/horusec"
+	ldapEnums "github.com/ZupIT/horusec-platform/auth/internal/enums/authentication/ldap"
 	authUseCases "github.com/ZupIT/horusec-platform/auth/internal/usecases/authentication"
 )
 
@@ -86,7 +87,7 @@ func (h *Handler) checkLoginErrors(w http.ResponseWriter, err error) {
 	case authTypes.Horusec:
 		h.checkLoginErrorsHorusec(w, err)
 	case authTypes.Ldap:
-		httpUtil.StatusInternalServerError(w, err)
+		h.checkLoginErrorsLdap(w, err)
 	case authTypes.Keycloak:
 		httpUtil.StatusInternalServerError(w, err)
 	default:
@@ -102,6 +103,15 @@ func (h *Handler) checkLoginErrorsHorusec(w http.ResponseWriter, err error) {
 
 	if err == horusecAuthEnums.ErrorAccountEmailNotConfirmed {
 		httpUtil.StatusForbidden(w, err)
+		return
+	}
+
+	httpUtil.StatusInternalServerError(w, err)
+}
+
+func (h *Handler) checkLoginErrorsLdap(w http.ResponseWriter, err error) {
+	if err == ldapEnums.ErrorUserDoesNotExist || err == ldapEnums.ErrorLdapUnauthorized {
+		httpUtil.StatusForbidden(w, ldapEnums.ErrorWrongUserOrPassword)
 		return
 	}
 

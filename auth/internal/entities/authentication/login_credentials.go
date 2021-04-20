@@ -1,6 +1,8 @@
 package authentication
 
 import (
+	"encoding/json"
+
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/go-ozzo/ozzo-validation/v4/is"
 
@@ -25,4 +27,9 @@ func (l *LoginCredentials) CheckInvalidPassword(hash string) bool {
 
 func (l *LoginCredentials) IsInvalidUsernameEmail() bool {
 	return validation.Validate(&l.Username, is.EmailFormat) != nil
+}
+
+func (l *LoginCredentials) ToBytes() []byte {
+	bytes, _ := json.Marshal(l)
+	return bytes
 }
