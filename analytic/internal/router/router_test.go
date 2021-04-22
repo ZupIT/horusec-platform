@@ -3,6 +3,8 @@ package router
 import (
 	"testing"
 
+	eventDashboard "github.com/ZupIT/horusec-platform/analytic/internal/events/dashboard"
+
 	"github.com/ZupIT/horusec-platform/analytic/internal/handlers/dashboard"
 
 	"github.com/ZupIT/horusec-devkit/pkg/services/middlewares"
@@ -21,7 +23,8 @@ func TestNewHTTPRouter(t *testing.T) {
 		healthMock := &health.Handler{}
 		dashboardHandlerMock := &dashboard.Handler{}
 		middlewareMock := &middlewares.AuthzMiddleware{}
-		instance := NewHTTPRouter(router, middlewareMock, healthMock, dashboardHandlerMock)
+		eventMock := &eventDashboard.Event{}
+		instance := NewHTTPRouter(router, middlewareMock, healthMock, dashboardHandlerMock, eventMock)
 		assert.NotEmpty(t, instance)
 	})
 }
