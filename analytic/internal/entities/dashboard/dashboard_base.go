@@ -10,6 +10,7 @@ import (
 )
 
 type Vulnerability struct {
+	VulnerabilityID       uuid.UUID `json:"vulnerabilityID" gorm:"Column:vulnerability_id"`
 	CreatedAt             time.Time `json:"createdAt" gorm:"Column:created_at"`
 	Active                bool      `json:"active" gorm:"Column:active"`
 	WorkspaceID           uuid.UUID `json:"workspaceID" gorm:"Column:workspace_id"`

@@ -1,8 +1,7 @@
 package enums
 
 const (
-	DefaultPortRest          = "8003"
-	DefaultPortBroker        = "8004"
+	DefaultPort              = "8003"
 	BaseRouter               = "/analytic"
 	HealthRouter             = BaseRouter + "/health"
 	DashboardWorkspaceRouter = BaseRouter + "/dashboard/{workspaceID}"

@@ -2,6 +2,7 @@ BEGIN;
 
 CREATE TABLE IF NOT EXISTS "vulnerabilities_by_author"
 (
+    "vulnerability_id" UUID NOT NULL,
     "created_at" TIMESTAMP NOT NULL,
     "author" VARCHAR(500) NOT NULL,
     "active" BOOLEAN NOT NULL,
@@ -27,11 +28,12 @@ CREATE TABLE IF NOT EXISTS "vulnerabilities_by_author"
     "info_false_positive" INT NOT NULL,
     "info_risk_accepted" INT NOT NULL,
     "info_corrected" INT NOT NULL,
-    PRIMARY KEY (created_at)
+    PRIMARY KEY (vulnerability_id)
 );
 
 CREATE TABLE IF NOT EXISTS "vulnerabilities_by_language"
 (
+    "vulnerability_id" UUID NOT NULL,
     "created_at" TIMESTAMP NOT NULL,
     "language" VARCHAR(255) NOT NULL,
     "active" BOOLEAN NOT NULL,
@@ -57,11 +59,12 @@ CREATE TABLE IF NOT EXISTS "vulnerabilities_by_language"
     "info_false_positive" INT NOT NULL,
     "info_risk_accepted" INT NOT NULL,
     "info_corrected" INT NOT NULL,
-    PRIMARY KEY (created_at)
+    PRIMARY KEY (vulnerability_id)
 );
 
 CREATE TABLE IF NOT EXISTS "vulnerabilities_by_repository"
 (
+    "vulnerability_id" UUID NOT NULL,
     "created_at" TIMESTAMP NOT NULL,
     "repository_name" VARCHAR(255) NOT NULL,
     "active" BOOLEAN NOT NULL,
@@ -88,11 +91,12 @@ CREATE TABLE IF NOT EXISTS "vulnerabilities_by_repository"
     "info_false_positive" INT NOT NULL,
     "info_risk_accepted" INT NOT NULL,
     "info_corrected" INT NOT NULL,
-    PRIMARY KEY (created_at)
+    PRIMARY KEY (vulnerability_id)
 );
 
 CREATE TABLE IF NOT EXISTS "vulnerabilities_by_time"
 (
+    "vulnerability_id" UUID NOT NULL,
     "created_at" TIMESTAMP NOT NULL,
     "active" BOOLEAN NOT NULL,
     "workspace_id" UUID NOT NULL,
@@ -117,7 +121,7 @@ CREATE TABLE IF NOT EXISTS "vulnerabilities_by_time"
     "info_false_positive" INT NOT NULL,
     "info_risk_accepted" INT NOT NULL,
     "info_corrected" INT NOT NULL,
-    PRIMARY KEY (created_at)
+    PRIMARY KEY (vulnerability_id)
 );
 
 COMMIT;

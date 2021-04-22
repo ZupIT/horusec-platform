@@ -67,6 +67,7 @@ func (u *UseCase) newVulnerabilitiesByAuthor(author string,
 	entity := &dashboard.VulnerabilitiesByAuthor{
 		Author: author,
 		Vulnerability: dashboard.Vulnerability{
+			VulnerabilityID: uuid.New(),
 			CreatedAt:    time.Now(),
 			Active:       true,
 			WorkspaceID:  workspaceID,
@@ -118,6 +119,7 @@ func (u *UseCase) newVulnerabilitiesByRepository(repositoryName string, workspac
 	entity := &dashboard.VulnerabilitiesByRepository{
 		RepositoryName: repositoryName,
 		Vulnerability: dashboard.Vulnerability{
+			VulnerabilityID: uuid.New(),
 			CreatedAt:    time.Now(),
 			Active:       true,
 			WorkspaceID:  workspaceID,
@@ -171,6 +173,7 @@ func (u *UseCase) newVulnerabilitiesByLanguage(language languages.Language,
 	entity := &dashboard.VulnerabilitiesByLanguage{
 		Language: language,
 		Vulnerability: dashboard.Vulnerability{
+			VulnerabilityID: uuid.New(),
 			CreatedAt:    time.Now(),
 			Active:       true,
 			WorkspaceID:  workspaceID,
@@ -185,6 +188,7 @@ func (u *UseCase) ParseAnalysisToVulnerabilitiesByTime(
 	analysisEntity *analysis.Analysis) (entititesByTime []dashboard.VulnerabilitiesByTime) {
 	entityToAppend := &dashboard.VulnerabilitiesByTime{
 		Vulnerability: dashboard.Vulnerability{
+			VulnerabilityID: uuid.New(),
 			CreatedAt:    time.Now(),
 			Active:       true,
 			WorkspaceID:  analysisEntity.WorkspaceID,

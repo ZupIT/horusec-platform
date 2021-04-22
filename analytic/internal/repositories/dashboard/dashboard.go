@@ -3,8 +3,6 @@ package dashboard
 import (
 	"fmt"
 
-	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
-
 	"github.com/ZupIT/horusec-devkit/pkg/services/database"
 	"github.com/ZupIT/horusec-devkit/pkg/services/database/response"
 	"github.com/google/uuid"
@@ -13,7 +11,8 @@ import (
 )
 
 type IRepoDashboard interface {
-	SaveNewVulnByEntity(entity interface{}, table string) error
+	Save(entity interface{}, table string) error
+	Update(entity interface{}, condition map[string]interface{}, table string) error
 
 	GetDashboardTotalDevelopers(filter *dashboard.FilterDashboard) response.IResponse
 	GetDashboardTotalRepositories(filter *dashboard.FilterDashboard) response.IResponse
@@ -36,19 +35,12 @@ func NewRepoDashboard(connection *database.Connection) IRepoDashboard {
 	}
 }
 
-func (r *RepoDashboard) SaveNewVulnByEntity(entity interface{}, table string) error {
-	tx := r.databaseWrite.StartTransaction()
-	entityToUpdate := map[string]interface{}{"active": false}
-	conditionToUpdate := map[string]interface{}{"active": true}
-	if err := tx.Update(entityToUpdate, conditionToUpdate, table).GetErrorExceptNotFound(); err != nil {
-		logger.LogError("{HORUSEC} Transaction rollback error", tx.RollbackTransaction().GetError())
-		return err
-	}
-	if err := tx.Create(entity, table).GetErrorExceptNotFound(); err != nil {
-		logger.LogError("{HORUSEC} Transaction rollback error", tx.RollbackTransaction().GetError())
-		return err
-	}
-	return tx.CommitTransaction().GetErrorExceptNotFound()
+func (r *RepoDashboard) Save(entity interface{}, table string) error {
+	return r.databaseWrite.Create(entity, table).GetErrorExceptNotFound()
+}
+
+func (r *RepoDashboard) Update(entity interface{}, condition map[string]interface{}, table string) error {
+	return r.databaseWrite.Update(entity, condition, table).GetErrorExceptNotFound()
 }
 
 func (r *RepoDashboard) GetDashboardTotalDevelopers(filter *dashboard.FilterDashboard) response.IResponse {
@@ -72,7 +64,7 @@ func (r *RepoDashboard) GetDashboardTotalRepositories(filter *dashboard.FilterDa
 func (r *RepoDashboard) GetDashboardVulnBySeverity(filter *dashboard.FilterDashboard) response.IResponse {
 	vuln := dashboard.VulnerabilitiesByTime{}
 	condition, args := r.getConditionFilter(filter)
-	query := fmt.Sprintf(`SELECT * FROM %s WHERE %s AND active = true LIMIT 1 ORDER BY "created_at" ASC`,
+	query := fmt.Sprintf(`SELECT * FROM %s WHERE %s AND active = true ORDER BY "created_at" ASC LIMIT 1`,
 		(&dashboard.VulnerabilitiesByTime{}).GetTable(), condition)
 	result := r.databaseRead.Raw(query, &vuln, args...)
 	return response.NewResponse(int64(result.GetRowsAffected()), result.GetErrorExceptNotFound(), vuln)
@@ -90,7 +82,7 @@ func (r *RepoDashboard) GetDashboardVulnByAuthor(filter *dashboard.FilterDashboa
 func (r *RepoDashboard) GetDashboardVulnByRepository(filter *dashboard.FilterDashboard) response.IResponse {
 	var vulns []dashboard.VulnerabilitiesByRepository
 	condition, args := r.getConditionFilter(filter)
-	query := fmt.Sprintf(`SELECT * FROM %s WHERE %s AND active = true LIMIT 5 GROUP BY author`,
+	query := fmt.Sprintf(`SELECT * FROM %s WHERE %s AND active = true GROUP BY author LIMIT 5`,
 		(&dashboard.VulnerabilitiesByRepository{}).GetTable(), condition)
 	result := r.databaseRead.Raw(query, &vulns, args...)
 	return response.NewResponse(int64(result.GetRowsAffected()), result.GetErrorExceptNotFound(), vulns)

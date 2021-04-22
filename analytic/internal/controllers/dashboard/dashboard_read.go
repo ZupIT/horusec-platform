@@ -38,7 +38,9 @@ func (c *ControllerRead) GetAllCharts(filter *dashboard.FilterDashboard) (*dashb
 		if res.GetErrorExceptNotFound() != nil {
 			return nil, res.GetErrorExceptNotFound()
 		}
-		dashResponse = c.setDashDataByKey(key, dashResponse, res.GetData())
+		if data := res.GetData(); data != nil {
+			dashResponse = c.setDashDataByKey(key, dashResponse, data)
+		}
 	}
 	return dashResponse, nil
 }

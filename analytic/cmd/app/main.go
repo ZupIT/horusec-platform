@@ -17,7 +17,7 @@ import (
 // @in header
 // @name X-Horusec-Authorization
 func main() {
-	router, err := providers.Initialize(enums.DefaultPortRest)
+	router, err := providers.Initialize(enums.DefaultPort)
 	if err != nil {
 		panic(err)
 	}

@@ -37,7 +37,7 @@ func NewHTTPRouter(router http.IRouter, authzMiddleware middlewares.IAuthzMiddle
 	routes := &Router{
 		IRouter:          router,
 		IAuthzMiddleware: authzMiddleware,
-		ISwagger:         swagger.NewSwagger(router.GetMux(), enums.DefaultPortRest),
+		ISwagger:         swagger.NewSwagger(router.GetMux(), enums.DefaultPort),
 		healthHandler:    healthHandler,
 		dashboardHandler: dashboardHandler,
 		dashboardEvent:   dashboardEvent,
