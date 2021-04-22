@@ -68,10 +68,10 @@ func (u *UseCase) newVulnerabilitiesByAuthor(author string,
 		Author: author,
 		Vulnerability: dashboard.Vulnerability{
 			VulnerabilityID: uuid.New(),
-			CreatedAt:    time.Now(),
-			Active:       true,
-			WorkspaceID:  workspaceID,
-			RepositoryID: repositoryID,
+			CreatedAt:       time.Now(),
+			Active:          true,
+			WorkspaceID:     workspaceID,
+			RepositoryID:    repositoryID,
 		},
 	}
 	entity.AddCountVulnerabilityBySeverity(1, vuln.Severity, vuln.Type)
@@ -120,10 +120,10 @@ func (u *UseCase) newVulnerabilitiesByRepository(repositoryName string, workspac
 		RepositoryName: repositoryName,
 		Vulnerability: dashboard.Vulnerability{
 			VulnerabilityID: uuid.New(),
-			CreatedAt:    time.Now(),
-			Active:       true,
-			WorkspaceID:  workspaceID,
-			RepositoryID: repositoryID,
+			CreatedAt:       time.Now(),
+			Active:          true,
+			WorkspaceID:     workspaceID,
+			RepositoryID:    repositoryID,
 		},
 	}
 	entity.AddCountVulnerabilityBySeverity(1, vuln.Severity, vuln.Type)
@@ -174,10 +174,10 @@ func (u *UseCase) newVulnerabilitiesByLanguage(language languages.Language,
 		Language: language,
 		Vulnerability: dashboard.Vulnerability{
 			VulnerabilityID: uuid.New(),
-			CreatedAt:    time.Now(),
-			Active:       true,
-			WorkspaceID:  workspaceID,
-			RepositoryID: repositoryID,
+			CreatedAt:       time.Now(),
+			Active:          true,
+			WorkspaceID:     workspaceID,
+			RepositoryID:    repositoryID,
 		},
 	}
 	entity.AddCountVulnerabilityBySeverity(1, vuln.Severity, vuln.Type)
@@ -189,10 +189,10 @@ func (u *UseCase) ParseAnalysisToVulnerabilitiesByTime(
 	entityToAppend := &dashboard.VulnerabilitiesByTime{
 		Vulnerability: dashboard.Vulnerability{
 			VulnerabilityID: uuid.New(),
-			CreatedAt:    time.Now(),
-			Active:       true,
-			WorkspaceID:  analysisEntity.WorkspaceID,
-			RepositoryID: analysisEntity.RepositoryID,
+			CreatedAt:       time.Now(),
+			Active:          true,
+			WorkspaceID:     analysisEntity.WorkspaceID,
+			RepositoryID:    analysisEntity.RepositoryID,
 		},
 	}
 	for indexNN := range analysisEntity.AnalysisVulnerabilities {

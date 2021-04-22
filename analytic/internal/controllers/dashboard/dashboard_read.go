@@ -1,8 +1,6 @@
 package dashboard
 
 import (
-	"github.com/ZupIT/horusec-devkit/pkg/services/database/response"
-
 	"github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard"
 	repoDashboard "github.com/ZupIT/horusec-platform/analytic/internal/repositories/dashboard"
 )
@@ -33,67 +31,106 @@ func NewControllerDashboardRead(repositoryDashboard repoDashboard.IRepoDashboard
 
 func (c *ControllerRead) GetAllCharts(filter *dashboard.FilterDashboard) (*dashboard.Response, error) {
 	dashResponse := &dashboard.Response{}
-	for key, dashFunc := range c.mapRepoDashFuncToDashboard() {
-		res := dashFunc(filter)
-		if res.GetErrorExceptNotFound() != nil {
-			return nil, res.GetErrorExceptNotFound()
-		}
-		if data := res.GetData(); data != nil {
-			dashResponse = c.setDashDataByKey(key, dashResponse, data)
-		}
+	return c.getAllChartsFirst(filter, dashResponse)
+}
+
+// nolint:dupl // methods is not duplicate
+func (c *ControllerRead) getAllChartsFirst(filter *dashboard.FilterDashboard,
+	dashResponse *dashboard.Response) (*dashboard.Response, error) {
+	res := c.repoDashboard.GetDashboardTotalDevelopers(filter)
+	if res.GetErrorExceptNotFound() != nil {
+		return nil, res.GetErrorExceptNotFound()
 	}
+	dashResponse.TotalAuthors = c.dataDashToTotalRepositoriesAndAuthors(res.GetData())
+
+	res = c.repoDashboard.GetDashboardTotalRepositories(filter)
+	if res.GetErrorExceptNotFound() != nil {
+		return nil, res.GetErrorExceptNotFound()
+	}
+	dashResponse.TotalRepositories = c.dataDashToTotalRepositoriesAndAuthors(res.GetData())
+	return c.getAllChartsSecond(filter, dashResponse)
+}
+
+// nolint:dupl // methods is not duplicate
+func (c *ControllerRead) getAllChartsSecond(filter *dashboard.FilterDashboard,
+	dashResponse *dashboard.Response) (*dashboard.Response, error) {
+	res := c.repoDashboard.GetDashboardVulnBySeverity(filter)
+	if res.GetErrorExceptNotFound() != nil {
+		return nil, res.GetErrorExceptNotFound()
+	}
+	dashResponse.VulnerabilityBySeverity = c.dataDashToVulnBySeverity(res.GetData())
+	res = c.repoDashboard.GetDashboardVulnByAuthor(filter)
+	if res.GetErrorExceptNotFound() != nil {
+		return nil, res.GetErrorExceptNotFound()
+	}
+	dashResponse.VulnerabilitiesByAuthor = c.dataDashToVulnByAuthor(res.GetData())
+	return c.getAllChartsThird(filter, dashResponse)
+}
+
+// nolint:dupl // methods is not duplicate
+func (c *ControllerRead) getAllChartsThird(filter *dashboard.FilterDashboard,
+	dashResponse *dashboard.Response) (*dashboard.Response, error) {
+	res := c.repoDashboard.GetDashboardVulnByRepository(filter)
+	if res.GetErrorExceptNotFound() != nil {
+		return nil, res.GetErrorExceptNotFound()
+	}
+	dashResponse.VulnerabilitiesByRepository = c.dataDashToVulnByRepository(res.GetData())
+	res = c.repoDashboard.GetDashboardVulnByLanguage(filter)
+	if res.GetErrorExceptNotFound() != nil {
+		return nil, res.GetErrorExceptNotFound()
+	}
+	dashResponse.VulnerabilitiesByLanguage = c.dataDashToVulnByLanguage(res.GetData())
+	return c.getAllChartsFinal(filter, dashResponse)
+}
+
+func (c *ControllerRead) getAllChartsFinal(filter *dashboard.FilterDashboard,
+	dashResponse *dashboard.Response) (*dashboard.Response, error) {
+	res := c.repoDashboard.GetDashboardVulnByTime(filter)
+	if res.GetErrorExceptNotFound() != nil {
+		return nil, res.GetErrorExceptNotFound()
+	}
+	dashResponse.VulnerabilitiesByTime = c.dataDashToVulnByTime(res.GetData())
 	return dashResponse, nil
 }
 
-func (c *ControllerRead) mapRepoDashFuncToDashboard() map[string]func(*dashboard.FilterDashboard) response.IResponse {
-	return map[string]func(*dashboard.FilterDashboard) response.IResponse{
-		KeyTotalAuthors:                c.repoDashboard.GetDashboardTotalDevelopers,
-		KeyTotalRepositories:           c.repoDashboard.GetDashboardTotalRepositories,
-		KeyVulnerabilityBySeverity:     c.repoDashboard.GetDashboardVulnBySeverity,
-		KeyVulnerabilitiesByAuthor:     c.repoDashboard.GetDashboardVulnByAuthor,
-		KeyVulnerabilitiesByRepository: c.repoDashboard.GetDashboardVulnByRepository,
-		KeyVulnerabilitiesByLanguage:   c.repoDashboard.GetDashboardVulnByLanguage,
-		KeyVulnerabilitiesByTime:       c.repoDashboard.GetDashboardVulnByTime,
+func (c *ControllerRead) dataDashToTotalRepositoriesAndAuthors(data interface{}) int {
+	if data == nil {
+		return 0
 	}
-}
-
-// nolint:funlen,gocyclo // factory is necessary all switch case lines
-func (c *ControllerRead) setDashDataByKey(key string, dash *dashboard.Response, data interface{}) *dashboard.Response {
-	switch key {
-	case KeyTotalAuthors:
-		dash.TotalAuthors = data.(int)
-	case KeyTotalRepositories:
-		dash.TotalRepositories = data.(int)
-	case KeyVulnerabilityBySeverity:
-		dash.VulnerabilityBySeverity = c.dataDashToVulnBySeverity(data)
-	case KeyVulnerabilitiesByAuthor:
-		dash.VulnerabilitiesByAuthor = c.dataDashToVulnByAuthor(data)
-	case KeyVulnerabilitiesByRepository:
-		dash.VulnerabilitiesByRepository = c.dataDashToVulnByRepository(data)
-	case KeyVulnerabilitiesByLanguage:
-		dash.VulnerabilitiesByLanguage = c.dataDashToVulnByLanguage(data)
-	case KeyVulnerabilitiesByTime:
-		dash.VulnerabilitiesByTime = c.dataDashToVulnByTime(data)
-	}
-	return dash
+	return data.(int)
 }
 
 func (c *ControllerRead) dataDashToVulnBySeverity(data interface{}) dashboard.ResponseSeverity {
+	if data == nil {
+		return dashboard.ResponseSeverity{}
+	}
 	return data.(*dashboard.VulnerabilitiesByTime).ToResponseSeverity()
 }
 
 func (c *ControllerRead) dataDashToVulnByAuthor(data interface{}) []dashboard.ResponseByAuthor {
-	return dashboard.ParseListVulnByAuthorToListResponse(*data.(*[]dashboard.VulnerabilitiesByAuthor))
+	if data == nil {
+		return []dashboard.ResponseByAuthor{}
+	}
+	return dashboard.ParseListVulnByAuthorToListResponse(data.([]*dashboard.VulnerabilitiesByAuthor))
 }
 
 func (c *ControllerRead) dataDashToVulnByRepository(data interface{}) []dashboard.ResponseByRepository {
-	return dashboard.ParseListVulnByRepositoryToListResponse(*data.(*[]dashboard.VulnerabilitiesByRepository))
+	if data == nil {
+		return []dashboard.ResponseByRepository{}
+	}
+	return dashboard.ParseListVulnByRepositoryToListResponse(data.([]*dashboard.VulnerabilitiesByRepository))
 }
 
 func (c *ControllerRead) dataDashToVulnByLanguage(data interface{}) []dashboard.ResponseByLanguage {
-	return dashboard.ParseListVulnByLanguageToListResponse(*data.(*[]dashboard.VulnerabilitiesByLanguage))
+	if data == nil {
+		return []dashboard.ResponseByLanguage{}
+	}
+	return dashboard.ParseListVulnByLanguageToListResponse(data.([]*dashboard.VulnerabilitiesByLanguage))
 }
 
 func (c *ControllerRead) dataDashToVulnByTime(data interface{}) []dashboard.ResponseByTime {
-	return dashboard.ParseListVulnByTimeToListResponse(*data.(*[]dashboard.VulnerabilitiesByTime))
+	if data == nil {
+		return []dashboard.ResponseByTime{}
+	}
+	return dashboard.ParseListVulnByTimeToListResponse(data.([]*dashboard.VulnerabilitiesByTime))
 }

@@ -4,7 +4,7 @@ type VulnerabilitiesByTime struct {
 	Vulnerability
 }
 
-func ParseListVulnByTimeToListResponse(vulns []VulnerabilitiesByTime) (result []ResponseByTime) {
+func ParseListVulnByTimeToListResponse(vulns []*VulnerabilitiesByTime) (result []ResponseByTime) {
 	for index := range vulns {
 		result = append(result, vulns[index].ToResponseByTime())
 	}

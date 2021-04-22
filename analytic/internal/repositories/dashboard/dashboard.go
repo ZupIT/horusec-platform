@@ -62,7 +62,7 @@ func (r *RepoDashboard) GetDashboardTotalRepositories(filter *dashboard.FilterDa
 }
 
 func (r *RepoDashboard) GetDashboardVulnBySeverity(filter *dashboard.FilterDashboard) response.IResponse {
-	vuln := dashboard.VulnerabilitiesByTime{}
+	vuln := &dashboard.VulnerabilitiesByTime{}
 	condition, args := r.getConditionFilter(filter)
 	query := fmt.Sprintf(`SELECT * FROM %s WHERE %s AND active = true ORDER BY "created_at" ASC LIMIT 1`,
 		(&dashboard.VulnerabilitiesByTime{}).GetTable(), condition)
@@ -71,34 +71,34 @@ func (r *RepoDashboard) GetDashboardVulnBySeverity(filter *dashboard.FilterDashb
 }
 
 func (r *RepoDashboard) GetDashboardVulnByAuthor(filter *dashboard.FilterDashboard) response.IResponse {
-	var vulns []dashboard.VulnerabilitiesByAuthor
+	vulns := []*dashboard.VulnerabilitiesByAuthor{}
 	condition, args := r.getConditionFilter(filter)
-	query := fmt.Sprintf(`SELECT * FROM %s WHERE %s AND active = true LIMIT 5 GROUP BY author`,
+	query := fmt.Sprintf(`SELECT * FROM %s WHERE %s AND active = true ORDER BY "critical_vulnerability" DESC LIMIT 5`,
 		(&dashboard.VulnerabilitiesByAuthor{}).GetTable(), condition)
 	result := r.databaseRead.Raw(query, &vulns, args...)
 	return response.NewResponse(int64(result.GetRowsAffected()), result.GetErrorExceptNotFound(), vulns)
 }
 
 func (r *RepoDashboard) GetDashboardVulnByRepository(filter *dashboard.FilterDashboard) response.IResponse {
-	var vulns []dashboard.VulnerabilitiesByRepository
+	vulns := []*dashboard.VulnerabilitiesByRepository{}
 	condition, args := r.getConditionFilter(filter)
-	query := fmt.Sprintf(`SELECT * FROM %s WHERE %s AND active = true GROUP BY author LIMIT 5`,
+	query := fmt.Sprintf(`SELECT * FROM %s WHERE %s AND active = true ORDER BY "critical_vulnerability" DESC LIMIT 5`,
 		(&dashboard.VulnerabilitiesByRepository{}).GetTable(), condition)
 	result := r.databaseRead.Raw(query, &vulns, args...)
 	return response.NewResponse(int64(result.GetRowsAffected()), result.GetErrorExceptNotFound(), vulns)
 }
 
 func (r *RepoDashboard) GetDashboardVulnByLanguage(filter *dashboard.FilterDashboard) response.IResponse {
-	var vulns []dashboard.VulnerabilitiesByLanguage
+	vulns := []*dashboard.VulnerabilitiesByLanguage{}
 	condition, args := r.getConditionFilter(filter)
-	query := fmt.Sprintf(`SELECT * FROM %s WHERE %s AND active = true GROUP BY language`,
+	query := fmt.Sprintf(`SELECT * FROM %s WHERE %s AND active = true ORDER BY "critical_vulnerability" DESC`,
 		(&dashboard.VulnerabilitiesByLanguage{}).GetTable(), condition)
 	result := r.databaseRead.Raw(query, &vulns, args...)
 	return response.NewResponse(int64(result.GetRowsAffected()), result.GetErrorExceptNotFound(), vulns)
 }
 
 func (r *RepoDashboard) GetDashboardVulnByTime(filter *dashboard.FilterDashboard) response.IResponse {
-	var vulns []dashboard.VulnerabilitiesByTime
+	vulns := []*dashboard.VulnerabilitiesByTime{}
 	condition, args := r.getConditionFilter(filter)
 	query := fmt.Sprintf(`SELECT * FROM %s WHERE %s AND active = true ORDER BY "created_at" ASC`,
 		(&dashboard.VulnerabilitiesByTime{}).GetTable(), condition)

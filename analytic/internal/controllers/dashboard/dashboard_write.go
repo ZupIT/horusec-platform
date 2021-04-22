@@ -2,6 +2,8 @@ package dashboard
 
 import (
 	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
+	"github.com/google/uuid"
+
 	"github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard"
 
 	repoDashboard "github.com/ZupIT/horusec-platform/analytic/internal/repositories/dashboard"
@@ -45,11 +47,7 @@ func (c *ControllerWrite) addVulnerabilitiesByAuthor(entity *analysis.Analysis) 
 	for index := range vulnsByAuthor {
 		vuln := &vulnsByAuthor[index]
 		if index == 0 {
-			conditionToUpdate := map[string]interface{}{
-				"active": true,
-				"repository_id": vuln.RepositoryID,
-			}
-			if err := c.repoDashboard.Update(map[string]interface{}{"active": false}, conditionToUpdate, tableName); err != nil {
+			if err := c.inactiveVulnerabilities(vuln.RepositoryID, tableName); err != nil {
 				return err
 			}
 		}
@@ -65,11 +63,7 @@ func (c *ControllerWrite) addVulnerabilitiesByRepository(entity *analysis.Analys
 	for index := range vulnsByRepository {
 		vuln := &vulnsByRepository[index]
 		if index == 0 {
-			conditionToUpdate := map[string]interface{}{
-				"active": true,
-				"repository_id": vuln.RepositoryID,
-			}
-			if err := c.repoDashboard.Update(map[string]interface{}{"active": false}, conditionToUpdate, tableName); err != nil {
+			if err := c.inactiveVulnerabilities(vuln.RepositoryID, tableName); err != nil {
 				return err
 			}
 		}
@@ -85,11 +79,7 @@ func (c *ControllerWrite) addVulnerabilitiesByLanguage(entity *analysis.Analysis
 	for index := range vulnsByLanguage {
 		vuln := &vulnsByLanguage[index]
 		if index == 0 {
-			conditionToUpdate := map[string]interface{}{
-				"active": true,
-				"repository_id": vuln.RepositoryID,
-			}
-			if err := c.repoDashboard.Update(map[string]interface{}{"active": false}, conditionToUpdate, tableName); err != nil {
+			if err := c.inactiveVulnerabilities(vuln.RepositoryID, tableName); err != nil {
 				return err
 			}
 		}
@@ -109,4 +99,12 @@ func (c *ControllerWrite) addVulnerabilitiesByTime(entity *analysis.Analysis) er
 		}
 	}
 	return nil
+}
+
+func (c *ControllerWrite) inactiveVulnerabilities(repositoryID uuid.UUID, tableName string) error {
+	conditionToUpdate := map[string]interface{}{
+		"active":        true,
+		"repository_id": repositoryID,
+	}
+	return c.repoDashboard.Update(map[string]interface{}{"active": false}, conditionToUpdate, tableName)
 }
