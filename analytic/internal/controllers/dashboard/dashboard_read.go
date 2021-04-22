@@ -51,7 +51,7 @@ func (c *ControllerRead) mapRepoDashboardFuncToDashboard() map[string]func(*dash
 		KeyVulnerabilitiesByAuthor:     c.repoDashboard.GetDashboardVulnByAuthor,
 		KeyVulnerabilitiesByRepository: c.repoDashboard.GetDashboardVulnByRepository,
 		KeyVulnerabilitiesByLanguage:   c.repoDashboard.GetDashboardVulnByLanguage,
-		KeyVulnerabilitiesByTime:       c.repoDashboard.GetVulnByTime,
+		KeyVulnerabilitiesByTime:       c.repoDashboard.GetDashboardVulnByTime,
 	}
 }
 

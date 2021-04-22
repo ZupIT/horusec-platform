@@ -9,7 +9,7 @@ type ResponseVulnTypes struct {
 }
 
 type ResponseSeverityContAndTypes struct {
-	Count int               `json:"count"`
+	Count int                `json:"count"`
 	Types *ResponseVulnTypes `json:"types"`
 }
 

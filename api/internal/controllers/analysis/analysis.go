@@ -15,6 +15,7 @@
 package analysis
 
 import (
+	"github.com/ZupIT/horusec-devkit/pkg/enums/exchange"
 	"time"
 
 	"github.com/google/uuid"
@@ -72,7 +73,7 @@ func (c *Controller) SaveAnalysis(analysisEntity *analysis.Analysis) (uuid.UUID,
 	if err != nil {
 		return uuid.Nil, err
 	}
-	if err := c.publishToWebhookAnalysis(analysisDecorated); err != nil {
+	if err := c.publishInBroker(analysisDecorated); err != nil {
 		return uuid.Nil, err
 	}
 	return analysisDecorated.ID, nil
@@ -146,9 +147,10 @@ func (c *Controller) hasDuplicatedHash(
 	return false
 }
 
-func (c *Controller) publishToWebhookAnalysis(analysisData *analysis.Analysis) error {
+func (c *Controller) publishInBroker(analysisData *analysis.Analysis) error {
 	if !c.appConfig.IsBrokerDisabled() {
-		return c.broker.Publish(queues.HorusecWebhookDispatch.ToString(), "", "", analysisData.ToBytes())
+		return c.broker.Publish(queues.HorusecNewAnalysis.ToString(), exchange.NewAnalysis.ToString(),
+			exchange.Fanout.ToString(), analysisData.ToBytes())
 	}
 	return nil
 }

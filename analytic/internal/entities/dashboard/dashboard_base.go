@@ -1,9 +1,10 @@
 package dashboard
 
 import (
+	"time"
+
 	"github.com/ZupIT/horusec-devkit/pkg/enums/severities"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/vulnerability"
-	"time"
 
 	"github.com/google/uuid"
 )

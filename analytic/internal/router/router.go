@@ -2,6 +2,7 @@ package router
 
 import (
 	"github.com/ZupIT/horusec-devkit/pkg/services/middlewares"
+	eventDashboard "github.com/ZupIT/horusec-platform/analytic/internal/events/dashboard"
 
 	"github.com/ZupIT/horusec-platform/analytic/internal/handlers/dashboard"
 
@@ -27,16 +28,18 @@ type Router struct {
 	middlewares.IAuthzMiddleware
 	healthHandler    *health.Handler
 	dashboardHandler *dashboard.Handler
+	dashboardEvent   eventDashboard.IEvent
 }
 
 func NewHTTPRouter(router http.IRouter, authzMiddleware middlewares.IAuthzMiddleware, healthHandler *health.Handler,
-	dashboardHandler *dashboard.Handler) IRouter {
+	dashboardHandler *dashboard.Handler, dashboardEvent eventDashboard.IEvent) IRouter {
 	routes := &Router{
 		IRouter:          router,
 		IAuthzMiddleware: authzMiddleware,
-		ISwagger:         swagger.NewSwagger(router.GetMux(), enums.DefaultPort),
+		ISwagger:         swagger.NewSwagger(router.GetMux(), enums.DefaultPortRest),
 		healthHandler:    healthHandler,
 		dashboardHandler: dashboardHandler,
+		dashboardEvent:   dashboardEvent,
 	}
 	return routes.setRoutes()
 }

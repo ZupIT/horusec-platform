@@ -8,26 +8,29 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/services/broker/packet"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/parser"
+
 	"github.com/ZupIT/horusec-platform/analytic/internal/controllers/dashboard"
 )
 
+type IEvent interface {}
+
 type Event struct {
-	broker broker.IBroker
+	broker     broker.IBroker
 	controller dashboard.IWriteController
 }
 
-func NewDashboardEvent(iBroker broker.IBroker, controller dashboard.IWriteController) *Event {
+func NewDashboardEvent(iBroker broker.IBroker, controller dashboard.IWriteController) IEvent {
 	e := &Event{
-		broker: iBroker,
+		broker:     iBroker,
 		controller: controller,
 	}
-	e.ConsumeQueues()
-	return e
+	return e.consumeQueues()
 }
 
-func (e *Event) ConsumeQueues() {
+func (e *Event) consumeQueues() IEvent {
 	go e.broker.Consume(queues.HorusecNewAnalysis.ToString(), exchange.NewAnalysis.ToString(),
 		exchange.Fanout.ToString(), e.handleNewAnalysis)
+	return e
 }
 
 func (e *Event) handleNewAnalysis(packet packet.IPacket) {

@@ -3,9 +3,12 @@
 //go:generate go run github.com/google/wire/cmd/wire
 //+build !wireinject
 
-package providersrest
+package providers
 
 import (
+	"github.com/ZupIT/horusec-devkit/pkg/services/app"
+	"github.com/ZupIT/horusec-devkit/pkg/services/broker"
+	config2 "github.com/ZupIT/horusec-devkit/pkg/services/broker/config"
 	"github.com/ZupIT/horusec-devkit/pkg/services/database"
 	"github.com/ZupIT/horusec-devkit/pkg/services/database/config"
 	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth"
@@ -14,6 +17,7 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/services/middlewares"
 	"github.com/ZupIT/horusec-platform/analytic/config/cors"
 	dashboard2 "github.com/ZupIT/horusec-platform/analytic/internal/controllers/dashboard"
+	dashboard4 "github.com/ZupIT/horusec-platform/analytic/internal/events/dashboard"
 	dashboard3 "github.com/ZupIT/horusec-platform/analytic/internal/handlers/dashboard"
 	"github.com/ZupIT/horusec-platform/analytic/internal/handlers/health"
 	"github.com/ZupIT/horusec-platform/analytic/internal/repositories/dashboard"
@@ -35,12 +39,21 @@ func Initialize(defaultPort string) (router.IRouter, error) {
 	}
 	handler := health.NewHealthHandler(connection, clientConnInterface)
 	iRepoDashboard := dashboard.NewRepoDashboard(connection)
-	iController := dashboard2.NewControllerDashboardRead(iRepoDashboard)
-	dashboardHandler := dashboard3.NewDashboardHandler(iController)
-	routerIRouter := router.NewHTTPRouter(iRouter, iAuthzMiddleware, handler, dashboardHandler)
+	iReadController := dashboard2.NewControllerDashboardRead(iRepoDashboard)
+	dashboardHandler := dashboard3.NewDashboardHandler(iReadController)
+	configIConfig := config2.NewBrokerConfig()
+	authServiceClient := proto.NewAuthServiceClient(clientConnInterface)
+	appIConfig := app.NewAppConfig(authServiceClient)
+	iBroker, err := broker.NewBroker(configIConfig, appIConfig)
+	if err != nil {
+		return nil, err
+	}
+	iWriteController := dashboard2.NewControllerDashboardWrite(iRepoDashboard)
+	iEvent := dashboard4.NewDashboardEvent(iBroker, iWriteController)
+	routerIRouter := router.NewHTTPRouter(iRouter, iAuthzMiddleware, handler, dashboardHandler, iEvent)
 	return routerIRouter, nil
 }
 
 // wire.go:
 
-var providers = wire.NewSet(config.NewDatabaseConfig, database.NewDatabaseReadAndWrite, auth.NewAuthGRPCConnection, proto.NewAuthServiceClient, cors.NewCorsConfig, http.NewHTTPRouter, middlewares.NewAuthzMiddleware, dashboard.NewRepoDashboard, dashboard2.NewControllerDashboardRead, health.NewHealthHandler, dashboard3.NewDashboardHandler, router.NewHTTPRouter)
+var providers = wire.NewSet(auth.NewAuthGRPCConnection, proto.NewAuthServiceClient, app.NewAppConfig, config2.NewBrokerConfig, broker.NewBroker, config.NewDatabaseConfig, database.NewDatabaseReadAndWrite, cors.NewCorsConfig, http.NewHTTPRouter, middlewares.NewAuthzMiddleware, dashboard.NewRepoDashboard, dashboard2.NewControllerDashboardWrite, dashboard2.NewControllerDashboardRead, health.NewHealthHandler, dashboard3.NewDashboardHandler, dashboard4.NewDashboardEvent, router.NewHTTPRouter)

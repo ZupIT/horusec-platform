@@ -3,8 +3,7 @@ package router
 import (
 	"testing"
 
-	dashboardRepository "github.com/ZupIT/horusec-platform/analytic/internal/handlers/dashboard_repository"
-	dashboardWorkspace "github.com/ZupIT/horusec-platform/analytic/internal/handlers/dashboard_workspace"
+	"github.com/ZupIT/horusec-platform/analytic/internal/handlers/dashboard"
 
 	"github.com/ZupIT/horusec-devkit/pkg/services/middlewares"
 
@@ -20,10 +19,9 @@ func TestNewHTTPRouter(t *testing.T) {
 	t.Run("Should add all necessary routes", func(t *testing.T) {
 		router := http.NewHTTPRouter(&cors.Options{}, "8009")
 		healthMock := &health.Handler{}
-		dashboardWorkspaceMock := &dashboardWorkspace.Handler{}
-		dashboardRepositoryMock := &dashboardRepository.Handler{}
+		dashboardHandlerMock := &dashboard.Handler{}
 		middlewareMock := &middlewares.AuthzMiddleware{}
-		instance := NewHTTPRouter(router, middlewareMock, healthMock, dashboardWorkspaceMock, dashboardRepositoryMock)
+		instance := NewHTTPRouter(router, middlewareMock, healthMock, dashboardHandlerMock)
 		assert.NotEmpty(t, instance)
 	})
 }

@@ -1,8 +1,11 @@
 //+build wireinject
 
-package providersrest
+package providers
 
 import (
+	"github.com/ZupIT/horusec-devkit/pkg/services/broker"
+	"github.com/ZupIT/horusec-devkit/pkg/services/broker/config"
+	dashboardEvent "github.com/ZupIT/horusec-platform/analytic/internal/events/dashboard"
 	"github.com/google/wire"
 
 	"github.com/ZupIT/horusec-platform/analytic/internal/handlers/dashboard"
@@ -23,24 +26,35 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth"
 	"github.com/ZupIT/horusec-devkit/pkg/services/http"
 
+	"github.com/ZupIT/horusec-devkit/pkg/services/app"
 	"github.com/ZupIT/horusec-platform/analytic/config/cors"
 )
 
 var providers = wire.NewSet(
-	databaseConfig.NewDatabaseConfig,
-	database.NewDatabaseReadAndWrite,
 	auth.NewAuthGRPCConnection,
 	proto.NewAuthServiceClient,
+	app.NewAppConfig,
+
+	config.NewBrokerConfig,
+	broker.NewBroker,
+
+	databaseConfig.NewDatabaseConfig,
+	database.NewDatabaseReadAndWrite,
+
 	cors.NewCorsConfig,
 	http.NewHTTPRouter,
+
 	middlewares.NewAuthzMiddleware,
 
 	repoDashboard.NewRepoDashboard,
 
+	controllerDashboard.NewControllerDashboardWrite,
 	controllerDashboard.NewControllerDashboardRead,
 
 	health.NewHealthHandler,
 	dashboard.NewDashboardHandler,
+
+	dashboardEvent.NewDashboardEvent,
 
 	router.NewHTTPRouter,
 )

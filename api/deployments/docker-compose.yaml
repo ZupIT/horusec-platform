@@ -74,4 +74,4 @@ services:
       HORUSEC_BROKER_PORT: "5672"
       HORUSEC_BROKER_USERNAME: "guest"
       HORUSEC_BROKER_PASSWORD: "guest"
-      HORUSEC_DISABLED_BROKER: "true"
+      HORUSEC_DISABLED_BROKER: "false"

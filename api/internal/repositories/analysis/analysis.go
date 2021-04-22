@@ -1,8 +1,9 @@
 package analysis
 
 import (
-	"github.com/google/uuid"
 	"time"
+
+	"github.com/google/uuid"
 
 	"github.com/ZupIT/horusec-platform/api/internal/repositories/analysis/enums"
 
@@ -39,21 +40,21 @@ func (a *Analysis) FindAnalysisByID(analysisID uuid.UUID) response.IResponse {
 }
 
 func (a *Analysis) CreateFullAnalysis(newAnalysis *analysis.Analysis) error {
-	a.databaseWrite = a.databaseWrite.StartTransaction()
-	if err := a.createAnalysis(newAnalysis); err != nil {
-		logger.LogError(enums.ErrorRollbackCreate, a.databaseWrite.RollbackTransaction().GetError())
+	tsx := a.databaseWrite.StartTransaction()
+	if err := a.createAnalysis(newAnalysis, tsx); err != nil {
+		logger.LogError(enums.ErrorRollbackCreate, tsx.RollbackTransaction().GetError())
 		return err
 	}
-	if err := a.createManyToManyAnalysisAndVulnerabilities(newAnalysis); err != nil {
-		logger.LogError(enums.ErrorRollbackCreate, a.databaseWrite.RollbackTransaction().GetError())
+	if err := a.createManyToManyAnalysisAndVulnerabilities(newAnalysis, tsx); err != nil {
+		logger.LogError(enums.ErrorRollbackCreate, tsx.RollbackTransaction().GetError())
 		return err
 	}
-	err := a.databaseWrite.CommitTransaction().GetError()
+	err := tsx.CommitTransaction().GetError()
 	logger.LogError(enums.ErrorCommitCreate, err)
 	return err
 }
 
-func (a *Analysis) createAnalysis(newAnalysis *analysis.Analysis) error {
+func (a *Analysis) createAnalysis(newAnalysis *analysis.Analysis, tsx database.IDatabaseWrite) error {
 	analysisToCreate := &analysis.Analysis{
 		ID:             newAnalysis.ID,
 		RepositoryID:   newAnalysis.RepositoryID,
@@ -65,31 +66,32 @@ func (a *Analysis) createAnalysis(newAnalysis *analysis.Analysis) error {
 		CreatedAt:      newAnalysis.CreatedAt,
 		FinishedAt:     newAnalysis.FinishedAt,
 	}
-	return a.databaseWrite.Create(analysisToCreate, analysisToCreate.GetTable()).GetError()
+	return tsx.Create(analysisToCreate, analysisToCreate.GetTable()).GetError()
 }
 
-func (a *Analysis) createManyToManyAnalysisAndVulnerabilities(newAnalysis *analysis.Analysis) error {
+func (a *Analysis) createManyToManyAnalysisAndVulnerabilities(newAnalysis *analysis.Analysis,
+	tsx database.IDatabaseWrite) error {
 	for index := range newAnalysis.AnalysisVulnerabilities {
 		manyToMany := newAnalysis.AnalysisVulnerabilities[index]
-		vulnerabilityID, err := a.createVulnerabilityIfNotExists(&manyToMany.Vulnerability, newAnalysis.WorkspaceID)
+		vulnerabilityID, err := a.createVulnerabilityIfNotExists(&manyToMany.Vulnerability, newAnalysis.WorkspaceID, tsx)
 		if err != nil {
 			return err
 		}
 		manyToMany.VulnerabilityID = vulnerabilityID
-		if err := a.createManyToMany(&manyToMany); err != nil {
+		if err := a.createManyToMany(&manyToMany, tsx); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func (a *Analysis) createVulnerabilityIfNotExists(
-	vuln *vulnerability.Vulnerability, workspaceID uuid.UUID) (uuid.UUID, error) {
+func (a *Analysis) createVulnerabilityIfNotExists(vuln *vulnerability.Vulnerability, workspaceID uuid.UUID,
+	tsx database.IDatabaseWrite) (uuid.UUID, error) {
 	res := a.findVulnerabilityByHashInWorkspace(vuln.VulnHash, workspaceID)
 	exists, err := a.checkIfAlreadyExistsVulnerability(res)
 	if err == nil {
 		if !exists {
-			return vuln.VulnerabilityID, a.databaseWrite.Create(vuln, vuln.GetTable()).GetError()
+			return vuln.VulnerabilityID, tsx.Create(vuln, vuln.GetTable()).GetError()
 		}
 		return uuid.Parse(res.GetData().(map[string]interface{})["vulnerability_id"].(string))
 	}
@@ -106,13 +108,13 @@ func (a *Analysis) checkIfAlreadyExistsVulnerability(res response.IResponse) (bo
 	return res.GetData() != nil, nil
 }
 
-func (a *Analysis) createManyToMany(manyToMany *analysis.AnalysisVulnerabilities) error {
+func (a *Analysis) createManyToMany(manyToMany *analysis.AnalysisVulnerabilities, tsx database.IDatabaseWrite) error {
 	manyToManyForCreate := &analysis.AnalysisVulnerabilities{
 		VulnerabilityID: manyToMany.VulnerabilityID,
 		AnalysisID:      manyToMany.AnalysisID,
 		CreatedAt:       time.Now(),
 	}
-	return a.databaseWrite.Create(manyToManyForCreate, manyToManyForCreate.GetTable()).GetError()
+	return tsx.Create(manyToManyForCreate, manyToManyForCreate.GetTable()).GetError()
 }
 
 func (a *Analysis) findVulnerabilityByHashInWorkspace(vulnHash string, workspaceID uuid.UUID) response.IResponse {

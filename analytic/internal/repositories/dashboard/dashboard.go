@@ -2,7 +2,7 @@ package dashboard
 
 import (
 	"fmt"
-	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
+
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 
 	"github.com/ZupIT/horusec-devkit/pkg/services/database"
@@ -13,17 +13,7 @@ import (
 )
 
 type IRepoDashboard interface {
-	SaveVulnByAuthor(vulns *dashboard.VulnerabilitiesByAuthor) error
-	GetVulnByAuthor(author string, workspaceID, repositoryID uuid.UUID) (*dashboard.VulnerabilitiesByAuthor, error)
-
-	SaveVulnByRepository(vulns *dashboard.VulnerabilitiesByRepository) error
-	GetVulnByRepository(workspaceID, repositoryID uuid.UUID) (*dashboard.VulnerabilitiesByRepository, error)
-
-	SaveVulnByLanguage(vulns *dashboard.VulnerabilitiesByLanguage) error
-	GetVulnByLanguage(language languages.Language, workspaceID, repositoryID uuid.UUID) (*dashboard.VulnerabilitiesByLanguage, error)
-
-	SaveVulnByTime(vulns *dashboard.VulnerabilitiesByTime) error
-	GetVulnByTime(workspaceID, repositoryID uuid.UUID) (*dashboard.VulnerabilitiesByTime, error)
+	SaveNewVulnByEntity(entity interface{}, table string) error
 
 	GetDashboardTotalDevelopers(filter *dashboard.FilterDashboard) response.IResponse
 	GetDashboardTotalRepositories(filter *dashboard.FilterDashboard) response.IResponse
@@ -46,119 +36,21 @@ func NewRepoDashboard(connection *database.Connection) IRepoDashboard {
 	}
 }
 
-func (r *RepoDashboard) SaveVulnByAuthor(vuln *dashboard.VulnerabilitiesByAuthor) error {
+func (r *RepoDashboard) SaveNewVulnByEntity(entity interface{}, table string) error {
 	tx := r.databaseWrite.StartTransaction()
 	entityToUpdate := map[string]interface{}{"active": false}
 	conditionToUpdate := map[string]interface{}{"active": true}
-	if err := tx.Update(entityToUpdate, conditionToUpdate, vuln.GetTable()).GetErrorExceptNotFound(); err != nil {
+	if err := tx.Update(entityToUpdate, conditionToUpdate, table).GetErrorExceptNotFound(); err != nil {
 		logger.LogError("{HORUSEC} Transaction rollback error", tx.RollbackTransaction().GetError())
 		return err
 	}
-	if err := tx.Create(vuln, vuln.GetTable()).GetErrorExceptNotFound(); err != nil {
+	if err := tx.Create(entity, table).GetErrorExceptNotFound(); err != nil {
 		logger.LogError("{HORUSEC} Transaction rollback error", tx.RollbackTransaction().GetError())
 		return err
 	}
 	return tx.CommitTransaction().GetErrorExceptNotFound()
 }
 
-func (r *RepoDashboard) GetVulnByAuthor(author string, workspaceID, repositoryID uuid.UUID) (entity *dashboard.VulnerabilitiesByAuthor, err error) {
-	condition := map[string]interface{}{
-		"author": author,
-		"workspace_id": workspaceID,
-		"repository_id": repositoryID,
-		"active": true,
-	}
-	result := r.databaseRead.Find(entity, condition, (&dashboard.VulnerabilitiesByAuthor{}).GetTable())
-	if result.GetErrorExceptNotFound() != nil {
-		return nil, result.GetErrorExceptNotFound()
-	}
-	return entity, nil
-}
-
-func (r *RepoDashboard) SaveVulnByRepository(vuln *dashboard.VulnerabilitiesByRepository) error {
-	tx := r.databaseWrite.StartTransaction()
-	entityToUpdate := map[string]interface{}{"active": false}
-	conditionToUpdate := map[string]interface{}{"active": true}
-	if err := tx.Update(entityToUpdate, conditionToUpdate, vuln.GetTable()).GetErrorExceptNotFound(); err != nil {
-		logger.LogError("{HORUSEC} Transaction rollback error", tx.RollbackTransaction().GetError())
-		return err
-	}
-	if err := tx.Create(vuln, vuln.GetTable()).GetErrorExceptNotFound(); err != nil {
-		logger.LogError("{HORUSEC} Transaction rollback error", tx.RollbackTransaction().GetError())
-		return err
-	}
-	return tx.CommitTransaction().GetErrorExceptNotFound()
-}
-
-func (r *RepoDashboard) GetVulnByRepository(workspaceID, repositoryID uuid.UUID) (entity *dashboard.VulnerabilitiesByRepository, err error) {
-	condition := map[string]interface{}{
-		"workspace_id": workspaceID,
-		"repository_id": repositoryID,
-		"active": true,
-	}
-	result := r.databaseRead.Find(entity, condition, (&dashboard.VulnerabilitiesByRepository{}).GetTable())
-	if result.GetErrorExceptNotFound() != nil {
-		return nil, result.GetErrorExceptNotFound()
-	}
-	return entity, nil
-}
-
-func (r *RepoDashboard) SaveVulnByLanguage(vuln *dashboard.VulnerabilitiesByLanguage) error {
-	tx := r.databaseWrite.StartTransaction()
-	entityToUpdate := map[string]interface{}{"active": false}
-	conditionToUpdate := map[string]interface{}{"active": true}
-	if err := tx.Update(entityToUpdate, conditionToUpdate, vuln.GetTable()).GetErrorExceptNotFound(); err != nil {
-		logger.LogError("{HORUSEC} Transaction rollback error", tx.RollbackTransaction().GetError())
-		return err
-	}
-	if err := tx.Create(vuln, vuln.GetTable()).GetErrorExceptNotFound(); err != nil {
-		logger.LogError("{HORUSEC} Transaction rollback error", tx.RollbackTransaction().GetError())
-		return err
-	}
-	return tx.CommitTransaction().GetErrorExceptNotFound()
-}
-
-func (r *RepoDashboard) GetVulnByLanguage(language languages.Language, workspaceID, repositoryID uuid.UUID) (entity *dashboard.VulnerabilitiesByLanguage, err error) {
-	condition := map[string]interface{}{
-		"language": language,
-		"workspace_id": workspaceID,
-		"repository_id": repositoryID,
-		"active": true,
-	}
-	result := r.databaseRead.Find(entity, condition, (&dashboard.VulnerabilitiesByLanguage{}).GetTable())
-	if result.GetErrorExceptNotFound() != nil {
-		return nil, result.GetErrorExceptNotFound()
-	}
-	return entity, nil
-}
-
-func (r *RepoDashboard) SaveVulnByTime(vuln *dashboard.VulnerabilitiesByTime) error {
-	tx := r.databaseWrite.StartTransaction()
-	entityToUpdate := map[string]interface{}{"active": false}
-	conditionToUpdate := map[string]interface{}{"active": true}
-	if err := tx.Update(entityToUpdate, conditionToUpdate, vuln.GetTable()).GetErrorExceptNotFound(); err != nil {
-		logger.LogError("{HORUSEC} Transaction rollback error", tx.RollbackTransaction().GetError())
-		return err
-	}
-	if err := tx.Create(vuln, vuln.GetTable()).GetErrorExceptNotFound(); err != nil {
-		logger.LogError("{HORUSEC} Transaction rollback error", tx.RollbackTransaction().GetError())
-		return err
-	}
-	return tx.CommitTransaction().GetErrorExceptNotFound()
-}
-
-func (r *RepoDashboard) GetVulnByTime(workspaceID, repositoryID uuid.UUID) (entity *dashboard.VulnerabilitiesByTime, err error) {
-	condition := map[string]interface{}{
-		"workspace_id": workspaceID,
-		"repository_id": repositoryID,
-		"active": true,
-	}
-	result := r.databaseRead.Find(entity, condition, (&dashboard.VulnerabilitiesByTime{}).GetTable())
-	if result.GetErrorExceptNotFound() != nil {
-		return nil, result.GetErrorExceptNotFound()
-	}
-	return entity, nil
-}
 func (r *RepoDashboard) GetDashboardTotalDevelopers(filter *dashboard.FilterDashboard) response.IResponse {
 	count := 0
 	condition, args := r.getConditionFilter(filter)
