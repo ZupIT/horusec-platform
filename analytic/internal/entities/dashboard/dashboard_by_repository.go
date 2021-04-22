@@ -7,8 +7,8 @@ type VulnerabilitiesByRepository struct {
 }
 
 func ParseListVulnByRepositoryToListResponse(vulns []VulnerabilitiesByRepository) (result []ResponseByRepository) {
-	for _, vuln := range vulns {
-		result = append(result, vuln.ToResponseByRepository())
+	for index := range vulns {
+		result = append(result, vulns[index].ToResponseByRepository())
 	}
 	return result
 }

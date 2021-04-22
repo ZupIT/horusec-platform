@@ -96,7 +96,7 @@ func (h *Handler) getCreateData(r *http.Request) (*repositoryEntities.Data, erro
 	}
 
 	return data.SetWorkspaceIDAndAccountData(parser.ParseStringToUUID(
-		chi.URLParam(r, workspaceEnums.ID)), accountData), data.CheckLdapGroups(h.appConfig.GetAuthorizationType())
+		chi.URLParam(r, workspaceEnums.ID)), accountData), data.CheckLdapGroups(h.appConfig.GetAuthenticationType())
 }
 
 func (h *Handler) checkCreateRepositoryErrors(w http.ResponseWriter, err error) {
@@ -196,7 +196,7 @@ func (h *Handler) getUpdateData(r *http.Request) (*repositoryEntities.Data, erro
 	}
 
 	return data.SetWorkspaceAndRepositoryID(parser.ParseStringToUUID(chi.URLParam(r, workspaceEnums.ID)),
-		repositoryID), data.CheckLdapGroups(h.appConfig.GetAuthorizationType())
+		repositoryID), data.CheckLdapGroups(h.appConfig.GetAuthenticationType())
 }
 
 func (h *Handler) checkUpdateRepositoryErrors(w http.ResponseWriter, err error) {

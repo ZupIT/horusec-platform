@@ -6,8 +6,8 @@ type VulnerabilitiesByAuthor struct {
 }
 
 func ParseListVulnByAuthorToListResponse(vulns []VulnerabilitiesByAuthor) (result []ResponseByAuthor) {
-	for _, vuln := range vulns {
-		result = append(result, vuln.ToResponseByAuthor())
+	for index := range vulns {
+		result = append(result, vulns[index].ToResponseByAuthor())
 	}
 	return result
 }

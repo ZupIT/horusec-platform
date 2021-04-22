@@ -128,7 +128,7 @@ func (c *Controller) Delete(repositoryID uuid.UUID) error {
 }
 
 func (c *Controller) List(data *repositoryEntities.Data) (*[]repositoryEntities.Response, error) {
-	if c.appConfig.GetAuthorizationType() == auth.Ldap {
+	if c.appConfig.GetAuthenticationType() == auth.Ldap {
 		return c.repository.ListRepositoriesAuthTypeLdap(data.WorkspaceID, data.Permissions)
 	}
 

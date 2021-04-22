@@ -2,6 +2,7 @@ package router
 
 import (
 	"github.com/ZupIT/horusec-devkit/pkg/services/middlewares"
+
 	eventDashboard "github.com/ZupIT/horusec-platform/analytic/internal/events/dashboard"
 
 	"github.com/ZupIT/horusec-platform/analytic/internal/handlers/dashboard"

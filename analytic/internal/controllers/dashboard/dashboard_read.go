@@ -33,7 +33,7 @@ func NewControllerDashboardRead(repositoryDashboard repoDashboard.IRepoDashboard
 
 func (c *ControllerRead) GetAllCharts(filter *dashboard.FilterDashboard) (*dashboard.Response, error) {
 	dashResponse := &dashboard.Response{}
-	for key, dashFunc := range c.mapRepoDashboardFuncToDashboard() {
+	for key, dashFunc := range c.mapRepoDashFuncToDashboard() {
 		res := dashFunc(filter)
 		if res.GetErrorExceptNotFound() != nil {
 			return nil, res.GetErrorExceptNotFound()
@@ -43,7 +43,7 @@ func (c *ControllerRead) GetAllCharts(filter *dashboard.FilterDashboard) (*dashb
 	return dashResponse, nil
 }
 
-func (c *ControllerRead) mapRepoDashboardFuncToDashboard() map[string]func(*dashboard.FilterDashboard) response.IResponse {
+func (c *ControllerRead) mapRepoDashFuncToDashboard() map[string]func(*dashboard.FilterDashboard) response.IResponse {
 	return map[string]func(*dashboard.FilterDashboard) response.IResponse{
 		KeyTotalAuthors:                c.repoDashboard.GetDashboardTotalDevelopers,
 		KeyTotalRepositories:           c.repoDashboard.GetDashboardTotalRepositories,
@@ -55,6 +55,7 @@ func (c *ControllerRead) mapRepoDashboardFuncToDashboard() map[string]func(*dash
 	}
 }
 
+// nolint:funlen,gocyclo // factory is necessary all switch case lines
 func (c *ControllerRead) setDashDataByKey(key string, dash *dashboard.Response, data interface{}) *dashboard.Response {
 	switch key {
 	case KeyTotalAuthors:
@@ -62,15 +63,35 @@ func (c *ControllerRead) setDashDataByKey(key string, dash *dashboard.Response, 
 	case KeyTotalRepositories:
 		dash.TotalRepositories = data.(int)
 	case KeyVulnerabilityBySeverity:
-		dash.VulnerabilityBySeverity = data.(*dashboard.VulnerabilitiesByTime).ToResponseSeverity()
+		dash.VulnerabilityBySeverity = c.dataDashToVulnBySeverity(data)
 	case KeyVulnerabilitiesByAuthor:
-		dash.VulnerabilitiesByAuthor = dashboard.ParseListVulnByAuthorToListResponse(*data.(*[]dashboard.VulnerabilitiesByAuthor))
+		dash.VulnerabilitiesByAuthor = c.dataDashToVulnByAuthor(data)
 	case KeyVulnerabilitiesByRepository:
-		dash.VulnerabilitiesByRepository = dashboard.ParseListVulnByRepositoryToListResponse(*data.(*[]dashboard.VulnerabilitiesByRepository))
+		dash.VulnerabilitiesByRepository = c.dataDashToVulnByRepository(data)
 	case KeyVulnerabilitiesByLanguage:
-		dash.VulnerabilitiesByLanguage = dashboard.ParseListVulnByLanguageToListResponse(*data.(*[]dashboard.VulnerabilitiesByLanguage))
+		dash.VulnerabilitiesByLanguage = c.dataDashToVulnByLanguage(data)
 	case KeyVulnerabilitiesByTime:
-		dash.VulnerabilitiesByTime = dashboard.ParseListVulnByTimeToListResponse(*data.(*[]dashboard.VulnerabilitiesByTime))
+		dash.VulnerabilitiesByTime = c.dataDashToVulnByTime(data)
 	}
 	return dash
+}
+
+func (c *ControllerRead) dataDashToVulnBySeverity(data interface{}) dashboard.ResponseSeverity {
+	return data.(*dashboard.VulnerabilitiesByTime).ToResponseSeverity()
+}
+
+func (c *ControllerRead) dataDashToVulnByAuthor(data interface{}) []dashboard.ResponseByAuthor {
+	return dashboard.ParseListVulnByAuthorToListResponse(*data.(*[]dashboard.VulnerabilitiesByAuthor))
+}
+
+func (c *ControllerRead) dataDashToVulnByRepository(data interface{}) []dashboard.ResponseByRepository {
+	return dashboard.ParseListVulnByRepositoryToListResponse(*data.(*[]dashboard.VulnerabilitiesByRepository))
+}
+
+func (c *ControllerRead) dataDashToVulnByLanguage(data interface{}) []dashboard.ResponseByLanguage {
+	return dashboard.ParseListVulnByLanguageToListResponse(*data.(*[]dashboard.VulnerabilitiesByLanguage))
+}
+
+func (c *ControllerRead) dataDashToVulnByTime(data interface{}) []dashboard.ResponseByTime {
+	return dashboard.ParseListVulnByTimeToListResponse(*data.(*[]dashboard.VulnerabilitiesByTime))
 }

@@ -3,6 +3,8 @@ package dashboard
 import (
 	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 
+	"github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard"
+
 	repoDashboard "github.com/ZupIT/horusec-platform/analytic/internal/repositories/dashboard"
 	useCaseAnalysis "github.com/ZupIT/horusec-platform/analytic/internal/usecase/analysis"
 )
@@ -40,29 +42,33 @@ func (c *ControllerWrite) AddNewAnalysis(entity *analysis.Analysis) error {
 }
 func (c *ControllerWrite) addVulnerabilitiesByAuthor(entity *analysis.Analysis) error {
 	vulnsByAuthor := c.useCase.ParseAnalysisToVulnerabilitiesByAuthor(entity)
-	for _, vuln := range vulnsByAuthor {
-		return c.repoDashboard.SaveNewVulnByEntity(vuln, (&vuln).GetTable())
+	for index := range vulnsByAuthor {
+		vuln := vulnsByAuthor[index]
+		return c.repoDashboard.SaveNewVulnByEntity(&vuln, (&dashboard.VulnerabilitiesByAuthor{}).GetTable())
 	}
 	return nil
 }
 func (c *ControllerWrite) addVulnerabilitiesByRepository(entity *analysis.Analysis) error {
 	vulnsByRepository := c.useCase.ParseAnalysisToVulnerabilitiesByRepository(entity)
-	for _, vuln := range vulnsByRepository {
-		return c.repoDashboard.SaveNewVulnByEntity(vuln, (&vuln).GetTable())
+	for index := range vulnsByRepository {
+		vuln := vulnsByRepository[index]
+		return c.repoDashboard.SaveNewVulnByEntity(&vuln, (&dashboard.VulnerabilitiesByRepository{}).GetTable())
 	}
 	return nil
 }
 func (c *ControllerWrite) addVulnerabilitiesByLanguage(entity *analysis.Analysis) error {
 	vulnsByLanguage := c.useCase.ParseAnalysisToVulnerabilitiesByLanguage(entity)
-	for _, vuln := range vulnsByLanguage {
-		return c.repoDashboard.SaveNewVulnByEntity(vuln, (&vuln).GetTable())
+	for index := range vulnsByLanguage {
+		vuln := vulnsByLanguage[index]
+		return c.repoDashboard.SaveNewVulnByEntity(&vuln, (&dashboard.VulnerabilitiesByLanguage{}).GetTable())
 	}
 	return nil
 }
 func (c *ControllerWrite) addVulnerabilitiesByTime(entity *analysis.Analysis) error {
 	vulnsByTime := c.useCase.ParseAnalysisToVulnerabilitiesByTime(entity)
-	for _, vuln := range vulnsByTime {
-		return c.repoDashboard.SaveNewVulnByEntity(vuln, (&vuln).GetTable())
+	for index := range vulnsByTime {
+		vuln := vulnsByTime[index]
+		return c.repoDashboard.SaveNewVulnByEntity(&vuln, (&dashboard.VulnerabilitiesByTime{}).GetTable())
 	}
 	return nil
 }

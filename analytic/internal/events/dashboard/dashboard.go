@@ -12,7 +12,7 @@ import (
 	"github.com/ZupIT/horusec-platform/analytic/internal/controllers/dashboard"
 )
 
-type IEvent interface {}
+type IEvent interface{}
 
 type Event struct {
 	broker     broker.IBroker
@@ -33,9 +33,9 @@ func (e *Event) consumeQueues() IEvent {
 	return e
 }
 
-func (e *Event) handleNewAnalysis(packet packet.IPacket) {
+func (e *Event) handleNewAnalysis(brokerPacket packet.IPacket) {
 	entity := analysis.Analysis{}
-	if err := parser.ParsePacketToEntity(packet, &entity); err != nil {
+	if err := parser.ParsePacketToEntity(brokerPacket, &entity); err != nil {
 		logger.LogError("{HORUSEC} Read packet error", err)
 		return
 	}
@@ -44,6 +44,6 @@ func (e *Event) handleNewAnalysis(packet packet.IPacket) {
 		logger.LogError("{HORUSEC} Save new analysis", err)
 		return
 	}
-	_ = packet.Ack()
+	_ = brokerPacket.Ack()
 	logger.LogInfo("{HORUSEC} New analysis received and registered on analytic")
 }

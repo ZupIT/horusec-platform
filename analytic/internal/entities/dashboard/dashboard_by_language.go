@@ -10,8 +10,8 @@ type VulnerabilitiesByLanguage struct {
 }
 
 func ParseListVulnByLanguageToListResponse(vulns []VulnerabilitiesByLanguage) (result []ResponseByLanguage) {
-	for _, vuln := range vulns {
-		result = append(result, vuln.ToResponseByLanguage())
+	for index := range vulns {
+		result = append(result, vulns[index].ToResponseByLanguage())
 	}
 	return result
 }

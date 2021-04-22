@@ -5,8 +5,8 @@ type VulnerabilitiesByTime struct {
 }
 
 func ParseListVulnByTimeToListResponse(vulns []VulnerabilitiesByTime) (result []ResponseByTime) {
-	for _, vuln := range vulns {
-		result = append(result, vuln.ToResponseByTime())
+	for index := range vulns {
+		result = append(result, vulns[index].ToResponseByTime())
 	}
 	return result
 }

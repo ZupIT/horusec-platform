@@ -110,7 +110,7 @@ func (c *Controller) Delete(workspaceID uuid.UUID) error {
 }
 
 func (c *Controller) List(data *workspaceEntities.Data) (*[]workspaceEntities.Response, error) {
-	if c.appConfig.GetAuthorizationType() == auth.Ldap {
+	if c.appConfig.GetAuthenticationType() == auth.Ldap {
 		return c.repository.ListWorkspacesAuthTypeLdap(data.Permissions)
 	}
 

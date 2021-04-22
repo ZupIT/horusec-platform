@@ -15,8 +15,9 @@
 package analysis
 
 import (
-	"github.com/ZupIT/horusec-devkit/pkg/enums/exchange"
 	"time"
+
+	"github.com/ZupIT/horusec-devkit/pkg/enums/exchange"
 
 	"github.com/google/uuid"
 

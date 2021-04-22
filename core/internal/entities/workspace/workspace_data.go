@@ -54,7 +54,7 @@ func (d *Data) ToBytes() []byte {
 	return bytes
 }
 
-func (d *Data) CheckLdapGroups(authorizationType auth.AuthorizationType) error {
+func (d *Data) CheckLdapGroups(authorizationType auth.AuthenticationType) error {
 	return utilsValidation.CheckInvalidLdapGroups(authorizationType, d.AuthzAdmin, d.Permissions)
 }
 

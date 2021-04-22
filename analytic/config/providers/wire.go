@@ -5,8 +5,9 @@ package providers
 import (
 	"github.com/ZupIT/horusec-devkit/pkg/services/broker"
 	"github.com/ZupIT/horusec-devkit/pkg/services/broker/config"
-	dashboardEvent "github.com/ZupIT/horusec-platform/analytic/internal/events/dashboard"
 	"github.com/google/wire"
+
+	dashboardEvent "github.com/ZupIT/horusec-platform/analytic/internal/events/dashboard"
 
 	"github.com/ZupIT/horusec-platform/analytic/internal/handlers/dashboard"
 
@@ -27,6 +28,7 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/services/http"
 
 	"github.com/ZupIT/horusec-devkit/pkg/services/app"
+
 	"github.com/ZupIT/horusec-platform/analytic/config/cors"
 )
 

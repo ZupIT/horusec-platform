@@ -24,15 +24,19 @@ func NewUseCaseAnalysis() IUseCase {
 }
 
 func (u *UseCase) ParseAnalysisToVulnerabilitiesByAuthor(analysisEntity *analysis.Analysis) (entity []dashboard.VulnerabilitiesByAuthor) {
-	for _, manyToMany := range analysisEntity.AnalysisVulnerabilities {
+	for indexNN := range analysisEntity.AnalysisVulnerabilities {
+		manyToMany := analysisEntity.AnalysisVulnerabilities[indexNN]
 		index, exists := u.existsAuthorInList(entity, manyToMany.Vulnerability.CommitEmail)
 		if !exists {
-			entityToAppend := u.newVulnerabilitiesByAuthor(manyToMany.Vulnerability.CommitEmail, analysisEntity.WorkspaceID, analysisEntity.RepositoryID)
-			entityToAppend.AddCountVulnerabilityBySeverity(1, manyToMany.Vulnerability.Severity, manyToMany.Vulnerability.Type)
+			entityToAppend := u.newVulnerabilitiesByAuthor(
+				manyToMany.Vulnerability.CommitEmail, analysisEntity.WorkspaceID, analysisEntity.RepositoryID)
+			entityToAppend.AddCountVulnerabilityBySeverity(
+				1, manyToMany.Vulnerability.Severity, manyToMany.Vulnerability.Type)
 			entity = append(entity, *entityToAppend)
 		} else if len(entity) > 0 {
 			entityToAppend := &entity[index]
-			entityToAppend.AddCountVulnerabilityBySeverity(1, manyToMany.Vulnerability.Severity, manyToMany.Vulnerability.Type)
+			entityToAppend.AddCountVulnerabilityBySeverity(
+				1, manyToMany.Vulnerability.Severity, manyToMany.Vulnerability.Type)
 			entity[index] = *entityToAppend
 		}
 	}
@@ -40,15 +44,16 @@ func (u *UseCase) ParseAnalysisToVulnerabilitiesByAuthor(analysisEntity *analysi
 }
 
 func (u *UseCase) existsAuthorInList(listVulns []dashboard.VulnerabilitiesByAuthor, author string) (int, bool) {
-	for index, entity := range listVulns {
-		if entity.Author == author {
+	for index := range listVulns {
+		if listVulns[index].Author == author {
 			return index, true
 		}
 	}
 	return 0, false
 }
 
-func (u *UseCase) newVulnerabilitiesByAuthor(author string, workspaceID, repositoryID uuid.UUID) *dashboard.VulnerabilitiesByAuthor {
+func (u *UseCase) newVulnerabilitiesByAuthor(author string,
+	workspaceID, repositoryID uuid.UUID) *dashboard.VulnerabilitiesByAuthor {
 	return &dashboard.VulnerabilitiesByAuthor{
 		Author: author,
 		Vulnerability: dashboard.Vulnerability{
@@ -61,31 +66,37 @@ func (u *UseCase) newVulnerabilitiesByAuthor(author string, workspaceID, reposit
 }
 
 func (u *UseCase) ParseAnalysisToVulnerabilitiesByRepository(analysisEntity *analysis.Analysis) (entity []dashboard.VulnerabilitiesByRepository) {
-	for _, manyToMany := range analysisEntity.AnalysisVulnerabilities {
+	for indexNN := range analysisEntity.AnalysisVulnerabilities {
+		manyToMany := analysisEntity.AnalysisVulnerabilities[indexNN]
 		index, exists := u.existsRepositoryInList(entity, analysisEntity.RepositoryID)
 		if !exists {
-			entityToAppend := u.newVulnerabilitiesByRepository(manyToMany.Vulnerability.CommitEmail, analysisEntity.WorkspaceID, analysisEntity.RepositoryID)
-			entityToAppend.AddCountVulnerabilityBySeverity(1, manyToMany.Vulnerability.Severity, manyToMany.Vulnerability.Type)
+			entityToAppend := u.newVulnerabilitiesByRepository(
+				manyToMany.Vulnerability.CommitEmail, analysisEntity.WorkspaceID, analysisEntity.RepositoryID)
+			entityToAppend.AddCountVulnerabilityBySeverity(
+				1, manyToMany.Vulnerability.Severity, manyToMany.Vulnerability.Type)
 			entity = append(entity, *entityToAppend)
 		} else if len(entity) > 0 {
 			entityToAppend := &entity[index]
-			entityToAppend.AddCountVulnerabilityBySeverity(1, manyToMany.Vulnerability.Severity, manyToMany.Vulnerability.Type)
+			entityToAppend.AddCountVulnerabilityBySeverity(
+				1, manyToMany.Vulnerability.Severity, manyToMany.Vulnerability.Type)
 			entity[index] = *entityToAppend
 		}
 	}
 	return entity
 }
 
-func (u *UseCase) existsRepositoryInList(listVulns []dashboard.VulnerabilitiesByRepository, repositoryID uuid.UUID) (int, bool) {
-	for index, entity := range listVulns {
-		if entity.RepositoryID == repositoryID {
+func (u *UseCase) existsRepositoryInList(listVulns []dashboard.VulnerabilitiesByRepository,
+	repositoryID uuid.UUID) (int, bool) {
+	for index := range listVulns {
+		if listVulns[index].RepositoryID == repositoryID {
 			return index, true
 		}
 	}
 	return 0, false
 }
 
-func (u *UseCase) newVulnerabilitiesByRepository(repositoryName string, workspaceID, repositoryID uuid.UUID) *dashboard.VulnerabilitiesByRepository {
+func (u *UseCase) newVulnerabilitiesByRepository(repositoryName string,
+	workspaceID, repositoryID uuid.UUID) *dashboard.VulnerabilitiesByRepository {
 	return &dashboard.VulnerabilitiesByRepository{
 		RepositoryName: repositoryName,
 		Vulnerability: dashboard.Vulnerability{
@@ -98,31 +109,37 @@ func (u *UseCase) newVulnerabilitiesByRepository(repositoryName string, workspac
 }
 
 func (u *UseCase) ParseAnalysisToVulnerabilitiesByLanguage(analysisEntity *analysis.Analysis) (entity []dashboard.VulnerabilitiesByLanguage) {
-	for _, manyToMany := range analysisEntity.AnalysisVulnerabilities {
+	for indexNN := range analysisEntity.AnalysisVulnerabilities {
+		manyToMany := analysisEntity.AnalysisVulnerabilities[indexNN]
 		index, exists := u.existsLanguageInList(entity, manyToMany.Vulnerability.Language)
 		if !exists {
-			entityToAppend := u.newVulnerabilitiesByLanguage(manyToMany.Vulnerability.Language, analysisEntity.WorkspaceID, analysisEntity.RepositoryID)
-			entityToAppend.AddCountVulnerabilityBySeverity(1, manyToMany.Vulnerability.Severity, manyToMany.Vulnerability.Type)
+			entityToAppend := u.newVulnerabilitiesByLanguage(
+				manyToMany.Vulnerability.Language, analysisEntity.WorkspaceID, analysisEntity.RepositoryID)
+			entityToAppend.AddCountVulnerabilityBySeverity(
+				1, manyToMany.Vulnerability.Severity, manyToMany.Vulnerability.Type)
 			entity = append(entity, *entityToAppend)
 		} else if len(entity) > 0 {
 			entityToAppend := &entity[index]
-			entityToAppend.AddCountVulnerabilityBySeverity(1, manyToMany.Vulnerability.Severity, manyToMany.Vulnerability.Type)
+			entityToAppend.AddCountVulnerabilityBySeverity(
+				1, manyToMany.Vulnerability.Severity, manyToMany.Vulnerability.Type)
 			entity[index] = *entityToAppend
 		}
 	}
 	return entity
 }
 
-func (u *UseCase) existsLanguageInList(listVulns []dashboard.VulnerabilitiesByLanguage, language languages.Language) (int, bool) {
-	for index, entity := range listVulns {
-		if entity.Language == language {
+func (u *UseCase) existsLanguageInList(
+	listVulns []dashboard.VulnerabilitiesByLanguage, language languages.Language) (int, bool) {
+	for index := range listVulns {
+		if listVulns[index].Language == language {
 			return index, true
 		}
 	}
 	return 0, false
 }
 
-func (u *UseCase) newVulnerabilitiesByLanguage(language languages.Language, workspaceID, repositoryID uuid.UUID) *dashboard.VulnerabilitiesByLanguage {
+func (u *UseCase) newVulnerabilitiesByLanguage(
+	language languages.Language, workspaceID, repositoryID uuid.UUID) *dashboard.VulnerabilitiesByLanguage {
 	return &dashboard.VulnerabilitiesByLanguage{
 		Language: language,
 		Vulnerability: dashboard.Vulnerability{
@@ -134,7 +151,8 @@ func (u *UseCase) newVulnerabilitiesByLanguage(language languages.Language, work
 	}
 }
 
-func (u *UseCase) ParseAnalysisToVulnerabilitiesByTime(analysisEntity *analysis.Analysis) (entity []dashboard.VulnerabilitiesByTime) {
+func (u *UseCase) ParseAnalysisToVulnerabilitiesByTime(
+	analysisEntity *analysis.Analysis) (entity []dashboard.VulnerabilitiesByTime) {
 	entityToAppend := &dashboard.VulnerabilitiesByTime{
 		Vulnerability: dashboard.Vulnerability{
 			CreatedAt:    time.Now(),
@@ -143,7 +161,8 @@ func (u *UseCase) ParseAnalysisToVulnerabilitiesByTime(analysisEntity *analysis.
 			RepositoryID: analysisEntity.RepositoryID,
 		},
 	}
-	for _, manyToMany := range analysisEntity.AnalysisVulnerabilities {
+	for indexNN := range analysisEntity.AnalysisVulnerabilities {
+		manyToMany := analysisEntity.AnalysisVulnerabilities[indexNN]
 		entityToAppend.AddCountVulnerabilityBySeverity(1, manyToMany.Vulnerability.Severity, manyToMany.Vulnerability.Type)
 	}
 	return []dashboard.VulnerabilitiesByTime{*entityToAppend}
