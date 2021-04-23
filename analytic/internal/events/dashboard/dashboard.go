@@ -28,22 +28,47 @@ func NewDashboardEvent(iBroker broker.IBroker, controller dashboard.IWriteContro
 }
 
 func (e *Event) consumeQueues() IEvent {
-	go e.broker.Consume(queues.HorusecNewAnalysis.ToString(), exchange.NewAnalysis.ToString(),
-		exchange.Fanout.ToString(), e.handleNewAnalysis)
+	go e.broker.Consume(
+		queues.HorusecAnalyticAuthors.ToString(), exchange.NewAnalysis.ToString(), exchange.Fanout.ToString(),
+		func(pack packet.IPacket) { e.handleNewAnalysis(pack, queues.HorusecAnalyticAuthors) })
+	go e.broker.Consume(
+		queues.HorusecAnalyticRepositories.ToString(), exchange.NewAnalysis.ToString(), exchange.Fanout.ToString(),
+		func(pack packet.IPacket) { e.handleNewAnalysis(pack, queues.HorusecAnalyticRepositories) })
+	go e.broker.Consume(
+		queues.HorusecAnalyticLanguages.ToString(), exchange.NewAnalysis.ToString(), exchange.Fanout.ToString(),
+		func(pack packet.IPacket) { e.handleNewAnalysis(pack, queues.HorusecAnalyticLanguages) })
+	go e.broker.Consume(
+		queues.HorusecAnalyticTimes.ToString(), exchange.NewAnalysis.ToString(), exchange.Fanout.ToString(),
+		func(pack packet.IPacket) { e.handleNewAnalysis(pack, queues.HorusecAnalyticTimes) })
 	return e
 }
 
-func (e *Event) handleNewAnalysis(brokerPacket packet.IPacket) {
+// nolint:exhaustive // others queues is not necessary
+func (e *Event) execControllerByQueueType(queue queues.Queue) func(*analysis.Analysis) error {
+	switch queue {
+	case queues.HorusecAnalyticAuthors:
+		return e.controller.AddVulnerabilitiesByAuthor
+	case queues.HorusecAnalyticRepositories:
+		return e.controller.AddVulnerabilitiesByRepository
+	case queues.HorusecAnalyticLanguages:
+		return e.controller.AddVulnerabilitiesByLanguage
+	case queues.HorusecAnalyticTimes:
+		return e.controller.AddVulnerabilitiesByTime
+	}
+	return nil
+}
+
+func (e *Event) handleNewAnalysis(brokerPacket packet.IPacket, queue queues.Queue) {
+	logger.LogInfo("{HORUSEC} Packet received from new analysis")
 	entity := analysis.Analysis{}
 	if err := parser.ParsePacketToEntity(brokerPacket, &entity); err != nil {
-		logger.LogError("{HORUSEC} Read packet error", err)
+		logger.LogError("{HORUSEC} Read packet error by "+queue.ToString(), err)
 		return
 	}
 
-	if err := e.controller.AddNewAnalysis(&entity); err != nil {
-		logger.LogError("{HORUSEC} Save new analysis", err)
+	if err := e.execControllerByQueueType(queue)(&entity); err != nil {
+		logger.LogError("{HORUSEC} Error on save new analysis by "+queue.ToString(), err)
 		return
 	}
 	_ = brokerPacket.Ack()
-	logger.LogInfo("{HORUSEC} New analysis received and registered on analytic")
 }

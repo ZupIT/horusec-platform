@@ -2,7 +2,6 @@ package dashboard
 
 type VulnerabilitiesByRepository struct {
 	RepositoryName string `json:"repository_name" gorm:"Column:repository_name"`
-	IsLast         bool   `json:"isLast" gorm:"Column:is_last"`
 	Vulnerability
 }
 

@@ -11,7 +11,10 @@ import (
 )
 
 type IWriteController interface {
-	AddNewAnalysis(analysis *analysis.Analysis) error
+	AddVulnerabilitiesByAuthor(entity *analysis.Analysis) error
+	AddVulnerabilitiesByRepository(entity *analysis.Analysis) error
+	AddVulnerabilitiesByLanguage(entity *analysis.Analysis) error
+	AddVulnerabilitiesByTime(entity *analysis.Analysis) error
 }
 
 type ControllerWrite struct {
@@ -26,70 +29,49 @@ func NewControllerDashboardWrite(repositoryDashboard repoDashboard.IRepoDashboar
 	}
 }
 
-func (c *ControllerWrite) AddNewAnalysis(entity *analysis.Analysis) error {
-	if err := c.addVulnerabilitiesByAuthor(entity); err != nil {
-		return err
-	}
-	if err := c.addVulnerabilitiesByRepository(entity); err != nil {
-		return err
-	}
-	if err := c.addVulnerabilitiesByLanguage(entity); err != nil {
-		return err
-	}
-	if err := c.addVulnerabilitiesByTime(entity); err != nil {
-		return err
-	}
-	return nil
-}
-func (c *ControllerWrite) addVulnerabilitiesByAuthor(entity *analysis.Analysis) error {
+func (c *ControllerWrite) AddVulnerabilitiesByAuthor(entity *analysis.Analysis) error {
 	tableName := (&dashboard.VulnerabilitiesByAuthor{}).GetTable()
+	if err := c.inactiveVulnerabilities(entity.RepositoryID, tableName); err != nil {
+		return err
+	}
 	vulnsByAuthor := c.useCase.ParseAnalysisToVulnerabilitiesByAuthor(entity)
 	for index := range vulnsByAuthor {
 		vuln := &vulnsByAuthor[index]
-		if index == 0 {
-			if err := c.inactiveVulnerabilities(vuln.RepositoryID, tableName); err != nil {
-				return err
-			}
-		}
 		if err := c.repoDashboard.Save(vuln, tableName); err != nil {
 			return err
 		}
 	}
 	return nil
 }
-func (c *ControllerWrite) addVulnerabilitiesByRepository(entity *analysis.Analysis) error {
+func (c *ControllerWrite) AddVulnerabilitiesByRepository(entity *analysis.Analysis) error {
 	tableName := (&dashboard.VulnerabilitiesByRepository{}).GetTable()
+	if err := c.inactiveVulnerabilities(entity.RepositoryID, tableName); err != nil {
+		return err
+	}
 	vulnsByRepository := c.useCase.ParseAnalysisToVulnerabilitiesByRepository(entity)
 	for index := range vulnsByRepository {
 		vuln := &vulnsByRepository[index]
-		if index == 0 {
-			if err := c.inactiveVulnerabilities(vuln.RepositoryID, tableName); err != nil {
-				return err
-			}
-		}
 		if err := c.repoDashboard.Save(vuln, tableName); err != nil {
 			return err
 		}
 	}
 	return nil
 }
-func (c *ControllerWrite) addVulnerabilitiesByLanguage(entity *analysis.Analysis) error {
+func (c *ControllerWrite) AddVulnerabilitiesByLanguage(entity *analysis.Analysis) error {
 	tableName := (&dashboard.VulnerabilitiesByLanguage{}).GetTable()
+	if err := c.inactiveVulnerabilities(entity.RepositoryID, tableName); err != nil {
+		return err
+	}
 	vulnsByLanguage := c.useCase.ParseAnalysisToVulnerabilitiesByLanguage(entity)
 	for index := range vulnsByLanguage {
 		vuln := &vulnsByLanguage[index]
-		if index == 0 {
-			if err := c.inactiveVulnerabilities(vuln.RepositoryID, tableName); err != nil {
-				return err
-			}
-		}
 		if err := c.repoDashboard.Save(vuln, tableName); err != nil {
 			return err
 		}
 	}
 	return nil
 }
-func (c *ControllerWrite) addVulnerabilitiesByTime(entity *analysis.Analysis) error {
+func (c *ControllerWrite) AddVulnerabilitiesByTime(entity *analysis.Analysis) error {
 	tableName := (&dashboard.VulnerabilitiesByTime{}).GetTable()
 	vulnsByTime := c.useCase.ParseAnalysisToVulnerabilitiesByTime(entity)
 	for index := range vulnsByTime {

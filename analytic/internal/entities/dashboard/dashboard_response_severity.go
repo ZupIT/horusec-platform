@@ -18,6 +18,7 @@ type ResponseSeverity struct {
 	Medium   *ResponseSeverityContAndTypes `json:"medium"`
 	Low      *ResponseSeverityContAndTypes `json:"low"`
 	Info     *ResponseSeverityContAndTypes `json:"info"`
+	Unknown  *ResponseSeverityContAndTypes `json:"unknown"`
 }
 
 func (r *ResponseSeverity) SumVulnerabilityCritical(vuln *Vulnerability) *ResponseSeverity {
@@ -67,5 +68,15 @@ func (r *ResponseSeverity) SumVulnerabilityInfo(vuln *Vulnerability) *ResponseSe
 	r.Info.Types.RiskAccepted = vuln.InfoRiskAccepted
 	r.Info.Types.FalsePositive = vuln.InfoFalsePositive
 	r.Info.Types.Corrected = vuln.InfoCorrected
+	return r
+}
+
+func (r *ResponseSeverity) SumVulnerabilityUnknown(vuln *Vulnerability) *ResponseSeverity {
+	r.Unknown.Count = vuln.UnknownVulnerability + vuln.UnknownRiskAccepted +
+		vuln.UnknownFalsePositive + vuln.UnknownCorrected
+	r.Unknown.Types.Vulnerability = vuln.UnknownVulnerability
+	r.Unknown.Types.RiskAccepted = vuln.UnknownRiskAccepted
+	r.Unknown.Types.FalsePositive = vuln.UnknownFalsePositive
+	r.Unknown.Types.Corrected = vuln.UnknownCorrected
 	return r
 }

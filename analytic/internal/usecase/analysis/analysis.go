@@ -82,18 +82,17 @@ func (u *UseCase) ParseAnalysisToVulnerabilitiesByRepository(
 	analysisEntity *analysis.Analysis) (entitiesByRepository []dashboard.VulnerabilitiesByRepository) {
 	for indexNN := range analysisEntity.AnalysisVulnerabilities {
 		entitiesByRepository = u.appendEntitiesByRepository(&analysisEntity.AnalysisVulnerabilities[indexNN],
-			analysisEntity.WorkspaceID, analysisEntity.RepositoryID, entitiesByRepository)
+			analysisEntity.WorkspaceID, analysisEntity.RepositoryID, analysisEntity.RepositoryName, entitiesByRepository)
 	}
 	return entitiesByRepository
 }
 
 func (u *UseCase) appendEntitiesByRepository(manyToMany *analysis.AnalysisVulnerabilities,
-	workspaceID, repositoryID uuid.UUID,
+	workspaceID, repositoryID uuid.UUID, repositoryName string,
 	entitiesByRepository []dashboard.VulnerabilitiesByRepository) []dashboard.VulnerabilitiesByRepository {
 	index, exists := u.existsRepositoryInList(entitiesByRepository, repositoryID)
 	if !exists {
-		toAppend := u.newVulnerabilitiesByRepository(manyToMany.Vulnerability.CommitEmail,
-			workspaceID, repositoryID, &manyToMany.Vulnerability)
+		toAppend := u.newVulnerabilitiesByRepository(repositoryName, workspaceID, repositoryID, &manyToMany.Vulnerability)
 		entitiesByRepository = append(entitiesByRepository, toAppend)
 	} else if len(entitiesByRepository) > 0 {
 		entityToAppend := &entitiesByRepository[index]

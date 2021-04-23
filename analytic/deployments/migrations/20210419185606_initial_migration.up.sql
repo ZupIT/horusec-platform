@@ -28,6 +28,10 @@ CREATE TABLE IF NOT EXISTS "vulnerabilities_by_author"
     "info_false_positive" INT NOT NULL,
     "info_risk_accepted" INT NOT NULL,
     "info_corrected" INT NOT NULL,
+    "unknown_vulnerability" INT NOT NULL,
+    "unknown_false_positive" INT NOT NULL,
+    "unknown_risk_accepted" INT NOT NULL,
+    "unknown_corrected" INT NOT NULL,
     PRIMARY KEY (vulnerability_id)
 );
 
@@ -59,6 +63,10 @@ CREATE TABLE IF NOT EXISTS "vulnerabilities_by_language"
     "info_false_positive" INT NOT NULL,
     "info_risk_accepted" INT NOT NULL,
     "info_corrected" INT NOT NULL,
+    "unknown_vulnerability" INT NOT NULL,
+    "unknown_false_positive" INT NOT NULL,
+    "unknown_risk_accepted" INT NOT NULL,
+    "unknown_corrected" INT NOT NULL,
     PRIMARY KEY (vulnerability_id)
 );
 
@@ -70,7 +78,6 @@ CREATE TABLE IF NOT EXISTS "vulnerabilities_by_repository"
     "active" BOOLEAN NOT NULL,
     "workspace_id" UUID NOT NULL,
     "repository_id" UUID NOT NULL,
-    "is_last" BOOLEAN NOT NULL,
     "critical_vulnerability" INT NOT NULL,
     "critical_false_positive" INT NOT NULL,
     "critical_risk_accepted" INT NOT NULL,
@@ -91,6 +98,10 @@ CREATE TABLE IF NOT EXISTS "vulnerabilities_by_repository"
     "info_false_positive" INT NOT NULL,
     "info_risk_accepted" INT NOT NULL,
     "info_corrected" INT NOT NULL,
+    "unknown_vulnerability" INT NOT NULL,
+    "unknown_false_positive" INT NOT NULL,
+    "unknown_risk_accepted" INT NOT NULL,
+    "unknown_corrected" INT NOT NULL,
     PRIMARY KEY (vulnerability_id)
 );
 
@@ -121,6 +132,10 @@ CREATE TABLE IF NOT EXISTS "vulnerabilities_by_time"
     "info_false_positive" INT NOT NULL,
     "info_risk_accepted" INT NOT NULL,
     "info_corrected" INT NOT NULL,
+    "unknown_vulnerability" INT NOT NULL,
+    "unknown_false_positive" INT NOT NULL,
+    "unknown_risk_accepted" INT NOT NULL,
+    "unknown_corrected" INT NOT NULL,
     PRIMARY KEY (vulnerability_id)
 );
 

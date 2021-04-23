@@ -35,6 +35,10 @@ type Vulnerability struct {
 	InfoFalsePositive     int       `json:"infoFalsePositive" gorm:"Column:info_false_positive"`
 	InfoRiskAccepted      int       `json:"infoRiskAccepted" gorm:"Column:info_risk_accepted"`
 	InfoCorrected         int       `json:"infoCorrected" gorm:"Column:info_corrected"`
+	UnknownVulnerability  int       `json:"unknownVulnerability" gorm:"Column:unknown_vulnerability"`
+	UnknownFalsePositive  int       `json:"unknownFalsePositive" gorm:"Column:unknown_false_positive"`
+	UnknownRiskAccepted   int       `json:"unknownRiskAccepted" gorm:"Column:unknown_risk_accepted"`
+	UnknownCorrected      int       `json:"unknownCorrected" gorm:"Column:unknown_corrected"`
 }
 
 func (v *Vulnerability) ToResponseSeverity() ResponseSeverity {
@@ -44,16 +48,18 @@ func (v *Vulnerability) ToResponseSeverity() ResponseSeverity {
 		Medium:   &ResponseSeverityContAndTypes{Count: 0, Types: &ResponseVulnTypes{}},
 		Low:      &ResponseSeverityContAndTypes{Count: 0, Types: &ResponseVulnTypes{}},
 		Info:     &ResponseSeverityContAndTypes{Count: 0, Types: &ResponseVulnTypes{}},
+		Unknown:  &ResponseSeverityContAndTypes{Count: 0, Types: &ResponseVulnTypes{}},
 	}
 	responseSeverity = responseSeverity.SumVulnerabilityCritical(v)
 	responseSeverity = responseSeverity.SumVulnerabilityHigh(v)
 	responseSeverity = responseSeverity.SumVulnerabilityMedium(v)
 	responseSeverity = responseSeverity.SumVulnerabilityLow(v)
 	responseSeverity = responseSeverity.SumVulnerabilityInfo(v)
+	responseSeverity = responseSeverity.SumVulnerabilityUnknown(v)
 	return *responseSeverity
 }
 
-// nolint:exhaustive,funlen,gocyclo // is not necessary unknown type and factory of severity
+// nolint:funlen,gocyclo // is not necessary unknown type and factory of severity
 func (v *Vulnerability) AddCountVulnerabilityBySeverity(
 	count int, severity severities.Severity, vulnType vulnerability.Type) {
 	switch severity {
@@ -67,6 +73,8 @@ func (v *Vulnerability) AddCountVulnerabilityBySeverity(
 		v.AddCountVulnerabilityLow(count, vulnType)
 	case severities.Info:
 		v.AddCountVulnerabilityInfo(count, vulnType)
+	case severities.Unknown:
+		v.AddCountVulnerabilityUnknown(count, vulnType)
 	}
 }
 
@@ -84,7 +92,7 @@ func (v *Vulnerability) AddCountVulnerabilityCritical(count int, vulnType vulner
 	}
 }
 
-// nolint:exhaustive // is not necessary unknown type
+// nolint:exhaustive // is not duplicate method
 func (v *Vulnerability) AddCountVulnerabilityHigh(count int, vulnType vulnerability.Type) {
 	switch vulnType {
 	case vulnerability.Vulnerability:
@@ -98,7 +106,7 @@ func (v *Vulnerability) AddCountVulnerabilityHigh(count int, vulnType vulnerabil
 	}
 }
 
-// nolint:exhaustive // is not necessary unknown type
+// nolint:exhaustive // is not duplicate method
 func (v *Vulnerability) AddCountVulnerabilityMedium(count int, vulnType vulnerability.Type) {
 	switch vulnType {
 	case vulnerability.Vulnerability:
@@ -112,7 +120,7 @@ func (v *Vulnerability) AddCountVulnerabilityMedium(count int, vulnType vulnerab
 	}
 }
 
-// nolint:exhaustive // is not necessary unknown type
+// nolint:exhaustive // is not duplicate method
 func (v *Vulnerability) AddCountVulnerabilityLow(count int, vulnType vulnerability.Type) {
 	switch vulnType {
 	case vulnerability.Vulnerability:
@@ -126,7 +134,7 @@ func (v *Vulnerability) AddCountVulnerabilityLow(count int, vulnType vulnerabili
 	}
 }
 
-// nolint:exhaustive // is not necessary unknown type
+// nolint:exhaustive // is not duplicate method
 func (v *Vulnerability) AddCountVulnerabilityInfo(count int, vulnType vulnerability.Type) {
 	switch vulnType {
 	case vulnerability.Vulnerability:
@@ -137,5 +145,19 @@ func (v *Vulnerability) AddCountVulnerabilityInfo(count int, vulnType vulnerabil
 		v.InfoFalsePositive += count
 	case vulnerability.Corrected:
 		v.InfoCorrected += count
+	}
+}
+
+// nolint:exhaustive // is not duplicate method
+func (v *Vulnerability) AddCountVulnerabilityUnknown(count int, vulnType vulnerability.Type) {
+	switch vulnType {
+	case vulnerability.Vulnerability:
+		v.UnknownVulnerability += count
+	case vulnerability.RiskAccepted:
+		v.UnknownRiskAccepted += count
+	case vulnerability.FalsePositive:
+		v.UnknownFalsePositive += count
+	case vulnerability.Corrected:
+		v.UnknownCorrected += count
 	}
 }
