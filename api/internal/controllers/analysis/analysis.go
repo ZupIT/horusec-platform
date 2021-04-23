@@ -25,7 +25,6 @@ import (
 	"github.com/ZupIT/horusec-platform/api/internal/repositories/repository"
 
 	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
-	"github.com/ZupIT/horusec-devkit/pkg/enums/queues"
 	appConfiguration "github.com/ZupIT/horusec-devkit/pkg/services/app"
 	brokerService "github.com/ZupIT/horusec-devkit/pkg/services/broker"
 	"github.com/ZupIT/horusec-devkit/pkg/services/database/enums"
@@ -150,7 +149,7 @@ func (c *Controller) hasDuplicatedHash(
 
 func (c *Controller) publishInBroker(analysisData *analysis.Analysis) error {
 	if !c.appConfig.IsBrokerDisabled() {
-		return c.broker.Publish(queues.HorusecNewAnalysis.ToString(), exchange.NewAnalysis.ToString(),
+		return c.broker.Publish("", exchange.NewAnalysis.ToString(),
 			exchange.Fanout.ToString(), analysisData.ToBytes())
 	}
 	return nil

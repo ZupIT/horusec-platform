@@ -143,6 +143,7 @@ func (au *UseCases) sliceSeverities() []interface{} {
 		severities.Medium,
 		severities.Low,
 		severities.Info,
+		severities.Unknown,
 	}
 }
 
