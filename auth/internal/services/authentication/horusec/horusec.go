@@ -2,11 +2,11 @@ package horusec
 
 import (
 	"github.com/google/uuid"
-	"github.com/patrickmn/go-cache"
 	"github.com/pkg/errors"
 
 	accountEnums "github.com/ZupIT/horusec-devkit/pkg/enums/account"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/auth"
+	"github.com/ZupIT/horusec-devkit/pkg/services/cache"
 	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth/proto"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/jwt"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/parser"
@@ -30,15 +30,15 @@ type IService interface {
 type Service struct {
 	accountRepository accountRepository.IRepository
 	authUseCases      authUseCases.IUseCases
-	cache             *cache.Cache
+	cache             cache.ICache
 	authRepository    authRepository.IRepository
 	appConfig         app.IConfig
 }
 
 func NewHorusecAuthenticationService(repositoryAccount accountRepository.IRepository, appConfig app.IConfig,
-	useCasesAuth authUseCases.IUseCases, repositoryAuth authRepository.IRepository) IService {
+	useCasesAuth authUseCases.IUseCases, repositoryAuth authRepository.IRepository, cache cache.ICache) IService {
 	return &Service{
-		cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
+		cache:             cache,
 		authUseCases:      useCasesAuth,
 		accountRepository: repositoryAccount,
 		authRepository:    repositoryAuth,
@@ -70,7 +70,7 @@ func (s *Service) setTokensAndResponse(account *accountEntities.Account) (*authE
 
 func (s *Service) setRefreshTokenCache(accountID, refreshToken string) {
 	s.cache.Delete(refreshToken)
-	_ = s.cache.Add(refreshToken, accountID, authEnums.TokenDuration)
+	s.cache.Set(refreshToken, accountID, authEnums.TokenDuration)
 }
 
 func (s *Service) IsAuthorized(data *authEntities.AuthorizationData) (bool, error) {

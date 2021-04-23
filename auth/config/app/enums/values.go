@@ -8,6 +8,7 @@ const (
 	EnvApplicationAdminData     = "HORUSEC_APPLICATION_ADMIN_DATA"
 	EnvEnableDefaultUser        = "HORUSEC_ENABLE_DEFAULT_USER"
 	EnvDefaultUserData          = "HORUSEC_DEFAULT_USER_DATA"
+	EnvHorusecManager           = "HORUSEC_MANAGER_URL"
 	DefaultUserData             = "{\"username\": \"dev\", \"email\":\"dev@example.com\", \"password\":\"Devpass0*\"}"
 	ApplicationAdminDefaultData = "{\"username\": \"horusec-admin\", \"email\":\"horusec-admin@example.com\"," +
 		" \"password\":\"Devpass0*\"}"

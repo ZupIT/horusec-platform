@@ -3,9 +3,8 @@ package ldap
 import (
 	"strings"
 
-	"github.com/patrickmn/go-cache"
-
 	"github.com/ZupIT/horusec-devkit/pkg/enums/auth"
+	"github.com/ZupIT/horusec-devkit/pkg/services/cache"
 	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth/proto"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/env"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/jwt"
@@ -28,7 +27,7 @@ type Service struct {
 	authRepository    authRepository.IRepository
 	authUseCases      authUseCases.IUseCases
 	appConfig         app.IConfig
-	cache             *cache.Cache
+	cache             cache.ICache
 }
 
 type IService interface {
@@ -38,9 +37,9 @@ type IService interface {
 }
 
 func NewLDAPAuthenticationService(repositoryAccount accountRepository.IRepository, useCasesAuth authUseCases.IUseCases,
-	appConfig app.IConfig, repositoryAuth authRepository.IRepository) IService {
+	appConfig app.IConfig, repositoryAuth authRepository.IRepository, cacheLib cache.ICache) IService {
 	return &Service{
-		cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
+		cache:             cacheLib,
 		ldap:              client.NewLdapClient(),
 		accountRepository: repositoryAccount,
 		authUseCases:      useCasesAuth,
@@ -109,7 +108,7 @@ func (s *Service) newLoginResponse(account *accountEntities.Account,
 
 func (s *Service) setRefreshTokenCache(accountID, refreshToken string) {
 	s.cache.Delete(refreshToken)
-	_ = s.cache.Add(refreshToken, accountID, authEnums.TokenDuration)
+	s.cache.Set(refreshToken, accountID, authEnums.TokenDuration)
 }
 
 func (s *Service) isApplicationAdmin(userGroups []string) bool {

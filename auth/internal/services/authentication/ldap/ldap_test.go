@@ -6,16 +6,15 @@ import (
 	"testing"
 
 	"github.com/google/uuid"
-	"github.com/patrickmn/go-cache"
 	"github.com/stretchr/testify/assert"
 
 	authorization "github.com/ZupIT/horusec-devkit/pkg/enums/auth"
+	"github.com/ZupIT/horusec-devkit/pkg/services/cache"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/jwt"
 
 	"github.com/ZupIT/horusec-platform/auth/config/app"
 	accountEntities "github.com/ZupIT/horusec-platform/auth/internal/entities/account"
 	authEntities "github.com/ZupIT/horusec-platform/auth/internal/entities/authentication"
-	authEnums "github.com/ZupIT/horusec-platform/auth/internal/enums/authentication"
 	ldapEnums "github.com/ZupIT/horusec-platform/auth/internal/enums/authentication/ldap"
 	accountRepository "github.com/ZupIT/horusec-platform/auth/internal/repositories/account"
 	authRepository "github.com/ZupIT/horusec-platform/auth/internal/repositories/authentication"
@@ -25,8 +24,8 @@ import (
 
 func TestNewLDAPAuthenticationService(t *testing.T) {
 	t.Run("should success create a new service", func(t *testing.T) {
-		assert.NotNil(t, NewLDAPAuthenticationService(
-			nil, nil, nil, nil))
+		assert.NotNil(t, NewLDAPAuthenticationService(nil, nil, nil,
+			nil, nil))
 	})
 }
 
@@ -50,7 +49,7 @@ func TestLogin(t *testing.T) {
 		ldapMock.On("Close")
 
 		service := Service{
-			cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
+			cache:             cache.NewCache(),
 			ldap:              ldapMock,
 			accountRepository: accountRepositoryMock,
 			authRepository:    authRepositoryMock,
@@ -86,7 +85,7 @@ func TestLogin(t *testing.T) {
 		ldapMock.On("Close")
 
 		service := Service{
-			cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
+			cache:             cache.NewCache(),
 			ldap:              ldapMock,
 			accountRepository: accountRepositoryMock,
 			authRepository:    authRepositoryMock,
@@ -122,7 +121,7 @@ func TestLogin(t *testing.T) {
 		ldapMock.On("Close")
 
 		service := Service{
-			cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
+			cache:             cache.NewCache(),
 			ldap:              ldapMock,
 			accountRepository: accountRepositoryMock,
 			authRepository:    authRepositoryMock,
@@ -154,7 +153,7 @@ func TestLogin(t *testing.T) {
 		ldapMock.On("Close")
 
 		service := Service{
-			cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
+			cache:             cache.NewCache(),
 			ldap:              ldapMock,
 			accountRepository: accountRepositoryMock,
 			authRepository:    authRepositoryMock,
@@ -177,7 +176,7 @@ func TestLogin(t *testing.T) {
 			true, map[string]string{}, ldapEnums.ErrorUserDoesNotExist)
 
 		service := Service{
-			cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
+			cache:             cache.NewCache(),
 			ldap:              ldapMock,
 			accountRepository: accountRepositoryMock,
 			authRepository:    authRepositoryMock,
@@ -201,7 +200,7 @@ func TestLogin(t *testing.T) {
 			true, map[string]string{}, ldapEnums.ErrorLdapUnauthorized)
 
 		service := Service{
-			cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
+			cache:             cache.NewCache(),
 			ldap:              ldapMock,
 			accountRepository: accountRepositoryMock,
 			authRepository:    authRepositoryMock,
@@ -234,7 +233,7 @@ func TestLogin(t *testing.T) {
 		ldapMock.On("Close")
 
 		service := Service{
-			cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
+			cache:             cache.NewCache(),
 			ldap:              ldapMock,
 			accountRepository: accountRepositoryMock,
 			authRepository:    authRepositoryMock,
@@ -268,7 +267,7 @@ func TestIsAuthorizedApplicationAdmin(t *testing.T) {
 		}
 
 		service := Service{
-			cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
+			cache:             cache.NewCache(),
 			ldap:              ldapMock,
 			accountRepository: accountRepositoryMock,
 			authRepository:    authRepositoryMock,
@@ -308,7 +307,7 @@ func TestIsAuthorizedApplicationAdmin(t *testing.T) {
 		}
 
 		service := Service{
-			cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
+			cache:             cache.NewCache(),
 			ldap:              ldapMock,
 			accountRepository: accountRepositoryMock,
 			authRepository:    authRepositoryMock,
@@ -348,7 +347,7 @@ func TestIsAuthorizedApplicationAdmin(t *testing.T) {
 		}
 
 		service := Service{
-			cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
+			cache:             cache.NewCache(),
 			ldap:              ldapMock,
 			accountRepository: accountRepositoryMock,
 			authRepository:    authRepositoryMock,
@@ -381,7 +380,7 @@ func TestIsAuthorizedApplicationAdmin(t *testing.T) {
 		}
 
 		service := Service{
-			cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
+			cache:             cache.NewCache(),
 			ldap:              ldapMock,
 			accountRepository: accountRepositoryMock,
 			authRepository:    authRepositoryMock,
@@ -419,7 +418,7 @@ func TestIsAuthorizedWorkspaceMember(t *testing.T) {
 		authRepositoryMock.On("GetWorkspaceGroups").Return(groups, nil)
 
 		service := Service{
-			cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
+			cache:             cache.NewCache(),
 			ldap:              ldapMock,
 			accountRepository: accountRepositoryMock,
 			authRepository:    authRepositoryMock,
@@ -457,7 +456,7 @@ func TestIsAuthorizedWorkspaceMember(t *testing.T) {
 		authRepositoryMock.On("GetWorkspaceGroups").Return(groups, nil)
 
 		service := Service{
-			cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
+			cache:             cache.NewCache(),
 			ldap:              ldapMock,
 			accountRepository: accountRepositoryMock,
 			authRepository:    authRepositoryMock,
@@ -495,7 +494,7 @@ func TestIsAuthorizedWorkspaceMember(t *testing.T) {
 		authRepositoryMock.On("GetWorkspaceGroups").Return(groups, errors.New("test"))
 
 		service := Service{
-			cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
+			cache:             cache.NewCache(),
 			ldap:              ldapMock,
 			accountRepository: accountRepositoryMock,
 			authRepository:    authRepositoryMock,
@@ -524,7 +523,7 @@ func TestIsAuthorizedWorkspaceMember(t *testing.T) {
 		authRepositoryMock := &authRepository.Mock{}
 
 		service := Service{
-			cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
+			cache:             cache.NewCache(),
 			ldap:              ldapMock,
 			accountRepository: accountRepositoryMock,
 			authRepository:    authRepositoryMock,
@@ -562,7 +561,7 @@ func TestIsAuthorizedWorkspaceAdmin(t *testing.T) {
 		authRepositoryMock.On("GetWorkspaceGroups").Return(groups, nil)
 
 		service := Service{
-			cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
+			cache:             cache.NewCache(),
 			ldap:              ldapMock,
 			accountRepository: accountRepositoryMock,
 			authRepository:    authRepositoryMock,
@@ -600,7 +599,7 @@ func TestIsAuthorizedWorkspaceAdmin(t *testing.T) {
 		authRepositoryMock.On("GetWorkspaceGroups").Return(groups, nil)
 
 		service := Service{
-			cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
+			cache:             cache.NewCache(),
 			ldap:              ldapMock,
 			accountRepository: accountRepositoryMock,
 			authRepository:    authRepositoryMock,
@@ -638,7 +637,7 @@ func TestIsAuthorizedWorkspaceAdmin(t *testing.T) {
 		authRepositoryMock.On("GetWorkspaceGroups").Return(groups, errors.New("test"))
 
 		service := Service{
-			cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
+			cache:             cache.NewCache(),
 			ldap:              ldapMock,
 			accountRepository: accountRepositoryMock,
 			authRepository:    authRepositoryMock,
@@ -667,7 +666,7 @@ func TestIsAuthorizedWorkspaceAdmin(t *testing.T) {
 		authRepositoryMock := &authRepository.Mock{}
 
 		service := Service{
-			cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
+			cache:             cache.NewCache(),
 			ldap:              ldapMock,
 			accountRepository: accountRepositoryMock,
 			authRepository:    authRepositoryMock,
@@ -706,7 +705,7 @@ func TestIsAuthorizedRepositoryAdmin(t *testing.T) {
 		authRepositoryMock.On("GetRepositoryGroups").Return(groups, nil)
 
 		service := Service{
-			cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
+			cache:             cache.NewCache(),
 			ldap:              ldapMock,
 			accountRepository: accountRepositoryMock,
 			authRepository:    authRepositoryMock,
@@ -745,7 +744,7 @@ func TestIsAuthorizedRepositoryAdmin(t *testing.T) {
 		authRepositoryMock.On("GetRepositoryGroups").Return(groups, nil)
 
 		service := Service{
-			cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
+			cache:             cache.NewCache(),
 			ldap:              ldapMock,
 			accountRepository: accountRepositoryMock,
 			authRepository:    authRepositoryMock,
@@ -784,7 +783,7 @@ func TestIsAuthorizedRepositoryAdmin(t *testing.T) {
 		authRepositoryMock.On("GetRepositoryGroups").Return(groups, errors.New("test"))
 
 		service := Service{
-			cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
+			cache:             cache.NewCache(),
 			ldap:              ldapMock,
 			accountRepository: accountRepositoryMock,
 			authRepository:    authRepositoryMock,
@@ -822,7 +821,7 @@ func TestIsAuthorizedRepositoryAdmin(t *testing.T) {
 		authRepositoryMock.On("GetWorkspaceGroups").Return(groups, errors.New("test"))
 
 		service := Service{
-			cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
+			cache:             cache.NewCache(),
 			ldap:              ldapMock,
 			accountRepository: accountRepositoryMock,
 			authRepository:    authRepositoryMock,
@@ -851,7 +850,7 @@ func TestIsAuthorizedRepositoryAdmin(t *testing.T) {
 		authRepositoryMock := &authRepository.Mock{}
 
 		service := Service{
-			cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
+			cache:             cache.NewCache(),
 			ldap:              ldapMock,
 			accountRepository: accountRepositoryMock,
 			authRepository:    authRepositoryMock,
@@ -890,7 +889,7 @@ func TestIsAuthorizedRepositorySupervisor(t *testing.T) {
 		authRepositoryMock.On("GetRepositoryGroups").Return(groups, nil)
 
 		service := Service{
-			cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
+			cache:             cache.NewCache(),
 			ldap:              ldapMock,
 			accountRepository: accountRepositoryMock,
 			authRepository:    authRepositoryMock,
@@ -929,7 +928,7 @@ func TestIsAuthorizedRepositorySupervisor(t *testing.T) {
 		authRepositoryMock.On("GetRepositoryGroups").Return(groups, nil)
 
 		service := Service{
-			cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
+			cache:             cache.NewCache(),
 			ldap:              ldapMock,
 			accountRepository: accountRepositoryMock,
 			authRepository:    authRepositoryMock,
@@ -968,7 +967,7 @@ func TestIsAuthorizedRepositorySupervisor(t *testing.T) {
 		authRepositoryMock.On("GetRepositoryGroups").Return(groups, errors.New("test"))
 
 		service := Service{
-			cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
+			cache:             cache.NewCache(),
 			ldap:              ldapMock,
 			accountRepository: accountRepositoryMock,
 			authRepository:    authRepositoryMock,
@@ -1006,7 +1005,7 @@ func TestIsAuthorizedRepositorySupervisor(t *testing.T) {
 		authRepositoryMock.On("GetWorkspaceGroups").Return(groups, errors.New("test"))
 
 		service := Service{
-			cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
+			cache:             cache.NewCache(),
 			ldap:              ldapMock,
 			accountRepository: accountRepositoryMock,
 			authRepository:    authRepositoryMock,
@@ -1035,7 +1034,7 @@ func TestIsAuthorizedRepositorySupervisor(t *testing.T) {
 		authRepositoryMock := &authRepository.Mock{}
 
 		service := Service{
-			cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
+			cache:             cache.NewCache(),
 			ldap:              ldapMock,
 			accountRepository: accountRepositoryMock,
 			authRepository:    authRepositoryMock,
@@ -1074,7 +1073,7 @@ func TestIsAuthorizedRepositoryMember(t *testing.T) {
 		authRepositoryMock.On("GetRepositoryGroups").Return(groups, nil)
 
 		service := Service{
-			cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
+			cache:             cache.NewCache(),
 			ldap:              ldapMock,
 			accountRepository: accountRepositoryMock,
 			authRepository:    authRepositoryMock,
@@ -1113,7 +1112,7 @@ func TestIsAuthorizedRepositoryMember(t *testing.T) {
 		authRepositoryMock.On("GetRepositoryGroups").Return(groups, nil)
 
 		service := Service{
-			cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
+			cache:             cache.NewCache(),
 			ldap:              ldapMock,
 			accountRepository: accountRepositoryMock,
 			authRepository:    authRepositoryMock,
@@ -1152,7 +1151,7 @@ func TestIsAuthorizedRepositoryMember(t *testing.T) {
 		authRepositoryMock.On("GetRepositoryGroups").Return(groups, errors.New("test"))
 
 		service := Service{
-			cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
+			cache:             cache.NewCache(),
 			ldap:              ldapMock,
 			accountRepository: accountRepositoryMock,
 			authRepository:    authRepositoryMock,
@@ -1190,7 +1189,7 @@ func TestIsAuthorizedRepositoryMember(t *testing.T) {
 		authRepositoryMock.On("GetWorkspaceGroups").Return(groups, errors.New("test"))
 
 		service := Service{
-			cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
+			cache:             cache.NewCache(),
 			ldap:              ldapMock,
 			accountRepository: accountRepositoryMock,
 			authRepository:    authRepositoryMock,
@@ -1219,7 +1218,7 @@ func TestIsAuthorizedRepositoryMember(t *testing.T) {
 		authRepositoryMock := &authRepository.Mock{}
 
 		service := Service{
-			cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
+			cache:             cache.NewCache(),
 			ldap:              ldapMock,
 			accountRepository: accountRepositoryMock,
 			authRepository:    authRepositoryMock,
@@ -1273,7 +1272,7 @@ func TestGetAccountDataFromToken(t *testing.T) {
 		accountRepositoryMock.On("GetAccount").Return(account, nil)
 
 		service := Service{
-			cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
+			cache:             cache.NewCache(),
 			ldap:              ldapMock,
 			accountRepository: accountRepositoryMock,
 			authRepository:    authRepositoryMock,
@@ -1307,7 +1306,7 @@ func TestGetAccountDataFromToken(t *testing.T) {
 		accountRepositoryMock.On("GetAccount").Return(account, errors.New("test"))
 
 		service := Service{
-			cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
+			cache:             cache.NewCache(),
 			ldap:              ldapMock,
 			accountRepository: accountRepositoryMock,
 			authRepository:    authRepositoryMock,
@@ -1339,7 +1338,7 @@ func TestGetAccountDataFromToken(t *testing.T) {
 		accountRepositoryMock.On("GetAccount").Return(account, errors.New("test"))
 
 		service := Service{
-			cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
+			cache:             cache.NewCache(),
 			ldap:              ldapMock,
 			accountRepository: accountRepositoryMock,
 			authRepository:    authRepositoryMock,
@@ -1361,7 +1360,7 @@ func TestGetAccountDataFromToken(t *testing.T) {
 		ldapMock := &client.Mock{}
 
 		service := Service{
-			cache:             cache.New(authEnums.TokenDuration, authEnums.TokenCheckExpiredDuration),
+			cache:             cache.NewCache(),
 			ldap:              ldapMock,
 			accountRepository: accountRepositoryMock,
 			authRepository:    authRepositoryMock,

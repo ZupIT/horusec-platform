@@ -10,6 +10,7 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/services/database"
 	databaseConfig "github.com/ZupIT/horusec-devkit/pkg/services/database/config"
 	"github.com/ZupIT/horusec-devkit/pkg/services/http"
+	"github.com/ZupIT/horusec-devkit/pkg/services/cache"
 
 	"github.com/ZupIT/horusec-platform/auth/config/app"
 	"github.com/ZupIT/horusec-platform/auth/config/cors"
@@ -34,6 +35,7 @@ var devKitProviders = wire.NewSet(
 	brokerConfig.NewBrokerConfig,
 	broker.NewBroker,
 	database.NewDatabaseReadAndWrite,
+	cache.NewCache,
 )
 
 var configProviders = wire.NewSet(

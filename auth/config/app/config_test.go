@@ -61,3 +61,19 @@ func TestToGetAuthConfigResponse(t *testing.T) {
 		assert.Equal(t, auth.Horusec.ToString(), result.AuthType)
 	})
 }
+
+func TestGetHorusecAuthURL(t *testing.T) {
+	t.Run("should success get auth url", func(t *testing.T) {
+		appConfig := NewAuthAppConfig()
+
+		assert.Equal(t, "http://localhost:8006", appConfig.GetHorusecAuthURL())
+	})
+}
+
+func TestGetHorusecManagerURL(t *testing.T) {
+	t.Run("should success get manager url", func(t *testing.T) {
+		appConfig := NewAuthAppConfig()
+
+		assert.Equal(t, "http://localhost:8043", appConfig.GetHorusecManagerURL())
+	})
+}

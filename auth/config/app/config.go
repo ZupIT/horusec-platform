@@ -14,6 +14,8 @@ type IConfig interface {
 	IsApplicationAdminEnabled() bool
 	IsDisableBroker() bool
 	ToGetAuthConfigResponse() *proto.GetAuthConfigResponse
+	GetHorusecAuthURL() string
+	GetHorusecManagerURL() string
 }
 
 type Config struct {
@@ -24,6 +26,7 @@ type Config struct {
 	ApplicationAdminData   string
 	EnableDefaultUser      bool
 	DefaultUserData        string
+	HorusecManagerURL      string
 }
 
 func NewAuthAppConfig() IConfig {
@@ -35,6 +38,7 @@ func NewAuthAppConfig() IConfig {
 		ApplicationAdminData:   env.GetEnvOrDefault(enums.EnvApplicationAdminData, enums.ApplicationAdminDefaultData),
 		EnableDefaultUser:      env.GetEnvOrDefaultBool(enums.EnvEnableDefaultUser, true),
 		DefaultUserData:        env.GetEnvOrDefault(enums.EnvDefaultUserData, enums.DefaultUserData),
+		HorusecManagerURL:      env.GetEnvOrDefault(enums.EnvHorusecManager, "http://localhost:8043"),
 	}
 }
 
@@ -64,4 +68,12 @@ func (c *Config) ToGetAuthConfigResponse() *proto.GetAuthConfigResponse {
 		AuthType:               c.AuthType.ToString(),
 		DisableBroker:          c.DisableBroker,
 	}
+}
+
+func (c *Config) GetHorusecAuthURL() string {
+	return c.HorusecAuthURL
+}
+
+func (c *Config) GetHorusecManagerURL() string {
+	return c.HorusecManagerURL
 }

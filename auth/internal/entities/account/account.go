@@ -80,3 +80,13 @@ func (a *Account) ToGetAccountDataResponse(permissions []string) *proto.GetAccou
 		Permissions:        permissions,
 	}
 }
+
+func (a *Account) SetIsConfirmedTrue() {
+	a.IsConfirmed = true
+}
+
+func (a *Account) Update() *Account {
+	a.UpdatedAt = time.Now()
+
+	return a
+}

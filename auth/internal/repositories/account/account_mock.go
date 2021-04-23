@@ -32,3 +32,8 @@ func (m *Mock) CreateAccount(_ *accountEntities.Account) (*accountEntities.Accou
 	args := m.MethodCalled("CreateAccount")
 	return args.Get(0).(*accountEntities.Account), mockUtils.ReturnNilOrError(args, 1)
 }
+
+func (m *Mock) Update(_ *accountEntities.Account) (*accountEntities.Account, error) {
+	args := m.MethodCalled("Update")
+	return args.Get(0).(*accountEntities.Account), mockUtils.ReturnNilOrError(args, 1)
+}

@@ -1,9 +1,17 @@
 package account
 
 import (
+	"fmt"
 	"io"
+	"math/rand"
 	"strings"
 	"time"
+
+	"github.com/ZupIT/horusec-platform/auth/config/app"
+
+	emailEnums "github.com/ZupIT/horusec-devkit/pkg/enums/email"
+
+	"github.com/ZupIT/horusec-devkit/pkg/entities/email"
 
 	"github.com/Nerzal/gocloak/v7"
 	"github.com/google/uuid"
@@ -21,13 +29,21 @@ type IUseCases interface {
 	NewAccountFromKeycloakUserInfo(userInfo *gocloak.UserInfo) *accountEntities.Account
 	CheckCreateAccountErrors(err error) error
 	AccessTokenFromIOReadCloser(body io.ReadCloser) (string, error)
+	AccountDataFromIOReadCloser(body io.ReadCloser) (*accountEntities.Data, error)
+	NewAccountValidationEmail(account *accountEntities.Account) []byte
+	EmailFromIOReadCloser(body io.ReadCloser) (string, error)
+	GenerateResetPasswordCode() string
+	NewResetPasswordCodeEmail(account *accountEntities.Account, code string) []byte
 }
 
 type UseCases struct {
+	appConfig app.IConfig
 }
 
-func NewAccountUseCases() IUseCases {
-	return &UseCases{}
+func NewAccountUseCases(appConfig app.IConfig) IUseCases {
+	return &UseCases{
+		appConfig: appConfig,
+	}
 }
 
 func (u *UseCases) FilterAccountByID(accountID uuid.UUID) map[string]interface{} {
@@ -79,11 +95,77 @@ func (u *UseCases) contains(err error, check string) bool {
 }
 
 func (u *UseCases) AccessTokenFromIOReadCloser(body io.ReadCloser) (string, error) {
-	var accessToken string
+	data := &map[string]string{"accessToken": ""}
 
-	if err := parser.ParseBodyToEntity(body, accessToken); err != nil {
+	if err := parser.ParseBodyToEntity(body, data); err != nil {
 		return "", err
 	}
 
-	return accessToken, nil
+	result := *data
+	return result["accessToken"], nil
+}
+
+func (u *UseCases) AccountDataFromIOReadCloser(body io.ReadCloser) (*accountEntities.Data, error) {
+	data := &accountEntities.Data{}
+
+	if err := parser.ParseBodyToEntity(body, data); err != nil {
+		return nil, err
+	}
+
+	return data, data.Validate()
+}
+
+func (u *UseCases) NewAccountValidationEmail(account *accountEntities.Account) []byte {
+	message := &email.Message{
+		To:           account.Email,
+		Subject:      "[Horusec] Account Confirmation Email",
+		TemplateName: emailEnums.AccountConfirmation,
+		Data: map[string]interface{}{"Username": account.Username,
+			"URL": u.getAccountValidationEmailURL(account.AccountID)},
+	}
+
+	return message.ToBytes()
+}
+
+func (u *UseCases) getAccountValidationEmailURL(accountID uuid.UUID) string {
+	return fmt.Sprintf("%s/auth/account/validate/%s", u.appConfig.GetHorusecAuthURL(), accountID)
+}
+
+func (u *UseCases) EmailFromIOReadCloser(body io.ReadCloser) (string, error) {
+	data := &map[string]string{"email": ""}
+
+	if err := parser.ParseBodyToEntity(body, data); err != nil {
+		return "", err
+	}
+
+	result := *data
+	return result["email"], nil
+}
+
+func (u *UseCases) GenerateResetPasswordCode() string {
+	seededRand := rand.New(rand.NewSource(time.Now().UnixNano()))
+
+	code := make([]byte, 6)
+	for i := range code {
+		code[i] = accountEnums.ResetPasswordCharset[seededRand.Intn(len(accountEnums.ResetPasswordCharset))]
+	}
+
+	return string(code)
+}
+
+func (u *UseCases) NewResetPasswordCodeEmail(account *accountEntities.Account, code string) []byte {
+	message := &email.Message{
+		To:           account.Email,
+		Subject:      "[Horusec] Reset Password",
+		TemplateName: emailEnums.ResetPassword,
+		Data: map[string]interface{}{"Username": account.Username, "Code": code,
+			"URL": u.getResetPasswordCodeEmailURL(account.Email, code)},
+	}
+
+	return message.ToBytes()
+}
+
+func (u *UseCases) getResetPasswordCodeEmailURL(email, code string) string {
+	return fmt.Sprintf("%s/auth/recovery-password/check-code?email=%s&code=%s",
+		u.appConfig.GetHorusecManagerURL(), email, code)
 }

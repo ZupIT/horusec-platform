@@ -8,6 +8,7 @@ package providers
 import (
 	"github.com/ZupIT/horusec-devkit/pkg/services/broker"
 	config2 "github.com/ZupIT/horusec-devkit/pkg/services/broker/config"
+	"github.com/ZupIT/horusec-devkit/pkg/services/cache"
 	"github.com/ZupIT/horusec-devkit/pkg/services/database"
 	"github.com/ZupIT/horusec-devkit/pkg/services/database/config"
 	"github.com/ZupIT/horusec-devkit/pkg/services/http"
@@ -42,11 +43,12 @@ func Initialize(string2 string) (router.IRouter, error) {
 	if err != nil {
 		return nil, err
 	}
-	accountIUseCases := account.NewAccountUseCases()
+	accountIUseCases := account.NewAccountUseCases(iConfig)
 	iRepository := account2.NewAccountRepository(connection, accountIUseCases)
 	authenticationIRepository := authentication2.NewAuthenticationRepository(connection, iUseCases)
-	iService := horusec.NewHorusecAuthenticationService(iRepository, iConfig, iUseCases, authenticationIRepository)
-	ldapIService := ldap.NewLDAPAuthenticationService(iRepository, iUseCases, iConfig, authenticationIRepository)
+	iCache := cache.NewCache()
+	iService := horusec.NewHorusecAuthenticationService(iRepository, iConfig, iUseCases, authenticationIRepository, iCache)
+	ldapIService := ldap.NewLDAPAuthenticationService(iRepository, iUseCases, iConfig, authenticationIRepository, iCache)
 	keycloakIService := keycloak.NewKeycloakAuthenticationService(iRepository, iConfig, iUseCases, authenticationIRepository)
 	iController := authentication3.NewAuthenticationController(iConfig, iService, ldapIService, keycloakIService)
 	handler := authentication4.NewAuthenticationHandler(iConfig, iUseCases, iController)
@@ -57,7 +59,7 @@ func Initialize(string2 string) (router.IRouter, error) {
 
 // wire.go:
 
-var devKitProviders = wire.NewSet(http.NewHTTPRouter, config.NewDatabaseConfig, config2.NewBrokerConfig, broker.NewBroker, database.NewDatabaseReadAndWrite)
+var devKitProviders = wire.NewSet(http.NewHTTPRouter, config.NewDatabaseConfig, config2.NewBrokerConfig, broker.NewBroker, database.NewDatabaseReadAndWrite, cache.NewCache)
 
 var configProviders = wire.NewSet(grpc.NewAuthGRPCServer, cors.NewCorsConfig, router.NewHTTPRouter, app.NewAuthAppConfig)
 
