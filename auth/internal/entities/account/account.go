@@ -90,3 +90,10 @@ func (a *Account) Update() *Account {
 
 	return a
 }
+
+func (a *Account) SetNewPassword(password string) *Account {
+	a.Password = password
+	a.HashPassword()
+
+	return a.Update()
+}

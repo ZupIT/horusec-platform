@@ -16,6 +16,7 @@ type IRepository interface {
 	GetAccountByUsername(username string) (*accountEntities.Account, error)
 	CreateAccount(account *accountEntities.Account) (*accountEntities.Account, error)
 	Update(account *accountEntities.Account) (*accountEntities.Account, error)
+	Delete(accountID uuid.UUID) error
 }
 
 type Repository struct {
@@ -60,4 +61,8 @@ func (r *Repository) CreateAccount(account *accountEntities.Account) (*accountEn
 func (r *Repository) Update(account *accountEntities.Account) (*accountEntities.Account, error) {
 	return account, r.databaseWrite.Update(account, r.useCases.FilterAccountByID(account.AccountID),
 		accountEnums.DatabaseTableAccount).GetError()
+}
+
+func (r *Repository) Delete(accountID uuid.UUID) error {
+	return r.databaseWrite.Delete(r.useCases.FilterAccountByID(accountID), accountEnums.DatabaseTableAccount).GetError()
 }

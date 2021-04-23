@@ -1,10 +1,17 @@
 package account
 
 import (
+	"github.com/ZupIT/horusec-devkit/pkg/enums/auth"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/queues"
 	"github.com/ZupIT/horusec-devkit/pkg/services/broker"
 	"github.com/ZupIT/horusec-devkit/pkg/services/cache"
+	"github.com/ZupIT/horusec-devkit/pkg/utils/crypto"
+	"github.com/ZupIT/horusec-devkit/pkg/utils/jwt"
+	"github.com/ZupIT/horusec-devkit/pkg/utils/parser"
 	"github.com/google/uuid"
+
+	authEntities "github.com/ZupIT/horusec-platform/auth/internal/entities/authentication"
+	authEnums "github.com/ZupIT/horusec-platform/auth/internal/enums/authentication"
 
 	"github.com/ZupIT/horusec-platform/auth/config/app"
 	accountEntities "github.com/ZupIT/horusec-platform/auth/internal/entities/account"
@@ -19,6 +26,13 @@ type IController interface {
 	CreateAccountHorusec(data *accountEntities.Data) (*accountEntities.Response, error)
 	ValidateAccountEmail(accountID uuid.UUID) error
 	SendResetPasswordCode(email string) error
+	CheckResetPasswordCode(data *accountEntities.ResetCodeData) (string, error)
+	ChangePassword(data *accountEntities.ChangePasswordData) error
+	RefreshToken(refreshToken string) (*authEntities.LoginResponse, error)
+	Logout(refreshToken string)
+	CheckExistingEmailOrUsername(data *accountEntities.CheckEmailAndUsername) error
+	DeleteAccount(accountID uuid.UUID) error
+	GetAccountID(token string) (uuid.UUID, error)
 }
 
 type Controller struct {
@@ -110,4 +124,116 @@ func (c *Controller) sendResetPasswordCodeEmail(account *accountEntities.Account
 
 	return c.broker.Publish(queues.HorusecEmail.ToString(), "", "",
 		c.accountUseCases.NewResetPasswordCodeEmail(account, code))
+}
+
+func (c *Controller) CheckResetPasswordCode(data *accountEntities.ResetCodeData) (string, error) {
+	correctCode, err := c.cache.GetString(data.Email)
+	if err != nil {
+		return "", err
+	}
+
+	if data.Code != correctCode {
+		return "", accountEnums.ErrorIncorrectRetrievePasswordCode
+	}
+
+	return c.createAccessTokenIfCorrectCode(data)
+}
+
+func (c *Controller) createAccessTokenIfCorrectCode(data *accountEntities.ResetCodeData) (string, error) {
+	account, err := c.accountRepository.GetAccountByEmail(data.Email)
+	if err != nil {
+		return "", err
+	}
+
+	token, _, err := jwt.CreateToken(account.ToTokenData(), nil)
+	if err != nil {
+		return "", err
+	}
+
+	c.cache.Delete(data.Email)
+	return token, nil
+}
+
+func (c *Controller) ChangePassword(data *accountEntities.ChangePasswordData) error {
+	account, err := c.accountRepository.GetAccount(data.AccountID)
+	if err != nil {
+		return err
+	}
+
+	if crypto.CheckPasswordHashBcrypt(data.Password, account.Password) {
+		return accountEnums.ErrorPasswordEqualPrevious
+	}
+
+	_, err = c.accountRepository.Update(account.SetNewPassword(data.Password))
+	return err
+}
+
+func (c *Controller) RefreshToken(refreshToken string) (*authEntities.LoginResponse, error) {
+	accountID, err := c.cache.GetString(refreshToken)
+	if err != nil {
+		return nil, err
+	}
+
+	account, err := c.accountRepository.GetAccount(parser.ParseStringToUUID(accountID))
+	if err != nil {
+		return nil, err
+	}
+
+	c.cache.Delete(refreshToken)
+	return c.createNewTokens(account)
+}
+
+func (c *Controller) createNewTokens(account *accountEntities.Account) (*authEntities.LoginResponse, error) {
+	accessToken, expiresAt, err := jwt.CreateToken(account.ToTokenData(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	refreshToken := jwt.CreateRefreshToken()
+	c.cache.Set(refreshToken, account.AccountID, authEnums.TokenDuration)
+	return account.ToLoginResponse(accessToken, refreshToken, expiresAt), nil
+}
+
+func (c *Controller) Logout(refreshToken string) {
+	c.cache.Delete(refreshToken)
+}
+
+func (c *Controller) CheckExistingEmailOrUsername(data *accountEntities.CheckEmailAndUsername) error {
+	validateEmail, _ := c.accountRepository.GetAccountByEmail(data.Email)
+	if validateEmail != nil && validateEmail.Email != "" {
+		return accountEnums.ErrorEmailAlreadyInUse
+	}
+
+	validateUsername, _ := c.accountRepository.GetAccountByUsername(data.Username)
+	if validateUsername != nil && validateUsername.Username != "" {
+		return accountEnums.ErrorUsernameAlreadyInUse
+	}
+
+	return nil
+}
+
+func (c *Controller) DeleteAccount(accountID uuid.UUID) error {
+	return c.accountRepository.Delete(accountID)
+}
+
+func (c *Controller) GetAccountID(token string) (uuid.UUID, error) {
+	switch c.appConfig.GetAuthType() {
+	case auth.Horusec:
+		return jwt.GetAccountIDByJWTToken(token)
+	case auth.Keycloak:
+		return c.getAccountIDKeycloak(token)
+	case auth.Ldap:
+		return jwt.GetAccountIDByJWTToken(token)
+	}
+
+	return uuid.Nil, authEnums.ErrorAuthTypeInvalid
+}
+
+func (c *Controller) getAccountIDKeycloak(token string) (uuid.UUID, error) {
+	data, err := c.keycloakAuth.GetAccountDataFromToken(token)
+	if err != nil {
+		return uuid.Nil, err
+	}
+
+	return parser.ParseStringToUUID(data.AccountID), nil
 }

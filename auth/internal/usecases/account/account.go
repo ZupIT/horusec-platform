@@ -34,6 +34,10 @@ type IUseCases interface {
 	EmailFromIOReadCloser(body io.ReadCloser) (string, error)
 	GenerateResetPasswordCode() string
 	NewResetPasswordCodeEmail(account *accountEntities.Account, code string) []byte
+	ResetCodeDataFromIOReadCloser(body io.ReadCloser) (*accountEntities.ResetCodeData, error)
+	ChangePasswordDataFromIOReadCloser(body io.ReadCloser) (*accountEntities.ChangePasswordData, error)
+	RefreshTokenFromIOReadCloser(body io.ReadCloser) (string, error)
+	CheckEmailAndUsernameFromIOReadCloser(body io.ReadCloser) (*accountEntities.CheckEmailAndUsername, error)
 }
 
 type UseCases struct {
@@ -95,14 +99,13 @@ func (u *UseCases) contains(err error, check string) bool {
 }
 
 func (u *UseCases) AccessTokenFromIOReadCloser(body io.ReadCloser) (string, error) {
-	data := &map[string]string{"accessToken": ""}
+	data := &accountEntities.AccessToken{}
 
 	if err := parser.ParseBodyToEntity(body, data); err != nil {
 		return "", err
 	}
 
-	result := *data
-	return result["accessToken"], nil
+	return data.AccessToken, data.Validate()
 }
 
 func (u *UseCases) AccountDataFromIOReadCloser(body io.ReadCloser) (*accountEntities.Data, error) {
@@ -132,14 +135,13 @@ func (u *UseCases) getAccountValidationEmailURL(accountID uuid.UUID) string {
 }
 
 func (u *UseCases) EmailFromIOReadCloser(body io.ReadCloser) (string, error) {
-	data := &map[string]string{"email": ""}
+	data := &accountEntities.Email{}
 
 	if err := parser.ParseBodyToEntity(body, data); err != nil {
 		return "", err
 	}
 
-	result := *data
-	return result["email"], nil
+	return data.Email, data.Validate()
 }
 
 func (u *UseCases) GenerateResetPasswordCode() string {
@@ -168,4 +170,45 @@ func (u *UseCases) NewResetPasswordCodeEmail(account *accountEntities.Account, c
 func (u *UseCases) getResetPasswordCodeEmailURL(email, code string) string {
 	return fmt.Sprintf("%s/auth/recovery-password/check-code?email=%s&code=%s",
 		u.appConfig.GetHorusecManagerURL(), email, code)
+}
+
+func (u *UseCases) ResetCodeDataFromIOReadCloser(body io.ReadCloser) (*accountEntities.ResetCodeData, error) {
+	data := &accountEntities.ResetCodeData{}
+
+	if err := parser.ParseBodyToEntity(body, data); err != nil {
+		return nil, err
+	}
+
+	return data, data.Validate()
+}
+
+func (u *UseCases) ChangePasswordDataFromIOReadCloser(body io.ReadCloser) (*accountEntities.ChangePasswordData, error) {
+	data := &accountEntities.ChangePasswordData{}
+
+	if err := parser.ParseBodyToEntity(body, data); err != nil {
+		return nil, err
+	}
+
+	return data, data.Validate()
+}
+
+func (u *UseCases) RefreshTokenFromIOReadCloser(body io.ReadCloser) (string, error) {
+	data := &accountEntities.RefreshToken{}
+
+	if err := parser.ParseBodyToEntity(body, data); err != nil {
+		return "", err
+	}
+
+	return data.RefreshToken, data.Validate()
+}
+
+func (u *UseCases) CheckEmailAndUsernameFromIOReadCloser(
+	body io.ReadCloser) (*accountEntities.CheckEmailAndUsername, error) {
+	data := &accountEntities.CheckEmailAndUsername{}
+
+	if err := parser.ParseBodyToEntity(body, data); err != nil {
+		return nil, err
+	}
+
+	return data, data.Validate()
 }

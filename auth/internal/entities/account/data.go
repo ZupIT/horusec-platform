@@ -3,6 +3,8 @@ package account
 import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/go-ozzo/ozzo-validation/v4/is"
+
+	utils "github.com/ZupIT/horusec-devkit/pkg/utils/validation"
 )
 
 type Data struct {
@@ -14,7 +16,7 @@ type Data struct {
 func (d *Data) Validate() error {
 	return validation.ValidateStruct(d,
 		validation.Field(&d.Email, validation.Required, validation.Length(1, 255), is.EmailFormat),
-		validation.Field(&d.Password, validation.Length(1, 255), validation.Required),
+		validation.Field(&d.Password, utils.PasswordValidationRules()...),
 		validation.Field(&d.Username, validation.Length(1, 255), validation.Required),
 	)
 }
