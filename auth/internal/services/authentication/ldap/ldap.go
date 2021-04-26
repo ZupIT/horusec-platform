@@ -119,7 +119,7 @@ func (s *Service) isApplicationAdmin(userGroups []string) bool {
 func (s *Service) getApplicationAdminAuthzGroupName() ([]string, error) {
 	applicationAdminGroup := env.GetEnvOrDefault(ldapEnums.EnvLdapAdminGroup, "")
 
-	if applicationAdminGroup == "" && s.appConfig.IsApplicationAdminEnabled() {
+	if applicationAdminGroup == "" && s.appConfig.IsApplicationAdmEnabled() {
 		return []string{}, ldapEnums.ErrorLdapApplicationAdminGroupNotSet
 	}
 

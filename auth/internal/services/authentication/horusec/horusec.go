@@ -109,7 +109,7 @@ func (s *Service) checkForAdmin(role accountEnums.Role, accountID uuid.UUID) boo
 }
 
 func (s *Service) checkForApplicationAdmin(accountID uuid.UUID) (bool, error) {
-	if !s.appConfig.IsApplicationAdminEnabled() {
+	if !s.appConfig.IsApplicationAdmEnabled() {
 		return false, horusecAuthEnums.ErrorApplicationAdminNotEnabled
 	}
 

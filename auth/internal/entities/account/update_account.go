@@ -7,10 +7,10 @@ import (
 )
 
 type UpdateAccount struct {
-	AccountID   uuid.UUID `json:"accountID"`
+	AccountID   uuid.UUID `json:"accountID" swaggerignore:"true"`
 	Email       string    `json:"email"`
 	Username    string    `json:"username"`
-	IsConfirmed bool      `json:"isConfirmed"`
+	IsConfirmed bool      `json:"isConfirmed" swaggerignore:"true"`
 }
 
 func (u *UpdateAccount) Validate() error {

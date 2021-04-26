@@ -36,7 +36,7 @@ func NewAuthenticationController(appConfig app.IConfig, authHorusec horusec.ISer
 }
 
 func (c *Controller) Login(credentials *authEntities.LoginCredentials) (*authEntities.LoginResponse, error) {
-	switch c.appConfig.GetAuthType() {
+	switch c.appConfig.GetAuthenticationType() {
 	case authTypes.Horusec:
 		return c.horusecAuth.Login(credentials)
 	case authTypes.Keycloak:
@@ -49,7 +49,7 @@ func (c *Controller) Login(credentials *authEntities.LoginCredentials) (*authEnt
 }
 
 func (c *Controller) IsAuthorized(data *authEntities.AuthorizationData) (bool, error) {
-	switch c.appConfig.GetAuthType() {
+	switch c.appConfig.GetAuthenticationType() {
 	case authTypes.Horusec:
 		return c.horusecAuth.IsAuthorized(data)
 	case authTypes.Keycloak:
@@ -62,7 +62,7 @@ func (c *Controller) IsAuthorized(data *authEntities.AuthorizationData) (bool, e
 }
 
 func (c *Controller) GetAccountInfo(token string) (*proto.GetAccountDataResponse, error) {
-	switch c.appConfig.GetAuthType() {
+	switch c.appConfig.GetAuthenticationType() {
 	case authTypes.Horusec:
 		return c.horusecAuth.GetAccountDataFromToken(token)
 	case authTypes.Keycloak:

@@ -1,4 +1,54 @@
 definitions:
+  account.AccessToken:
+    properties:
+      accessToken:
+        type: string
+    type: object
+  account.ChangePasswordData:
+    properties:
+      password:
+        type: string
+    type: object
+  account.CheckEmailAndUsername:
+    properties:
+      email:
+        type: string
+      username:
+        type: string
+    type: object
+  account.Data:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  account.Email:
+    properties:
+      email:
+        type: string
+    type: object
+  account.RefreshToken:
+    properties:
+      refreshToken:
+        type: string
+    type: object
+  account.ResetCodeData:
+    properties:
+      code:
+        type: string
+      email:
+        type: string
+    type: object
+  account.UpdateAccount:
+    properties:
+      email:
+        type: string
+      username:
+        type: string
+    type: object
   authentication.LoginCredentials:
     properties:
       password:
@@ -16,8 +66,358 @@ definitions:
         type: string
     type: object
 info:
-  contact: {}
+  contact:
+    email: horusec@zup.com.br
+    name: Horusec
+    url: https://github.com/ZupIT/horusec-platform
+  description: Service responsible for authentication and account operations.
+  termsOfService: http://swagger.io/terms/
+  title: Horusec-Auth
 paths:
+  /auth/account/change-password:
+    post:
+      consumes:
+      - application/json
+      description: Update account password
+      operationId: change-password
+      parameters:
+      - description: change password data
+        in: body
+        name: ChangePasswordData
+        required: true
+        schema:
+          $ref: '#/definitions/account.ChangePasswordData'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/entities.Response'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Account
+  /auth/account/check-reset-code:
+    post:
+      consumes:
+      - application/json
+      description: Check for valid reset password code
+      operationId: check-reset-password-code
+      parameters:
+      - description: reset password code
+        in: body
+        name: ResetCodeData
+        required: true
+        schema:
+          $ref: '#/definitions/account.ResetCodeData'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/entities.Response'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Account
+  /auth/account/create-account-horusec:
+    post:
+      consumes:
+      - application/json
+      description: Create account when horusec auth
+      operationId: create-account-horusec
+      parameters:
+      - description: create account with horusec data
+        in: body
+        name: AccountData
+        required: true
+        schema:
+          $ref: '#/definitions/account.Data'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/entities.Response'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Account
+  /auth/account/create-account-keycloak:
+    post:
+      consumes:
+      - application/json
+      description: Create account when keycloak auth
+      operationId: create-account-keycloak
+      parameters:
+      - description: create account with keycloak data
+        in: body
+        name: AccessToken
+        required: true
+        schema:
+          $ref: '#/definitions/account.AccessToken'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/entities.Response'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Account
+  /auth/account/delete:
+    delete:
+      consumes:
+      - application/json
+      description: Delete your account
+      operationId: delete-account
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/entities.Response'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Account
+  /auth/account/logout:
+    post:
+      consumes:
+      - application/json
+      description: Refresh access token
+      operationId: logout
+      parameters:
+      - description: refresh token data
+        in: body
+        name: RefreshToken
+        required: true
+        schema:
+          $ref: '#/definitions/account.RefreshToken'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entities.Response'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Account
+  /auth/account/refresh-token:
+    post:
+      consumes:
+      - application/json
+      description: Refresh access token
+      operationId: refresh-token
+      parameters:
+      - description: refresh token data
+        in: body
+        name: RefreshToken
+        required: true
+        schema:
+          $ref: '#/definitions/account.RefreshToken'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/entities.Response'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Account
+  /auth/account/send-reset-code:
+    post:
+      consumes:
+      - application/json
+      description: Send a reset password code email
+      operationId: reset-password-code
+      parameters:
+      - description: email data
+        in: body
+        name: Email
+        required: true
+        schema:
+          $ref: '#/definitions/account.Email'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/entities.Response'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Account
+  /auth/account/update:
+    patch:
+      consumes:
+      - application/json
+      description: Update account data
+      operationId: update-account
+      parameters:
+      - description: update account data
+        in: body
+        name: UpdateAccount
+        required: true
+        schema:
+          $ref: '#/definitions/account.UpdateAccount'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/entities.Response'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Account
+  /auth/account/validate/{accountID}:
+    get:
+      consumes:
+      - application/json
+      description: Validate account email
+      operationId: validate-account-email
+      parameters:
+      - description: ID of the account
+        in: path
+        name: accountID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "304":
+          description: Not Modified
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/entities.Response'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Account
+  /auth/account/verify-already-used:
+    post:
+      consumes:
+      - application/json
+      description: Verify username or email already in use
+      operationId: verify-email-username
+      parameters:
+      - description: check already in use email username
+        in: body
+        name: CheckEmailAndUsername
+        required: true
+        schema:
+          $ref: '#/definitions/account.CheckEmailAndUsername'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/entities.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/entities.Response'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Account
   /auth/authenticate/config:
     get:
       consumes:
@@ -71,4 +471,9 @@ paths:
       - ApiKeyAuth: []
       tags:
       - Authenticate
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: X-Horusec-Authorization
+    type: apiKey
 swagger: "2.0"

@@ -76,6 +76,8 @@ github.com/ZupIT/horusec-devkit v0.0.0-20210423133952-ded8508f0970 h1:XJeJgF06su
 github.com/ZupIT/horusec-devkit v0.0.0-20210423133952-ded8508f0970/go.mod h1:DSvVm4r+H6nYJul50ZuuN25nQPr5aZ8z2Z1gUmKumpM=
 github.com/ZupIT/horusec-devkit v0.0.0-20210423165445-1592a2ce3eb7 h1:AEUVwft+9H5XFDgYYBbAEHo/XpAcPhtlvgpoqq8xkHY=
 github.com/ZupIT/horusec-devkit v0.0.0-20210423165445-1592a2ce3eb7/go.mod h1:DSvVm4r+H6nYJul50ZuuN25nQPr5aZ8z2Z1gUmKumpM=
+github.com/ZupIT/horusec-devkit v0.0.0-20210426135140-06fc7f48b8d8 h1:VIYisuQg7JCLYws3D/0fPtFyUjDZ5r2AgFXpVM0NBKI=
+github.com/ZupIT/horusec-devkit v0.0.0-20210426135140-06fc7f48b8d8/go.mod h1:DSvVm4r+H6nYJul50ZuuN25nQPr5aZ8z2Z1gUmKumpM=
 github.com/ZupIT/horusec-engine v0.2.8/go.mod h1:YUvzG1NJ5BXQ/vKJv2i4KbiwF2z5vHwcCVvjtf4fIkE=
 github.com/ZupIT/horusec-engine v0.3.2/go.mod h1:DzWhLavXcxKY8BzC8ELi2W6L8M+RXILCJU1+HZfzRss=
 github.com/afex/hystrix-go v0.0.0-20180502004556-fa1af6a1f4f5/go.mod h1:SkGFH1ia65gfNATL8TAiHDNxPzPdmEL5uirI2Uyuz6c=

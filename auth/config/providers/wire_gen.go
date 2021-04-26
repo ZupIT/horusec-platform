@@ -53,7 +53,14 @@ func Initialize(string2 string) (router.IRouter, error) {
 	iController := authentication3.NewAuthenticationController(iConfig, iService, ldapIService, keycloakIService)
 	handler := authentication4.NewAuthenticationHandler(iConfig, iUseCases, iController)
 	iAuthGRPCServer := grpc.NewAuthGRPCServer(handler)
-	routerIRouter := router.NewHTTPRouter(iRouter, iAuthGRPCServer, handler)
+	iConfig2 := config2.NewBrokerConfig()
+	iBroker, err := broker.NewBroker(iConfig2)
+	if err != nil {
+		return nil, err
+	}
+	accountIController := account3.NewAccountController(iRepository, keycloakIService, accountIUseCases, iConfig, iBroker, iCache)
+	accountHandler := account4.NewAccountHandler(accountIUseCases, accountIController, iConfig)
+	routerIRouter := router.NewHTTPRouter(iRouter, iAuthGRPCServer, handler, accountHandler)
 	return routerIRouter, nil
 }
 

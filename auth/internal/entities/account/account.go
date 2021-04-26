@@ -104,3 +104,10 @@ func (a *Account) UpdateFromUpdateAccountData(data *UpdateAccount) {
 	a.Username = data.Username
 	a.IsConfirmed = data.IsConfirmed
 }
+
+func (a *Account) SetIsConfirmed() *Account {
+	a.Update()
+	a.IsConfirmed = true
+
+	return a
+}

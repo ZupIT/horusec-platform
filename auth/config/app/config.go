@@ -9,10 +9,10 @@ import (
 )
 
 type IConfig interface {
-	GetAuthType() auth.AuthenticationType
+	GetAuthenticationType() auth.AuthenticationType
 	ToConfigResponse() map[string]interface{}
-	IsApplicationAdminEnabled() bool
-	IsDisableBroker() bool
+	IsApplicationAdmEnabled() bool
+	IsBrokerDisabled() bool
 	ToGetAuthConfigResponse() *proto.GetAuthConfigResponse
 	GetHorusecAuthURL() string
 	GetHorusecManagerURL() string
@@ -42,7 +42,7 @@ func NewAuthAppConfig() IConfig {
 	}
 }
 
-func (c *Config) GetAuthType() auth.AuthenticationType {
+func (c *Config) GetAuthenticationType() auth.AuthenticationType {
 	return c.AuthType
 }
 
@@ -54,11 +54,11 @@ func (c *Config) ToConfigResponse() map[string]interface{} {
 	}
 }
 
-func (c *Config) IsApplicationAdminEnabled() bool {
+func (c *Config) IsApplicationAdmEnabled() bool {
 	return c.EnableApplicationAdmin
 }
 
-func (c *Config) IsDisableBroker() bool {
+func (c *Config) IsBrokerDisabled() bool {
 	return c.DisableBroker
 }
 

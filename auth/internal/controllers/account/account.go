@@ -75,7 +75,7 @@ func (c *Controller) CreateAccountKeycloak(token string) (*accountEntities.Respo
 
 func (c *Controller) CreateAccountHorusec(data *accountEntities.Data) (*accountEntities.Response, error) {
 	account := data.ToAccount()
-	if c.appConfig.IsDisableBroker() {
+	if c.appConfig.IsBrokerDisabled() {
 		account.SetIsConfirmedTrue()
 	}
 
@@ -87,7 +87,7 @@ func (c *Controller) CreateAccountHorusec(data *accountEntities.Data) (*accountE
 }
 
 func (c *Controller) sendValidateAccountEmail(account *accountEntities.Account) error {
-	if c.appConfig.IsDisableBroker() {
+	if c.appConfig.IsBrokerDisabled() {
 		return nil
 	}
 
@@ -101,7 +101,7 @@ func (c *Controller) ValidateAccountEmail(accountID uuid.UUID) error {
 		return err
 	}
 
-	_, err = c.accountRepository.Update(account.SetNewAccountData().Update())
+	_, err = c.accountRepository.Update(account.SetIsConfirmed())
 	return err
 }
 
@@ -119,7 +119,7 @@ func (c *Controller) SendResetPasswordCode(email string) error {
 }
 
 func (c *Controller) sendResetPasswordCodeEmail(account *accountEntities.Account, code string) error {
-	if c.appConfig.IsDisableBroker() {
+	if c.appConfig.IsBrokerDisabled() {
 		return nil
 	}
 
@@ -218,7 +218,7 @@ func (c *Controller) DeleteAccount(accountID uuid.UUID) error {
 }
 
 func (c *Controller) GetAccountID(token string) (uuid.UUID, error) {
-	switch c.appConfig.GetAuthType() {
+	switch c.appConfig.GetAuthenticationType() {
 	case auth.Horusec:
 		return jwt.GetAccountIDByJWTToken(token)
 	case auth.Keycloak:

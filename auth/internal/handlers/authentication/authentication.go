@@ -83,7 +83,7 @@ func (h *Handler) getLoginCredentials(r *http.Request) (*authentication.LoginCre
 }
 
 func (h *Handler) checkLoginErrors(w http.ResponseWriter, err error) {
-	switch h.appConfig.GetAuthType() {
+	switch h.appConfig.GetAuthenticationType() {
 	case authTypes.Horusec:
 		h.checkLoginErrorsHorusec(w, err)
 	case authTypes.Ldap:

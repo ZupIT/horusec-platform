@@ -10,8 +10,8 @@ import (
 	"github.com/Nerzal/gocloak/v7"
 	"github.com/google/uuid"
 
-	emailEnums "github.com/ZupIT/horusec-devkit/pkg/enums/email"
 	"github.com/ZupIT/horusec-devkit/pkg/entities/email"
+	emailEnums "github.com/ZupIT/horusec-devkit/pkg/enums/email"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/parser"
 
 	"github.com/ZupIT/horusec-platform/auth/config/app"
@@ -25,15 +25,15 @@ type IUseCases interface {
 	FilterAccountByUsername(username string) map[string]interface{}
 	NewAccountFromKeycloakUserInfo(userInfo *gocloak.UserInfo) *accountEntities.Account
 	CheckCreateAccountErrors(err error) error
-	AccessTokenFromIOReadCloser(body io.ReadCloser) (string, error)
+	AccessTokenFromIOReadCloser(body io.ReadCloser) (*accountEntities.AccessToken, error)
 	AccountDataFromIOReadCloser(body io.ReadCloser) (*accountEntities.Data, error)
 	NewAccountValidationEmail(account *accountEntities.Account) []byte
-	EmailFromIOReadCloser(body io.ReadCloser) (string, error)
+	EmailFromIOReadCloser(body io.ReadCloser) (*accountEntities.Email, error)
 	GenerateResetPasswordCode() string
 	NewResetPasswordCodeEmail(account *accountEntities.Account, code string) []byte
 	ResetCodeDataFromIOReadCloser(body io.ReadCloser) (*accountEntities.ResetCodeData, error)
 	ChangePasswordDataFromIOReadCloser(body io.ReadCloser) (*accountEntities.ChangePasswordData, error)
-	RefreshTokenFromIOReadCloser(body io.ReadCloser) (string, error)
+	RefreshTokenFromIOReadCloser(body io.ReadCloser) (*accountEntities.RefreshToken, error)
 	CheckEmailAndUsernameFromIOReadCloser(body io.ReadCloser) (*accountEntities.CheckEmailAndUsername, error)
 	UpdateAccountFromIOReadCloser(body io.ReadCloser) (*accountEntities.UpdateAccount, error)
 }
@@ -96,14 +96,14 @@ func (u *UseCases) contains(err error, check string) bool {
 	return strings.Contains(strings.ToLower(err.Error()), check)
 }
 
-func (u *UseCases) AccessTokenFromIOReadCloser(body io.ReadCloser) (string, error) {
+func (u *UseCases) AccessTokenFromIOReadCloser(body io.ReadCloser) (*accountEntities.AccessToken, error) {
 	data := &accountEntities.AccessToken{}
 
 	if err := parser.ParseBodyToEntity(body, data); err != nil {
-		return "", err
+		return nil, err
 	}
 
-	return data.AccessToken, data.Validate()
+	return data, data.Validate()
 }
 
 func (u *UseCases) AccountDataFromIOReadCloser(body io.ReadCloser) (*accountEntities.Data, error) {
@@ -132,14 +132,14 @@ func (u *UseCases) getAccountValidationEmailURL(accountID uuid.UUID) string {
 	return fmt.Sprintf("%s/auth/account/validate/%s", u.appConfig.GetHorusecAuthURL(), accountID)
 }
 
-func (u *UseCases) EmailFromIOReadCloser(body io.ReadCloser) (string, error) {
+func (u *UseCases) EmailFromIOReadCloser(body io.ReadCloser) (*accountEntities.Email, error) {
 	data := &accountEntities.Email{}
 
 	if err := parser.ParseBodyToEntity(body, data); err != nil {
-		return "", err
+		return nil, err
 	}
 
-	return data.Email, data.Validate()
+	return data, data.Validate()
 }
 
 func (u *UseCases) GenerateResetPasswordCode() string {
@@ -190,14 +190,14 @@ func (u *UseCases) ChangePasswordDataFromIOReadCloser(body io.ReadCloser) (*acco
 	return data, data.Validate()
 }
 
-func (u *UseCases) RefreshTokenFromIOReadCloser(body io.ReadCloser) (string, error) {
+func (u *UseCases) RefreshTokenFromIOReadCloser(body io.ReadCloser) (*accountEntities.RefreshToken, error) {
 	data := &accountEntities.RefreshToken{}
 
 	if err := parser.ParseBodyToEntity(body, data); err != nil {
-		return "", err
+		return nil, err
 	}
 
-	return data.RefreshToken, data.Validate()
+	return data, data.Validate()
 }
 
 func (u *UseCases) CheckEmailAndUsernameFromIOReadCloser(
