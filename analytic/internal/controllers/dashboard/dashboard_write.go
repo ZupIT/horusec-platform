@@ -88,5 +88,5 @@ func (c *ControllerWrite) inactiveVulnerabilities(repositoryID uuid.UUID, tableN
 		"active":        true,
 		"repository_id": repositoryID,
 	}
-	return c.repoDashboard.Update(map[string]interface{}{"active": false}, conditionToUpdate, tableName)
+	return c.repoDashboard.Inactive(conditionToUpdate, tableName)
 }

@@ -34,16 +34,22 @@ var doc = `{
                 "security": [
                     {
                         "ApiKeyAuth": []
+                    },
+                    {
+                        "ApiKeyAuth": []
                     }
                 ],
-                "description": "Get all charts of dashboard screen",
+                "description": "Get all charts of dashboard screen\nGet all charts of dashboard screen",
                 "consumes": [
+                    "application/json",
                     "application/json"
                 ],
                 "produces": [
+                    "application/json",
                     "application/json"
                 ],
                 "tags": [
+                    "DashboardByWorkspace",
                     "DashboardByWorkspace"
                 ],
                 "operationId": "get-total-developers-workspace",
@@ -57,9 +63,34 @@ var doc = `{
                     },
                     {
                         "type": "string",
-                        "description": "repositoryID query string",
+                        "description": "repositoryID of the repository",
                         "name": "repositoryID",
+                        "in": "path"
+                    },
+                    {
+                        "type": "string",
+                        "description": "initialDate query string",
+                        "name": "initialDate",
                         "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "finalDate query string",
+                        "name": "finalDate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "workspaceID of the workspace",
+                        "name": "workspaceID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "repositoryID of the repository",
+                        "name": "repositoryID",
+                        "in": "path"
                     },
                     {
                         "type": "string",
@@ -373,9 +404,6 @@ var doc = `{
                     "type": "integer"
                 },
                 "riskAccepted": {
-                    "type": "integer"
-                },
-                "unknown": {
                     "type": "integer"
                 },
                 "vulnerability": {

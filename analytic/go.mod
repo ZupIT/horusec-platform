@@ -14,9 +14,9 @@ require (
 	github.com/stretchr/testify v1.7.0
 	github.com/swaggo/swag v1.7.0
 	golang.org/x/crypto v0.0.0-20210421170649-83a5a9bb288b // indirect
-	golang.org/x/net v0.0.0-20210421230115-4e50805a0758 // indirect
+	golang.org/x/net v0.0.0-20210423174036-e997de6604e2 // indirect
 	golang.org/x/sys v0.0.0-20210423082822-04245dca01da // indirect
-	google.golang.org/genproto v0.0.0-20210422153429-2279cbceda62 // indirect
+	google.golang.org/genproto v0.0.0-20210423144448-3a41ef94ed2b // indirect
 	google.golang.org/grpc v1.37.0
 	gorm.io/gorm v1.21.8 // indirect
 )

@@ -51,4 +51,4 @@ build-broker:
 pipeline: fmt fix-imports lint test coverage build security
 
 update-swagger:
-	curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec-devkit/develop/scripts/update-swagger.sh | bash -s "./cmd/app_rest/main.go" .
+	curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec-devkit/develop/scripts/update-swagger.sh | bash -s "./cmd/app/main.go" .

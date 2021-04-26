@@ -11,7 +11,7 @@ import (
 
 type IRepoDashboard interface {
 	Save(entity interface{}, table string) error
-	Update(entity interface{}, condition map[string]interface{}, table string) error
+	Inactive(condition map[string]interface{}, table string) error
 
 	GetDashboardTotalDevelopers(filter *dashboard.FilterDashboard) (int, error)
 	GetDashboardTotalRepositories(filter *dashboard.FilterDashboard) (int, error)
@@ -38,8 +38,8 @@ func (r *RepoDashboard) Save(entity interface{}, table string) error {
 	return r.databaseWrite.Create(entity, table).GetErrorExceptNotFound()
 }
 
-func (r *RepoDashboard) Update(entity interface{}, condition map[string]interface{}, table string) error {
-	return r.databaseWrite.Update(entity, condition, table).GetErrorExceptNotFound()
+func (r *RepoDashboard) Inactive(condition map[string]interface{}, table string) error {
+	return r.databaseWrite.Update(map[string]interface{}{"active": false}, condition, table).GetErrorExceptNotFound()
 }
 
 func (r *RepoDashboard) GetDashboardTotalDevelopers(

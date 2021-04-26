@@ -13,11 +13,7 @@ type Mock struct {
 	mock.Mock
 }
 
-func (m *Mock) ExtractFilterDashboardByWorkspace(r *netHTTP.Request) (*dashboard.FilterDashboard, error) {
-	args := m.MethodCalled("ExtractFilterDashboardByWorkspace")
-	return args.Get(0).(*dashboard.FilterDashboard), utilsMock.ReturnNilOrError(args, 1)
-}
-func (m *Mock) ExtractFilterDashboardByRepository(r *netHTTP.Request) (*dashboard.FilterDashboard, error) {
-	args := m.MethodCalled("ExtractFilterDashboardByRepository")
+func (m *Mock) ExtractFilterDashboard(r *netHTTP.Request) (*dashboard.FilterDashboard, error) {
+	args := m.MethodCalled("ExtractFilterDashboard")
 	return args.Get(0).(*dashboard.FilterDashboard), utilsMock.ReturnNilOrError(args, 1)
 }

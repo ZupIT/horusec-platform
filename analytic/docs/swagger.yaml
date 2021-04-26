@@ -122,8 +122,6 @@ definitions:
         type: integer
       riskAccepted:
         type: integer
-      unknown:
-        type: integer
       vulnerability:
         type: integer
     type: object
@@ -149,7 +147,10 @@ paths:
     get:
       consumes:
       - application/json
-      description: Get all charts of dashboard screen
+      - application/json
+      description: |-
+        Get all charts of dashboard screen
+        Get all charts of dashboard screen
       operationId: get-total-developers-workspace
       parameters:
       - description: workspaceID of the workspace
@@ -157,8 +158,25 @@ paths:
         name: workspaceID
         required: true
         type: string
-      - description: repositoryID query string
+      - description: repositoryID of the repository
+        in: path
+        name: repositoryID
+        type: string
+      - description: initialDate query string
         in: query
+        name: initialDate
+        type: string
+      - description: finalDate query string
+        in: query
+        name: finalDate
+        type: string
+      - description: workspaceID of the workspace
+        in: path
+        name: workspaceID
+        required: true
+        type: string
+      - description: repositoryID of the repository
+        in: path
         name: repositoryID
         type: string
       - description: initialDate query string
@@ -170,6 +188,7 @@ paths:
         name: finalDate
         type: string
       produces:
+      - application/json
       - application/json
       responses:
         "200":
@@ -201,7 +220,9 @@ paths:
               type: object
       security:
       - ApiKeyAuth: []
+      - ApiKeyAuth: []
       tags:
+      - DashboardByWorkspace
       - DashboardByWorkspace
   /analytic/health:
     get:

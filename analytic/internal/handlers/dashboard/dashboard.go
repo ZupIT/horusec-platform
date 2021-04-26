@@ -35,7 +35,22 @@ func (h *Handler) Options(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
 // @Accept  json
 // @Produce  json
 // @Param workspaceID path string true "workspaceID of the workspace"
-// @Param repositoryID query string false "repositoryID query string"
+// @Param repositoryID path string false "repositoryID of the repository"
+// @Param initialDate query string false "initialDate query string"
+// @Param finalDate query string false "finalDate query string"
+// @Success 200 {object} entities.Response{content=dashboard.Response} "OK"
+// @Failure 400 {object} entities.Response{content=string} "BAD REQUEST"
+// @Failure 500 {object} entities.Response{content=string} "INTERNAL SERVER ERROR"
+// @Router /analytic/dashboard/{workspaceID}/{repositoryID}/dashboard-charts [get]
+// GetAllCharts
+// @Tags DashboardByWorkspace
+// @Security ApiKeyAuth
+// @Description Get all charts of dashboard screen
+// @ID get-total-developers-workspace
+// @Accept  json
+// @Produce  json
+// @Param workspaceID path string true "workspaceID of the workspace"
+// @Param repositoryID path string false "repositoryID of the repository"
 // @Param initialDate query string false "initialDate query string"
 // @Param finalDate query string false "finalDate query string"
 // @Success 200 {object} entities.Response{content=dashboard.Response} "OK"

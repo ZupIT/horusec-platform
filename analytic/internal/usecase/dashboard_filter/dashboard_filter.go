@@ -30,8 +30,8 @@ func (u *UseCaseDashboard) ExtractFilterDashboard(r *netHTTP.Request) (*dashboar
 	if err != nil {
 		return nil, err
 	}
-	if r.URL.Query().Get("repositoryID") != "" {
-		filter.RepositoryID, err = uuid.Parse(r.URL.Query().Get("repositoryID"))
+	if chi.URLParam(r, "repositoryID") != "" {
+		filter.RepositoryID, err = uuid.Parse(chi.URLParam(r, "repositoryID"))
 		if err != nil {
 			return nil, enums.ErrorWrongRepositoryID
 		}
