@@ -10,6 +10,7 @@ import (
 
 	"github.com/ZupIT/horusec-platform/auth/config/cors"
 	"github.com/ZupIT/horusec-platform/auth/config/grpc"
+	accountHandler "github.com/ZupIT/horusec-platform/auth/internal/handlers/account"
 	authHandler "github.com/ZupIT/horusec-platform/auth/internal/handlers/authentication"
 )
 
@@ -19,7 +20,8 @@ func TestNewHTTPRouter(t *testing.T) {
 		authGRPCServer := &grpc.AuthGRPCServer{Port: 9998, GRPCServer: grpcService.NewServer()}
 
 		assert.NotPanics(t, func() {
-			assert.NotNil(t, NewHTTPRouter(routerService, authGRPCServer, &authHandler.Handler{}))
+			assert.NotNil(t, NewHTTPRouter(routerService, authGRPCServer,
+				&authHandler.Handler{}, &accountHandler.Handler{}))
 		})
 	})
 }

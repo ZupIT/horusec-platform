@@ -18,7 +18,7 @@ func TestGetAuthType(t *testing.T) {
 	t.Run("should success create a new config", func(t *testing.T) {
 		appConfig := NewAuthAppConfig()
 
-		assert.Equal(t, auth.Horusec, appConfig.GetAuthType())
+		assert.Equal(t, auth.Horusec, appConfig.GetAuthenticationType())
 	})
 }
 
@@ -39,7 +39,7 @@ func TestIsApplicationAdminEnabled(t *testing.T) {
 	t.Run("should return false when not active", func(t *testing.T) {
 		appConfig := NewAuthAppConfig()
 
-		assert.False(t, appConfig.IsApplicationAdminEnabled())
+		assert.False(t, appConfig.IsApplicationAdmEnabled())
 	})
 }
 
@@ -47,7 +47,7 @@ func TestIsDisableBroker(t *testing.T) {
 	t.Run("should return false when not active", func(t *testing.T) {
 		appConfig := NewAuthAppConfig()
 
-		assert.False(t, appConfig.IsDisableBroker())
+		assert.False(t, appConfig.IsBrokerDisabled())
 	})
 }
 

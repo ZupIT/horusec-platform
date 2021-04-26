@@ -9,6 +9,7 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/services/database"
 	"github.com/ZupIT/horusec-devkit/pkg/services/database/response"
 
+	"github.com/ZupIT/horusec-platform/auth/config/app"
 	accountEntities "github.com/ZupIT/horusec-platform/auth/internal/entities/account"
 	accountUseCases "github.com/ZupIT/horusec-platform/auth/internal/usecases/account"
 )
@@ -25,7 +26,7 @@ func TestGetAccount(t *testing.T) {
 		databaseMock.On("Find").Return(&response.Response{})
 
 		repository := NewAccountRepository(&database.Connection{Read: databaseMock, Write: databaseMock},
-			accountUseCases.NewAccountUseCases())
+			accountUseCases.NewAccountUseCases(&app.Config{}))
 
 		account, err := repository.GetAccount(uuid.New())
 		assert.NoError(t, err)
@@ -39,7 +40,7 @@ func TestGetAccountByEmail(t *testing.T) {
 		databaseMock.On("Find").Return(&response.Response{})
 
 		repository := NewAccountRepository(&database.Connection{Read: databaseMock, Write: databaseMock},
-			accountUseCases.NewAccountUseCases())
+			accountUseCases.NewAccountUseCases(&app.Config{}))
 
 		account, err := repository.GetAccountByEmail("test@test.com")
 		assert.NoError(t, err)
@@ -53,7 +54,7 @@ func TestGetAccountByUsername(t *testing.T) {
 		databaseMock.On("Find").Return(&response.Response{})
 
 		repository := NewAccountRepository(&database.Connection{Read: databaseMock, Write: databaseMock},
-			accountUseCases.NewAccountUseCases())
+			accountUseCases.NewAccountUseCases(&app.Config{}))
 
 		account, err := repository.GetAccountByUsername("test")
 		assert.NoError(t, err)
@@ -67,7 +68,7 @@ func TestCreateAccount(t *testing.T) {
 		databaseMock.On("Create").Return(&response.Response{})
 
 		repository := NewAccountRepository(&database.Connection{Read: databaseMock, Write: databaseMock},
-			accountUseCases.NewAccountUseCases())
+			accountUseCases.NewAccountUseCases(&app.Config{}))
 
 		account, err := repository.CreateAccount(&accountEntities.Account{})
 		assert.NoError(t, err)

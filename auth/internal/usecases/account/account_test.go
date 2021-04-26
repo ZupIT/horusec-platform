@@ -7,17 +7,19 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/ZupIT/horusec-platform/auth/config/app"
 )
 
 func TestNewAccountUseCases(t *testing.T) {
 	t.Run("should success create a new use cases", func(t *testing.T) {
-		assert.NotNil(t, NewAccountUseCases())
+		assert.NotNil(t, NewAccountUseCases(app.NewAuthAppConfig()))
 	})
 }
 
 func TestFilterAccountByID(t *testing.T) {
 	t.Run("should success create a filter by account id", func(t *testing.T) {
-		useCases := NewAccountUseCases()
+		useCases := NewAccountUseCases(app.NewAuthAppConfig())
 
 		id := uuid.New()
 
@@ -30,7 +32,7 @@ func TestFilterAccountByID(t *testing.T) {
 
 func TestFilterAccountByEmail(t *testing.T) {
 	t.Run("should success create a filter by account id", func(t *testing.T) {
-		useCases := NewAccountUseCases()
+		useCases := NewAccountUseCases(app.NewAuthAppConfig())
 
 		filter := useCases.FilterAccountByEmail("test@test.com")
 		assert.NotPanics(t, func() {
@@ -41,7 +43,7 @@ func TestFilterAccountByEmail(t *testing.T) {
 
 func TestFilterAccountByUsername(t *testing.T) {
 	t.Run("should success create a filter by account id", func(t *testing.T) {
-		useCases := NewAccountUseCases()
+		useCases := NewAccountUseCases(app.NewAuthAppConfig())
 
 		filter := useCases.FilterAccountByUsername("test")
 		assert.NotPanics(t, func() {
@@ -52,7 +54,7 @@ func TestFilterAccountByUsername(t *testing.T) {
 
 func TestLoginCredentialsFromIOReadCloser(t *testing.T) {
 	t.Run("should success get data from request body", func(t *testing.T) {
-		useCases := NewAccountUseCases()
+		useCases := NewAccountUseCases(app.NewAuthAppConfig())
 
 		data := map[string]string{"accessToken": "test"}
 
@@ -61,12 +63,12 @@ func TestLoginCredentialsFromIOReadCloser(t *testing.T) {
 
 		response, err := useCases.AccessTokenFromIOReadCloser(readCloser)
 		assert.NoError(t, err)
-		assert.NotEmpty(t, response)
-		assert.Equal(t, "test", response)
+		assert.NotNil(t, response)
+		assert.Equal(t, "test", response.AccessToken)
 	})
 
 	t.Run("should return error when failed to parse body to entity", func(t *testing.T) {
-		useCases := NewAccountUseCases()
+		useCases := NewAccountUseCases(app.NewAuthAppConfig())
 
 		readCloser, err := parser.ParseEntityToIOReadCloser("")
 		assert.NoError(t, err)

@@ -37,3 +37,8 @@ func (m *Mock) Update(_ *accountEntities.Account) (*accountEntities.Account, err
 	args := m.MethodCalled("Update")
 	return args.Get(0).(*accountEntities.Account), mockUtils.ReturnNilOrError(args, 1)
 }
+
+func (m *Mock) Delete(_ uuid.UUID) error {
+	args := m.MethodCalled("Delete")
+	return mockUtils.ReturnNilOrError(args, 0)
+}

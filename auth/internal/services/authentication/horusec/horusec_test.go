@@ -9,6 +9,7 @@ import (
 
 	accountEnums "github.com/ZupIT/horusec-devkit/pkg/enums/account"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/auth"
+	"github.com/ZupIT/horusec-devkit/pkg/services/cache"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/crypto"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/jwt"
 
@@ -24,7 +25,7 @@ import (
 func TestNewHorusecAuthenticationService(t *testing.T) {
 	t.Run("should success create a new service", func(t *testing.T) {
 		assert.NotNil(t, NewHorusecAuthenticationService(
-			nil, nil, nil, nil))
+			nil, nil, nil, nil, nil))
 	})
 }
 
@@ -46,7 +47,7 @@ func TestLogin(t *testing.T) {
 		accountRepositoryMock.On("GetAccountByEmail").Return(account, nil)
 
 		service := NewHorusecAuthenticationService(accountRepositoryMock, appConfig,
-			authentication.NewAuthenticationUseCases(), authRepositoryMock)
+			authentication.NewAuthenticationUseCases(), authRepositoryMock, cache.NewCache())
 
 		credentials := &authEntities.LoginCredentials{
 			Username: "test@test.com",
@@ -80,7 +81,7 @@ func TestLogin(t *testing.T) {
 		accountRepositoryMock.On("GetAccountByEmail").Return(account, nil)
 
 		service := NewHorusecAuthenticationService(accountRepositoryMock, appConfig,
-			authentication.NewAuthenticationUseCases(), authRepositoryMock)
+			authentication.NewAuthenticationUseCases(), authRepositoryMock, cache.NewCache())
 
 		credentials := &authEntities.LoginCredentials{
 			Username: "test@test.com",
@@ -110,7 +111,7 @@ func TestLogin(t *testing.T) {
 		accountRepositoryMock.On("GetAccountByEmail").Return(account, nil)
 
 		service := NewHorusecAuthenticationService(accountRepositoryMock, appConfig,
-			authentication.NewAuthenticationUseCases(), authRepositoryMock)
+			authentication.NewAuthenticationUseCases(), authRepositoryMock, cache.NewCache())
 
 		credentials := &authEntities.LoginCredentials{
 			Username: "test",
@@ -140,7 +141,7 @@ func TestLogin(t *testing.T) {
 		accountRepositoryMock.On("GetAccountByEmail").Return(account, nil)
 
 		service := NewHorusecAuthenticationService(accountRepositoryMock, appConfig,
-			authentication.NewAuthenticationUseCases(), authRepositoryMock)
+			authentication.NewAuthenticationUseCases(), authRepositoryMock, cache.NewCache())
 
 		credentials := &authEntities.LoginCredentials{
 			Username: "test@test.com",
@@ -170,7 +171,7 @@ func TestLogin(t *testing.T) {
 		accountRepositoryMock.On("GetAccountByEmail").Return(account, errors.New("test"))
 
 		service := NewHorusecAuthenticationService(accountRepositoryMock, appConfig,
-			authentication.NewAuthenticationUseCases(), authRepositoryMock)
+			authentication.NewAuthenticationUseCases(), authRepositoryMock, cache.NewCache())
 
 		credentials := &authEntities.LoginCredentials{
 			Username: "test@test.com",
@@ -201,7 +202,7 @@ func TestIsAuthorizedApplicationAdmin(t *testing.T) {
 		appConfig := &app.Config{EnableApplicationAdmin: true}
 
 		service := NewHorusecAuthenticationService(accountRepositoryMock, appConfig,
-			authentication.NewAuthenticationUseCases(), authRepositoryMock)
+			authentication.NewAuthenticationUseCases(), authRepositoryMock, cache.NewCache())
 
 		token, _, _ := jwt.CreateToken(account.ToTokenData(), nil)
 
@@ -233,7 +234,7 @@ func TestIsAuthorizedApplicationAdmin(t *testing.T) {
 		appConfig := &app.Config{EnableApplicationAdmin: true}
 
 		service := NewHorusecAuthenticationService(accountRepositoryMock, appConfig,
-			authentication.NewAuthenticationUseCases(), authRepositoryMock)
+			authentication.NewAuthenticationUseCases(), authRepositoryMock, cache.NewCache())
 
 		token, _, _ := jwt.CreateToken(account.ToTokenData(), nil)
 
@@ -265,7 +266,7 @@ func TestIsAuthorizedApplicationAdmin(t *testing.T) {
 		appConfig := &app.Config{EnableApplicationAdmin: false}
 
 		service := NewHorusecAuthenticationService(accountRepositoryMock, appConfig,
-			authentication.NewAuthenticationUseCases(), authRepositoryMock)
+			authentication.NewAuthenticationUseCases(), authRepositoryMock, cache.NewCache())
 
 		token, _, _ := jwt.CreateToken(account.ToTokenData(), nil)
 
@@ -288,7 +289,7 @@ func TestIsAuthorizedApplicationAdmin(t *testing.T) {
 		appConfig := &app.Config{EnableApplicationAdmin: true}
 
 		service := NewHorusecAuthenticationService(accountRepositoryMock, appConfig,
-			authentication.NewAuthenticationUseCases(), authRepositoryMock)
+			authentication.NewAuthenticationUseCases(), authRepositoryMock, cache.NewCache())
 
 		data := &authEntities.AuthorizationData{
 			Token:        "test",
@@ -319,7 +320,7 @@ func TestIsAuthorizedWorkspaceAdmin(t *testing.T) {
 		authRepositoryMock.On("GetWorkspaceRole").Return(accountEnums.Admin, nil)
 
 		service := NewHorusecAuthenticationService(accountRepositoryMock, appConfig,
-			authentication.NewAuthenticationUseCases(), authRepositoryMock)
+			authentication.NewAuthenticationUseCases(), authRepositoryMock, cache.NewCache())
 
 		token, _, _ := jwt.CreateToken(account.ToTokenData(), nil)
 
@@ -350,7 +351,7 @@ func TestIsAuthorizedWorkspaceAdmin(t *testing.T) {
 		authRepositoryMock.On("GetWorkspaceRole").Return(accountEnums.Admin, errors.New("test"))
 
 		service := NewHorusecAuthenticationService(accountRepositoryMock, appConfig,
-			authentication.NewAuthenticationUseCases(), authRepositoryMock)
+			authentication.NewAuthenticationUseCases(), authRepositoryMock, cache.NewCache())
 
 		token, _, _ := jwt.CreateToken(account.ToTokenData(), nil)
 
@@ -372,7 +373,7 @@ func TestIsAuthorizedWorkspaceAdmin(t *testing.T) {
 		authRepositoryMock := &authRepository.Mock{}
 
 		service := NewHorusecAuthenticationService(accountRepositoryMock, appConfig,
-			authentication.NewAuthenticationUseCases(), authRepositoryMock)
+			authentication.NewAuthenticationUseCases(), authRepositoryMock, cache.NewCache())
 
 		data := &authEntities.AuthorizationData{
 			Token:        "test",
@@ -403,7 +404,7 @@ func TestIsAuthorizedWorkspaceMember(t *testing.T) {
 		authRepositoryMock.On("GetWorkspaceRole").Return(accountEnums.Member, nil)
 
 		service := NewHorusecAuthenticationService(accountRepositoryMock, appConfig,
-			authentication.NewAuthenticationUseCases(), authRepositoryMock)
+			authentication.NewAuthenticationUseCases(), authRepositoryMock, cache.NewCache())
 
 		token, _, _ := jwt.CreateToken(account.ToTokenData(), nil)
 
@@ -434,7 +435,7 @@ func TestIsAuthorizedWorkspaceMember(t *testing.T) {
 		authRepositoryMock.On("GetWorkspaceRole").Return(accountEnums.Member, errors.New("test"))
 
 		service := NewHorusecAuthenticationService(accountRepositoryMock, appConfig,
-			authentication.NewAuthenticationUseCases(), authRepositoryMock)
+			authentication.NewAuthenticationUseCases(), authRepositoryMock, cache.NewCache())
 
 		token, _, _ := jwt.CreateToken(account.ToTokenData(), nil)
 
@@ -456,7 +457,7 @@ func TestIsAuthorizedWorkspaceMember(t *testing.T) {
 		authRepositoryMock := &authRepository.Mock{}
 
 		service := NewHorusecAuthenticationService(accountRepositoryMock, appConfig,
-			authentication.NewAuthenticationUseCases(), authRepositoryMock)
+			authentication.NewAuthenticationUseCases(), authRepositoryMock, cache.NewCache())
 
 		data := &authEntities.AuthorizationData{
 			Token:        "test",
@@ -488,7 +489,7 @@ func TestIsAuthorizedRepositoryMember(t *testing.T) {
 		authRepositoryMock.On("GetWorkspaceRole").Return(accountEnums.Member, nil)
 
 		service := NewHorusecAuthenticationService(accountRepositoryMock, appConfig,
-			authentication.NewAuthenticationUseCases(), authRepositoryMock)
+			authentication.NewAuthenticationUseCases(), authRepositoryMock, cache.NewCache())
 
 		token, _, _ := jwt.CreateToken(account.ToTokenData(), nil)
 
@@ -520,7 +521,7 @@ func TestIsAuthorizedRepositoryMember(t *testing.T) {
 		authRepositoryMock.On("GetWorkspaceRole").Return(accountEnums.Member, errors.New("test"))
 
 		service := NewHorusecAuthenticationService(accountRepositoryMock, appConfig,
-			authentication.NewAuthenticationUseCases(), authRepositoryMock)
+			authentication.NewAuthenticationUseCases(), authRepositoryMock, cache.NewCache())
 
 		token, _, _ := jwt.CreateToken(account.ToTokenData(), nil)
 
@@ -542,7 +543,7 @@ func TestIsAuthorizedRepositoryMember(t *testing.T) {
 		authRepositoryMock := &authRepository.Mock{}
 
 		service := NewHorusecAuthenticationService(accountRepositoryMock, appConfig,
-			authentication.NewAuthenticationUseCases(), authRepositoryMock)
+			authentication.NewAuthenticationUseCases(), authRepositoryMock, cache.NewCache())
 
 		data := &authEntities.AuthorizationData{
 			Token:        "test",
@@ -574,7 +575,7 @@ func TestIsAuthorizedRepositorySupervisor(t *testing.T) {
 		authRepositoryMock.On("GetWorkspaceRole").Return(accountEnums.Supervisor, nil)
 
 		service := NewHorusecAuthenticationService(accountRepositoryMock, appConfig,
-			authentication.NewAuthenticationUseCases(), authRepositoryMock)
+			authentication.NewAuthenticationUseCases(), authRepositoryMock, cache.NewCache())
 
 		token, _, _ := jwt.CreateToken(account.ToTokenData(), nil)
 
@@ -606,7 +607,7 @@ func TestIsAuthorizedRepositorySupervisor(t *testing.T) {
 		authRepositoryMock.On("GetWorkspaceRole").Return(accountEnums.Supervisor, errors.New("test"))
 
 		service := NewHorusecAuthenticationService(accountRepositoryMock, appConfig,
-			authentication.NewAuthenticationUseCases(), authRepositoryMock)
+			authentication.NewAuthenticationUseCases(), authRepositoryMock, cache.NewCache())
 
 		token, _, _ := jwt.CreateToken(account.ToTokenData(), nil)
 
@@ -628,7 +629,7 @@ func TestIsAuthorizedRepositorySupervisor(t *testing.T) {
 		authRepositoryMock := &authRepository.Mock{}
 
 		service := NewHorusecAuthenticationService(accountRepositoryMock, appConfig,
-			authentication.NewAuthenticationUseCases(), authRepositoryMock)
+			authentication.NewAuthenticationUseCases(), authRepositoryMock, cache.NewCache())
 
 		data := &authEntities.AuthorizationData{
 			Token:        "test",
@@ -660,7 +661,7 @@ func TestIsAuthorizedRepositoryAdmin(t *testing.T) {
 		authRepositoryMock.On("GetWorkspaceRole").Return(accountEnums.Admin, nil)
 
 		service := NewHorusecAuthenticationService(accountRepositoryMock, appConfig,
-			authentication.NewAuthenticationUseCases(), authRepositoryMock)
+			authentication.NewAuthenticationUseCases(), authRepositoryMock, cache.NewCache())
 
 		token, _, _ := jwt.CreateToken(account.ToTokenData(), nil)
 
@@ -692,7 +693,7 @@ func TestIsAuthorizedRepositoryAdmin(t *testing.T) {
 		authRepositoryMock.On("GetWorkspaceRole").Return(accountEnums.Member, nil)
 
 		service := NewHorusecAuthenticationService(accountRepositoryMock, appConfig,
-			authentication.NewAuthenticationUseCases(), authRepositoryMock)
+			authentication.NewAuthenticationUseCases(), authRepositoryMock, cache.NewCache())
 
 		token, _, _ := jwt.CreateToken(account.ToTokenData(), nil)
 
@@ -714,7 +715,7 @@ func TestIsAuthorizedRepositoryAdmin(t *testing.T) {
 		authRepositoryMock := &authRepository.Mock{}
 
 		service := NewHorusecAuthenticationService(accountRepositoryMock, appConfig,
-			authentication.NewAuthenticationUseCases(), authRepositoryMock)
+			authentication.NewAuthenticationUseCases(), authRepositoryMock, cache.NewCache())
 
 		data := &authEntities.AuthorizationData{
 			Token:        "test",
@@ -746,7 +747,7 @@ func TestGetAccountDataFromToken(t *testing.T) {
 		accountRepositoryMock.On("GetAccount").Return(account, nil)
 
 		service := NewHorusecAuthenticationService(accountRepositoryMock, appConfig,
-			authentication.NewAuthenticationUseCases(), authRepositoryMock)
+			authentication.NewAuthenticationUseCases(), authRepositoryMock, cache.NewCache())
 
 		token, _, _ := jwt.CreateToken(account.ToTokenData(), []string{"test"})
 
@@ -773,7 +774,7 @@ func TestGetAccountDataFromToken(t *testing.T) {
 		accountRepositoryMock.On("GetAccount").Return(account, errors.New("test"))
 
 		service := NewHorusecAuthenticationService(accountRepositoryMock, appConfig,
-			authentication.NewAuthenticationUseCases(), authRepositoryMock)
+			authentication.NewAuthenticationUseCases(), authRepositoryMock, cache.NewCache())
 
 		token, _, _ := jwt.CreateToken(account.ToTokenData(), []string{"test"})
 
@@ -798,7 +799,7 @@ func TestGetAccountDataFromToken(t *testing.T) {
 		accountRepositoryMock.On("GetAccount").Return(account, errors.New("test"))
 
 		service := NewHorusecAuthenticationService(accountRepositoryMock, appConfig,
-			authentication.NewAuthenticationUseCases(), authRepositoryMock)
+			authentication.NewAuthenticationUseCases(), authRepositoryMock, cache.NewCache())
 
 		token, _, _ := jwt.CreateToken(account.ToTokenData(), []string{"test"})
 
@@ -813,7 +814,7 @@ func TestGetAccountDataFromToken(t *testing.T) {
 		accountRepositoryMock := &accountRepository.Mock{}
 
 		service := NewHorusecAuthenticationService(accountRepositoryMock, appConfig,
-			authentication.NewAuthenticationUseCases(), authRepositoryMock)
+			authentication.NewAuthenticationUseCases(), authRepositoryMock, cache.NewCache())
 
 		result, err := service.GetAccountDataFromToken("")
 		assert.Error(t, err)
