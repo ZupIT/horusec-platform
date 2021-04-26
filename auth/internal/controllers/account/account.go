@@ -1,6 +1,8 @@
 package account
 
 import (
+	"github.com/google/uuid"
+
 	"github.com/ZupIT/horusec-devkit/pkg/enums/auth"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/queues"
 	"github.com/ZupIT/horusec-devkit/pkg/services/broker"
@@ -8,14 +10,12 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/utils/crypto"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/jwt"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/parser"
-	"github.com/google/uuid"
-
-	authEntities "github.com/ZupIT/horusec-platform/auth/internal/entities/authentication"
-	authEnums "github.com/ZupIT/horusec-platform/auth/internal/enums/authentication"
 
 	"github.com/ZupIT/horusec-platform/auth/config/app"
 	accountEntities "github.com/ZupIT/horusec-platform/auth/internal/entities/account"
+	authEntities "github.com/ZupIT/horusec-platform/auth/internal/entities/authentication"
 	accountEnums "github.com/ZupIT/horusec-platform/auth/internal/enums/account"
+	authEnums "github.com/ZupIT/horusec-platform/auth/internal/enums/authentication"
 	accountRepository "github.com/ZupIT/horusec-platform/auth/internal/repositories/account"
 	"github.com/ZupIT/horusec-platform/auth/internal/services/authentication/keycloak"
 	accountUseCases "github.com/ZupIT/horusec-platform/auth/internal/usecases/account"
@@ -33,6 +33,7 @@ type IController interface {
 	CheckExistingEmailOrUsername(data *accountEntities.CheckEmailAndUsername) error
 	DeleteAccount(accountID uuid.UUID) error
 	GetAccountID(token string) (uuid.UUID, error)
+	UpdateAccount(data *accountEntities.UpdateAccount) (*accountEntities.Response, error)
 }
 
 type Controller struct {
@@ -236,4 +237,32 @@ func (c *Controller) getAccountIDKeycloak(token string) (uuid.UUID, error) {
 	}
 
 	return parser.ParseStringToUUID(data.AccountID), nil
+}
+
+func (c *Controller) UpdateAccount(data *accountEntities.UpdateAccount) (*accountEntities.Response, error) {
+	account, err := c.accountRepository.GetAccount(data.AccountID)
+	if err != nil {
+		return nil, err
+	}
+
+	if errMail := c.checkForEmailChange(data, account); errMail != nil {
+		return nil, errMail
+	}
+
+	account, err = c.accountRepository.Update(account)
+	if err != nil {
+		return nil, err
+	}
+
+	return account.ToResponse(), err
+}
+
+func (c *Controller) checkForEmailChange(data *accountEntities.UpdateAccount, account *accountEntities.Account) error {
+	if data.HasEmailChange(account.Email) {
+		account.UpdateFromUpdateAccountData(data)
+		return c.sendValidateAccountEmail(account)
+	}
+
+	account.UpdateFromUpdateAccountData(data)
+	return nil
 }

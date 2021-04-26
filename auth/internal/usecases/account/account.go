@@ -7,17 +7,14 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ZupIT/horusec-platform/auth/config/app"
-
-	emailEnums "github.com/ZupIT/horusec-devkit/pkg/enums/email"
-
-	"github.com/ZupIT/horusec-devkit/pkg/entities/email"
-
 	"github.com/Nerzal/gocloak/v7"
 	"github.com/google/uuid"
 
+	emailEnums "github.com/ZupIT/horusec-devkit/pkg/enums/email"
+	"github.com/ZupIT/horusec-devkit/pkg/entities/email"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/parser"
 
+	"github.com/ZupIT/horusec-platform/auth/config/app"
 	accountEntities "github.com/ZupIT/horusec-platform/auth/internal/entities/account"
 	accountEnums "github.com/ZupIT/horusec-platform/auth/internal/enums/account"
 )
@@ -38,6 +35,7 @@ type IUseCases interface {
 	ChangePasswordDataFromIOReadCloser(body io.ReadCloser) (*accountEntities.ChangePasswordData, error)
 	RefreshTokenFromIOReadCloser(body io.ReadCloser) (string, error)
 	CheckEmailAndUsernameFromIOReadCloser(body io.ReadCloser) (*accountEntities.CheckEmailAndUsername, error)
+	UpdateAccountFromIOReadCloser(body io.ReadCloser) (*accountEntities.UpdateAccount, error)
 }
 
 type UseCases struct {
@@ -205,6 +203,16 @@ func (u *UseCases) RefreshTokenFromIOReadCloser(body io.ReadCloser) (string, err
 func (u *UseCases) CheckEmailAndUsernameFromIOReadCloser(
 	body io.ReadCloser) (*accountEntities.CheckEmailAndUsername, error) {
 	data := &accountEntities.CheckEmailAndUsername{}
+
+	if err := parser.ParseBodyToEntity(body, data); err != nil {
+		return nil, err
+	}
+
+	return data, data.Validate()
+}
+
+func (u *UseCases) UpdateAccountFromIOReadCloser(body io.ReadCloser) (*accountEntities.UpdateAccount, error) {
+	data := &accountEntities.UpdateAccount{}
 
 	if err := parser.ParseBodyToEntity(body, data); err != nil {
 		return nil, err

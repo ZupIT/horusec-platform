@@ -97,3 +97,10 @@ func (a *Account) SetNewPassword(password string) *Account {
 
 	return a.Update()
 }
+
+func (a *Account) UpdateFromUpdateAccountData(data *UpdateAccount) {
+	a.Update()
+	a.Email = data.Email
+	a.Username = data.Username
+	a.IsConfirmed = data.IsConfirmed
+}

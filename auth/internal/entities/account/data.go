@@ -13,19 +13,19 @@ type Data struct {
 	Username string `json:"username"`
 }
 
-func (d *Data) Validate() error {
-	return validation.ValidateStruct(d,
-		validation.Field(&d.Email, validation.Required, validation.Length(1, 255), is.EmailFormat),
-		validation.Field(&d.Password, utils.PasswordValidationRules()...),
-		validation.Field(&d.Username, validation.Length(1, 255), validation.Required),
+func (u *Data) Validate() error {
+	return validation.ValidateStruct(u,
+		validation.Field(&u.Email, validation.Required, validation.Length(1, 255), is.EmailFormat),
+		validation.Field(&u.Password, utils.PasswordValidationRules()...),
+		validation.Field(&u.Username, validation.Length(1, 255), validation.Required),
 	)
 }
 
-func (d *Data) ToAccount() *Account {
+func (u *Data) ToAccount() *Account {
 	account := &Account{
-		Email:    d.Email,
-		Password: d.Password,
-		Username: d.Username,
+		Email:    u.Email,
+		Password: u.Password,
+		Username: u.Username,
 	}
 
 	return account.SetNewAccountData()

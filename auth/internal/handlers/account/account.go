@@ -247,3 +247,33 @@ func (h *Handler) DeleteAccount(w http.ResponseWriter, r *http.Request) {
 
 	httpUtil.StatusNoContent(w)
 }
+
+func (h *Handler) UpdateAccount(w http.ResponseWriter, r *http.Request) {
+	data, err := h.getUpdateAccountData(r)
+	if err != nil {
+		httpUtil.StatusBadRequest(w, err)
+		return
+	}
+
+	response, err := h.controller.UpdateAccount(data)
+	if err != nil {
+		httpUtil.StatusInternalServerError(w, err)
+		return
+	}
+
+	httpUtil.StatusOK(w, response)
+}
+
+func (h *Handler) getUpdateAccountData(r *http.Request) (*accountEntities.UpdateAccount, error) {
+	accountID, err := h.controller.GetAccountID(r.Header.Get(enums.HorusecJWTHeader))
+	if err != nil {
+		return nil, err
+	}
+
+	data, err := h.useCases.UpdateAccountFromIOReadCloser(r.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	return data.SetAccountIDAndIsConfirmed(accountID, h.appConfig.IsDisableBroker()), nil
+}
