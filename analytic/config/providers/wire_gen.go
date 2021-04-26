@@ -43,9 +43,7 @@ func Initialize(defaultPort string) (router.IRouter, error) {
 	iReadController := dashboard2.NewControllerDashboardRead(iRepoDashboard)
 	dashboardHandler := dashboard3.NewDashboardHandler(iReadController)
 	configIConfig := config2.NewBrokerConfig()
-	authServiceClient := proto.NewAuthServiceClient(clientConnInterface)
-	appIConfig := app.NewAppConfig(authServiceClient)
-	iBroker, err := broker.NewBroker(configIConfig, appIConfig)
+	iBroker, err := broker.NewBroker(configIConfig)
 	if err != nil {
 		return nil, err
 	}

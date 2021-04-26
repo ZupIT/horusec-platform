@@ -48,7 +48,10 @@ func (r *RepoDashboard) GetDashboardTotalDevelopers(
 	query := fmt.Sprintf(`SELECT COUNT( DISTINCT ( author ) ) FROM %s WHERE %s AND active = true `,
 		(&dashboard.VulnerabilitiesByAuthor{}).GetTable(), condition)
 	result := r.databaseRead.Raw(query, &count, args...)
-	return count, result.GetErrorExceptNotFound()
+	if result.GetData() == nil || result.GetErrorExceptNotFound() != nil {
+		return 0, result.GetErrorExceptNotFound()
+	}
+	return result.GetData().(int), result.GetErrorExceptNotFound()
 }
 
 func (r *RepoDashboard) GetDashboardTotalRepositories(
@@ -57,7 +60,10 @@ func (r *RepoDashboard) GetDashboardTotalRepositories(
 	query := fmt.Sprintf(`SELECT COUNT( DISTINCT ( repository_id ) ) FROM %s WHERE %s AND active = true `,
 		(&dashboard.VulnerabilitiesByRepository{}).GetTable(), condition)
 	result := r.databaseRead.Raw(query, &count, args...)
-	return count, result.GetErrorExceptNotFound()
+	if result.GetData() == nil || result.GetErrorExceptNotFound() != nil {
+		return 0, result.GetErrorExceptNotFound()
+	}
+	return result.GetData().(int), result.GetErrorExceptNotFound()
 }
 
 func (r *RepoDashboard) GetDashboardVulnBySeverity(
@@ -67,9 +73,13 @@ func (r *RepoDashboard) GetDashboardVulnBySeverity(
 	query := fmt.Sprintf(`SELECT %s FROM %s WHERE %s AND active = true GROUP BY "workspace_id", "active" %s LIMIT 1`,
 		r.querySelectFieldsDefault(), (&dashboard.VulnerabilitiesByTime{}).GetTable(), condition, r.orderByDefault())
 	result := r.databaseRead.Raw(query, &vuln, args...)
-	return vuln, result.GetErrorExceptNotFound()
+	if result.GetData() == nil || result.GetErrorExceptNotFound() != nil {
+		return &dashboard.Vulnerability{}, result.GetErrorExceptNotFound()
+	}
+	return result.GetData().(*dashboard.Vulnerability), result.GetErrorExceptNotFound()
 }
 
+// nolint:dupl // method is not duplicate
 func (r *RepoDashboard) GetDashboardVulnByAuthor(
 	filter *dashboard.FilterDashboard) (vulns []*dashboard.VulnerabilitiesByAuthor, err error) {
 	condition, args := r.getConditionFilter(filter)
@@ -77,12 +87,13 @@ func (r *RepoDashboard) GetDashboardVulnByAuthor(
 		SELECT author, %s FROM %s WHERE %s AND active = true GROUP BY "author", "active" %s LIMIT 5`,
 		r.querySelectFieldsDefault(), (&dashboard.VulnerabilitiesByAuthor{}).GetTable(), condition, r.orderByDefault())
 	result := r.databaseRead.Raw(query, &vulns, args...)
-	if vulns == nil {
+	if result.GetData() == nil || result.GetErrorExceptNotFound() != nil {
 		return []*dashboard.VulnerabilitiesByAuthor{}, result.GetErrorExceptNotFound()
 	}
-	return vulns, result.GetErrorExceptNotFound()
+	return result.GetData().([]*dashboard.VulnerabilitiesByAuthor), result.GetErrorExceptNotFound()
 }
 
+// nolint:dupl // method is not duplicate
 func (r *RepoDashboard) GetDashboardVulnByRepository(
 	filter *dashboard.FilterDashboard) (vulns []*dashboard.VulnerabilitiesByRepository, err error) {
 	condition, args := r.getConditionFilter(filter)
@@ -90,12 +101,13 @@ func (r *RepoDashboard) GetDashboardVulnByRepository(
 		SELECT repository_name, %s FROM %s WHERE %s AND active = true GROUP BY "repository_name", "active" %s LIMIT 5`,
 		r.querySelectFieldsDefault(), (&dashboard.VulnerabilitiesByRepository{}).GetTable(), condition, r.orderByDefault())
 	result := r.databaseRead.Raw(query, &vulns, args...)
-	if vulns == nil {
+	if result.GetData() == nil || result.GetErrorExceptNotFound() != nil {
 		return []*dashboard.VulnerabilitiesByRepository{}, result.GetErrorExceptNotFound()
 	}
-	return vulns, result.GetErrorExceptNotFound()
+	return result.GetData().([]*dashboard.VulnerabilitiesByRepository), result.GetErrorExceptNotFound()
 }
 
+// nolint:dupl // method is not duplicate
 func (r *RepoDashboard) GetDashboardVulnByLanguage(
 	filter *dashboard.FilterDashboard) (vulns []*dashboard.VulnerabilitiesByLanguage, err error) {
 	condition, args := r.getConditionFilter(filter)
@@ -103,12 +115,13 @@ func (r *RepoDashboard) GetDashboardVulnByLanguage(
 		SELECT language, %s FROM %s WHERE %s AND active = true GROUP BY "language", "active" %s LIMIT 5`,
 		r.querySelectFieldsDefault(), (&dashboard.VulnerabilitiesByLanguage{}).GetTable(), condition, r.orderByDefault())
 	result := r.databaseRead.Raw(query, &vulns, args...)
-	if vulns == nil {
+	if result.GetData() == nil || result.GetErrorExceptNotFound() != nil {
 		return []*dashboard.VulnerabilitiesByLanguage{}, result.GetErrorExceptNotFound()
 	}
-	return vulns, result.GetErrorExceptNotFound()
+	return result.GetData().([]*dashboard.VulnerabilitiesByLanguage), result.GetErrorExceptNotFound()
 }
 
+// nolint:dupl // method is not duplicate
 func (r *RepoDashboard) GetDashboardVulnByTime(
 	filter *dashboard.FilterDashboard) (vulns []*dashboard.VulnerabilitiesByTime, err error) {
 	condition, args := r.getConditionFilter(filter)
@@ -116,10 +129,10 @@ func (r *RepoDashboard) GetDashboardVulnByTime(
 		SELECT created_at, %s FROM %s WHERE %s AND active = true group by "created_at", "active" %s LIMIT 5`,
 		r.querySelectFieldsDefault(), (&dashboard.VulnerabilitiesByTime{}).GetTable(), condition, r.orderByDefault())
 	result := r.databaseRead.Raw(query, &vulns, args...)
-	if vulns == nil {
+	if result.GetData() == nil || result.GetErrorExceptNotFound() != nil {
 		return []*dashboard.VulnerabilitiesByTime{}, result.GetErrorExceptNotFound()
 	}
-	return vulns, result.GetErrorExceptNotFound()
+	return result.GetData().([]*dashboard.VulnerabilitiesByTime), result.GetErrorExceptNotFound()
 }
 
 func (r *RepoDashboard) getConditionFilter(

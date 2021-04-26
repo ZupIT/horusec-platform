@@ -3,7 +3,7 @@ module github.com/ZupIT/horusec-platform/analytic
 go 1.16
 
 require (
-	github.com/ZupIT/horusec-devkit v0.0.0-20210423162325-293714602951
+	github.com/ZupIT/horusec-devkit v0.0.0-20210426200535-f65565027b4d
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
 	github.com/go-chi/chi v4.1.2+incompatible
 	github.com/go-chi/cors v1.2.0
@@ -11,6 +11,7 @@ require (
 	github.com/google/uuid v1.2.0
 	github.com/google/wire v0.5.0
 	github.com/prometheus/common v0.21.0 // indirect
+	github.com/streadway/amqp v1.0.0 // indirect
 	github.com/stretchr/testify v1.7.0
 	github.com/swaggo/swag v1.7.0
 	golang.org/x/crypto v0.0.0-20210421170649-83a5a9bb288b // indirect

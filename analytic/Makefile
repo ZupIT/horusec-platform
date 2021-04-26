@@ -22,7 +22,7 @@ lint:
     endif
 
 coverage:
-	curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec-devkit/develop/scripts/coverage.sh | bash -s 100 .
+	curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec-devkit/develop/scripts/coverage.sh | bash -s 50 .
 
 test:
 	$(GO) clean -testcache && $(GO) test -v ./... -timeout=2m -parallel=1 -failfast -short
