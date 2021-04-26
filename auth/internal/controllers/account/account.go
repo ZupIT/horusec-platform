@@ -76,7 +76,7 @@ func (c *Controller) CreateAccountKeycloak(token string) (*accountEntities.Respo
 func (c *Controller) CreateAccountHorusec(data *accountEntities.Data) (*accountEntities.Response, error) {
 	account := data.ToAccount()
 	if c.appConfig.IsBrokerDisabled() {
-		account.SetIsConfirmedTrue()
+		_ = account.SetIsConfirmedTrue()
 	}
 
 	if _, err := c.accountRepository.CreateAccount(account); err != nil {
@@ -101,7 +101,7 @@ func (c *Controller) ValidateAccountEmail(accountID uuid.UUID) error {
 		return err
 	}
 
-	_, err = c.accountRepository.Update(account.SetIsConfirmed())
+	_, err = c.accountRepository.Update(account.SetIsConfirmedTrue())
 	return err
 }
 

@@ -6,6 +6,8 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/ZupIT/horusec-devkit/pkg/utils/crypto"
 )
 
 func TestToResponse(t *testing.T) {
@@ -128,5 +130,66 @@ func TestToGetAccountDataResponse(t *testing.T) {
 		assert.Equal(t, account.AccountID.String(), response.AccountID)
 		assert.Equal(t, account.IsApplicationAdmin, response.IsApplicationAdmin)
 		assert.Equal(t, []string{"test"}, response.Permissions)
+	})
+}
+
+func TestSetIsConfirmedTrue(t *testing.T) {
+	t.Run("should success set is confirmed true", func(t *testing.T) {
+		account := &Account{
+			IsConfirmed: false,
+		}
+
+		_ = account.SetIsConfirmedTrue()
+		assert.True(t, account.IsConfirmed)
+	})
+}
+
+func TestUpdate(t *testing.T) {
+	t.Run("should update field update at", func(t *testing.T) {
+		expectedTime := time.Now()
+
+		account := &Account{
+			UpdatedAt: expectedTime,
+		}
+
+		_ = account.Update()
+		assert.NotEqual(t, expectedTime, account.UpdatedAt)
+	})
+}
+
+func TestSetNewPassword(t *testing.T) {
+	t.Run("should success set new password", func(t *testing.T) {
+		expectedTime := time.Now()
+
+		account := &Account{
+			UpdatedAt: expectedTime,
+		}
+
+		_ = account.SetNewPassword("test")
+		assert.NotEqual(t, expectedTime, account.UpdatedAt)
+		assert.True(t, crypto.CheckPasswordHashBcrypt("test", account.Password))
+	})
+}
+
+func TestUpdateFromUpdateAccountData(t *testing.T) {
+	t.Run("should success update is confirmed, email and username", func(t *testing.T) {
+		expectedTime := time.Now()
+
+		account := &Account{
+			UpdatedAt:   expectedTime,
+			IsConfirmed: false,
+		}
+
+		data := &UpdateAccount{
+			Email:       "test@test.com",
+			Username:    "test",
+			IsConfirmed: true,
+		}
+
+		account.UpdateFromUpdateAccountData(data)
+		assert.NotEqual(t, expectedTime, account.UpdatedAt)
+		assert.Equal(t, data.Email, account.Email)
+		assert.Equal(t, data.Username, account.Username)
+		assert.Equal(t, data.IsConfirmed, account.IsConfirmed)
 	})
 }

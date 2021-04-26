@@ -81,8 +81,11 @@ func (a *Account) ToGetAccountDataResponse(permissions []string) *proto.GetAccou
 	}
 }
 
-func (a *Account) SetIsConfirmedTrue() {
+func (a *Account) SetIsConfirmedTrue() *Account {
+	a.Update()
 	a.IsConfirmed = true
+
+	return a
 }
 
 func (a *Account) Update() *Account {
@@ -103,11 +106,4 @@ func (a *Account) UpdateFromUpdateAccountData(data *UpdateAccount) {
 	a.Email = data.Email
 	a.Username = data.Username
 	a.IsConfirmed = data.IsConfirmed
-}
-
-func (a *Account) SetIsConfirmed() *Account {
-	a.Update()
-	a.IsConfirmed = true
-
-	return a
 }
