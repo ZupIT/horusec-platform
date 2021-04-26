@@ -1,6 +1,9 @@
 package analysis
 
 import (
+	"testing"
+	"time"
+
 	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 	"github.com/ZupIT/horusec-devkit/pkg/entities/vulnerability"
 	analysisEnum "github.com/ZupIT/horusec-devkit/pkg/enums/analysis"
@@ -11,8 +14,6 @@ import (
 	vulnerabilityEnum "github.com/ZupIT/horusec-devkit/pkg/enums/vulnerability"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
-	"testing"
-	"time"
 )
 
 func getAnalysisMock() *analysis.Analysis {
@@ -34,48 +35,48 @@ func getAnalysisMock() *analysis.Analysis {
 		VulnerabilityID: VulnerabilityID1,
 		AnalysisID:      input.ID,
 		CreatedAt:       time.Now(),
-		Vulnerability:   vulnerability.Vulnerability{
+		Vulnerability: vulnerability.Vulnerability{
 			VulnerabilityID: VulnerabilityID1,
-			Line:          "1",
-			Column:        "1",
-			Confidence:    confidence.High,
-			File:          "/deployments/cert.pem",
-			Code:          "-----BEGIN CERTIFICATE-----",
-			Details:       "Asymmetric Private Key \n Found SSH and/or x.509 Cerficates among the files of your project, make sure you want this kind of information inside your Git repo, since it can be missused by someone with access to any kind of copy.  For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
-			SecurityTool:  tools.HorusecEngine,
-			Language:      languages.Leaks,
-			Severity:      severities.Critical,
-			VulnHash:      "1234567890",
-			Type:          vulnerabilityEnum.Vulnerability,
-			CommitAuthor:  "Horusec",
-			CommitEmail:   "horusec@zup.com.br",
-			CommitHash:    "9876543210",
-			CommitMessage: "Initial Commit",
-			CommitDate:    "2021-03-31T10:58:42Z",
+			Line:            "1",
+			Column:          "1",
+			Confidence:      confidence.High,
+			File:            "/deployments/cert.pem",
+			Code:            "-----BEGIN CERTIFICATE-----",
+			Details:         "Asymmetric Private Key \n Found SSH and/or x.509 Cerficates among the files of your project, make sure you want this kind of information inside your Git repo, since it can be missused by someone with access to any kind of copy.  For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
+			SecurityTool:    tools.HorusecEngine,
+			Language:        languages.Leaks,
+			Severity:        severities.Critical,
+			VulnHash:        "1234567890",
+			Type:            vulnerabilityEnum.Vulnerability,
+			CommitAuthor:    "Horusec",
+			CommitEmail:     "horusec@zup.com.br",
+			CommitHash:      "9876543210",
+			CommitMessage:   "Initial Commit",
+			CommitDate:      "2021-03-31T10:58:42Z",
 		},
 	})
 	input.AnalysisVulnerabilities = append(input.AnalysisVulnerabilities, analysis.AnalysisVulnerabilities{
 		VulnerabilityID: VulnerabilityID2,
 		AnalysisID:      input.ID,
 		CreatedAt:       time.Now(),
-		Vulnerability:   vulnerability.Vulnerability{
+		Vulnerability: vulnerability.Vulnerability{
 			VulnerabilityID: VulnerabilityID2,
-			Line:          "1",
-			Column:        "1",
-			Confidence:    confidence.High,
-			File:          "/deployments/key.pem",
-			Code:          "-----BEGIN OPENSSH PRIVATE KEY-----",
-			Details:       "Asymmetric Private Key \n Found SSH and/or x.509 Cerficates among the files of your project, make sure you want this kind of information inside your Git repo, since it can be missused by someone with access to any kind of copy.  For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
-			SecurityTool:  tools.HorusecEngine,
-			Language:      languages.Leaks,
-			Severity:      severities.Critical,
-			VulnHash:      "0987654321",
-			Type:          vulnerabilityEnum.Vulnerability,
-			CommitAuthor:  "Horusec",
-			CommitEmail:   "horusec@zup.com.br",
-			CommitHash:    "1234567890",
-			CommitMessage: "Initial Commit",
-			CommitDate:    "2021-03-31T10:58:42Z",
+			Line:            "1",
+			Column:          "1",
+			Confidence:      confidence.High,
+			File:            "/deployments/key.pem",
+			Code:            "-----BEGIN OPENSSH PRIVATE KEY-----",
+			Details:         "Asymmetric Private Key \n Found SSH and/or x.509 Cerficates among the files of your project, make sure you want this kind of information inside your Git repo, since it can be missused by someone with access to any kind of copy.  For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
+			SecurityTool:    tools.HorusecEngine,
+			Language:        languages.Leaks,
+			Severity:        severities.Critical,
+			VulnHash:        "0987654321",
+			Type:            vulnerabilityEnum.Vulnerability,
+			CommitAuthor:    "Horusec",
+			CommitEmail:     "horusec@zup.com.br",
+			CommitHash:      "1234567890",
+			CommitMessage:   "Initial Commit",
+			CommitDate:      "2021-03-31T10:58:42Z",
 		},
 	})
 	return input

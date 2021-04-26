@@ -2,14 +2,16 @@ package dashboard
 
 import (
 	"errors"
+	"testing"
+	"time"
+
 	"github.com/ZupIT/horusec-devkit/pkg/services/database"
 	"github.com/ZupIT/horusec-devkit/pkg/services/database/enums"
 	"github.com/ZupIT/horusec-devkit/pkg/services/database/response"
-	"github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
-	"testing"
-	"time"
+
+	"github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard"
 )
 
 func TestRepoDashboard_Save(t *testing.T) {
@@ -24,11 +26,11 @@ func TestRepoDashboard_Save(t *testing.T) {
 		entity := &dashboard.VulnerabilitiesByAuthor{
 			Author: "horusec@zup.com.br",
 			Vulnerability: dashboard.Vulnerability{
-				VulnerabilityID:       uuid.New(),
-				CreatedAt:             time.Now(),
-				Active:                true,
-				WorkspaceID:           uuid.New(),
-				RepositoryID:          uuid.New(),
+				VulnerabilityID: uuid.New(),
+				CreatedAt:       time.Now(),
+				Active:          true,
+				WorkspaceID:     uuid.New(),
+				RepositoryID:    uuid.New(),
 			},
 		}
 		err := repo.Save(entity, entity.GetTable())
@@ -45,11 +47,11 @@ func TestRepoDashboard_Save(t *testing.T) {
 		entity := &dashboard.VulnerabilitiesByAuthor{
 			Author: "horusec@zup.com.br",
 			Vulnerability: dashboard.Vulnerability{
-				VulnerabilityID:       uuid.New(),
-				CreatedAt:             time.Now(),
-				Active:                true,
-				WorkspaceID:           uuid.New(),
-				RepositoryID:          uuid.New(),
+				VulnerabilityID: uuid.New(),
+				CreatedAt:       time.Now(),
+				Active:          true,
+				WorkspaceID:     uuid.New(),
+				RepositoryID:    uuid.New(),
 			},
 		}
 		err := repo.Save(entity, entity.GetTable())
@@ -67,7 +69,7 @@ func TestRepoDashboard_Inactive(t *testing.T) {
 		}
 		repo := NewRepoDashboard(conn)
 		condition := map[string]interface{}{
-			"active": true,
+			"active":        true,
 			"repository_id": uuid.New(),
 		}
 		err := repo.Inactive(condition, (&dashboard.VulnerabilitiesByAuthor{}).GetTable())
@@ -82,7 +84,7 @@ func TestRepoDashboard_Inactive(t *testing.T) {
 		}
 		repo := NewRepoDashboard(conn)
 		condition := map[string]interface{}{
-			"active": true,
+			"active":        true,
 			"repository_id": uuid.New(),
 		}
 		err := repo.Inactive(condition, (&dashboard.VulnerabilitiesByAuthor{}).GetTable())

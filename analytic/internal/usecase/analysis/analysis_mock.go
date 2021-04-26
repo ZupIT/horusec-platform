@@ -2,8 +2,9 @@ package analysis
 
 import (
 	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
-	"github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard"
 	"github.com/stretchr/testify/mock"
+
+	"github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard"
 )
 
 type Mock struct {

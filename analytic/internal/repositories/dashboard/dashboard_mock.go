@@ -2,14 +2,14 @@ package dashboard
 
 import (
 	utilsMock "github.com/ZupIT/horusec-devkit/pkg/utils/mock"
-	"github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard"
 	"github.com/stretchr/testify/mock"
+
+	"github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard"
 )
 
 type Mock struct {
 	mock.Mock
 }
-
 
 func (m *Mock) Save(_ interface{}, _ string) error {
 	args := m.MethodCalled("Save")

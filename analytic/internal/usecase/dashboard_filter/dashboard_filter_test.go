@@ -3,14 +3,16 @@ package dashboardfilter
 import (
 	"context"
 	"fmt"
-	"github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard"
-	"github.com/ZupIT/horusec-platform/analytic/internal/enums"
-	"github.com/go-chi/chi"
-	"github.com/google/uuid"
-	"github.com/stretchr/testify/assert"
 	"net/http"
 	"testing"
 	"time"
+
+	"github.com/go-chi/chi"
+	"github.com/google/uuid"
+	"github.com/stretchr/testify/assert"
+
+	"github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard"
+	"github.com/ZupIT/horusec-platform/analytic/internal/enums"
 )
 
 func TestUseCaseDashboard_ExtractFilterDashboard(t *testing.T) {
