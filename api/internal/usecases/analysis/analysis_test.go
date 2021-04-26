@@ -89,7 +89,7 @@ func TestUseCases_DecodeAnalysisDataFromIoRead(t *testing.T) {
 						Language:        languages.Leaks,
 						Severity:        severities.Critical,
 						VulnHash:        "1234567890",
-							Type:            vulnerabilityEnum.Vulnerability,
+						Type:            vulnerabilityEnum.Vulnerability,
 						CommitAuthor:    "Wilian Gabriel",
 						CommitEmail:     "wilian.silva@zup.com.br",
 						CommitHash:      "9876543210",

@@ -19,6 +19,8 @@ github.com/ZupIT/horusec-devkit v0.0.0-20210422160249-0f2dd75131fc h1:U9ETC41xzy
 github.com/ZupIT/horusec-devkit v0.0.0-20210422160249-0f2dd75131fc/go.mod h1:t6hq7it2Z1mMwLBC2drh5ieGk/t8T4GklKBkvxnVqP8=
 github.com/ZupIT/horusec-devkit v0.0.0-20210423142256-85c6ef6bbbcc h1:sbn9vSa1t9DeajL0teafG9deH9ABCeOiab5NuM8Cx/U=
 github.com/ZupIT/horusec-devkit v0.0.0-20210423142256-85c6ef6bbbcc/go.mod h1:DSvVm4r+H6nYJul50ZuuN25nQPr5aZ8z2Z1gUmKumpM=
+github.com/ZupIT/horusec-devkit v0.0.0-20210426200535-f65565027b4d h1:S+WWAHNj0gsjRaG/ZONzUZjegt+1OmakpbX8hZu/7UM=
+github.com/ZupIT/horusec-devkit v0.0.0-20210426200535-f65565027b4d/go.mod h1:DSvVm4r+H6nYJul50ZuuN25nQPr5aZ8z2Z1gUmKumpM=
 github.com/afex/hystrix-go v0.0.0-20180502004556-fa1af6a1f4f5/go.mod h1:SkGFH1ia65gfNATL8TAiHDNxPzPdmEL5uirI2Uyuz6c=
 github.com/alecthomas/template v0.0.0-20160405071501-a0175ee3bccc/go.mod h1:LOuyumcjzFXgccqObfd/Ljyb9UuFJ6TxHnclSeseNhc=
 github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751 h1:JYp7IbQjafoB+tBA3gMyHYHrpOtNuDiK/uB5uXxq5wM=
