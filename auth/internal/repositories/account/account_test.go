@@ -75,3 +75,29 @@ func TestCreateAccount(t *testing.T) {
 		assert.NotNil(t, account)
 	})
 }
+
+func TestUpdate(t *testing.T) {
+	t.Run("should success update account", func(t *testing.T) {
+		databaseMock := &database.Mock{}
+		databaseMock.On("Update").Return(&response.Response{})
+
+		repository := NewAccountRepository(&database.Connection{Read: databaseMock, Write: databaseMock},
+			accountUseCases.NewAccountUseCases(&app.Config{}))
+
+		account, err := repository.Update(&accountEntities.Account{})
+		assert.NoError(t, err)
+		assert.NotNil(t, account)
+	})
+}
+
+func TestDelete(t *testing.T) {
+	t.Run("should success delete account", func(t *testing.T) {
+		databaseMock := &database.Mock{}
+		databaseMock.On("Delete").Return(&response.Response{})
+
+		repository := NewAccountRepository(&database.Connection{Read: databaseMock, Write: databaseMock},
+			accountUseCases.NewAccountUseCases(&app.Config{}))
+
+		assert.NoError(t, repository.Delete(uuid.New()))
+	})
+}
