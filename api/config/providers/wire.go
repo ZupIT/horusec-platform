@@ -3,6 +3,8 @@
 package providers
 
 import (
+	"github.com/google/wire"
+
 	analysisHandler "github.com/ZupIT/horusec-platform/api/internal/handlers/analysis"
 	healthHandler "github.com/ZupIT/horusec-platform/api/internal/handlers/health"
 	"github.com/ZupIT/horusec-platform/api/internal/middelwares/token"
@@ -10,7 +12,6 @@ import (
 	"github.com/ZupIT/horusec-platform/api/internal/repositories/repository"
 	repositoriesToken "github.com/ZupIT/horusec-platform/api/internal/repositories/token"
 	"github.com/ZupIT/horusec-platform/api/internal/router"
-	"github.com/google/wire"
 
 	appConfiguration "github.com/ZupIT/horusec-devkit/pkg/services/app"
 	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth/proto"

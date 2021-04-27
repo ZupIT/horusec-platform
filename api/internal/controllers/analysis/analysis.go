@@ -17,9 +17,10 @@ package analysis
 import (
 	"time"
 
+	"github.com/google/uuid"
+
 	repoAnalysis "github.com/ZupIT/horusec-platform/api/internal/repositories/analysis"
 	"github.com/ZupIT/horusec-platform/api/internal/repositories/repository"
-	"github.com/google/uuid"
 
 	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/queues"

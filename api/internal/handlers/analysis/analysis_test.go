@@ -11,10 +11,11 @@ import (
 
 	tokensEnums "github.com/ZupIT/horusec-platform/api/internal/middelwares/token/enums"
 
-	analysisController "github.com/ZupIT/horusec-platform/api/internal/controllers/analysis"
 	"github.com/go-chi/chi"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
+
+	analysisController "github.com/ZupIT/horusec-platform/api/internal/controllers/analysis"
 
 	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 	"github.com/ZupIT/horusec-devkit/pkg/entities/cli"
