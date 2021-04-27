@@ -18,6 +18,8 @@ import (
 	"fmt"
 	netHTTP "net/http"
 
+	"github.com/ZupIT/horusec-devkit/pkg/services/broker"
+
 	"google.golang.org/grpc"
 
 	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/health"
@@ -33,12 +35,15 @@ type Handler struct {
 	databaseRead           database.IDatabaseRead
 	databaseWrite          database.IDatabaseWrite
 	grpcHealthCheckService health.ICheckClient
+	broker                 broker.IBroker
 }
 
-func NewHealthHandler(databaseConnection *database.Connection, authConGRPC grpc.ClientConnInterface) *Handler {
+func NewHealthHandler(databaseConnection *database.Connection, authConGRPC grpc.ClientConnInterface,
+	brokerConnection broker.IBroker) *Handler {
 	return &Handler{
 		databaseRead:           databaseConnection.Read,
 		databaseWrite:          databaseConnection.Write,
+		broker:                 brokerConnection,
 		grpcHealthCheckService: health.NewHealthCheckGrpcClient(authConGRPC.(*grpc.ClientConn)),
 	}
 }
@@ -59,6 +64,10 @@ func (h *Handler) Options(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
 func (h *Handler) Get(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
 	if h.databaseNotAvailable() {
 		httpUtil.StatusInternalServerError(w, httpUtilEnums.ErrorDatabaseIsNotHealth)
+		return
+	}
+	if isAvailable := h.broker.IsAvailable(); !isAvailable {
+		httpUtil.StatusInternalServerError(w, httpUtilEnums.ErrorBrokerIsNotHealth)
 		return
 	}
 	if isAvailable, state := h.grpcAvailable(); !isAvailable {

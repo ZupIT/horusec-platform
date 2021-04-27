@@ -38,15 +38,15 @@ func Initialize(defaultPort string) (router.IRouter, error) {
 	if err != nil {
 		return nil, err
 	}
-	handler := health.NewHealthHandler(connection, clientConnInterface)
-	iRepoDashboard := dashboard.NewRepoDashboard(connection)
-	iReadController := dashboard2.NewControllerDashboardRead(iRepoDashboard)
-	dashboardHandler := dashboard3.NewDashboardHandler(iReadController)
 	configIConfig := config2.NewBrokerConfig()
 	iBroker, err := broker.NewBroker(configIConfig)
 	if err != nil {
 		return nil, err
 	}
+	handler := health.NewHealthHandler(connection, clientConnInterface, iBroker)
+	iRepoDashboard := dashboard.NewRepoDashboard(connection)
+	iReadController := dashboard2.NewControllerDashboardRead(iRepoDashboard)
+	dashboardHandler := dashboard3.NewDashboardHandler(iReadController)
 	iWriteController := dashboard2.NewControllerDashboardWrite(iRepoDashboard)
 	iEvent := dashboard4.NewDashboardEvent(iBroker, iWriteController)
 	routerIRouter := router.NewHTTPRouter(iRouter, iAuthzMiddleware, handler, dashboardHandler, iEvent)
