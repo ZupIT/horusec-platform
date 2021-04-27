@@ -13,11 +13,11 @@ type Mock struct {
 
 func (m *Mock) Save(_ interface{}, _ string) error {
 	args := m.MethodCalled("Save")
-	return utilsMock.ReturnNilOrError(args, 1)
+	return utilsMock.ReturnNilOrError(args, 0)
 }
 func (m *Mock) Inactive(_ map[string]interface{}, _ string) error {
 	args := m.MethodCalled("Inactive")
-	return utilsMock.ReturnNilOrError(args, 1)
+	return utilsMock.ReturnNilOrError(args, 0)
 }
 func (m *Mock) GetDashboardTotalDevelopers(_ *dashboard.FilterDashboard) (int, error) {
 	args := m.MethodCalled("GetDashboardTotalDevelopers")

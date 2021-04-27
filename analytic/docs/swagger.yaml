@@ -143,15 +143,12 @@ info:
   termsOfService: http://swagger.io/terms/
   title: Horusec-Analytic
 paths:
-  /analytic/dashboard/{workspaceID}/dashboard-charts:
+  /analytic/dashboard/{workspaceID}/{repositoryID}/dashboard-charts:
     get:
       consumes:
       - application/json
-      - application/json
-      description: |-
-        Get all charts of dashboard screen
-        Get all charts of dashboard screen
-      operationId: get-total-developers-workspace
+      description: Get all charts of dashboard screen
+      operationId: GetAllChartsByRepository
       parameters:
       - description: workspaceID of the workspace
         in: path
@@ -161,23 +158,7 @@ paths:
       - description: repositoryID of the repository
         in: path
         name: repositoryID
-        type: string
-      - description: initialDate query string
-        in: query
-        name: initialDate
-        type: string
-      - description: finalDate query string
-        in: query
-        name: finalDate
-        type: string
-      - description: workspaceID of the workspace
-        in: path
-        name: workspaceID
         required: true
-        type: string
-      - description: repositoryID of the repository
-        in: path
-        name: repositoryID
         type: string
       - description: initialDate query string
         in: query
@@ -188,7 +169,6 @@ paths:
         name: finalDate
         type: string
       produces:
-      - application/json
       - application/json
       responses:
         "200":
@@ -220,9 +200,61 @@ paths:
               type: object
       security:
       - ApiKeyAuth: []
-      - ApiKeyAuth: []
       tags:
       - DashboardByWorkspace
+  /analytic/dashboard/{workspaceID}/dashboard-charts:
+    get:
+      consumes:
+      - application/json
+      description: Get all charts of dashboard screen
+      operationId: GetAllChartsByWorkspace
+      parameters:
+      - description: workspaceID of the workspace
+        in: path
+        name: workspaceID
+        required: true
+        type: string
+      - description: initialDate query string
+        in: query
+        name: initialDate
+        type: string
+      - description: finalDate query string
+        in: query
+        name: finalDate
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/entities.Response'
+            - properties:
+                content:
+                  $ref: '#/definitions/dashboard.Response'
+              type: object
+        "400":
+          description: BAD REQUEST
+          schema:
+            allOf:
+            - $ref: '#/definitions/entities.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "500":
+          description: INTERNAL SERVER ERROR
+          schema:
+            allOf:
+            - $ref: '#/definitions/entities.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      tags:
       - DashboardByWorkspace
   /analytic/health:
     get:

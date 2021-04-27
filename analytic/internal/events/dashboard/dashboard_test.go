@@ -3,6 +3,7 @@ package dashboard
 import (
 	"errors"
 	"testing"
+	"time"
 
 	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/queues"
@@ -29,6 +30,8 @@ func TestNewDashboardEvent(t *testing.T) {
 		controllerMock.On("AddVulnerabilitiesByTime").Return(nil)
 		assert.NotPanics(t, func() {
 			NewDashboardEvent(brokerMock, controllerMock)
+			time.Sleep(5 * time.Second)
+			brokerMock.AssertCalled(t, "ConsumeHandlerFunc")
 		})
 	})
 	t.Run("Should Handle new analysis with error on parse packet", func(t *testing.T) {

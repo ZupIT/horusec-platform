@@ -34,25 +34,19 @@ var doc = `{
                 "security": [
                     {
                         "ApiKeyAuth": []
-                    },
-                    {
-                        "ApiKeyAuth": []
                     }
                 ],
-                "description": "Get all charts of dashboard screen\nGet all charts of dashboard screen",
+                "description": "Get all charts of dashboard screen",
                 "consumes": [
-                    "application/json",
                     "application/json"
                 ],
                 "produces": [
-                    "application/json",
                     "application/json"
                 ],
                 "tags": [
-                    "DashboardByWorkspace",
                     "DashboardByWorkspace"
                 ],
-                "operationId": "get-total-developers-workspace",
+                "operationId": "GetAllChartsByWorkspace",
                 "parameters": [
                     {
                         "type": "string",
@@ -60,12 +54,6 @@ var doc = `{
                         "name": "workspaceID",
                         "in": "path",
                         "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "repositoryID of the repository",
-                        "name": "repositoryID",
-                        "in": "path"
                     },
                     {
                         "type": "string",
@@ -78,7 +66,85 @@ var doc = `{
                         "description": "finalDate query string",
                         "name": "finalDate",
                         "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/entities.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "$ref": "#/definitions/dashboard.Response"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
                     },
+                    "400": {
+                        "description": "BAD REQUEST",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/entities.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "INTERNAL SERVER ERROR",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/entities.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/analytic/dashboard/{workspaceID}/{repositoryID}/dashboard-charts": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get all charts of dashboard screen",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DashboardByWorkspace"
+                ],
+                "operationId": "GetAllChartsByRepository",
+                "parameters": [
                     {
                         "type": "string",
                         "description": "workspaceID of the workspace",
@@ -90,7 +156,8 @@ var doc = `{
                         "type": "string",
                         "description": "repositoryID of the repository",
                         "name": "repositoryID",
-                        "in": "path"
+                        "in": "path",
+                        "required": true
                     },
                     {
                         "type": "string",

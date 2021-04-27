@@ -67,7 +67,7 @@ func (r *Router) routerSwagger() {
 func (r *Router) routerDashboardWorkspace() {
 	r.Route(enums.DashboardWorkspaceRouter, func(router chi.Router) {
 		router.Options("/", r.dashboardHandler.Options)
-		router.With(r.IsWorkspaceAdmin).Get("/dashboard-charts", r.dashboardHandler.GetAllCharts)
-		router.With(r.IsRepositoryAdmin).Get("/{repositoryID}/dashboard-charts", r.dashboardHandler.GetAllCharts)
+		router.With(r.IsWorkspaceAdmin).Get("/dashboard-charts", r.dashboardHandler.GetAllChartsByWorkspace)
+		router.With(r.IsRepositoryAdmin).Get("/{repositoryID}/dashboard-charts", r.dashboardHandler.GetAllChartsByRepository)
 	})
 }
