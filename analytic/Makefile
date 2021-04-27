@@ -43,10 +43,8 @@ security:
 		$(HORUSEC) start -p="./" -e="true"
     endif
 
-build-rest:
-	$(GO) build -o "./tmp/bin/analytic" ./cmd/app_rest/main.go
-build-broker:
-	$(GO) build -o "./tmp/bin/analytic" ./cmd/app_broker/main.go
+build:
+	$(GO) build -o "./tmp/bin/analytic" ./cmd/app/main.go
 
 pipeline: fmt fix-imports lint test coverage build security
 
