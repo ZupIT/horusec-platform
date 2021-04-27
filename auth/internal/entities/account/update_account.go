@@ -1,6 +1,8 @@
 package account
 
 import (
+	"encoding/json"
+
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/go-ozzo/ozzo-validation/v4/is"
 	"github.com/google/uuid"
@@ -29,4 +31,10 @@ func (u *UpdateAccount) SetAccountIDAndIsConfirmed(accountID uuid.UUID, isConfir
 
 func (u *UpdateAccount) HasEmailChange(email string) bool {
 	return u.Email != "" && email != u.Email
+}
+
+func (u *UpdateAccount) ToBytes() []byte {
+	bytes, _ := json.Marshal(u)
+
+	return bytes
 }

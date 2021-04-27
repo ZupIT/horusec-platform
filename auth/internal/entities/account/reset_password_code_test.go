@@ -34,3 +34,14 @@ func TestValidateResetCodeData(t *testing.T) {
 		assert.Error(t, data.Validate())
 	})
 }
+
+func TestToBytesResetCodeData(t *testing.T) {
+	t.Run("should success parse to bytes", func(t *testing.T) {
+		data := &ResetCodeData{
+			Email: "test@test.com",
+			Code:  "123456",
+		}
+
+		assert.NotEmpty(t, data.ToBytes())
+	})
+}

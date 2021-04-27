@@ -64,3 +64,14 @@ func TestHasEmailChange(t *testing.T) {
 		assert.False(t, data.HasEmailChange("test@test.com"))
 	})
 }
+
+func TestToBytesUpdateAccount(t *testing.T) {
+	t.Run("should success parse to bytes", func(t *testing.T) {
+		data := &UpdateAccount{
+			Email:    "test",
+			Username: "test",
+		}
+
+		assert.NotEmpty(t, data.ToBytes())
+	})
+}

@@ -1,6 +1,8 @@
 package account
 
 import (
+	"encoding/json"
+
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/google/uuid"
 
@@ -22,4 +24,10 @@ func (c *ChangePasswordData) SetAccountID(accountID uuid.UUID) *ChangePasswordDa
 	c.AccountID = accountID
 
 	return c
+}
+
+func (c *ChangePasswordData) ToBytes() []byte {
+	bytes, _ := json.Marshal(c)
+
+	return bytes
 }

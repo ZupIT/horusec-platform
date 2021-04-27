@@ -303,20 +303,19 @@ func (h *Handler) Logout(w http.ResponseWriter, r *http.Request) {
 // @Failure 500 {object} entities.Response
 // @Router /auth/account/verify-already-used [post]
 // @Security ApiKeyAuth
-func (h *Handler) VerifyAlreadyInUse(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) CheckExistingEmailOrUsername(w http.ResponseWriter, r *http.Request) {
 	data, err := h.useCases.CheckEmailAndUsernameFromIOReadCloser(r.Body)
 	if err != nil {
 		httpUtil.StatusBadRequest(w, err)
 		return
 	}
 
-	err = h.controller.CheckExistingEmailOrUsername(data)
-	if err != nil {
+	if err := h.controller.CheckExistingEmailOrUsername(data); err != nil {
 		h.checkVerifyAlreadyInUseErrors(w, err)
 		return
 	}
 
-	httpUtil.StatusOK(w, "")
+	httpUtil.StatusNoContent(w)
 }
 
 func (h *Handler) checkVerifyAlreadyInUseErrors(w http.ResponseWriter, err error) {

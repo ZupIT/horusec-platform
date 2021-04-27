@@ -35,3 +35,13 @@ func TestSetAccountID(t *testing.T) {
 		assert.Equal(t, id, data.AccountID)
 	})
 }
+
+func TestToBytesChangePasswordData(t *testing.T) {
+	t.Run("should success parse to bytes", func(t *testing.T) {
+		data := &ChangePasswordData{
+			Password: "test",
+		}
+
+		assert.NotEmpty(t, data.ToBytes())
+	})
+}

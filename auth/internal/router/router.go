@@ -75,7 +75,7 @@ func (r *Router) accountRoutes() {
 		router.Post("/refresh-token", r.accountHandler.RefreshToken)
 		router.Post("/logout", r.accountHandler.Logout)
 		router.Delete("/delete", r.accountHandler.DeleteAccount)
-		router.Post("/verify-already-used", r.accountHandler.VerifyAlreadyInUse)
+		router.Post("/verify-already-used", r.accountHandler.CheckExistingEmailOrUsername)
 		router.Patch("/update", r.accountHandler.UpdateAccount)
 	})
 }

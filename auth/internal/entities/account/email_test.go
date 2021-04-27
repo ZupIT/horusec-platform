@@ -23,3 +23,13 @@ func TestValidateEmail(t *testing.T) {
 		assert.Error(t, data.Validate())
 	})
 }
+
+func TestToBytesEmail(t *testing.T) {
+	t.Run("should success parse to bytes", func(t *testing.T) {
+		data := &Email{
+			Email: "test@test.com",
+		}
+
+		assert.NotEmpty(t, data.ToBytes())
+	})
+}

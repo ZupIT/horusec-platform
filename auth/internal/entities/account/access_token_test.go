@@ -15,3 +15,13 @@ func TestValidateAccessToken(t *testing.T) {
 		assert.NoError(t, data.Validate())
 	})
 }
+
+func TestToBytesAccessToken(t *testing.T) {
+	t.Run("should success parse to bytes", func(t *testing.T) {
+		data := &AccessToken{
+			AccessToken: "test",
+		}
+
+		assert.NotEmpty(t, data.ToBytes())
+	})
+}

@@ -1,6 +1,8 @@
 package account
 
 import (
+	"encoding/json"
+
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/go-ozzo/ozzo-validation/v4/is"
 
@@ -29,4 +31,9 @@ func (u *Data) ToAccount() *Account {
 	}
 
 	return account.SetNewAccountData()
+}
+
+func (u *Data) ToBytes() []byte {
+	bytes, _ := json.Marshal(u)
+	return bytes
 }

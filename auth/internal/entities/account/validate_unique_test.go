@@ -34,3 +34,14 @@ func TestValidateCheckEmailAndUsername(t *testing.T) {
 		assert.Error(t, data.Validate())
 	})
 }
+
+func TestToBytesCheckEmailAndUsername(t *testing.T) {
+	t.Run("should success parse to bytes", func(t *testing.T) {
+		data := &CheckEmailAndUsername{
+			Email:    "test@test.com",
+			Username: "test",
+		}
+
+		assert.NotEmpty(t, data.ToBytes())
+	})
+}

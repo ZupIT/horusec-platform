@@ -52,3 +52,15 @@ func TestToAccount(t *testing.T) {
 		assert.Equal(t, data.Username, account.Username)
 	})
 }
+
+func TestToBytesData(t *testing.T) {
+	t.Run("should success parse to bytes", func(t *testing.T) {
+		data := &Data{
+			Email:    "test",
+			Password: "test",
+			Username: "test",
+		}
+
+		assert.NotEmpty(t, data.ToBytes())
+	})
+}
