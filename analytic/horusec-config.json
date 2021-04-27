@@ -39,9 +39,9 @@
   "horusecCliJsonOutputFilepath": "",
   "horusecCliMonitorRetryInSeconds": 15,
   "horusecCliPrintOutputType": "text",
-  "horusecCliProjectPath": "/home/wilian/go/src/github.com/ZupIT/horusec-platform/vulnerability",
+  "horusecCliProjectPath": "/home/wilian/go/src/github.com/ZupIT/horusec-platform/analytic",
   "horusecCliRepositoryAuthorization": "00000000-0000-0000-0000-000000000000",
-  "horusecCliRepositoryName": "vulnerability",
+  "horusecCliRepositoryName": "analytic",
   "horusecCliReturnErrorIfFoundVulnerability": false,
   "horusecCliRiskAcceptHashes": [],
   "horusecCliSeveritiesToIgnore": [
