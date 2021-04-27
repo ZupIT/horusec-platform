@@ -1,0 +1,20 @@
+{
+  "horusecCliFilesOrPathsToIgnore": [
+    "**/*_test.go",
+    "**/*_mock.go"
+  ],
+  "horusecCliFalsePositiveHashes": [
+    "988d10d7db960f81d0da6d3dcdcd4e4b1c795b8dc279bddfe658e8c9b5bce1cb",
+    "d5f48013e2b6795fa8ce861be6bec212fc934859d1ff13c73731d079ea0599b6",
+    "4ca0f1b862d633b51c55b36cd49d543dd0eeac331f6378a9198d116c2902bc01",
+    "676d8f994b4f155ce4a78f9785d074daa766daf10d42fedec7936632b397675c",
+    "f53c323369df825fc4afaa20b09b0d8e41b31123c2a6a462c27c02362ecb145f",
+    "da19619f7c0fa882a9ecf595f09a001358d6a7cc37f63efab170c55570cae0f2",
+    "91394e10881930579ec0502802c19dec41297bd3a9f5bd51a01959059cde3caf"
+  ],
+  "horusecCliRiskAcceptHashes": [
+    "d567cd68db8b94c754cc353dad44a1d9eda84b02f5c3613ba0a6905810259351",
+    "71b07f65c6d864e8400b173fcdc2f19afd4e8fc8817b2f685a82725856a65c00",
+    "27f614aba25f69c538e5af6d18314e6f98deeab2f9e26b502aedc9040e94bda9"
+  ]
+}
