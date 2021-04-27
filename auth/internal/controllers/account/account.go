@@ -146,11 +146,7 @@ func (c *Controller) createAccessTokenIfCorrectCode(data *accountEntities.ResetC
 		return "", err
 	}
 
-	token, _, err := jwt.CreateToken(account.ToTokenData(), nil)
-	if err != nil {
-		return "", err
-	}
-
+	token, _, _ := jwt.CreateToken(account.ToTokenData(), nil)
 	c.cache.Delete(data.Email)
 	return token, nil
 }
@@ -181,18 +177,17 @@ func (c *Controller) RefreshToken(refreshToken string) (*authEntities.LoginRespo
 	}
 
 	c.cache.Delete(refreshToken)
-	return c.createNewTokens(account)
+	return c.createNewTokens(account), nil
 }
 
-func (c *Controller) createNewTokens(account *accountEntities.Account) (*authEntities.LoginResponse, error) {
-	accessToken, expiresAt, err := jwt.CreateToken(account.ToTokenData(), nil)
-	if err != nil {
-		return nil, err
-	}
+func (c *Controller) createNewTokens(account *accountEntities.Account) *authEntities.LoginResponse {
+	accessToken, expiresAt, _ := jwt.CreateToken(account.ToTokenData(), nil)
 
 	refreshToken := jwt.CreateRefreshToken()
+
 	c.cache.Set(refreshToken, account.AccountID, authEnums.TokenDuration)
-	return account.ToLoginResponse(accessToken, refreshToken, expiresAt), nil
+
+	return account.ToLoginResponse(accessToken, refreshToken, expiresAt)
 }
 
 func (c *Controller) Logout(refreshToken string) {
