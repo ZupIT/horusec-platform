@@ -11,12 +11,15 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-go@v2
-      working-directory: ./auth
       - name: lint
+      working-directory: ./auth
       run: make lint
       - name: coverage
+      working-directory: ./auth
       run: make coverage
       - name: build
+      working-directory: ./auth
       run: make build
       - name: security
+      working-directory: ./auth
       run: make security
