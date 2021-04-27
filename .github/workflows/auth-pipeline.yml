@@ -1,0 +1,22 @@
+name: Auth
+on:
+  push:
+    paths: [
+        "auth/**",
+        ".github/workflows/auth-pipeline.yml",
+    ]
+jobs:
+  build-test-fmt-lint-security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+      working-directory: ./auth
+      - name: lint
+      run: make lint
+      - name: coverage
+      run: make coverage
+      - name: build
+      run: make build
+      - name: security
+      run: make security
