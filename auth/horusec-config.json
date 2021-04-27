@@ -1,7 +1,12 @@
 {
   "horusecCliFilesOrPathsToIgnore": [
     "**/*_test.go",
-    "**/*_mock.go"
+    "**/*_mock.go",
+    "*tmp*",
+    "**/.vscode/**",
+    "**/.idea/**",
+    "**/deployments/**",
+    "**/docs/**"
   ],
   "horusecCliFalsePositiveHashes": [
     "988d10d7db960f81d0da6d3dcdcd4e4b1c795b8dc279bddfe658e8c9b5bce1cb",
