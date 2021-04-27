@@ -36,9 +36,9 @@ type Service struct {
 }
 
 func NewHorusecAuthenticationService(repositoryAccount accountRepository.IRepository, appConfig app.IConfig,
-	useCasesAuth authUseCases.IUseCases, repositoryAuth authRepository.IRepository, cache cache.ICache) IService {
+	useCasesAuth authUseCases.IUseCases, repositoryAuth authRepository.IRepository, cacheLib cache.ICache) IService {
 	return &Service{
-		cache:             cache,
+		cache:             cacheLib,
 		authUseCases:      useCasesAuth,
 		accountRepository: repositoryAccount,
 		authRepository:    repositoryAuth,

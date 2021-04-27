@@ -471,6 +471,23 @@ paths:
       - ApiKeyAuth: []
       tags:
       - Authenticate
+  /auth/health:
+    get:
+      consumes:
+      - application/json
+      description: Check if application is healthy
+      operationId: health
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.Response'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Health
 securityDefinitions:
   ApiKeyAuth:
     in: header

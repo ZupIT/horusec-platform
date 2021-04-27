@@ -12,6 +12,7 @@ import (
 	"github.com/ZupIT/horusec-platform/auth/config/grpc"
 	accountHandler "github.com/ZupIT/horusec-platform/auth/internal/handlers/account"
 	authHandler "github.com/ZupIT/horusec-platform/auth/internal/handlers/authentication"
+	healthHandler "github.com/ZupIT/horusec-platform/auth/internal/handlers/health"
 )
 
 func TestNewHTTPRouter(t *testing.T) {
@@ -21,7 +22,7 @@ func TestNewHTTPRouter(t *testing.T) {
 
 		assert.NotPanics(t, func() {
 			assert.NotNil(t, NewHTTPRouter(routerService, authGRPCServer,
-				&authHandler.Handler{}, &accountHandler.Handler{}))
+				&authHandler.Handler{}, &accountHandler.Handler{}, &healthHandler.Handler{}))
 		})
 	})
 }

@@ -4,25 +4,24 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
-	"github.com/google/uuid"
 	"github.com/Nerzal/gocloak/v7"
+	"github.com/google/uuid"
+	"github.com/stretchr/testify/assert"
 
-	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth/proto"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/auth"
-	"github.com/ZupIT/horusec-devkit/pkg/utils/jwt"
-	"github.com/ZupIT/horusec-devkit/pkg/utils/crypto"
-	"github.com/ZupIT/horusec-devkit/pkg/services/cache"
 	"github.com/ZupIT/horusec-devkit/pkg/services/broker"
+	"github.com/ZupIT/horusec-devkit/pkg/services/cache"
+	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth/proto"
+	"github.com/ZupIT/horusec-devkit/pkg/utils/crypto"
+	"github.com/ZupIT/horusec-devkit/pkg/utils/jwt"
 
 	"github.com/ZupIT/horusec-platform/auth/config/app"
-	accountUseCases "github.com/ZupIT/horusec-platform/auth/internal/usecases/account"
+	accountEntities "github.com/ZupIT/horusec-platform/auth/internal/entities/account"
 	accountEnums "github.com/ZupIT/horusec-platform/auth/internal/enums/account"
 	authEnums "github.com/ZupIT/horusec-platform/auth/internal/enums/authentication"
-	accountEntities "github.com/ZupIT/horusec-platform/auth/internal/entities/account"
 	accountRepository "github.com/ZupIT/horusec-platform/auth/internal/repositories/account"
 	authServices "github.com/ZupIT/horusec-platform/auth/internal/services/authentication"
-
+	accountUseCases "github.com/ZupIT/horusec-platform/auth/internal/usecases/account"
 )
 
 func TestNewAccountController(t *testing.T) {

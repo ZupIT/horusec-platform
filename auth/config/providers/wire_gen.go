@@ -21,6 +21,7 @@ import (
 	authentication3 "github.com/ZupIT/horusec-platform/auth/internal/controllers/authentication"
 	account4 "github.com/ZupIT/horusec-platform/auth/internal/handlers/account"
 	authentication4 "github.com/ZupIT/horusec-platform/auth/internal/handlers/authentication"
+	"github.com/ZupIT/horusec-platform/auth/internal/handlers/health"
 	account2 "github.com/ZupIT/horusec-platform/auth/internal/repositories/account"
 	authentication2 "github.com/ZupIT/horusec-platform/auth/internal/repositories/authentication"
 	"github.com/ZupIT/horusec-platform/auth/internal/router"
@@ -60,7 +61,8 @@ func Initialize(string2 string) (router.IRouter, error) {
 	}
 	accountIController := account3.NewAccountController(iRepository, keycloakIService, accountIUseCases, iConfig, iBroker, iCache)
 	accountHandler := account4.NewAccountHandler(accountIUseCases, accountIController, iConfig)
-	routerIRouter := router.NewHTTPRouter(iRouter, iAuthGRPCServer, handler, accountHandler)
+	healthHandler := health.NewHealthHandler(connection, iBroker)
+	routerIRouter := router.NewHTTPRouter(iRouter, iAuthGRPCServer, handler, accountHandler, healthHandler)
 	return routerIRouter, nil
 }
 
@@ -72,7 +74,7 @@ var configProviders = wire.NewSet(grpc.NewAuthGRPCServer, cors.NewCorsConfig, ro
 
 var controllerProviders = wire.NewSet(authentication3.NewAuthenticationController, account3.NewAccountController)
 
-var handleProviders = wire.NewSet(authentication4.NewAuthenticationHandler, account4.NewAccountHandler)
+var handleProviders = wire.NewSet(authentication4.NewAuthenticationHandler, account4.NewAccountHandler, health.NewHealthHandler)
 
 var useCasesProviders = wire.NewSet(authentication.NewAuthenticationUseCases, account.NewAccountUseCases)
 

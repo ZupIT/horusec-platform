@@ -10,7 +10,7 @@ import (
 	"github.com/Nerzal/gocloak/v7"
 	"github.com/google/uuid"
 
-	"github.com/ZupIT/horusec-devkit/pkg/entities/email"
+	emailEntities "github.com/ZupIT/horusec-devkit/pkg/entities/email"
 	emailEnums "github.com/ZupIT/horusec-devkit/pkg/enums/email"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/parser"
 
@@ -117,7 +117,7 @@ func (u *UseCases) AccountDataFromIOReadCloser(body io.ReadCloser) (*accountEnti
 }
 
 func (u *UseCases) NewAccountValidationEmail(account *accountEntities.Account) []byte {
-	message := &email.Message{
+	message := &emailEntities.Message{
 		To:           account.Email,
 		Subject:      "[Horusec] Account Confirmation Email",
 		TemplateName: emailEnums.AccountConfirmation,
@@ -143,7 +143,7 @@ func (u *UseCases) EmailFromIOReadCloser(body io.ReadCloser) (*accountEntities.E
 }
 
 func (u *UseCases) GenerateResetPasswordCode() string {
-	seededRand := rand.New(rand.NewSource(time.Now().UnixNano()))
+	seededRand := rand.New(rand.NewSource(time.Now().UnixNano())) //nolint:gosec // valid for this use case
 
 	code := make([]byte, 6)
 	for i := range code {
@@ -154,7 +154,7 @@ func (u *UseCases) GenerateResetPasswordCode() string {
 }
 
 func (u *UseCases) NewResetPasswordCodeEmail(account *accountEntities.Account, code string) []byte {
-	message := &email.Message{
+	message := &emailEntities.Message{
 		To:           account.Email,
 		Subject:      "[Horusec] Reset Password",
 		TemplateName: emailEnums.ResetPassword,

@@ -19,6 +19,7 @@ import (
 	authController "github.com/ZupIT/horusec-platform/auth/internal/controllers/authentication"
 	accountHandler "github.com/ZupIT/horusec-platform/auth/internal/handlers/account"
 	authHandler "github.com/ZupIT/horusec-platform/auth/internal/handlers/authentication"
+	healthHandler "github.com/ZupIT/horusec-platform/auth/internal/handlers/health"
 	accountRepository "github.com/ZupIT/horusec-platform/auth/internal/repositories/account"
 	authRepository "github.com/ZupIT/horusec-platform/auth/internal/repositories/authentication"
 	"github.com/ZupIT/horusec-platform/auth/internal/router"
@@ -53,6 +54,7 @@ var controllerProviders = wire.NewSet(
 var handleProviders = wire.NewSet(
 	authHandler.NewAuthenticationHandler,
 	accountHandler.NewAccountHandler,
+	healthHandler.NewHealthHandler,
 )
 
 var useCasesProviders = wire.NewSet(

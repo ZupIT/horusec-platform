@@ -8,7 +8,6 @@ import (
 	"net/http/httptest"
 	"testing"
 
-
 	"github.com/go-chi/chi"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
@@ -16,9 +15,9 @@ import (
 	"github.com/ZupIT/horusec-platform/auth/config/app"
 	accountController "github.com/ZupIT/horusec-platform/auth/internal/controllers/account"
 	accountEntities "github.com/ZupIT/horusec-platform/auth/internal/entities/account"
+	"github.com/ZupIT/horusec-platform/auth/internal/entities/authentication"
 	accountEnums "github.com/ZupIT/horusec-platform/auth/internal/enums/account"
 	accountUseCases "github.com/ZupIT/horusec-platform/auth/internal/usecases/account"
-	"github.com/ZupIT/horusec-platform/auth/internal/entities/authentication"
 )
 
 func TestNewAccountHandler(t *testing.T) {
@@ -730,7 +729,7 @@ func TestUpdateAccount(t *testing.T) {
 
 		handler := NewAccountHandler(accountUseCases.NewAccountUseCases(appConfig), controllerMock, appConfig)
 
-		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(data.ToBytes()))
+		r, _ := http.NewRequest(http.MethodPatch, "test", bytes.NewReader(data.ToBytes()))
 		w := httptest.NewRecorder()
 
 		handler.UpdateAccount(w, r)
@@ -752,7 +751,7 @@ func TestUpdateAccount(t *testing.T) {
 
 		handler := NewAccountHandler(accountUseCases.NewAccountUseCases(appConfig), controllerMock, appConfig)
 
-		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(data.ToBytes()))
+		r, _ := http.NewRequest(http.MethodPatch, "test", bytes.NewReader(data.ToBytes()))
 		w := httptest.NewRecorder()
 
 		handler.UpdateAccount(w, r)
@@ -770,7 +769,7 @@ func TestUpdateAccount(t *testing.T) {
 
 		handler := NewAccountHandler(accountUseCases.NewAccountUseCases(appConfig), controllerMock, appConfig)
 
-		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(data.ToBytes()))
+		r, _ := http.NewRequest(http.MethodPatch, "test", bytes.NewReader(data.ToBytes()))
 		w := httptest.NewRecorder()
 
 		handler.UpdateAccount(w, r)
@@ -788,7 +787,7 @@ func TestUpdateAccount(t *testing.T) {
 
 		handler := NewAccountHandler(accountUseCases.NewAccountUseCases(appConfig), controllerMock, appConfig)
 
-		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(data.ToBytes()))
+		r, _ := http.NewRequest(http.MethodPatch, "test", bytes.NewReader(data.ToBytes()))
 		w := httptest.NewRecorder()
 
 		handler.UpdateAccount(w, r)

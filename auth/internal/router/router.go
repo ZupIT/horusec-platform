@@ -11,6 +11,7 @@ import (
 	"github.com/ZupIT/horusec-platform/auth/internal/enums/routes"
 	accountHandler "github.com/ZupIT/horusec-platform/auth/internal/handlers/account"
 	authHandler "github.com/ZupIT/horusec-platform/auth/internal/handlers/authentication"
+	"github.com/ZupIT/horusec-platform/auth/internal/handlers/health"
 )
 
 type IRouter interface {
@@ -23,16 +24,18 @@ type Router struct {
 	grpc.IAuthGRPCServer
 	authHandler    *authHandler.Handler
 	accountHandler *accountHandler.Handler
+	healthHandler  *health.Handler
 }
 
 func NewHTTPRouter(router http.IRouter, authGRPCServer grpc.IAuthGRPCServer, handlerAuth *authHandler.Handler,
-	handlerAccount *accountHandler.Handler) IRouter {
+	handlerAccount *accountHandler.Handler, handlerHealth *health.Handler) IRouter {
 	httpRouter := &Router{
 		IRouter:         router,
 		ISwagger:        swagger.NewSwagger(router.GetMux(), router.GetPort()),
 		IAuthGRPCServer: authGRPCServer,
 		authHandler:     handlerAuth,
 		accountHandler:  handlerAccount,
+		healthHandler:   handlerHealth,
 	}
 
 	httpRouter.startGRPCServer()
@@ -53,6 +56,7 @@ func (r *Router) swaggerRoutes() {
 	r.SetupSwagger()
 	r.authenticationRoutes()
 	r.accountRoutes()
+	r.healthRoutes()
 
 	docs.SwaggerInfo.Host = r.GetSwaggerHost()
 }
@@ -77,5 +81,11 @@ func (r *Router) accountRoutes() {
 		router.Delete("/delete", r.accountHandler.DeleteAccount)
 		router.Post("/verify-already-used", r.accountHandler.CheckExistingEmailOrUsername)
 		router.Patch("/update", r.accountHandler.UpdateAccount)
+	})
+}
+
+func (r *Router) healthRoutes() {
+	r.Route(routes.HealthHandler, func(router chi.Router) {
+		router.Get("/", r.healthHandler.Get)
 	})
 }

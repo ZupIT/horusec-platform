@@ -8,6 +8,7 @@ import (
 	databaseEnums "github.com/ZupIT/horusec-devkit/pkg/services/database/enums"
 	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth/proto"
 	httpUtil "github.com/ZupIT/horusec-devkit/pkg/utils/http"
+	_ "github.com/ZupIT/horusec-devkit/pkg/utils/http/entities" // swagger import
 
 	"github.com/ZupIT/horusec-platform/auth/config/app"
 	authController "github.com/ZupIT/horusec-platform/auth/internal/controllers/authentication"
