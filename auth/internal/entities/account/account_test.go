@@ -193,3 +193,14 @@ func TestUpdateFromUpdateAccountData(t *testing.T) {
 		assert.Equal(t, data.IsConfirmed, account.IsConfirmed)
 	})
 }
+
+func TestSetApplicationAdminTrue(t *testing.T) {
+	t.Run("should success set is app admin as true", func(t *testing.T) {
+		account := &Account{
+			IsApplicationAdmin: false,
+		}
+
+		_ = account.SetApplicationAdminTrue()
+		assert.True(t, account.IsApplicationAdmin)
+	})
+}

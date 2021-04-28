@@ -12,6 +12,9 @@ import (
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 
+	"github.com/ZupIT/horusec-devkit/pkg/services/database"
+	"github.com/ZupIT/horusec-devkit/pkg/services/database/response"
+
 	"github.com/ZupIT/horusec-platform/auth/config/app"
 	accountController "github.com/ZupIT/horusec-platform/auth/internal/controllers/account"
 	accountEntities "github.com/ZupIT/horusec-platform/auth/internal/entities/account"
@@ -19,6 +22,13 @@ import (
 	accountEnums "github.com/ZupIT/horusec-platform/auth/internal/enums/account"
 	accountUseCases "github.com/ZupIT/horusec-platform/auth/internal/usecases/account"
 )
+
+func getAppConfig() app.IConfig {
+	databaseMock := &database.Mock{}
+	databaseMock.On("Create").Return(&response.Response{})
+
+	return app.NewAuthAppConfig(&database.Connection{Read: databaseMock, Write: databaseMock})
+}
 
 func TestNewAccountHandler(t *testing.T) {
 	t.Run("should success create a new handler", func(t *testing.T) {
@@ -28,7 +38,7 @@ func TestNewAccountHandler(t *testing.T) {
 
 func TestCreateAccountKeycloak(t *testing.T) {
 	t.Run("should return 200 when success create account", func(t *testing.T) {
-		appConfig := app.NewAuthAppConfig()
+		appConfig := getAppConfig()
 
 		controllerMock := &accountController.Mock{}
 		controllerMock.On("CreateAccountKeycloak").Return(&accountEntities.Response{}, nil)
@@ -46,7 +56,7 @@ func TestCreateAccountKeycloak(t *testing.T) {
 	})
 
 	t.Run("should return 200 when account already exists", func(t *testing.T) {
-		appConfig := app.NewAuthAppConfig()
+		appConfig := getAppConfig()
 
 		controllerMock := &accountController.Mock{}
 		controllerMock.On("CreateAccountKeycloak").Return(
@@ -65,7 +75,7 @@ func TestCreateAccountKeycloak(t *testing.T) {
 	})
 
 	t.Run("should return 500 when something went wrong", func(t *testing.T) {
-		appConfig := app.NewAuthAppConfig()
+		appConfig := getAppConfig()
 
 		controllerMock := &accountController.Mock{}
 		controllerMock.On("CreateAccountKeycloak").Return(
@@ -84,7 +94,7 @@ func TestCreateAccountKeycloak(t *testing.T) {
 	})
 
 	t.Run("should return 400 when invalid request body", func(t *testing.T) {
-		appConfig := app.NewAuthAppConfig()
+		appConfig := getAppConfig()
 		controllerMock := &accountController.Mock{}
 
 		handler := NewAccountHandler(accountUseCases.NewAccountUseCases(appConfig), controllerMock, appConfig)
@@ -100,7 +110,7 @@ func TestCreateAccountKeycloak(t *testing.T) {
 
 func TestCreateAccountHorusec(t *testing.T) {
 	t.Run("should return 200 when success create account", func(t *testing.T) {
-		appConfig := app.NewAuthAppConfig()
+		appConfig := getAppConfig()
 
 		controllerMock := &accountController.Mock{}
 		controllerMock.On("CreateAccountHorusec").Return(&accountEntities.Response{}, nil)
@@ -122,7 +132,7 @@ func TestCreateAccountHorusec(t *testing.T) {
 	})
 
 	t.Run("should return 400 when username or email already in use", func(t *testing.T) {
-		appConfig := app.NewAuthAppConfig()
+		appConfig := getAppConfig()
 
 		controllerMock := &accountController.Mock{}
 		controllerMock.On("CreateAccountHorusec").Return(
@@ -145,7 +155,7 @@ func TestCreateAccountHorusec(t *testing.T) {
 	})
 
 	t.Run("should return 500 when something went wrong", func(t *testing.T) {
-		appConfig := app.NewAuthAppConfig()
+		appConfig := getAppConfig()
 
 		controllerMock := &accountController.Mock{}
 		controllerMock.On("CreateAccountHorusec").Return(
@@ -168,7 +178,7 @@ func TestCreateAccountHorusec(t *testing.T) {
 	})
 
 	t.Run("should return 400 when invalid request body", func(t *testing.T) {
-		appConfig := app.NewAuthAppConfig()
+		appConfig := getAppConfig()
 		controllerMock := &accountController.Mock{}
 
 		data := &accountEntities.Data{}
@@ -186,7 +196,7 @@ func TestCreateAccountHorusec(t *testing.T) {
 
 func TestValidateAccountEmail(t *testing.T) {
 	t.Run("should return 303 when success validate account email", func(t *testing.T) {
-		appConfig := app.NewAuthAppConfig()
+		appConfig := getAppConfig()
 
 		controllerMock := &accountController.Mock{}
 		controllerMock.On("ValidateAccountEmail").Return(nil)
@@ -206,7 +216,7 @@ func TestValidateAccountEmail(t *testing.T) {
 	})
 
 	t.Run("should return 500 when something went wrong", func(t *testing.T) {
-		appConfig := app.NewAuthAppConfig()
+		appConfig := getAppConfig()
 
 		controllerMock := &accountController.Mock{}
 		controllerMock.On("ValidateAccountEmail").Return(errors.New("test"))
@@ -226,7 +236,7 @@ func TestValidateAccountEmail(t *testing.T) {
 	})
 
 	t.Run("should return 400 when invalid account id", func(t *testing.T) {
-		appConfig := app.NewAuthAppConfig()
+		appConfig := getAppConfig()
 		controllerMock := &accountController.Mock{}
 
 		handler := NewAccountHandler(accountUseCases.NewAccountUseCases(appConfig), controllerMock, appConfig)
@@ -242,7 +252,7 @@ func TestValidateAccountEmail(t *testing.T) {
 
 func TestSendResetPasswordCode(t *testing.T) {
 	t.Run("should return 204 when success sent code", func(t *testing.T) {
-		appConfig := app.NewAuthAppConfig()
+		appConfig := getAppConfig()
 
 		controllerMock := &accountController.Mock{}
 		controllerMock.On("SendResetPasswordCode").Return(nil)
@@ -262,7 +272,7 @@ func TestSendResetPasswordCode(t *testing.T) {
 	})
 
 	t.Run("should return 500 when something went wrong", func(t *testing.T) {
-		appConfig := app.NewAuthAppConfig()
+		appConfig := getAppConfig()
 
 		controllerMock := &accountController.Mock{}
 		controllerMock.On("SendResetPasswordCode").Return(errors.New("test"))
@@ -282,7 +292,7 @@ func TestSendResetPasswordCode(t *testing.T) {
 	})
 
 	t.Run("should return 400 when invalid request body", func(t *testing.T) {
-		appConfig := app.NewAuthAppConfig()
+		appConfig := getAppConfig()
 		controllerMock := &accountController.Mock{}
 
 		data := &accountEntities.Email{}
@@ -300,7 +310,7 @@ func TestSendResetPasswordCode(t *testing.T) {
 
 func TestCheckResetPasswordCode(t *testing.T) {
 	t.Run("should return 200 when valid code", func(t *testing.T) {
-		appConfig := app.NewAuthAppConfig()
+		appConfig := getAppConfig()
 
 		controllerMock := &accountController.Mock{}
 		controllerMock.On("CheckResetPasswordCode").Return("test", nil)
@@ -321,7 +331,7 @@ func TestCheckResetPasswordCode(t *testing.T) {
 	})
 
 	t.Run("should return 403 when wrong code", func(t *testing.T) {
-		appConfig := app.NewAuthAppConfig()
+		appConfig := getAppConfig()
 
 		controllerMock := &accountController.Mock{}
 		controllerMock.On("CheckResetPasswordCode").Return(
@@ -343,7 +353,7 @@ func TestCheckResetPasswordCode(t *testing.T) {
 	})
 
 	t.Run("should return 500 when something went wrong", func(t *testing.T) {
-		appConfig := app.NewAuthAppConfig()
+		appConfig := getAppConfig()
 
 		controllerMock := &accountController.Mock{}
 		controllerMock.On("CheckResetPasswordCode").Return("", errors.New("test"))
@@ -364,7 +374,7 @@ func TestCheckResetPasswordCode(t *testing.T) {
 	})
 
 	t.Run("should return 400 when invalid request body", func(t *testing.T) {
-		appConfig := app.NewAuthAppConfig()
+		appConfig := getAppConfig()
 		controllerMock := &accountController.Mock{}
 
 		data := &accountEntities.ResetCodeData{}
@@ -382,7 +392,7 @@ func TestCheckResetPasswordCode(t *testing.T) {
 
 func TestChangePassword(t *testing.T) {
 	t.Run("should return 204 when success change password", func(t *testing.T) {
-		appConfig := app.NewAuthAppConfig()
+		appConfig := getAppConfig()
 
 		controllerMock := &accountController.Mock{}
 		controllerMock.On("ChangePassword").Return(nil)
@@ -403,7 +413,7 @@ func TestChangePassword(t *testing.T) {
 	})
 
 	t.Run("should return 400 when password equal previous one", func(t *testing.T) {
-		appConfig := app.NewAuthAppConfig()
+		appConfig := getAppConfig()
 
 		controllerMock := &accountController.Mock{}
 		controllerMock.On("ChangePassword").Return(accountEnums.ErrorPasswordEqualPrevious)
@@ -424,7 +434,7 @@ func TestChangePassword(t *testing.T) {
 	})
 
 	t.Run("should return 500 when something went wrong", func(t *testing.T) {
-		appConfig := app.NewAuthAppConfig()
+		appConfig := getAppConfig()
 
 		controllerMock := &accountController.Mock{}
 		controllerMock.On("ChangePassword").Return(errors.New("test"))
@@ -445,7 +455,7 @@ func TestChangePassword(t *testing.T) {
 	})
 
 	t.Run("should return 400 when invalid request body", func(t *testing.T) {
-		appConfig := app.NewAuthAppConfig()
+		appConfig := getAppConfig()
 
 		controllerMock := &accountController.Mock{}
 		controllerMock.On("GetAccountID").Return(uuid.New(), nil)
@@ -463,7 +473,7 @@ func TestChangePassword(t *testing.T) {
 	})
 
 	t.Run("should return 400 when failed to get account id", func(t *testing.T) {
-		appConfig := app.NewAuthAppConfig()
+		appConfig := getAppConfig()
 
 		controllerMock := &accountController.Mock{}
 		controllerMock.On("GetAccountID").Return(uuid.New(), errors.New("test"))
@@ -483,7 +493,7 @@ func TestChangePassword(t *testing.T) {
 
 func TestRefreshToken(t *testing.T) {
 	t.Run("should return 200 when success set refresh token", func(t *testing.T) {
-		appConfig := app.NewAuthAppConfig()
+		appConfig := getAppConfig()
 
 		controllerMock := &accountController.Mock{}
 		controllerMock.On("RefreshToken").Return(&authentication.LoginResponse{}, nil)
@@ -503,7 +513,7 @@ func TestRefreshToken(t *testing.T) {
 	})
 
 	t.Run("should return 401 when failed to refresh token", func(t *testing.T) {
-		appConfig := app.NewAuthAppConfig()
+		appConfig := getAppConfig()
 
 		controllerMock := &accountController.Mock{}
 		controllerMock.On("RefreshToken").Return(&authentication.LoginResponse{}, errors.New("test"))
@@ -523,7 +533,7 @@ func TestRefreshToken(t *testing.T) {
 	})
 
 	t.Run("should return 400 when invalid request body", func(t *testing.T) {
-		appConfig := app.NewAuthAppConfig()
+		appConfig := getAppConfig()
 
 		controllerMock := &accountController.Mock{}
 		controllerMock.On("RefreshToken").Return(&authentication.LoginResponse{}, errors.New("test"))
@@ -543,7 +553,7 @@ func TestRefreshToken(t *testing.T) {
 
 func TestLogout(t *testing.T) {
 	t.Run("should return 204 when success logout", func(t *testing.T) {
-		appConfig := app.NewAuthAppConfig()
+		appConfig := getAppConfig()
 
 		controllerMock := &accountController.Mock{}
 		controllerMock.On("Logout")
@@ -563,7 +573,7 @@ func TestLogout(t *testing.T) {
 	})
 
 	t.Run("should return 400 when invalid request body", func(t *testing.T) {
-		appConfig := app.NewAuthAppConfig()
+		appConfig := getAppConfig()
 
 		controllerMock := &accountController.Mock{}
 		controllerMock.On("Logout")
@@ -583,7 +593,7 @@ func TestLogout(t *testing.T) {
 
 func TestCheckExistingEmailOrUsername(t *testing.T) {
 	t.Run("should return 204 when not in use", func(t *testing.T) {
-		appConfig := app.NewAuthAppConfig()
+		appConfig := getAppConfig()
 
 		controllerMock := &accountController.Mock{}
 		controllerMock.On("CheckExistingEmailOrUsername").Return(nil)
@@ -604,7 +614,7 @@ func TestCheckExistingEmailOrUsername(t *testing.T) {
 	})
 
 	t.Run("should return 400 when email or username already in use", func(t *testing.T) {
-		appConfig := app.NewAuthAppConfig()
+		appConfig := getAppConfig()
 
 		controllerMock := &accountController.Mock{}
 		controllerMock.On("CheckExistingEmailOrUsername").Return(accountEnums.ErrorEmailAlreadyInUse)
@@ -625,7 +635,7 @@ func TestCheckExistingEmailOrUsername(t *testing.T) {
 	})
 
 	t.Run("should return 500 when something went wrong", func(t *testing.T) {
-		appConfig := app.NewAuthAppConfig()
+		appConfig := getAppConfig()
 
 		controllerMock := &accountController.Mock{}
 		controllerMock.On("CheckExistingEmailOrUsername").Return(errors.New("test"))
@@ -646,7 +656,7 @@ func TestCheckExistingEmailOrUsername(t *testing.T) {
 	})
 
 	t.Run("should return 400 when invalid request body", func(t *testing.T) {
-		appConfig := app.NewAuthAppConfig()
+		appConfig := getAppConfig()
 		controllerMock := &accountController.Mock{}
 
 		data := &accountEntities.CheckEmailAndUsername{}
@@ -664,7 +674,7 @@ func TestCheckExistingEmailOrUsername(t *testing.T) {
 
 func TestDeleteAccount(t *testing.T) {
 	t.Run("should return 204 success delete account", func(t *testing.T) {
-		appConfig := app.NewAuthAppConfig()
+		appConfig := getAppConfig()
 
 		controllerMock := &accountController.Mock{}
 		controllerMock.On("GetAccountID").Return(uuid.New(), nil)
@@ -681,7 +691,7 @@ func TestDeleteAccount(t *testing.T) {
 	})
 
 	t.Run("should return 500 when something went wrong", func(t *testing.T) {
-		appConfig := app.NewAuthAppConfig()
+		appConfig := getAppConfig()
 
 		controllerMock := &accountController.Mock{}
 		controllerMock.On("GetAccountID").Return(uuid.New(), nil)
@@ -698,7 +708,7 @@ func TestDeleteAccount(t *testing.T) {
 	})
 
 	t.Run("should return 401 when failed to get account id", func(t *testing.T) {
-		appConfig := app.NewAuthAppConfig()
+		appConfig := getAppConfig()
 
 		controllerMock := &accountController.Mock{}
 		controllerMock.On("GetAccountID").Return(uuid.New(), errors.New("test"))
@@ -716,7 +726,7 @@ func TestDeleteAccount(t *testing.T) {
 
 func TestUpdateAccount(t *testing.T) {
 	t.Run("should return 200 when success update account", func(t *testing.T) {
-		appConfig := app.NewAuthAppConfig()
+		appConfig := getAppConfig()
 
 		controllerMock := &accountController.Mock{}
 		controllerMock.On("UpdateAccount").Return(&accountEntities.Response{}, nil)
@@ -738,7 +748,7 @@ func TestUpdateAccount(t *testing.T) {
 	})
 
 	t.Run("should return 500 when something went wrong", func(t *testing.T) {
-		appConfig := app.NewAuthAppConfig()
+		appConfig := getAppConfig()
 
 		controllerMock := &accountController.Mock{}
 		controllerMock.On("UpdateAccount").Return(&accountEntities.Response{}, errors.New("test"))
@@ -760,7 +770,7 @@ func TestUpdateAccount(t *testing.T) {
 	})
 
 	t.Run("should return 400 when invalid request body", func(t *testing.T) {
-		appConfig := app.NewAuthAppConfig()
+		appConfig := getAppConfig()
 
 		controllerMock := &accountController.Mock{}
 		controllerMock.On("GetAccountID").Return(uuid.New(), nil)
@@ -778,7 +788,7 @@ func TestUpdateAccount(t *testing.T) {
 	})
 
 	t.Run("should return 400 when failed to get account id", func(t *testing.T) {
-		appConfig := app.NewAuthAppConfig()
+		appConfig := getAppConfig()
 
 		controllerMock := &accountController.Mock{}
 		controllerMock.On("GetAccountID").Return(uuid.New(), errors.New("test"))

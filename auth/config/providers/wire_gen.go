@@ -37,30 +37,30 @@ import (
 func Initialize(string2 string) (router.IRouter, error) {
 	options := cors.NewCorsConfig()
 	iRouter := http.NewHTTPRouter(options, string2)
-	iConfig := app.NewAuthAppConfig()
-	iUseCases := authentication.NewAuthenticationUseCases()
-	configIConfig := config.NewDatabaseConfig()
-	connection, err := database.NewDatabaseReadAndWrite(configIConfig)
+	iConfig := config.NewDatabaseConfig()
+	connection, err := database.NewDatabaseReadAndWrite(iConfig)
 	if err != nil {
 		return nil, err
 	}
-	accountIUseCases := account.NewAccountUseCases(iConfig)
+	appIConfig := app.NewAuthAppConfig(connection)
+	iUseCases := authentication.NewAuthenticationUseCases()
+	accountIUseCases := account.NewAccountUseCases(appIConfig)
 	iRepository := account2.NewAccountRepository(connection, accountIUseCases)
 	authenticationIRepository := authentication2.NewAuthenticationRepository(connection, iUseCases)
 	iCache := cache.NewCache()
-	iService := horusec.NewHorusecAuthenticationService(iRepository, iConfig, iUseCases, authenticationIRepository, iCache)
-	ldapIService := ldap.NewLDAPAuthenticationService(iRepository, iUseCases, iConfig, authenticationIRepository, iCache)
-	keycloakIService := keycloak.NewKeycloakAuthenticationService(iRepository, iConfig, iUseCases, authenticationIRepository)
-	iController := authentication3.NewAuthenticationController(iConfig, iService, ldapIService, keycloakIService)
-	handler := authentication4.NewAuthenticationHandler(iConfig, iUseCases, iController)
+	iService := horusec.NewHorusecAuthenticationService(iRepository, appIConfig, iUseCases, authenticationIRepository, iCache)
+	ldapIService := ldap.NewLDAPAuthenticationService(iRepository, iUseCases, appIConfig, authenticationIRepository, iCache)
+	keycloakIService := keycloak.NewKeycloakAuthenticationService(iRepository, appIConfig, iUseCases, authenticationIRepository)
+	iController := authentication3.NewAuthenticationController(appIConfig, iService, ldapIService, keycloakIService)
+	handler := authentication4.NewAuthenticationHandler(appIConfig, iUseCases, iController)
 	iAuthGRPCServer := grpc.NewAuthGRPCServer(handler)
-	iConfig2 := config2.NewBrokerConfig()
-	iBroker, err := broker.NewBroker(iConfig2)
+	configIConfig := config2.NewBrokerConfig()
+	iBroker, err := broker.NewBroker(configIConfig)
 	if err != nil {
 		return nil, err
 	}
-	accountIController := account3.NewAccountController(iRepository, keycloakIService, accountIUseCases, iConfig, iBroker, iCache)
-	accountHandler := account4.NewAccountHandler(accountIUseCases, accountIController, iConfig)
+	accountIController := account3.NewAccountController(iRepository, keycloakIService, accountIUseCases, appIConfig, iBroker, iCache)
+	accountHandler := account4.NewAccountHandler(accountIUseCases, accountIController, appIConfig)
 	healthHandler := health.NewHealthHandler(connection, iBroker)
 	routerIRouter := router.NewHTTPRouter(iRouter, iAuthGRPCServer, handler, accountHandler, healthHandler)
 	return routerIRouter, nil

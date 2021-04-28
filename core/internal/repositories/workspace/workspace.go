@@ -124,6 +124,6 @@ func (r *Repository) ListWorkspacesApplicationAdmin() (*[]workspaceEntities.Resp
 func (r *Repository) queryListWorkspacesApplicationAdmin() string {
 	return `
 			SELECT ws.workspace_id, ws.name, ws.description, 'applicationAdmin' AS role, ws.created_at, ws.updated_at
-			FROM workspaces
+			FROM workspaces as ws
 	`
 }
