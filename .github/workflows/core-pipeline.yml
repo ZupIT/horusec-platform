@@ -1,57 +1,24 @@
-name: HorusecCorePipeline
-
+name: Core
 on:
   push:
     paths: [
-        "core/**",
-        ".github/workflows/core-pipeline.yml",
+        "auth/**",
+        "**/workflows/core-pipeline.yml",
     ]
-
 jobs:
-  install-build-test-fmt-lint:
-    name: install-build-test-fmt-lint
+  lint-coverage-build-security:
     runs-on: ubuntu-latest
-    if: "!contains(github.event.head_commit.message, '[skip ci]')"
+    defaults:
+      run:
+        working-directory: core
     steps:
-      - name: Set up Go 1.14
-        uses: actions/setup-go@v1
-        with:
-          go-version: 1.14
-        id: go
-      - name: Check out code
-        uses: actions/checkout@v2
-      - name: Setup External Dependences
-        working-directory: ./core
-        run: make compose
-      - name: fmt
-        working-directory: ./core
-        run: |
-          echo "==> Checking that code complies with gofmt requirements..."
-          gofmt_files=$(gofmt -l `find . -name '*.go' | grep -v vendor`)
-          echo $gofmt_files
-          if [ ! -z $gofmt_files ]; then
-              echo 'gofmt needs running on the following files:'
-              echo "$gofmt_files"
-              echo "You can use the command: \`gofmt -w \$(gofmt -l \'find . -name \'*.go\' | grep -v vendor)\` to reformat code."
-              exit 1
-          fi
-          echo "=) The project core it's OK!"
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
       - name: lint
-        working-directory: ./core
-        run: |
-          curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s latest
-          ./bin/golangci-lint run -v --timeout=5m -c .golangci.yml ./...
-      - name: test
-        working-directory: ./core
-        run: |
-          go clean -testcache
-          go test -v ./... -timeout=5m -parallel=1 -failfast -short
+        run: make lint
       - name: coverage
-        working-directory: ./core
         run: make coverage
       - name: build
-        working-directory: ./core
-        run: go build -o "./tmp/bin/core" ./cmd/app/main.go
+        run: make build
       - name: security
-        working-directory: ./core
         run: make security
