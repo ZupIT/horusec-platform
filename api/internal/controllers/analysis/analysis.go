@@ -17,13 +17,14 @@ package analysis
 import (
 	"time"
 
+	"github.com/ZupIT/horusec-devkit/pkg/enums/exchange"
+
 	"github.com/google/uuid"
 
 	repoAnalysis "github.com/ZupIT/horusec-platform/api/internal/repositories/analysis"
 	"github.com/ZupIT/horusec-platform/api/internal/repositories/repository"
 
 	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
-	"github.com/ZupIT/horusec-devkit/pkg/enums/queues"
 	appConfiguration "github.com/ZupIT/horusec-devkit/pkg/services/app"
 	brokerService "github.com/ZupIT/horusec-devkit/pkg/services/broker"
 	"github.com/ZupIT/horusec-devkit/pkg/services/database/enums"
@@ -64,26 +65,34 @@ func (c *Controller) GetAnalysis(analysisID uuid.UUID) (*analysis.Analysis, erro
 }
 
 func (c *Controller) SaveAnalysis(analysisEntity *analysis.Analysis) (uuid.UUID, error) {
-	if err := c.createRepositoryIfNotExists(analysisEntity); err != nil {
+	analysisEntity, err := c.createRepositoryIfNotExists(analysisEntity)
+	if err != nil {
 		return uuid.Nil, err
 	}
 	analysisDecorated, err := c.decorateAnalysisEntityAndSaveOnDatabase(analysisEntity)
 	if err != nil {
 		return uuid.Nil, err
 	}
-	if err := c.publishToWebhookAnalysis(analysisDecorated); err != nil {
+	if err := c.publishInBroker(analysisDecorated); err != nil {
 		return uuid.Nil, err
 	}
 	return analysisDecorated.ID, nil
 }
 
-func (c *Controller) createRepositoryIfNotExists(analysisEntity *analysis.Analysis) error {
+func (c *Controller) createRepositoryIfNotExists(analysisEntity *analysis.Analysis) (*analysis.Analysis, error) {
 	if analysisEntity.RepositoryID == uuid.Nil {
 		analysisEntity.RepositoryID = uuid.New()
-		return c.repoRepository.
-			CreateRepository(analysisEntity.RepositoryID, analysisEntity.WorkspaceID, analysisEntity.RepositoryName)
+		repositoryID, err := c.repoRepository.FindRepository(analysisEntity.WorkspaceID, analysisEntity.RepositoryName)
+		if err != nil {
+			if err == enums.ErrorNotFoundRecords {
+				return analysisEntity, c.repoRepository.CreateRepository(analysisEntity.RepositoryID,
+					analysisEntity.WorkspaceID, analysisEntity.RepositoryName)
+			}
+			return nil, err
+		}
+		analysisEntity.RepositoryID = repositoryID
 	}
-	return nil
+	return analysisEntity, nil
 }
 
 func (c *Controller) decorateAnalysisEntityAndSaveOnDatabase(
@@ -138,9 +147,10 @@ func (c *Controller) hasDuplicatedHash(
 	return false
 }
 
-func (c *Controller) publishToWebhookAnalysis(analysisData *analysis.Analysis) error {
+func (c *Controller) publishInBroker(analysisData *analysis.Analysis) error {
 	if !c.appConfig.IsBrokerDisabled() {
-		return c.broker.Publish(queues.HorusecWebhookDispatch.ToString(), "", "", analysisData.ToBytes())
+		return c.broker.Publish("", exchange.NewAnalysis.ToString(),
+			exchange.Fanout.ToString(), analysisData.ToBytes())
 	}
 	return nil
 }

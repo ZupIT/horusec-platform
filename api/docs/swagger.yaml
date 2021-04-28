@@ -239,6 +239,8 @@ paths:
               type: object
       security:
       - ApiKeyAuth: []
+      tags:
+      - Analysis
   /api/analysis/{analysisID}:
     get:
       consumes:
@@ -292,6 +294,8 @@ paths:
               type: object
       security:
       - ApiKeyAuth: []
+      tags:
+      - Analysis
   /api/health:
     get:
       consumes:

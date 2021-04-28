@@ -43,6 +43,9 @@ var doc = `{
                 "produces": [
                     "application/json"
                 ],
+                "tags": [
+                    "Analysis"
+                ],
                 "operationId": "start-new-analysis",
                 "parameters": [
                     {
@@ -144,6 +147,9 @@ var doc = `{
                 ],
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "Analysis"
                 ],
                 "operationId": "get-one-analysis",
                 "parameters": [

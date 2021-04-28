@@ -40,7 +40,7 @@ func (d *Data) Validate() error {
 	)
 }
 
-func (d *Data) CheckLdapGroups(authorizationType auth.AuthorizationType) error {
+func (d *Data) CheckLdapGroups(authorizationType auth.AuthenticationType) error {
 	return utilsValidation.CheckInvalidLdapGroups(authorizationType, d.AuthzAdmin, d.Permissions)
 }
 

@@ -4,10 +4,10 @@ import (
 	"github.com/go-chi/chi"
 
 	"github.com/ZupIT/horusec-platform/api/docs"
+	"github.com/ZupIT/horusec-platform/api/internal/enums"
 	"github.com/ZupIT/horusec-platform/api/internal/handlers/analysis"
 	"github.com/ZupIT/horusec-platform/api/internal/handlers/health"
 	"github.com/ZupIT/horusec-platform/api/internal/middelwares/token"
-	"github.com/ZupIT/horusec-platform/api/internal/router/enums"
 
 	"github.com/ZupIT/horusec-devkit/pkg/services/swagger"
 

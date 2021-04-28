@@ -92,7 +92,7 @@ func (h *Handler) getCreateData(r *http.Request) (*workspaceEntities.Data, error
 		return nil, err
 	}
 
-	return workspaceData.SetAccountData(accountData), workspaceData.CheckLdapGroups(h.appConfig.GetAuthorizationType())
+	return workspaceData.SetAccountData(accountData), workspaceData.CheckLdapGroups(h.appConfig.GetAuthenticationType())
 }
 
 // @Tags Workspace
@@ -179,7 +179,7 @@ func (h *Handler) getUpdateData(r *http.Request) (*workspaceEntities.Data, error
 		return nil, err
 	}
 
-	return data.SetWorkspaceID(workspaceID), data.CheckLdapGroups(h.appConfig.GetAuthorizationType())
+	return data.SetWorkspaceID(workspaceID), data.CheckLdapGroups(h.appConfig.GetAuthenticationType())
 }
 
 // @Tags Workspace

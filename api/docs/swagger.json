@@ -25,6 +25,9 @@
                 "produces": [
                     "application/json"
                 ],
+                "tags": [
+                    "Analysis"
+                ],
                 "operationId": "start-new-analysis",
                 "parameters": [
                     {
@@ -126,6 +129,9 @@
                 ],
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "Analysis"
                 ],
                 "operationId": "get-one-analysis",
                 "parameters": [

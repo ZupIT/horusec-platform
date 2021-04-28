@@ -6,6 +6,14 @@
 package providers
 
 import (
+	"github.com/ZupIT/horusec-devkit/pkg/services/app"
+	"github.com/ZupIT/horusec-devkit/pkg/services/broker"
+	config2 "github.com/ZupIT/horusec-devkit/pkg/services/broker/config"
+	"github.com/ZupIT/horusec-devkit/pkg/services/database"
+	"github.com/ZupIT/horusec-devkit/pkg/services/database/config"
+	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth"
+	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth/proto"
+	"github.com/ZupIT/horusec-devkit/pkg/services/http"
 	"github.com/google/wire"
 
 	"github.com/ZupIT/horusec-platform/api/config/cors"
@@ -17,15 +25,6 @@ import (
 	"github.com/ZupIT/horusec-platform/api/internal/repositories/repository"
 	"github.com/ZupIT/horusec-platform/api/internal/repositories/token"
 	"github.com/ZupIT/horusec-platform/api/internal/router"
-
-	"github.com/ZupIT/horusec-devkit/pkg/services/app"
-	"github.com/ZupIT/horusec-devkit/pkg/services/broker"
-	config2 "github.com/ZupIT/horusec-devkit/pkg/services/broker/config"
-	"github.com/ZupIT/horusec-devkit/pkg/services/database"
-	"github.com/ZupIT/horusec-devkit/pkg/services/database/config"
-	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth"
-	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth/proto"
-	"github.com/ZupIT/horusec-devkit/pkg/services/http"
 )
 
 // Injectors from wire.go:
@@ -41,13 +40,13 @@ func Initialize(defaultPort string) (router.IRouter, error) {
 	iToken := token.NewRepositoriesToken(connection)
 	iTokenAuthz := token2.NewTokenAuthz(iToken)
 	configIConfig := config2.NewBrokerConfig()
-	clientConnInterface := auth.NewAuthGRPCConnection()
-	authServiceClient := proto.NewAuthServiceClient(clientConnInterface)
-	appIConfig := app.NewAppConfig(authServiceClient)
-	iBroker, err := broker.NewBroker(configIConfig, appIConfig)
+	iBroker, err := broker.NewBroker(configIConfig)
 	if err != nil {
 		return nil, err
 	}
+	clientConnInterface := auth.NewAuthGRPCConnection()
+	authServiceClient := proto.NewAuthServiceClient(clientConnInterface)
+	appIConfig := app.NewAppConfig(authServiceClient)
 	iRepository := repository.NewRepositoriesRepository(connection)
 	iAnalysis := analysis.NewRepositoriesAnalysis(connection)
 	iController := analysis2.NewAnalysisController(iBroker, appIConfig, iRepository, iAnalysis)

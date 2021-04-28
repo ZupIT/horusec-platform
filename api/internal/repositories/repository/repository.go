@@ -3,6 +3,8 @@ package repository
 import (
 	"time"
 
+	"github.com/ZupIT/horusec-devkit/pkg/services/database/enums"
+
 	"github.com/google/uuid"
 
 	"github.com/ZupIT/horusec-devkit/pkg/services/database"
@@ -10,6 +12,7 @@ import (
 
 type IRepository interface {
 	CreateRepository(ID, workspaceID uuid.UUID, name string) error
+	FindRepository(workspaceID uuid.UUID, name string) (uuid.UUID, error)
 }
 
 type Repository struct {
@@ -24,6 +27,24 @@ func NewRepositoriesRepository(connection *database.Connection) IRepository {
 		databaseRead:        connection.Read,
 		repositoryTableName: "repositories",
 	}
+}
+
+func (r *Repository) FindRepository(workspaceID uuid.UUID, name string) (uuid.UUID, error) {
+	entity := map[string]interface{}{}
+	condition := map[string]interface{}{
+		"workspace_id": workspaceID,
+		"name":         name,
+	}
+	res := r.databaseRead.Find(&entity, condition, r.repositoryTableName)
+	if res.GetError() != nil {
+		return uuid.Nil, res.GetError()
+	}
+	if res.GetData() == nil {
+		return uuid.Nil, enums.ErrorNotFoundRecords
+	}
+	entity = *res.GetData().(*map[string]interface{})
+	repositoryID := entity["repository_id"].(string)
+	return uuid.Parse(repositoryID)
 }
 
 func (r *Repository) CreateRepository(repositoryID, workspaceID uuid.UUID, name string) error {

@@ -9,6 +9,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/ZupIT/horusec-devkit/pkg/enums/confidence"
+
 	tokensEnums "github.com/ZupIT/horusec-platform/api/internal/middelwares/token/enums"
 
 	"github.com/go-chi/chi"
@@ -118,7 +120,7 @@ func TestHandler_Post(t *testing.T) {
 						VulnerabilityID: VulnerabilityID,
 						Line:            "1",
 						Column:          "1",
-						Confidence:      "",
+						Confidence:      confidence.High,
 						File:            "/cmd/app/cert.pem",
 						Code:            "=========PRIVATE KEY",
 						Details:         "",

@@ -55,7 +55,7 @@ func TestCreate(t *testing.T) {
 		authGRPCMock.On("GetAccountInfo").Return(accountData, nil)
 
 		appConfigMock := &app.Mock{}
-		appConfigMock.On("GetAuthorizationType").Return(auth.Horusec)
+		appConfigMock.On("GetAuthenticationType").Return(auth.Horusec)
 
 		handler := NewWorkspaceHandler(controllerMock, workspaceUseCases.NewWorkspaceUseCases(),
 			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases(), tokenUseCases.NewTokenUseCases())
@@ -76,7 +76,7 @@ func TestCreate(t *testing.T) {
 		authGRPCMock.On("GetAccountInfo").Return(accountData, nil)
 
 		appConfigMock := &app.Mock{}
-		appConfigMock.On("GetAuthorizationType").Return(auth.Horusec)
+		appConfigMock.On("GetAuthenticationType").Return(auth.Horusec)
 
 		handler := NewWorkspaceHandler(controllerMock, workspaceUseCases.NewWorkspaceUseCases(),
 			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases(), tokenUseCases.NewTokenUseCases())
@@ -96,7 +96,7 @@ func TestCreate(t *testing.T) {
 		authGRPCMock.On("GetAccountInfo").Return(accountData, errors.New("test"))
 
 		appConfigMock := &app.Mock{}
-		appConfigMock.On("GetAuthorizationType").Return(auth.Horusec)
+		appConfigMock.On("GetAuthenticationType").Return(auth.Horusec)
 
 		handler := NewWorkspaceHandler(controllerMock, workspaceUseCases.NewWorkspaceUseCases(),
 			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases(), tokenUseCases.NewTokenUseCases())
@@ -116,7 +116,7 @@ func TestCreate(t *testing.T) {
 		authGRPCMock.On("GetAccountInfo").Return(accountData, nil)
 
 		appConfigMock := &app.Mock{}
-		appConfigMock.On("GetAuthorizationType").Return(auth.Horusec)
+		appConfigMock.On("GetAuthenticationType").Return(auth.Horusec)
 
 		handler := NewWorkspaceHandler(controllerMock, workspaceUseCases.NewWorkspaceUseCases(),
 			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases(), tokenUseCases.NewTokenUseCases())
@@ -138,7 +138,7 @@ func TestCreate(t *testing.T) {
 		authGRPCMock.On("GetAccountInfo").Return(accountData, nil)
 
 		appConfigMock := &app.Mock{}
-		appConfigMock.On("GetAuthorizationType").Return(auth.Ldap)
+		appConfigMock.On("GetAuthenticationType").Return(auth.Ldap)
 
 		handler := NewWorkspaceHandler(controllerMock, workspaceUseCases.NewWorkspaceUseCases(),
 			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases(), tokenUseCases.NewTokenUseCases())
@@ -271,7 +271,7 @@ func TestUpdate(t *testing.T) {
 		authGRPCMock.On("GetAccountInfo").Return(accountData, nil)
 
 		appConfigMock := &app.Mock{}
-		appConfigMock.On("GetAuthorizationType").Return(auth.Horusec)
+		appConfigMock.On("GetAuthenticationType").Return(auth.Horusec)
 
 		handler := NewWorkspaceHandler(controllerMock, workspaceUseCases.NewWorkspaceUseCases(),
 			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases(), tokenUseCases.NewTokenUseCases())
@@ -296,7 +296,7 @@ func TestUpdate(t *testing.T) {
 		authGRPCMock.On("GetAccountInfo").Return(accountData, nil)
 
 		appConfigMock := &app.Mock{}
-		appConfigMock.On("GetAuthorizationType").Return(auth.Horusec)
+		appConfigMock.On("GetAuthenticationType").Return(auth.Horusec)
 
 		handler := NewWorkspaceHandler(controllerMock, workspaceUseCases.NewWorkspaceUseCases(),
 			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases(), tokenUseCases.NewTokenUseCases())
@@ -320,7 +320,7 @@ func TestUpdate(t *testing.T) {
 		authGRPCMock.On("GetAccountInfo").Return(accountData, nil)
 
 		appConfigMock := &app.Mock{}
-		appConfigMock.On("GetAuthorizationType").Return(auth.Horusec)
+		appConfigMock.On("GetAuthenticationType").Return(auth.Horusec)
 
 		handler := NewWorkspaceHandler(controllerMock, workspaceUseCases.NewWorkspaceUseCases(),
 			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases(), tokenUseCases.NewTokenUseCases())
@@ -344,7 +344,7 @@ func TestUpdate(t *testing.T) {
 		authGRPCMock.On("GetAccountInfo").Return(accountData, errors.New("test"))
 
 		appConfigMock := &app.Mock{}
-		appConfigMock.On("GetAuthorizationType").Return(auth.Horusec)
+		appConfigMock.On("GetAuthenticationType").Return(auth.Horusec)
 
 		handler := NewWorkspaceHandler(controllerMock, workspaceUseCases.NewWorkspaceUseCases(),
 			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases(), tokenUseCases.NewTokenUseCases())

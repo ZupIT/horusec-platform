@@ -7,6 +7,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/ZupIT/horusec-devkit/pkg/utils/crypto"
+
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 
@@ -19,6 +21,11 @@ import (
 func testHandler(w http.ResponseWriter, _ *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
+}
+
+func TestCrypto(t *testing.T) {
+	textStr := crypto.GenerateSHA256("bbf6c937-c985-4874-9981-c37c2889b745")
+	assert.Equal(t, "25398a3476bb0250be7f367e96cc54f0907ced1549fadda2cca110ee5c89ae5d", textStr)
 }
 
 func TestAuthz_IsAuthorized(t *testing.T) {

@@ -286,7 +286,7 @@ func TestList(t *testing.T) {
 		repositoryMock.On("ListWorkspacesAuthTypeHorusec").Return(workspaceResponse, nil)
 
 		appConfig := &app.Mock{}
-		appConfig.On("GetAuthorizationType").Return(auth.Horusec)
+		appConfig.On("GetAuthenticationType").Return(auth.Horusec)
 
 		databaseMock := &database.Mock{}
 
@@ -304,7 +304,7 @@ func TestList(t *testing.T) {
 		repositoryMock.On("ListWorkspacesAuthTypeLdap").Return(workspaceResponse, nil)
 
 		appConfig := &app.Mock{}
-		appConfig.On("GetAuthorizationType").Return(auth.Ldap)
+		appConfig.On("GetAuthenticationType").Return(auth.Ldap)
 
 		databaseMock := &database.Mock{}
 
@@ -323,7 +323,7 @@ func TestList(t *testing.T) {
 			workspaceResponse, errors.New("test"))
 
 		appConfig := &app.Mock{}
-		appConfig.On("GetAuthorizationType").Return(auth.Horusec)
+		appConfig.On("GetAuthenticationType").Return(auth.Horusec)
 
 		databaseMock := &database.Mock{}
 
@@ -340,7 +340,7 @@ func TestList(t *testing.T) {
 		repositoryMock.On("ListWorkspacesAuthTypeLdap").Return(workspaceResponse, errors.New("test"))
 
 		appConfig := &app.Mock{}
-		appConfig.On("GetAuthorizationType").Return(auth.Ldap)
+		appConfig.On("GetAuthenticationType").Return(auth.Ldap)
 
 		databaseMock := &database.Mock{}
 

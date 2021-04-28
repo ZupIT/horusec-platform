@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/ZupIT/horusec-platform/api/config/providers"
-	"github.com/ZupIT/horusec-platform/api/internal/router/enums"
+	"github.com/ZupIT/horusec-platform/api/internal/enums"
 )
 
 // @title Horusec-API
