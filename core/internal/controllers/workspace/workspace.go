@@ -80,6 +80,23 @@ func (c *Controller) Create(data *workspaceEntities.Data) (*workspaceEntities.Re
 }
 
 func (c *Controller) Get(data *workspaceEntities.Data) (*workspaceEntities.Response, error) {
+	if data.IsApplicationAdmin {
+		return c.getWorkspaceWhenAppAdmin(data)
+	}
+
+	return c.getWorkspace(data)
+}
+
+func (c *Controller) getWorkspaceWhenAppAdmin(data *workspaceEntities.Data) (*workspaceEntities.Response, error) {
+	workspace, err := c.repository.GetWorkspace(data.WorkspaceID)
+	if err != nil {
+		return nil, err
+	}
+
+	return workspace.ToWorkspaceResponse(accountEnums.ApplicationAdmin), nil
+}
+
+func (c *Controller) getWorkspace(data *workspaceEntities.Data) (*workspaceEntities.Response, error) {
 	accountWorkspace, err := c.repository.GetAccountWorkspace(data.AccountID, data.WorkspaceID)
 	if err != nil {
 		return nil, err
@@ -110,6 +127,10 @@ func (c *Controller) Delete(workspaceID uuid.UUID) error {
 }
 
 func (c *Controller) List(data *workspaceEntities.Data) (*[]workspaceEntities.Response, error) {
+	if data.IsApplicationAdmin {
+		return c.repository.ListWorkspacesApplicationAdmin()
+	}
+
 	if c.appConfig.GetAuthenticationType() == auth.Ldap {
 		return c.repository.ListWorkspacesAuthTypeLdap(data.Permissions)
 	}

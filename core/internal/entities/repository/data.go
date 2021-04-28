@@ -15,15 +15,16 @@ import (
 )
 
 type Data struct {
-	WorkspaceID     uuid.UUID `json:"workspaceID" swaggerignore:"true"`
-	RepositoryID    uuid.UUID `json:"repositoryID" swaggerignore:"true"`
-	AccountID       uuid.UUID `json:"accountID" swaggerignore:"true"`
-	Name            string    `json:"name"`
-	Description     string    `json:"description"`
-	AuthzMember     []string  `json:"authzMember"`
-	AuthzAdmin      []string  `json:"authzAdmin"`
-	AuthzSupervisor []string  `json:"authzSupervisor"`
-	Permissions     []string  `json:"permissions" swaggerignore:"true"`
+	WorkspaceID        uuid.UUID `json:"workspaceID" swaggerignore:"true"`
+	RepositoryID       uuid.UUID `json:"repositoryID" swaggerignore:"true"`
+	AccountID          uuid.UUID `json:"accountID" swaggerignore:"true"`
+	Name               string    `json:"name"`
+	Description        string    `json:"description"`
+	AuthzMember        []string  `json:"authzMember"`
+	AuthzAdmin         []string  `json:"authzAdmin"`
+	AuthzSupervisor    []string  `json:"authzSupervisor"`
+	Permissions        []string  `json:"permissions" swaggerignore:"true"`
+	IsApplicationAdmin bool      `json:"isApplicationAdmin" swaggerignore:"true"`
 }
 
 func (d *Data) Validate() error {
@@ -48,6 +49,7 @@ func (d *Data) SetWorkspaceIDAndAccountData(workspaceID uuid.UUID, accountData *
 	d.AccountID = parser.ParseStringToUUID(accountData.AccountID)
 	d.Permissions = accountData.Permissions
 	d.WorkspaceID = workspaceID
+	d.IsApplicationAdmin = accountData.IsApplicationAdmin
 
 	return d
 }

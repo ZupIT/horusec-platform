@@ -89,8 +89,9 @@ func TestNewRepositoryData(t *testing.T) {
 
 		id := uuid.New()
 		accountData := &proto.GetAccountDataResponse{
-			AccountID:   id.String(),
-			Permissions: []string{"test"},
+			AccountID:          id.String(),
+			Permissions:        []string{"test"},
+			IsApplicationAdmin: true,
 		}
 
 		data := useCases.NewRepositoryData(id, id, accountData)
@@ -98,6 +99,7 @@ func TestNewRepositoryData(t *testing.T) {
 		assert.Equal(t, id, data.WorkspaceID)
 		assert.Equal(t, id, data.AccountID)
 		assert.Equal(t, []string{"test"}, data.Permissions)
+		assert.Equal(t, true, data.IsApplicationAdmin)
 	})
 }
 

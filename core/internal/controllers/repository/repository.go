@@ -93,6 +93,23 @@ func (c *Controller) createTransaction(accountID uuid.UUID,
 }
 
 func (c *Controller) Get(data *repositoryEntities.Data) (*repositoryEntities.Response, error) {
+	if data.IsApplicationAdmin {
+		return c.getRepositoryWhenAppAdmin(data)
+	}
+
+	return c.getRepository(data)
+}
+
+func (c *Controller) getRepositoryWhenAppAdmin(data *repositoryEntities.Data) (*repositoryEntities.Response, error) {
+	repository, err := c.repository.GetRepository(data.RepositoryID)
+	if err != nil {
+		return nil, err
+	}
+
+	return repository.ToRepositoryResponse(accountEnums.ApplicationAdmin), nil
+}
+
+func (c *Controller) getRepository(data *repositoryEntities.Data) (*repositoryEntities.Response, error) {
 	accountRepository, err := c.repository.GetAccountRepository(data.AccountID, data.RepositoryID)
 	if err != nil {
 		return nil, err
@@ -128,6 +145,10 @@ func (c *Controller) Delete(repositoryID uuid.UUID) error {
 }
 
 func (c *Controller) List(data *repositoryEntities.Data) (*[]repositoryEntities.Response, error) {
+	if data.IsApplicationAdmin {
+		return c.repository.ListRepositoriesWhenApplicationAdmin()
+	}
+
 	if c.appConfig.GetAuthenticationType() == auth.Ldap {
 		return c.repository.ListRepositoriesAuthTypeLdap(data.WorkspaceID, data.Permissions)
 	}

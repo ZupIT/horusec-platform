@@ -3,7 +3,7 @@ package router
 import (
 	"github.com/go-chi/chi"
 
-	"github.com/ZupIT/horusec-devkit/pkg/services/http"
+	httpRouter "github.com/ZupIT/horusec-devkit/pkg/services/http/router"
 	"github.com/ZupIT/horusec-devkit/pkg/services/middlewares"
 	"github.com/ZupIT/horusec-devkit/pkg/services/swagger"
 
@@ -14,18 +14,18 @@ import (
 )
 
 type IRouter interface {
-	http.IRouter
+	httpRouter.IRouter
 }
 
 type Router struct {
-	http.IRouter
+	httpRouter.IRouter
 	middlewares.IAuthzMiddleware
 	workspaceHandler  *workspace.Handler
 	repositoryHandler *repository.Handler
 	swagger.ISwagger
 }
 
-func NewHTTPRouter(router http.IRouter, authzMiddleware middlewares.IAuthzMiddleware,
+func NewHTTPRouter(router httpRouter.IRouter, authzMiddleware middlewares.IAuthzMiddleware,
 	workspaceHandler *workspace.Handler, repositoryHandler *repository.Handler) IRouter {
 	httpRoutes := &Router{
 		IRouter:           router,

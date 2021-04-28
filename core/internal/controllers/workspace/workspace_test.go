@@ -183,6 +183,40 @@ func TestGet(t *testing.T) {
 		assert.Error(t, err)
 		assert.Equal(t, errors.New("test"), err)
 	})
+
+	t.Run("should success get workspace when application admin", func(t *testing.T) {
+		databaseMock := &database.Mock{}
+		appConfig := &app.Mock{}
+
+		repositoryMock := &workspaceRepository.Mock{}
+		repositoryMock.On("GetWorkspace").Return(workspace, nil)
+
+		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
+		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection, appConfig,
+			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock, tokenUseCases.NewTokenUseCases())
+
+		workspaceData.IsApplicationAdmin = true
+		result, err := controller.Get(workspaceData)
+		assert.NoError(t, err)
+		assert.NotNil(t, result)
+	})
+
+	t.Run("should return error when failed to get workspace and user is application admin", func(t *testing.T) {
+		databaseMock := &database.Mock{}
+		appConfig := &app.Mock{}
+
+		repositoryMock := &workspaceRepository.Mock{}
+		repositoryMock.On("GetWorkspace").Return(workspace, errors.New("test"))
+
+		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
+		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection, appConfig,
+			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock, tokenUseCases.NewTokenUseCases())
+
+		workspaceData.IsApplicationAdmin = true
+		_, err := controller.Get(workspaceData)
+		assert.Error(t, err)
+		assert.Equal(t, errors.New("test"), err)
+	})
 }
 
 func TestUpdate(t *testing.T) {
@@ -350,6 +384,23 @@ func TestList(t *testing.T) {
 
 		_, err := controller.List(workspaceData)
 		assert.Error(t, err)
+	})
+
+	t.Run("should list workspaces when application admin", func(t *testing.T) {
+		appConfig := &app.Mock{}
+		databaseMock := &database.Mock{}
+
+		repositoryMock := &workspaceRepository.Mock{}
+		repositoryMock.On("ListWorkspacesApplicationAdmin").Return(workspaceResponse, nil)
+
+		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
+		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection, appConfig,
+			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock, tokenUseCases.NewTokenUseCases())
+
+		workspaceData.IsApplicationAdmin = true
+		result, err := controller.List(workspaceData)
+		assert.NoError(t, err)
+		assert.NotNil(t, result)
 	})
 }
 

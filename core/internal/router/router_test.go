@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/ZupIT/horusec-devkit/pkg/services/http"
+	httpRouter "github.com/ZupIT/horusec-devkit/pkg/services/http/router"
 	"github.com/ZupIT/horusec-devkit/pkg/services/middlewares"
 
 	"github.com/ZupIT/horusec-platform/core/config/cors"
@@ -15,7 +15,7 @@ import (
 
 func TestNewHTTPRouter(t *testing.T) {
 	t.Run("should success create a new http router and set routes", func(t *testing.T) {
-		routerService := http.NewHTTPRouter(cors.NewCorsConfig(), "9999")
+		routerService := httpRouter.NewHTTPRouter(cors.NewCorsConfig(), "9999")
 		middlewareService := middlewares.NewAuthzMiddleware(nil)
 		workspaceHandler := &workspace.Handler{}
 		repositoryHandler := &repository.Handler{}
