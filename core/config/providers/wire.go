@@ -70,6 +70,7 @@ var repositoriesProviders = wire.NewSet(
 
 func Initialize(_ string) (router.IRouter, error) {
 	wire.Build(devKitProviders, configProviders, controllerProviders, handleProviders,
-		useCasesProviders, repositoriesProviders)
+		useCasesProviders, repositoriesProviders, serviceProviders)
+
 	return &router.Router{}, nil
 }

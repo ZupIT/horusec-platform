@@ -46,7 +46,7 @@ security:
 build:
 	$(GO) build -o "./tmp/bin/core" ./cmd/app/main.go
 
-pipeline: fmt fix-imports lint test coverage build security
-
 update-swagger:
 	curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec-devkit/develop/scripts/update-swagger.sh | bash
+
+pipeline: fmt fix-imports lint test coverage build security
