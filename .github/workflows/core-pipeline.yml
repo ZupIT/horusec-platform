@@ -2,7 +2,7 @@ name: Core
 on:
   push:
     paths: [
-        "auth/**",
+        "core/**",
         "**/workflows/core-pipeline.yml",
     ]
 jobs:
