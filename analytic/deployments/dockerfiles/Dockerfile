@@ -1,4 +1,3 @@
-#! /bin/bash
 # Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,18 +12,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+FROM golang:alpine AS builder
 
-MIGRATION_PATH="./deployments/migrations"
-POSTGRES_USER="root"
-POSTGRES_PASSWORD="root"
-POSTGRES_HOST="localhost"
-POSTGRES_PORT="5432"
-POSTGRES_DB_NAME="horusec_analytic_db"
-POSTGRES_SSL_MODE="disable"
+RUN apk update && apk add --no-cache git build-base
 
-docker run --name migrate \
-    --rm -v "$(pwd)/$MIGRATION_PATH:/migrations" \
-    --network=container:postgresql migrate/migrate:v4.13.0 \
-    -path=/migrations/ \
-    -database postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@$POSTGRES_HOST:$POSTGRES_PORT/$POSTGRES_DB_NAME?sslmode=$POSTGRES_SSL_MODE \
-    "$@"
+ADD . /analytic
+
+WORKDIR /analytic
+
+RUN go get -t -v -d ./...
+
+RUN GOOS=linux go build -a -o horusec-analytic-main ./cmd/app/main.go
+
+FROM alpine
+
+COPY --from=builder /analytic/horusec-analytic-main .
+
+ENTRYPOINT ["./horusec-analytic-main"]

@@ -1,0 +1,10 @@
+FROM golang
+
+WORKDIR /usr/app
+
+COPY . .
+
+RUN go get -d ./...
+RUN go get github.com/cosmtrek/air
+
+CMD ["air", "-c", "deployments/air/config.toml"]
