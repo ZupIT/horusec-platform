@@ -9,8 +9,8 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/services/middlewares"
 
 	"github.com/ZupIT/horusec-platform/core/config/cors"
-	"github.com/ZupIT/horusec-platform/core/internal/handlers/repository"
 	"github.com/ZupIT/horusec-platform/core/internal/handlers/health"
+	"github.com/ZupIT/horusec-platform/core/internal/handlers/repository"
 	"github.com/ZupIT/horusec-platform/core/internal/handlers/workspace"
 )
 

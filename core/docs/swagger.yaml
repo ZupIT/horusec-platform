@@ -76,7 +76,7 @@ info:
   termsOfService: http://swagger.io/terms/
   title: Horusec-Core
 paths:
-  /auth/health:
+  /core/health:
     get:
       consumes:
       - application/json

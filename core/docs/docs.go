@@ -29,7 +29,7 @@ var doc = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/auth/health": {
+        "/core/health": {
             "get": {
                 "security": [
                     {

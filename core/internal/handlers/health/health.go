@@ -32,7 +32,7 @@ func NewHealthHandler(connection *database.Connection, brokerLib broker.IBroker)
 // @Produce  json
 // @Success 200 {object} entities.Response
 // @Failure 200 {object} entities.Response
-// @Router /auth/health [get]
+// @Router /core/health [get]
 // @Security ApiKeyAuth
 func (h *Handler) Get(w http.ResponseWriter, _ *http.Request) {
 	if !h.databaseWrite.IsAvailable() || !h.databaseRead.IsAvailable() {
