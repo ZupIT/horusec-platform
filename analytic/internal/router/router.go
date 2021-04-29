@@ -1,6 +1,7 @@
 package router
 
 import (
+	"github.com/ZupIT/horusec-devkit/pkg/services/http/router"
 	"github.com/ZupIT/horusec-devkit/pkg/services/middlewares"
 
 	eventDashboard "github.com/ZupIT/horusec-platform/analytic/internal/events/dashboard"
@@ -15,16 +16,14 @@ import (
 	"github.com/ZupIT/horusec-platform/analytic/internal/enums"
 
 	"github.com/ZupIT/horusec-devkit/pkg/services/swagger"
-
-	"github.com/ZupIT/horusec-devkit/pkg/services/http"
 )
 
 type IRouter interface {
-	http.IRouter
+	router.IRouter
 }
 
 type Router struct {
-	http.IRouter
+	router.IRouter
 	swagger.ISwagger
 	middlewares.IAuthzMiddleware
 	healthHandler    *health.Handler
@@ -32,12 +31,12 @@ type Router struct {
 	dashboardEvent   eventDashboard.IEvent
 }
 
-func NewHTTPRouter(router http.IRouter, authzMiddleware middlewares.IAuthzMiddleware, healthHandler *health.Handler,
-	dashboardHandler *dashboard.Handler, dashboardEvent eventDashboard.IEvent) IRouter {
+func NewHTTPRouter(routerConn router.IRouter, authzMiddleware middlewares.IAuthzMiddleware,
+	healthHandler *health.Handler, dashboardHandler *dashboard.Handler, dashboardEvent eventDashboard.IEvent) IRouter {
 	routes := &Router{
-		IRouter:          router,
+		IRouter:          routerConn,
 		IAuthzMiddleware: authzMiddleware,
-		ISwagger:         swagger.NewSwagger(router.GetMux(), enums.DefaultPort),
+		ISwagger:         swagger.NewSwagger(routerConn.GetMux(), enums.DefaultPort),
 		healthHandler:    healthHandler,
 		dashboardHandler: dashboardHandler,
 		dashboardEvent:   dashboardEvent,

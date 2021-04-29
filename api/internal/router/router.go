@@ -1,6 +1,7 @@
 package router
 
 import (
+	"github.com/ZupIT/horusec-devkit/pkg/services/http/router"
 	"github.com/go-chi/chi"
 
 	"github.com/ZupIT/horusec-platform/api/docs"
@@ -10,27 +11,25 @@ import (
 	"github.com/ZupIT/horusec-platform/api/internal/middelwares/token"
 
 	"github.com/ZupIT/horusec-devkit/pkg/services/swagger"
-
-	"github.com/ZupIT/horusec-devkit/pkg/services/http"
 )
 
 type IRouter interface {
-	http.IRouter
+	router.IRouter
 }
 
 type Router struct {
-	http.IRouter
+	router.IRouter
 	swagger.ISwagger
 	analysisHandler *analysis.Handler
 	healthHandler   *health.Handler
 	tokenAuthz      token.ITokenAuthz
 }
 
-func NewHTTPRouter(router http.IRouter, tokenAuthz token.ITokenAuthz,
+func NewHTTPRouter(routerConnection router.IRouter, tokenAuthz token.ITokenAuthz,
 	analysisHandler *analysis.Handler, healthHandler *health.Handler) IRouter {
 	routes := &Router{
-		IRouter:         router,
-		ISwagger:        swagger.NewSwagger(router.GetMux(), enums.DefaultPort),
+		IRouter:         routerConnection,
+		ISwagger:        swagger.NewSwagger(routerConnection.GetMux(), enums.DefaultPort),
 		analysisHandler: analysisHandler,
 		healthHandler:   healthHandler,
 		tokenAuthz:      tokenAuthz,

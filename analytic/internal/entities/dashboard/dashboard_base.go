@@ -78,7 +78,6 @@ func (v *Vulnerability) AddCountVulnerabilityBySeverity(
 	}
 }
 
-// nolint:exhaustive // is not necessary unknown type
 func (v *Vulnerability) AddCountVulnerabilityCritical(count int, vulnType vulnerability.Type) {
 	switch vulnType {
 	case vulnerability.Vulnerability:
@@ -92,7 +91,6 @@ func (v *Vulnerability) AddCountVulnerabilityCritical(count int, vulnType vulner
 	}
 }
 
-// nolint:exhaustive // is not duplicate method
 func (v *Vulnerability) AddCountVulnerabilityHigh(count int, vulnType vulnerability.Type) {
 	switch vulnType {
 	case vulnerability.Vulnerability:
@@ -106,7 +104,6 @@ func (v *Vulnerability) AddCountVulnerabilityHigh(count int, vulnType vulnerabil
 	}
 }
 
-// nolint:exhaustive // is not duplicate method
 func (v *Vulnerability) AddCountVulnerabilityMedium(count int, vulnType vulnerability.Type) {
 	switch vulnType {
 	case vulnerability.Vulnerability:
@@ -120,7 +117,6 @@ func (v *Vulnerability) AddCountVulnerabilityMedium(count int, vulnType vulnerab
 	}
 }
 
-// nolint:exhaustive // is not duplicate method
 func (v *Vulnerability) AddCountVulnerabilityLow(count int, vulnType vulnerability.Type) {
 	switch vulnType {
 	case vulnerability.Vulnerability:
@@ -134,7 +130,6 @@ func (v *Vulnerability) AddCountVulnerabilityLow(count int, vulnType vulnerabili
 	}
 }
 
-// nolint:exhaustive // is not duplicate method
 func (v *Vulnerability) AddCountVulnerabilityInfo(count int, vulnType vulnerability.Type) {
 	switch vulnType {
 	case vulnerability.Vulnerability:
@@ -148,7 +143,6 @@ func (v *Vulnerability) AddCountVulnerabilityInfo(count int, vulnType vulnerabil
 	}
 }
 
-// nolint:exhaustive // is not duplicate method
 func (v *Vulnerability) AddCountVulnerabilityUnknown(count int, vulnType vulnerability.Type) {
 	switch vulnType {
 	case vulnerability.Vulnerability:

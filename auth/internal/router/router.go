@@ -1,9 +1,9 @@
 package router
 
 import (
+	"github.com/ZupIT/horusec-devkit/pkg/services/http/router"
 	"github.com/go-chi/chi"
 
-	"github.com/ZupIT/horusec-devkit/pkg/services/http"
 	"github.com/ZupIT/horusec-devkit/pkg/services/swagger"
 
 	"github.com/ZupIT/horusec-platform/auth/config/grpc"
@@ -15,11 +15,11 @@ import (
 )
 
 type IRouter interface {
-	http.IRouter
+	router.IRouter
 }
 
 type Router struct {
-	http.IRouter
+	router.IRouter
 	swagger.ISwagger
 	grpc.IAuthGRPCServer
 	authHandler    *authHandler.Handler
@@ -27,11 +27,11 @@ type Router struct {
 	healthHandler  *health.Handler
 }
 
-func NewHTTPRouter(router http.IRouter, authGRPCServer grpc.IAuthGRPCServer, handlerAuth *authHandler.Handler,
-	handlerAccount *accountHandler.Handler, handlerHealth *health.Handler) IRouter {
+func NewHTTPRouter(routerConnection router.IRouter, authGRPCServer grpc.IAuthGRPCServer,
+	handlerAuth *authHandler.Handler, handlerAccount *accountHandler.Handler, handlerHealth *health.Handler) IRouter {
 	httpRouter := &Router{
-		IRouter:         router,
-		ISwagger:        swagger.NewSwagger(router.GetMux(), router.GetPort()),
+		IRouter:         routerConnection,
+		ISwagger:        swagger.NewSwagger(routerConnection.GetMux(), routerConnection.GetPort()),
 		IAuthGRPCServer: authGRPCServer,
 		authHandler:     handlerAuth,
 		accountHandler:  handlerAccount,

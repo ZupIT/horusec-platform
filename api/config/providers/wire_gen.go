@@ -13,9 +13,7 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/services/database/config"
 	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth"
 	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth/proto"
-	"github.com/ZupIT/horusec-devkit/pkg/services/http"
-	"github.com/google/wire"
-
+	router2 "github.com/ZupIT/horusec-devkit/pkg/services/http/router"
 	"github.com/ZupIT/horusec-platform/api/config/cors"
 	analysis2 "github.com/ZupIT/horusec-platform/api/internal/controllers/analysis"
 	analysis3 "github.com/ZupIT/horusec-platform/api/internal/handlers/analysis"
@@ -25,13 +23,14 @@ import (
 	"github.com/ZupIT/horusec-platform/api/internal/repositories/repository"
 	"github.com/ZupIT/horusec-platform/api/internal/repositories/token"
 	"github.com/ZupIT/horusec-platform/api/internal/router"
+	"github.com/google/wire"
 )
 
 // Injectors from wire.go:
 
 func Initialize(defaultPort string) (router.IRouter, error) {
 	options := cors.NewCorsConfig()
-	iRouter := http.NewHTTPRouter(options, defaultPort)
+	iRouter := router2.NewHTTPRouter(options, defaultPort)
 	iConfig := config.NewDatabaseConfig()
 	connection, err := database.NewDatabaseReadAndWrite(iConfig)
 	if err != nil {
@@ -58,4 +57,4 @@ func Initialize(defaultPort string) (router.IRouter, error) {
 
 // wire.go:
 
-var providers = wire.NewSet(config2.NewBrokerConfig, broker.NewBroker, config.NewDatabaseConfig, database.NewDatabaseReadAndWrite, auth.NewAuthGRPCConnection, proto.NewAuthServiceClient, token2.NewTokenAuthz, analysis.NewRepositoriesAnalysis, repository.NewRepositoriesRepository, token.NewRepositoriesToken, cors.NewCorsConfig, http.NewHTTPRouter, app.NewAppConfig, analysis2.NewAnalysisController, analysis3.NewAnalysisHandler, health.NewHealthHandler, router.NewHTTPRouter)
+var providers = wire.NewSet(config2.NewBrokerConfig, broker.NewBroker, config.NewDatabaseConfig, database.NewDatabaseReadAndWrite, auth.NewAuthGRPCConnection, proto.NewAuthServiceClient, token2.NewTokenAuthz, analysis.NewRepositoriesAnalysis, repository.NewRepositoriesRepository, token.NewRepositoriesToken, cors.NewCorsConfig, router2.NewHTTPRouter, app.NewAppConfig, analysis2.NewAnalysisController, analysis3.NewAnalysisHandler, health.NewHealthHandler, router.NewHTTPRouter)
