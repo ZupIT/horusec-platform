@@ -9,6 +9,7 @@ import (
 
 	"github.com/ZupIT/horusec-platform/core/docs"
 	"github.com/ZupIT/horusec-platform/core/internal/enums/routes"
+	"github.com/ZupIT/horusec-platform/core/internal/handlers/health"
 	"github.com/ZupIT/horusec-platform/core/internal/handlers/repository"
 	"github.com/ZupIT/horusec-platform/core/internal/handlers/workspace"
 )
@@ -22,17 +23,19 @@ type Router struct {
 	middlewares.IAuthzMiddleware
 	workspaceHandler  *workspace.Handler
 	repositoryHandler *repository.Handler
+	healthHandler     *health.Handler
 	swagger.ISwagger
 }
 
 func NewHTTPRouter(router httpRouter.IRouter, authzMiddleware middlewares.IAuthzMiddleware,
-	workspaceHandler *workspace.Handler, repositoryHandler *repository.Handler) IRouter {
+	workspaceHandler *workspace.Handler, repositoryHandler *repository.Handler, healthHandler *health.Handler) IRouter {
 	httpRoutes := &Router{
 		IRouter:           router,
 		IAuthzMiddleware:  authzMiddleware,
 		ISwagger:          swagger.NewSwagger(router.GetMux(), router.GetPort()),
 		workspaceHandler:  workspaceHandler,
 		repositoryHandler: repositoryHandler,
+		healthHandler:     healthHandler,
 	}
 
 	return httpRoutes.setRoutes()
@@ -42,6 +45,7 @@ func (r *Router) setRoutes() IRouter {
 	r.swaggerRoutes()
 	r.workspaceRoutes()
 	r.repositoryRoutes()
+	r.healthRoutes()
 
 	return r
 }
@@ -77,6 +81,12 @@ func (r *Router) repositoryRoutes() {
 		router.With(r.IsRepositoryAdmin).Post("/{repositoryID}/tokens", r.repositoryHandler.CreateToken)
 		router.With(r.IsRepositoryAdmin).Delete("/{repositoryID}/tokens/{tokenID}", r.repositoryHandler.DeleteToken)
 		router.With(r.IsRepositoryAdmin).Get("/{repositoryID}/tokens", r.repositoryHandler.ListTokens)
+	})
+}
+
+func (r *Router) healthRoutes() {
+	r.Route(routes.HealthHandler, func(router chi.Router) {
+		router.Get("/", r.healthHandler.Get)
 	})
 }
 

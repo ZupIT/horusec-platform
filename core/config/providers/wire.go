@@ -18,6 +18,7 @@ import (
 	"github.com/ZupIT/horusec-platform/core/config/cors"
 	repositoryController "github.com/ZupIT/horusec-platform/core/internal/controllers/repository"
 	workspaceController "github.com/ZupIT/horusec-platform/core/internal/controllers/workspace"
+	healthHandler "github.com/ZupIT/horusec-platform/core/internal/handlers/health"
 	repositoryHandler "github.com/ZupIT/horusec-platform/core/internal/handlers/repository"
 	workspaceHandler "github.com/ZupIT/horusec-platform/core/internal/handlers/workspace"
 	repositoryRepository "github.com/ZupIT/horusec-platform/core/internal/repositories/repository"
@@ -54,6 +55,7 @@ var controllerProviders = wire.NewSet(
 var handleProviders = wire.NewSet(
 	workspaceHandler.NewWorkspaceHandler,
 	repositoryHandler.NewRepositoryHandler,
+	healthHandler.NewHealthHandler,
 )
 
 var useCasesProviders = wire.NewSet(

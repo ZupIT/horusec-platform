@@ -16,6 +16,8 @@ jobs:
       - uses: actions/setup-go@v2
       - name: lint
         run: make lint
+      - name: test
+        run: make test
       - name: coverage
         run: make coverage
       - name: build

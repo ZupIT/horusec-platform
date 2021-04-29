@@ -45,4 +45,4 @@ build:
 update-swagger:
 	curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec-devkit/develop/scripts/update-swagger.sh | bash
 
-pipeline: fmt fix-imports lint coverage build security
+pipeline: fmt fix-imports lint test coverage build security

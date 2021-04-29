@@ -20,6 +20,7 @@ import (
 	"github.com/ZupIT/horusec-platform/core/config/cors"
 	repository3 "github.com/ZupIT/horusec-platform/core/internal/controllers/repository"
 	workspace3 "github.com/ZupIT/horusec-platform/core/internal/controllers/workspace"
+	"github.com/ZupIT/horusec-platform/core/internal/handlers/health"
 	repository4 "github.com/ZupIT/horusec-platform/core/internal/handlers/repository"
 	workspace4 "github.com/ZupIT/horusec-platform/core/internal/handlers/workspace"
 	repository2 "github.com/ZupIT/horusec-platform/core/internal/repositories/repository"
@@ -60,7 +61,8 @@ func Initialize(string2 string) (router.IRouter, error) {
 	repositoryIRepository := repository2.NewRepositoryRepository(connection, repositoryIUseCases, iRepository)
 	repositoryIController := repository3.NewRepositoryController(iBroker, connection, appIConfig, repositoryIUseCases, repositoryIRepository, tokenIUseCases)
 	repositoryHandler := repository4.NewRepositoryHandler(repositoryIUseCases, repositoryIController, appIConfig, authServiceClient, roleIUseCases, tokenIUseCases)
-	routerIRouter := router.NewHTTPRouter(iRouter, iAuthzMiddleware, handler, repositoryHandler)
+	healthHandler := health.NewHealthHandler(connection, iBroker)
+	routerIRouter := router.NewHTTPRouter(iRouter, iAuthzMiddleware, handler, repositoryHandler, healthHandler)
 	return routerIRouter, nil
 }
 
@@ -72,7 +74,7 @@ var configProviders = wire.NewSet(cors.NewCorsConfig, router.NewHTTPRouter)
 
 var controllerProviders = wire.NewSet(workspace3.NewWorkspaceController, repository3.NewRepositoryController)
 
-var handleProviders = wire.NewSet(workspace4.NewWorkspaceHandler, repository4.NewRepositoryHandler)
+var handleProviders = wire.NewSet(workspace4.NewWorkspaceHandler, repository4.NewRepositoryHandler, health.NewHealthHandler)
 
 var useCasesProviders = wire.NewSet(workspace.NewWorkspaceUseCases, repository.NewRepositoryUseCases, role.NewRoleUseCases, token.NewTokenUseCases)
 
