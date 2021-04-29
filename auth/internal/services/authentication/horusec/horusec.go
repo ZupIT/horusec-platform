@@ -74,6 +74,10 @@ func (s *Service) setRefreshTokenCache(accountID, refreshToken string) {
 }
 
 func (s *Service) IsAuthorized(data *authEntities.AuthorizationData) (bool, error) {
+	if isAppAdmin, err := s.isApplicationAdmin(data); isAppAdmin && err == nil {
+		return isAppAdmin, err
+	}
+
 	return s.authorizeByRole()[data.Type](data)
 }
 
@@ -88,24 +92,16 @@ func (s *Service) authorizeByRole() map[auth.AuthorizationType]func(*authEntitie
 	}
 }
 
-func (s *Service) checkForMember(role accountEnums.Role, accountID uuid.UUID) bool {
-	isApplicationAdmin, _ := s.checkForApplicationAdmin(accountID)
-
-	return isApplicationAdmin || role == accountEnums.Admin ||
-		role == accountEnums.Supervisor || role == accountEnums.Member
+func (s *Service) checkForMember(role accountEnums.Role) bool {
+	return role == accountEnums.Admin || role == accountEnums.Supervisor || role == accountEnums.Member
 }
 
-func (s *Service) checkForSupervisor(role accountEnums.Role, accountID uuid.UUID) bool {
-	isApplicationAdmin, _ := s.checkForApplicationAdmin(accountID)
-
-	return isApplicationAdmin || role == accountEnums.Admin ||
-		role == accountEnums.Supervisor
+func (s *Service) checkForSupervisor(role accountEnums.Role) bool {
+	return role == accountEnums.Admin || role == accountEnums.Supervisor
 }
 
-func (s *Service) checkForAdmin(role accountEnums.Role, accountID uuid.UUID) bool {
-	isApplicationAdmin, _ := s.checkForApplicationAdmin(accountID)
-
-	return isApplicationAdmin || role == accountEnums.Admin
+func (s *Service) checkForAdmin(role accountEnums.Role) bool {
+	return role == accountEnums.Admin
 }
 
 func (s *Service) checkForApplicationAdmin(accountID uuid.UUID) (bool, error) {
@@ -132,7 +128,7 @@ func (s *Service) isWorkspaceMember(data *authEntities.AuthorizationData) (bool,
 		return false, errors.Wrap(err, horusecAuthEnums.ErrorFailedToGetWorkspaceRole)
 	}
 
-	return s.checkForMember(role, accountID), nil
+	return s.checkForMember(role), nil
 }
 
 func (s *Service) isWorkspaceAdmin(data *authEntities.AuthorizationData) (bool, error) {
@@ -146,7 +142,7 @@ func (s *Service) isWorkspaceAdmin(data *authEntities.AuthorizationData) (bool, 
 		return false, errors.Wrap(err, horusecAuthEnums.ErrorFailedToGetWorkspaceRole)
 	}
 
-	return s.checkForAdmin(role, accountID), nil
+	return s.checkForAdmin(role), nil
 }
 
 func (s *Service) isRepositoryMember(data *authEntities.AuthorizationData) (bool, error) {
@@ -160,7 +156,7 @@ func (s *Service) isRepositoryMember(data *authEntities.AuthorizationData) (bool
 		return s.checkRepositoryRequestForWorkspaceAdmin(data, err)
 	}
 
-	return s.checkForMember(role, accountID), nil
+	return s.checkForMember(role), nil
 }
 
 func (s *Service) isRepositorySupervisor(data *authEntities.AuthorizationData) (bool, error) {
@@ -174,7 +170,7 @@ func (s *Service) isRepositorySupervisor(data *authEntities.AuthorizationData) (
 		return s.checkRepositoryRequestForWorkspaceAdmin(data, err)
 	}
 
-	return s.checkForSupervisor(role, accountID), nil
+	return s.checkForSupervisor(role), nil
 }
 
 func (s *Service) isRepositoryAdmin(data *authEntities.AuthorizationData) (bool, error) {
@@ -188,7 +184,7 @@ func (s *Service) isRepositoryAdmin(data *authEntities.AuthorizationData) (bool,
 		return s.checkRepositoryRequestForWorkspaceAdmin(data, err)
 	}
 
-	return s.checkForAdmin(role, accountID), nil
+	return s.checkForAdmin(role), nil
 }
 
 func (s *Service) checkRepositoryRequestForWorkspaceAdmin(data *authEntities.AuthorizationData,
