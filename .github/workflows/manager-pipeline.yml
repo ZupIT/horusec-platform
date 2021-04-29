@@ -9,22 +9,22 @@ jobs:
       run:
         working-directory: manager
     steps:
-      - name: set up nodejs
+      - name: Set up nodejs
         uses: actions/setup-node@v1
         with:
           node-version: "12"
         id: node
       - uses: actions/checkout@v2
       - uses: actions/setup-go@v2
-      - name: install
+      - name: Install dependencies
         run: npm install
-      - name: security
+      - name: Security
         run: make security
-      - name: lint
+      - name: Lint
         run: npm run lint
-      - name: build
+      - name: Build
         run: npm run build
-      - name: test
+      - name: Test
         uses: cypress-io/github-action@v1
         with:
           browser: chrome
