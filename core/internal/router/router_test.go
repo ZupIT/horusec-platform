@@ -10,6 +10,7 @@ import (
 
 	"github.com/ZupIT/horusec-platform/core/config/cors"
 	"github.com/ZupIT/horusec-platform/core/internal/handlers/repository"
+	"github.com/ZupIT/horusec-platform/core/internal/handlers/health"
 	"github.com/ZupIT/horusec-platform/core/internal/handlers/workspace"
 )
 
@@ -19,9 +20,11 @@ func TestNewHTTPRouter(t *testing.T) {
 		middlewareService := middlewares.NewAuthzMiddleware(nil)
 		workspaceHandler := &workspace.Handler{}
 		repositoryHandler := &repository.Handler{}
+		healthHandler := &health.Handler{}
 
 		assert.NotPanics(t, func() {
-			assert.NotNil(t, NewHTTPRouter(routerService, middlewareService, workspaceHandler, repositoryHandler))
+			assert.NotNil(t, NewHTTPRouter(routerService, middlewareService, workspaceHandler,
+				repositoryHandler, healthHandler))
 		})
 	})
 }
