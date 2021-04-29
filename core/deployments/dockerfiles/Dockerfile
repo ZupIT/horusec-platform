@@ -1,4 +1,3 @@
-#! /bin/bash
 # Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,23 +12,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-MIGRATION_FILE_NAME=$1
-MIGRATION_PATH=$2
+FROM golang:alpine AS builder
 
-if [[ -z "$MIGRATION_FILE_NAME" ]]
-then
-    echo "Migration file name param not found."
-fi
-if [[ -z "$MIGRATION_PATH" ]]
-then
-    MIGRATION_PATH="./deployments/migrations"
-fi
+RUN apk update && apk add --no-cache git build-base
 
-docker run --name migrate \
-    migrate/migrate \
-    -path=/migrations/ \
-    create -ext sql -dir /migrations "$MIGRATION_FILE_NAME"
-docker cp migrate:/migrations $MIGRATION_PATH
-docker rm migrate
-mv $MIGRATION_PATH/migrations/* $MIGRATION_PATH/
-rm -rf "$MIGRATION_PATH/migrations"
+ADD . /core
+
+WORKDIR /core
+
+RUN go get -t -v -d ./...
+
+RUN GOOS=linux go build -a -o horusec-core-main ./cmd/app/main.go
+
+FROM alpine
+
+COPY --from=builder /core/horusec-core-main .
+
+ENTRYPOINT ["./horusec-core-main"]

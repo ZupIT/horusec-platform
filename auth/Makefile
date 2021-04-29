@@ -5,10 +5,6 @@ GOLANG_CI_LINT ?= ./bin/golangci-lint
 GO_IMPORTS ?= goimports
 GO_IMPORTS_LOCAL ?= github.com/ZupIT/horusec-platform/auth
 HORUSEC ?= horusec
-DOCKER_COMPOSE ?= docker-compose
-
-compose:
-	$(DOCKER_COMPOSE) -f ./deployments/docker-compose.yaml up -d --build --force-recreate
 
 fmt:
 	$(GOFMT) -w $(GO_FILES)

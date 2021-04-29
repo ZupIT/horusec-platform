@@ -5,10 +5,6 @@ GOLANG_CI_LINT ?= ./bin/golangci-lint
 GO_IMPORTS ?= goimports
 GO_IMPORTS_LOCAL ?= github.com/ZupIT/horusec-platform/analytic
 HORUSEC ?= horusec
-DOCKER_COMPOSE ?= docker-compose
-
-compose:
-	$(DOCKER_COMPOSE) -f ./deployments/docker-compose.yaml up -d --build --force-recreate
 
 fmt:
 	$(GOFMT) -w $(GO_FILES)
@@ -46,7 +42,7 @@ security:
 build:
 	$(GO) build -o "./tmp/bin/analytic" ./cmd/app/main.go
 
-pipeline: fmt fix-imports lint test coverage build security
-
 update-swagger:
 	curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec-devkit/develop/scripts/update-swagger.sh | bash -s "./cmd/app/main.go" .
+
+pipeline: fmt fix-imports lint coverage build security
