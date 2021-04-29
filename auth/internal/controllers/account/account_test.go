@@ -11,6 +11,8 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/enums/auth"
 	"github.com/ZupIT/horusec-devkit/pkg/services/broker"
 	"github.com/ZupIT/horusec-devkit/pkg/services/cache"
+	"github.com/ZupIT/horusec-devkit/pkg/services/database"
+	"github.com/ZupIT/horusec-devkit/pkg/services/database/response"
 	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth/proto"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/crypto"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/jwt"
@@ -24,6 +26,13 @@ import (
 	accountUseCases "github.com/ZupIT/horusec-platform/auth/internal/usecases/account"
 )
 
+func getAppConfig() app.IConfig {
+	databaseMock := &database.Mock{}
+	databaseMock.On("Create").Return(&response.Response{})
+
+	return app.NewAuthAppConfig(&database.Connection{Read: databaseMock, Write: databaseMock})
+}
+
 func TestNewAccountController(t *testing.T) {
 	t.Run("should success create a new controller", func(t *testing.T) {
 		assert.NotNil(t, NewAccountController(nil, nil, nil,
@@ -33,7 +42,7 @@ func TestNewAccountController(t *testing.T) {
 
 func TestCreateAccountKeycloak(t *testing.T) {
 	t.Run("should success create a new account", func(t *testing.T) {
-		appConfig := app.NewAuthAppConfig()
+		appConfig := getAppConfig()
 		brokerMock := &broker.Mock{}
 
 		test := ""
@@ -53,13 +62,13 @@ func TestCreateAccountKeycloak(t *testing.T) {
 		controller := NewAccountController(accountRepositoryMock, serviceMock,
 			accountUseCases.NewAccountUseCases(appConfig), appConfig, brokerMock, cache.NewCache())
 
-		response, err := controller.CreateAccountKeycloak("test")
-		assert.NotNil(t, response)
+		result, err := controller.CreateAccountKeycloak("test")
+		assert.NotNil(t, result)
 		assert.NoError(t, err)
 	})
 
 	t.Run("should return already existing account", func(t *testing.T) {
-		appConfig := app.NewAuthAppConfig()
+		appConfig := getAppConfig()
 		brokerMock := &broker.Mock{}
 
 		test := ""
@@ -85,7 +94,7 @@ func TestCreateAccountKeycloak(t *testing.T) {
 	})
 
 	t.Run("should return error when failed to get user info ", func(t *testing.T) {
-		appConfig := app.NewAuthAppConfig()
+		appConfig := getAppConfig()
 		brokerMock := &broker.Mock{}
 		accountRepositoryMock := &accountRepository.Mock{}
 
@@ -104,7 +113,7 @@ func TestCreateAccountKeycloak(t *testing.T) {
 
 func TestCreateAccountHorusec(t *testing.T) {
 	t.Run("should success create a new account with email enabled", func(t *testing.T) {
-		appConfig := app.NewAuthAppConfig()
+		appConfig := getAppConfig()
 		serviceMock := &authServices.Mock{}
 
 		accountRepositoryMock := &accountRepository.Mock{}
@@ -118,8 +127,8 @@ func TestCreateAccountHorusec(t *testing.T) {
 
 		data := &accountEntities.Data{}
 
-		response, err := controller.CreateAccountHorusec(data)
-		assert.NotNil(t, response)
+		result, err := controller.CreateAccountHorusec(data)
+		assert.NotNil(t, result)
 		assert.NoError(t, err)
 	})
 
@@ -138,8 +147,8 @@ func TestCreateAccountHorusec(t *testing.T) {
 
 		data := &accountEntities.Data{}
 
-		response, err := controller.CreateAccountHorusec(data)
-		assert.NotNil(t, response)
+		result, err := controller.CreateAccountHorusec(data)
+		assert.NotNil(t, result)
 		assert.NoError(t, err)
 	})
 
@@ -158,15 +167,15 @@ func TestCreateAccountHorusec(t *testing.T) {
 
 		data := &accountEntities.Data{}
 
-		response, err := controller.CreateAccountHorusec(data)
-		assert.Nil(t, response)
+		result, err := controller.CreateAccountHorusec(data)
+		assert.Nil(t, result)
 		assert.Error(t, err)
 	})
 }
 
 func TestValidateAccountEmail(t *testing.T) {
 	t.Run("should success validate account", func(t *testing.T) {
-		appConfig := app.NewAuthAppConfig()
+		appConfig := getAppConfig()
 		serviceMock := &authServices.Mock{}
 		brokerMock := &broker.Mock{}
 
@@ -181,7 +190,7 @@ func TestValidateAccountEmail(t *testing.T) {
 	})
 
 	t.Run("should return error when failed to get account", func(t *testing.T) {
-		appConfig := app.NewAuthAppConfig()
+		appConfig := getAppConfig()
 		serviceMock := &authServices.Mock{}
 		brokerMock := &broker.Mock{}
 
@@ -197,7 +206,7 @@ func TestValidateAccountEmail(t *testing.T) {
 
 func TestSendResetPasswordCode(t *testing.T) {
 	t.Run("should success send reset password code", func(t *testing.T) {
-		appConfig := app.NewAuthAppConfig()
+		appConfig := getAppConfig()
 		serviceMock := &authServices.Mock{}
 
 		brokerMock := &broker.Mock{}
@@ -229,7 +238,7 @@ func TestSendResetPasswordCode(t *testing.T) {
 	})
 
 	t.Run("should return error when failed to get account", func(t *testing.T) {
-		appConfig := app.NewAuthAppConfig()
+		appConfig := getAppConfig()
 		serviceMock := &authServices.Mock{}
 		brokerMock := &broker.Mock{}
 
@@ -246,7 +255,7 @@ func TestSendResetPasswordCode(t *testing.T) {
 
 func TestCheckResetPasswordCode(t *testing.T) {
 	t.Run("should success verify code without errors", func(t *testing.T) {
-		appConfig := app.NewAuthAppConfig()
+		appConfig := getAppConfig()
 		serviceMock := &authServices.Mock{}
 		brokerMock := &broker.Mock{}
 
@@ -272,7 +281,7 @@ func TestCheckResetPasswordCode(t *testing.T) {
 	})
 
 	t.Run("should return error when failed to get account", func(t *testing.T) {
-		appConfig := app.NewAuthAppConfig()
+		appConfig := getAppConfig()
 		serviceMock := &authServices.Mock{}
 		brokerMock := &broker.Mock{}
 
@@ -298,7 +307,7 @@ func TestCheckResetPasswordCode(t *testing.T) {
 	})
 
 	t.Run("should return error when wrong code", func(t *testing.T) {
-		appConfig := app.NewAuthAppConfig()
+		appConfig := getAppConfig()
 		serviceMock := &authServices.Mock{}
 		brokerMock := &broker.Mock{}
 
@@ -325,7 +334,7 @@ func TestCheckResetPasswordCode(t *testing.T) {
 	})
 
 	t.Run("should return error when failed to get stored code", func(t *testing.T) {
-		appConfig := app.NewAuthAppConfig()
+		appConfig := getAppConfig()
 		serviceMock := &authServices.Mock{}
 		brokerMock := &broker.Mock{}
 		accountRepositoryMock := &accountRepository.Mock{}
@@ -349,7 +358,7 @@ func TestCheckResetPasswordCode(t *testing.T) {
 
 func TestChangePassword(t *testing.T) {
 	t.Run("should success update account password", func(t *testing.T) {
-		appConfig := app.NewAuthAppConfig()
+		appConfig := getAppConfig()
 		serviceMock := &authServices.Mock{}
 		brokerMock := &broker.Mock{}
 		cacheMock := &cache.Mock{}
@@ -369,7 +378,7 @@ func TestChangePassword(t *testing.T) {
 	})
 
 	t.Run("should return error when same password", func(t *testing.T) {
-		appConfig := app.NewAuthAppConfig()
+		appConfig := getAppConfig()
 		serviceMock := &authServices.Mock{}
 		brokerMock := &broker.Mock{}
 		cacheMock := &cache.Mock{}
@@ -392,7 +401,7 @@ func TestChangePassword(t *testing.T) {
 	})
 
 	t.Run("should return error failed to get account", func(t *testing.T) {
-		appConfig := app.NewAuthAppConfig()
+		appConfig := getAppConfig()
 		serviceMock := &authServices.Mock{}
 		brokerMock := &broker.Mock{}
 		cacheMock := &cache.Mock{}
@@ -413,7 +422,7 @@ func TestChangePassword(t *testing.T) {
 
 func TestRefreshToken(t *testing.T) {
 	t.Run("should success refresh token", func(t *testing.T) {
-		appConfig := app.NewAuthAppConfig()
+		appConfig := getAppConfig()
 		serviceMock := &authServices.Mock{}
 		brokerMock := &broker.Mock{}
 
@@ -434,7 +443,7 @@ func TestRefreshToken(t *testing.T) {
 	})
 
 	t.Run("should return error when failed to get account", func(t *testing.T) {
-		appConfig := app.NewAuthAppConfig()
+		appConfig := getAppConfig()
 		serviceMock := &authServices.Mock{}
 		brokerMock := &broker.Mock{}
 
@@ -453,7 +462,7 @@ func TestRefreshToken(t *testing.T) {
 	})
 
 	t.Run("should return error when failed to get refresh token", func(t *testing.T) {
-		appConfig := app.NewAuthAppConfig()
+		appConfig := getAppConfig()
 		serviceMock := &authServices.Mock{}
 		brokerMock := &broker.Mock{}
 		accountRepositoryMock := &accountRepository.Mock{}
@@ -472,7 +481,7 @@ func TestRefreshToken(t *testing.T) {
 
 func TestLogout(t *testing.T) {
 	t.Run("should success logout user", func(t *testing.T) {
-		appConfig := app.NewAuthAppConfig()
+		appConfig := getAppConfig()
 		serviceMock := &authServices.Mock{}
 		brokerMock := &broker.Mock{}
 		accountRepositoryMock := &accountRepository.Mock{}
@@ -491,7 +500,7 @@ func TestLogout(t *testing.T) {
 
 func TestCheckExistingEmailOrUsername(t *testing.T) {
 	t.Run("should return no error when not in use", func(t *testing.T) {
-		appConfig := app.NewAuthAppConfig()
+		appConfig := getAppConfig()
 		serviceMock := &authServices.Mock{}
 		brokerMock := &broker.Mock{}
 		cacheMock := &cache.Mock{}
@@ -509,7 +518,7 @@ func TestCheckExistingEmailOrUsername(t *testing.T) {
 	})
 
 	t.Run("should return error username already in use", func(t *testing.T) {
-		appConfig := app.NewAuthAppConfig()
+		appConfig := getAppConfig()
 		serviceMock := &authServices.Mock{}
 		brokerMock := &broker.Mock{}
 		cacheMock := &cache.Mock{}
@@ -530,7 +539,7 @@ func TestCheckExistingEmailOrUsername(t *testing.T) {
 	})
 
 	t.Run("should return error email already in use", func(t *testing.T) {
-		appConfig := app.NewAuthAppConfig()
+		appConfig := getAppConfig()
 		serviceMock := &authServices.Mock{}
 		brokerMock := &broker.Mock{}
 		cacheMock := &cache.Mock{}
@@ -552,7 +561,7 @@ func TestCheckExistingEmailOrUsername(t *testing.T) {
 
 func TestDeleteAccount(t *testing.T) {
 	t.Run("should success delete account", func(t *testing.T) {
-		appConfig := app.NewAuthAppConfig()
+		appConfig := getAppConfig()
 		serviceMock := &authServices.Mock{}
 		brokerMock := &broker.Mock{}
 		cacheMock := &cache.Mock{}
@@ -658,7 +667,7 @@ func TestGetAccountID(t *testing.T) {
 
 func TestUpdateAccount(t *testing.T) {
 	t.Run("should success update account without email change", func(t *testing.T) {
-		appConfig := app.NewAuthAppConfig()
+		appConfig := getAppConfig()
 		serviceMock := &authServices.Mock{}
 		brokerMock := &broker.Mock{}
 		cacheMock := &cache.Mock{}
@@ -678,7 +687,7 @@ func TestUpdateAccount(t *testing.T) {
 	})
 
 	t.Run("should success update account with email change", func(t *testing.T) {
-		appConfig := app.NewAuthAppConfig()
+		appConfig := getAppConfig()
 		serviceMock := &authServices.Mock{}
 		cacheMock := &cache.Mock{}
 
@@ -700,7 +709,7 @@ func TestUpdateAccount(t *testing.T) {
 	})
 
 	t.Run("should return error when failed to send email", func(t *testing.T) {
-		appConfig := app.NewAuthAppConfig()
+		appConfig := getAppConfig()
 		serviceMock := &authServices.Mock{}
 		cacheMock := &cache.Mock{}
 
@@ -722,7 +731,7 @@ func TestUpdateAccount(t *testing.T) {
 	})
 
 	t.Run("should return error when failed to update", func(t *testing.T) {
-		appConfig := app.NewAuthAppConfig()
+		appConfig := getAppConfig()
 		serviceMock := &authServices.Mock{}
 		cacheMock := &cache.Mock{}
 
@@ -744,7 +753,7 @@ func TestUpdateAccount(t *testing.T) {
 	})
 
 	t.Run("should return error when failed to get account", func(t *testing.T) {
-		appConfig := app.NewAuthAppConfig()
+		appConfig := getAppConfig()
 		serviceMock := &authServices.Mock{}
 		cacheMock := &cache.Mock{}
 		brokerMock := &broker.Mock{}

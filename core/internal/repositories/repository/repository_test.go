@@ -190,3 +190,19 @@ func TestGetWorkspace(t *testing.T) {
 		assert.NotNil(t, result)
 	})
 }
+
+func TestListRepositoriesWhenApplicationAdmin(t *testing.T) {
+	t.Run("should success list repositories", func(t *testing.T) {
+		workspaceRepositoryMock := &workspaceRepository.Mock{}
+
+		databaseMock := &database.Mock{}
+		databaseMock.On("Raw").Return(&response.Response{})
+
+		repository := NewRepositoryRepository(&database.Connection{Read: databaseMock, Write: databaseMock},
+			repositoryUseCases.NewRepositoryUseCases(), workspaceRepositoryMock)
+
+		result, err := repository.ListRepositoriesWhenApplicationAdmin()
+		assert.NoError(t, err)
+		assert.NotNil(t, result)
+	})
+}

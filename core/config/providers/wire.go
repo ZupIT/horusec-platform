@@ -12,7 +12,7 @@ import (
 	databaseConfig "github.com/ZupIT/horusec-devkit/pkg/services/database/config"
 	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth"
 	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth/proto"
-	"github.com/ZupIT/horusec-devkit/pkg/services/http"
+	httpRouter "github.com/ZupIT/horusec-devkit/pkg/services/http/router"
 	"github.com/ZupIT/horusec-devkit/pkg/services/middlewares"
 
 	"github.com/ZupIT/horusec-platform/core/config/cors"
@@ -34,7 +34,7 @@ var devKitProviders = wire.NewSet(
 	broker.NewBroker,
 	databaseConfig.NewDatabaseConfig,
 	database.NewDatabaseReadAndWrite,
-	http.NewHTTPRouter,
+	httpRouter.NewHTTPRouter,
 	auth.NewAuthGRPCConnection,
 	proto.NewAuthServiceClient,
 	app.NewAppConfig,
@@ -70,7 +70,7 @@ var repositoriesProviders = wire.NewSet(
 
 func Initialize(_ string) (router.IRouter, error) {
 	wire.Build(devKitProviders, configProviders, controllerProviders, handleProviders,
-		useCasesProviders, repositoriesProviders, serviceProviders)
+		useCasesProviders, repositoriesProviders)
 
 	return &router.Router{}, nil
 }

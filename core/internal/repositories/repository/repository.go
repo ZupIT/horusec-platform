@@ -26,6 +26,7 @@ type IRepository interface {
 	IsNotMemberOfWorkspace(accountID, workspaceID uuid.UUID) bool
 	ListAllRepositoryUsers(repositoryID uuid.UUID) (*[]roleEntities.Response, error)
 	GetWorkspace(workspaceID uuid.UUID) (*workspaceEntities.Workspace, error)
+	ListRepositoriesWhenApplicationAdmin() (*[]repositoryEntities.Response, error)
 }
 
 type Repository struct {
@@ -195,4 +196,19 @@ func (r *Repository) queryListAllRepositoryUsers() string {
 
 func (r *Repository) GetWorkspace(workspaceID uuid.UUID) (*workspaceEntities.Workspace, error) {
 	return r.workspaceRepository.GetWorkspace(workspaceID)
+}
+
+func (r *Repository) ListRepositoriesWhenApplicationAdmin() (*[]repositoryEntities.Response, error) {
+	repositories := &[]repositoryEntities.Response{}
+
+	return repositories, r.databaseRead.Raw(
+		r.queryListRepositoriesWhenApplicationAdmin(), repositories).GetErrorExceptNotFound()
+}
+
+func (r *Repository) queryListRepositoriesWhenApplicationAdmin() string {
+	return `
+			SELECT repo.repository_id, repo.workspace_id, repo.description, repo.name, 'applicationAdmin' AS role, 
+				   repo.created_at, repo.updated_at
+			FROM repositories AS repo
+	`
 }

@@ -38,3 +38,8 @@ func (m *Mock) ListAllWorkspaceUsers(_ uuid.UUID) (*[]roleEntities.Response, err
 	args := m.MethodCalled("ListAllWorkspaceUsers")
 	return args.Get(0).(*[]roleEntities.Response), mockUtils.ReturnNilOrError(args, 1)
 }
+
+func (m *Mock) ListWorkspacesApplicationAdmin() (*[]workspaceEntities.Response, error) {
+	args := m.MethodCalled("ListWorkspacesApplicationAdmin")
+	return args.Get(0).(*[]workspaceEntities.Response), mockUtils.ReturnNilOrError(args, 1)
+}

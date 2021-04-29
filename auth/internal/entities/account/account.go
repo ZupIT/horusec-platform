@@ -107,3 +107,10 @@ func (a *Account) UpdateFromUpdateAccountData(data *UpdateAccount) {
 	a.Username = data.Username
 	a.IsConfirmed = data.IsConfirmed
 }
+
+func (a *Account) SetApplicationAdminTrue() *Account {
+	a.Update()
+	a.IsApplicationAdmin = true
+
+	return a
+}

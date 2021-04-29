@@ -12,6 +12,8 @@ import (
 
 	emailEntities "github.com/ZupIT/horusec-devkit/pkg/entities/email"
 	emailEnums "github.com/ZupIT/horusec-devkit/pkg/enums/email"
+	"github.com/ZupIT/horusec-devkit/pkg/services/database"
+	"github.com/ZupIT/horusec-devkit/pkg/services/database/response"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/parser"
 
 	"github.com/ZupIT/horusec-platform/auth/config/app"
@@ -19,15 +21,22 @@ import (
 	accountEnums "github.com/ZupIT/horusec-platform/auth/internal/enums/account"
 )
 
+func getAppConfig() app.IConfig {
+	databaseMock := &database.Mock{}
+	databaseMock.On("Create").Return(&response.Response{})
+
+	return app.NewAuthAppConfig(&database.Connection{Read: databaseMock, Write: databaseMock})
+}
+
 func TestNewAccountUseCases(t *testing.T) {
 	t.Run("should success create a new use cases", func(t *testing.T) {
-		assert.NotNil(t, NewAccountUseCases(app.NewAuthAppConfig()))
+		assert.NotNil(t, NewAccountUseCases(getAppConfig()))
 	})
 }
 
 func TestFilterAccountByID(t *testing.T) {
 	t.Run("should success create a filter by account id", func(t *testing.T) {
-		useCases := NewAccountUseCases(app.NewAuthAppConfig())
+		useCases := NewAccountUseCases(getAppConfig())
 
 		id := uuid.New()
 
@@ -40,7 +49,7 @@ func TestFilterAccountByID(t *testing.T) {
 
 func TestFilterAccountByEmail(t *testing.T) {
 	t.Run("should success create a filter by account id", func(t *testing.T) {
-		useCases := NewAccountUseCases(app.NewAuthAppConfig())
+		useCases := NewAccountUseCases(getAppConfig())
 
 		filter := useCases.FilterAccountByEmail("test@test.com")
 		assert.NotPanics(t, func() {
@@ -51,7 +60,7 @@ func TestFilterAccountByEmail(t *testing.T) {
 
 func TestFilterAccountByUsername(t *testing.T) {
 	t.Run("should success create a filter by account id", func(t *testing.T) {
-		useCases := NewAccountUseCases(app.NewAuthAppConfig())
+		useCases := NewAccountUseCases(getAppConfig())
 
 		filter := useCases.FilterAccountByUsername("test")
 		assert.NotPanics(t, func() {
@@ -62,34 +71,34 @@ func TestFilterAccountByUsername(t *testing.T) {
 
 func TestAccessTokenFromIOReadCloser(t *testing.T) {
 	t.Run("should success get data from request body", func(t *testing.T) {
-		useCases := NewAccountUseCases(app.NewAuthAppConfig())
+		useCases := NewAccountUseCases(getAppConfig())
 
 		data := map[string]string{"accessToken": "test"}
 
 		readCloser, err := parser.ParseEntityToIOReadCloser(data)
 		assert.NoError(t, err)
 
-		response, err := useCases.AccessTokenFromIOReadCloser(readCloser)
+		result, err := useCases.AccessTokenFromIOReadCloser(readCloser)
 		assert.NoError(t, err)
-		assert.NotNil(t, response)
-		assert.Equal(t, "test", response.AccessToken)
+		assert.NotNil(t, result)
+		assert.Equal(t, "test", result.AccessToken)
 	})
 
 	t.Run("should return error when failed to parse body to entity", func(t *testing.T) {
-		useCases := NewAccountUseCases(app.NewAuthAppConfig())
+		useCases := NewAccountUseCases(getAppConfig())
 
 		readCloser, err := parser.ParseEntityToIOReadCloser("")
 		assert.NoError(t, err)
 
-		response, err := useCases.AccessTokenFromIOReadCloser(readCloser)
+		result, err := useCases.AccessTokenFromIOReadCloser(readCloser)
 		assert.Error(t, err)
-		assert.Empty(t, response)
+		assert.Empty(t, result)
 	})
 }
 
 func TestNewAccountFromKeycloakUserInfo(t *testing.T) {
 	t.Run("should success create account from keycloak info with preferred username", func(t *testing.T) {
-		useCases := NewAccountUseCases(app.NewAuthAppConfig())
+		useCases := NewAccountUseCases(getAppConfig())
 
 		test := "test"
 		id := uuid.NewString()
@@ -109,7 +118,7 @@ func TestNewAccountFromKeycloakUserInfo(t *testing.T) {
 	})
 
 	t.Run("should success create account from keycloak info with name", func(t *testing.T) {
-		useCases := NewAccountUseCases(app.NewAuthAppConfig())
+		useCases := NewAccountUseCases(getAppConfig())
 
 		test := "test"
 		testEmpty := ""
@@ -133,7 +142,7 @@ func TestNewAccountFromKeycloakUserInfo(t *testing.T) {
 
 func TestCheckCreateAccountErrors(t *testing.T) {
 	t.Run("should return same error when not specified", func(t *testing.T) {
-		useCases := NewAccountUseCases(app.NewAuthAppConfig())
+		useCases := NewAccountUseCases(getAppConfig())
 
 		err := useCases.CheckCreateAccountErrors(errors.New("test"))
 		assert.Error(t, err)
@@ -141,7 +150,7 @@ func TestCheckCreateAccountErrors(t *testing.T) {
 	})
 
 	t.Run("should return same error username already in use", func(t *testing.T) {
-		useCases := NewAccountUseCases(app.NewAuthAppConfig())
+		useCases := NewAccountUseCases(getAppConfig())
 
 		err := useCases.CheckCreateAccountErrors(errors.New(accountEnums.DuplicatedConstraintPrimaryKey))
 		assert.Error(t, err)
@@ -149,7 +158,7 @@ func TestCheckCreateAccountErrors(t *testing.T) {
 	})
 
 	t.Run("should return same error username already in use", func(t *testing.T) {
-		useCases := NewAccountUseCases(app.NewAuthAppConfig())
+		useCases := NewAccountUseCases(getAppConfig())
 
 		err := useCases.CheckCreateAccountErrors(errors.New(accountEnums.DuplicatedConstraintUsername))
 		assert.Error(t, err)
@@ -157,7 +166,7 @@ func TestCheckCreateAccountErrors(t *testing.T) {
 	})
 
 	t.Run("should return same error email already in use", func(t *testing.T) {
-		useCases := NewAccountUseCases(app.NewAuthAppConfig())
+		useCases := NewAccountUseCases(getAppConfig())
 
 		err := useCases.CheckCreateAccountErrors(errors.New(accountEnums.DuplicatedConstraintEmail))
 		assert.Error(t, err)
@@ -167,7 +176,7 @@ func TestCheckCreateAccountErrors(t *testing.T) {
 
 func TestAccountDataFromIOReadCloser(t *testing.T) {
 	t.Run("should success get data from request body", func(t *testing.T) {
-		useCases := NewAccountUseCases(app.NewAuthAppConfig())
+		useCases := NewAccountUseCases(getAppConfig())
 
 		data := &accountEntities.Data{
 			Email:    "test@test.com",
@@ -178,27 +187,27 @@ func TestAccountDataFromIOReadCloser(t *testing.T) {
 		readCloser, err := parser.ParseEntityToIOReadCloser(data)
 		assert.NoError(t, err)
 
-		response, err := useCases.AccountDataFromIOReadCloser(readCloser)
+		result, err := useCases.AccountDataFromIOReadCloser(readCloser)
 		assert.NoError(t, err)
-		assert.NotNil(t, response)
-		assert.Equal(t, data, response)
+		assert.NotNil(t, result)
+		assert.Equal(t, data, result)
 	})
 
 	t.Run("should return error when failed to parse body to entity", func(t *testing.T) {
-		useCases := NewAccountUseCases(app.NewAuthAppConfig())
+		useCases := NewAccountUseCases(getAppConfig())
 
 		readCloser, err := parser.ParseEntityToIOReadCloser("")
 		assert.NoError(t, err)
 
-		response, err := useCases.AccountDataFromIOReadCloser(readCloser)
+		result, err := useCases.AccountDataFromIOReadCloser(readCloser)
 		assert.Error(t, err)
-		assert.Empty(t, response)
+		assert.Empty(t, result)
 	})
 }
 
 func TestNewAccountValidationEmail(t *testing.T) {
 	t.Run("should success create a new validation email", func(t *testing.T) {
-		useCases := NewAccountUseCases(app.NewAuthAppConfig())
+		useCases := NewAccountUseCases(getAppConfig())
 
 		account := &accountEntities.Account{
 			Email:    "test@test.com",
@@ -229,7 +238,7 @@ func TestNewAccountValidationEmail(t *testing.T) {
 
 func TestEmailFromIOReadCloser(t *testing.T) {
 	t.Run("should success get data from request body", func(t *testing.T) {
-		useCases := NewAccountUseCases(app.NewAuthAppConfig())
+		useCases := NewAccountUseCases(getAppConfig())
 
 		data := &accountEntities.Email{
 			Email: "test@test.com",
@@ -238,37 +247,37 @@ func TestEmailFromIOReadCloser(t *testing.T) {
 		readCloser, err := parser.ParseEntityToIOReadCloser(data)
 		assert.NoError(t, err)
 
-		response, err := useCases.EmailFromIOReadCloser(readCloser)
+		result, err := useCases.EmailFromIOReadCloser(readCloser)
 		assert.NoError(t, err)
-		assert.NotNil(t, response)
-		assert.Equal(t, data, response)
+		assert.NotNil(t, result)
+		assert.Equal(t, data, result)
 	})
 
 	t.Run("should return error when failed to parse body to entity", func(t *testing.T) {
-		useCases := NewAccountUseCases(app.NewAuthAppConfig())
+		useCases := NewAccountUseCases(getAppConfig())
 
 		readCloser, err := parser.ParseEntityToIOReadCloser("")
 		assert.NoError(t, err)
 
-		response, err := useCases.EmailFromIOReadCloser(readCloser)
+		result, err := useCases.EmailFromIOReadCloser(readCloser)
 		assert.Error(t, err)
-		assert.Empty(t, response)
+		assert.Empty(t, result)
 	})
 }
 
 func TestGenerateResetPasswordCode(t *testing.T) {
 	t.Run("should generate a reset password code", func(t *testing.T) {
-		useCases := NewAccountUseCases(app.NewAuthAppConfig())
+		useCases := NewAccountUseCases(getAppConfig())
 
-		response := useCases.GenerateResetPasswordCode()
-		assert.NotEmpty(t, response)
-		assert.Len(t, response, 6)
+		result := useCases.GenerateResetPasswordCode()
+		assert.NotEmpty(t, result)
+		assert.Len(t, result, 6)
 	})
 }
 
 func TestNewResetPasswordCodeEmail(t *testing.T) {
 	t.Run("should success create a new password code email", func(t *testing.T) {
-		useCases := NewAccountUseCases(app.NewAuthAppConfig())
+		useCases := NewAccountUseCases(getAppConfig())
 
 		account := &accountEntities.Account{
 			Email:    "test@test.com",
@@ -300,7 +309,7 @@ func TestNewResetPasswordCodeEmail(t *testing.T) {
 
 func TestResetCodeDataFromIOReadCloser(t *testing.T) {
 	t.Run("should success get data from request body", func(t *testing.T) {
-		useCases := NewAccountUseCases(app.NewAuthAppConfig())
+		useCases := NewAccountUseCases(getAppConfig())
 
 		data := &accountEntities.ResetCodeData{
 			Email: "test@test.com",
@@ -310,27 +319,27 @@ func TestResetCodeDataFromIOReadCloser(t *testing.T) {
 		readCloser, err := parser.ParseEntityToIOReadCloser(data)
 		assert.NoError(t, err)
 
-		response, err := useCases.ResetCodeDataFromIOReadCloser(readCloser)
+		result, err := useCases.ResetCodeDataFromIOReadCloser(readCloser)
 		assert.NoError(t, err)
-		assert.NotNil(t, response)
-		assert.Equal(t, data, response)
+		assert.NotNil(t, result)
+		assert.Equal(t, data, result)
 	})
 
 	t.Run("should return error when failed to parse body to entity", func(t *testing.T) {
-		useCases := NewAccountUseCases(app.NewAuthAppConfig())
+		useCases := NewAccountUseCases(getAppConfig())
 
 		readCloser, err := parser.ParseEntityToIOReadCloser("")
 		assert.NoError(t, err)
 
-		response, err := useCases.ResetCodeDataFromIOReadCloser(readCloser)
+		result, err := useCases.ResetCodeDataFromIOReadCloser(readCloser)
 		assert.Error(t, err)
-		assert.Empty(t, response)
+		assert.Empty(t, result)
 	})
 }
 
 func TestChangePasswordDataFromIOReadCloser(t *testing.T) {
 	t.Run("should success get data from request body", func(t *testing.T) {
-		useCases := NewAccountUseCases(app.NewAuthAppConfig())
+		useCases := NewAccountUseCases(getAppConfig())
 
 		data := &accountEntities.ChangePasswordData{
 			Password: "Test@123",
@@ -339,27 +348,27 @@ func TestChangePasswordDataFromIOReadCloser(t *testing.T) {
 		readCloser, err := parser.ParseEntityToIOReadCloser(data)
 		assert.NoError(t, err)
 
-		response, err := useCases.ChangePasswordDataFromIOReadCloser(readCloser)
+		result, err := useCases.ChangePasswordDataFromIOReadCloser(readCloser)
 		assert.NoError(t, err)
-		assert.NotNil(t, response)
-		assert.Equal(t, data, response)
+		assert.NotNil(t, result)
+		assert.Equal(t, data, result)
 	})
 
 	t.Run("should return error when failed to parse body to entity", func(t *testing.T) {
-		useCases := NewAccountUseCases(app.NewAuthAppConfig())
+		useCases := NewAccountUseCases(getAppConfig())
 
 		readCloser, err := parser.ParseEntityToIOReadCloser("")
 		assert.NoError(t, err)
 
-		response, err := useCases.ChangePasswordDataFromIOReadCloser(readCloser)
+		result, err := useCases.ChangePasswordDataFromIOReadCloser(readCloser)
 		assert.Error(t, err)
-		assert.Empty(t, response)
+		assert.Empty(t, result)
 	})
 }
 
 func TestRefreshTokenFromIOReadCloser(t *testing.T) {
 	t.Run("should success get data from request body", func(t *testing.T) {
-		useCases := NewAccountUseCases(app.NewAuthAppConfig())
+		useCases := NewAccountUseCases(getAppConfig())
 
 		data := &accountEntities.RefreshToken{
 			RefreshToken: "test",
@@ -368,27 +377,27 @@ func TestRefreshTokenFromIOReadCloser(t *testing.T) {
 		readCloser, err := parser.ParseEntityToIOReadCloser(data)
 		assert.NoError(t, err)
 
-		response, err := useCases.RefreshTokenFromIOReadCloser(readCloser)
+		result, err := useCases.RefreshTokenFromIOReadCloser(readCloser)
 		assert.NoError(t, err)
-		assert.NotNil(t, response)
-		assert.Equal(t, data, response)
+		assert.NotNil(t, result)
+		assert.Equal(t, data, result)
 	})
 
 	t.Run("should return error when failed to parse body to entity", func(t *testing.T) {
-		useCases := NewAccountUseCases(app.NewAuthAppConfig())
+		useCases := NewAccountUseCases(getAppConfig())
 
 		readCloser, err := parser.ParseEntityToIOReadCloser("")
 		assert.NoError(t, err)
 
-		response, err := useCases.RefreshTokenFromIOReadCloser(readCloser)
+		result, err := useCases.RefreshTokenFromIOReadCloser(readCloser)
 		assert.Error(t, err)
-		assert.Empty(t, response)
+		assert.Empty(t, result)
 	})
 }
 
 func TestCheckEmailAndUsernameFromIOReadCloser(t *testing.T) {
 	t.Run("should success get data from request body", func(t *testing.T) {
-		useCases := NewAccountUseCases(app.NewAuthAppConfig())
+		useCases := NewAccountUseCases(getAppConfig())
 
 		data := &accountEntities.CheckEmailAndUsername{
 			Email:    "test@test.com",
@@ -398,27 +407,27 @@ func TestCheckEmailAndUsernameFromIOReadCloser(t *testing.T) {
 		readCloser, err := parser.ParseEntityToIOReadCloser(data)
 		assert.NoError(t, err)
 
-		response, err := useCases.CheckEmailAndUsernameFromIOReadCloser(readCloser)
+		result, err := useCases.CheckEmailAndUsernameFromIOReadCloser(readCloser)
 		assert.NoError(t, err)
-		assert.NotNil(t, response)
-		assert.Equal(t, data, response)
+		assert.NotNil(t, result)
+		assert.Equal(t, data, result)
 	})
 
 	t.Run("should return error when failed to parse body to entity", func(t *testing.T) {
-		useCases := NewAccountUseCases(app.NewAuthAppConfig())
+		useCases := NewAccountUseCases(getAppConfig())
 
 		readCloser, err := parser.ParseEntityToIOReadCloser("")
 		assert.NoError(t, err)
 
-		response, err := useCases.CheckEmailAndUsernameFromIOReadCloser(readCloser)
+		result, err := useCases.CheckEmailAndUsernameFromIOReadCloser(readCloser)
 		assert.Error(t, err)
-		assert.Empty(t, response)
+		assert.Empty(t, result)
 	})
 }
 
 func TestUpdateAccountFromIOReadCloser(t *testing.T) {
 	t.Run("should success get data from request body", func(t *testing.T) {
-		useCases := NewAccountUseCases(app.NewAuthAppConfig())
+		useCases := NewAccountUseCases(getAppConfig())
 
 		data := &accountEntities.UpdateAccount{
 			Email:    "test@test.com",
@@ -428,20 +437,20 @@ func TestUpdateAccountFromIOReadCloser(t *testing.T) {
 		readCloser, err := parser.ParseEntityToIOReadCloser(data)
 		assert.NoError(t, err)
 
-		response, err := useCases.UpdateAccountFromIOReadCloser(readCloser)
+		result, err := useCases.UpdateAccountFromIOReadCloser(readCloser)
 		assert.NoError(t, err)
-		assert.NotNil(t, response)
-		assert.Equal(t, data, response)
+		assert.NotNil(t, result)
+		assert.Equal(t, data, result)
 	})
 
 	t.Run("should return error when failed to parse body to entity", func(t *testing.T) {
-		useCases := NewAccountUseCases(app.NewAuthAppConfig())
+		useCases := NewAccountUseCases(getAppConfig())
 
 		readCloser, err := parser.ParseEntityToIOReadCloser("")
 		assert.NoError(t, err)
 
-		response, err := useCases.UpdateAccountFromIOReadCloser(readCloser)
+		result, err := useCases.UpdateAccountFromIOReadCloser(readCloser)
 		assert.Error(t, err)
-		assert.Empty(t, response)
+		assert.Empty(t, result)
 	})
 }

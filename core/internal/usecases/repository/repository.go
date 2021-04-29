@@ -62,10 +62,11 @@ func (u *UseCases) IsNotFoundError(err error) bool {
 func (u *UseCases) NewRepositoryData(repositoryID, workspaceID uuid.UUID,
 	accountData *proto.GetAccountDataResponse) *repositoryEntities.Data {
 	return &repositoryEntities.Data{
-		RepositoryID: repositoryID,
-		WorkspaceID:  workspaceID,
-		AccountID:    parser.ParseStringToUUID(accountData.AccountID),
-		Permissions:  accountData.Permissions,
+		RepositoryID:       repositoryID,
+		WorkspaceID:        workspaceID,
+		AccountID:          parser.ParseStringToUUID(accountData.AccountID),
+		Permissions:        accountData.Permissions,
+		IsApplicationAdmin: accountData.IsApplicationAdmin,
 	}
 }
 

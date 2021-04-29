@@ -240,6 +240,40 @@ func TestGet(t *testing.T) {
 		_, err := controller.Get(data)
 		assert.Error(t, err)
 	})
+
+	t.Run("should success get a repository when application admin", func(t *testing.T) {
+		databaseMock := &database.Mock{}
+		appConfig := &app.Mock{}
+
+		repositoryMock := &repositoryRepository.Mock{}
+		repositoryMock.On("GetRepository").Return(&repositoryEntities.Repository{}, nil)
+
+		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
+		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{})
+
+		data.IsApplicationAdmin = true
+		result, err := controller.Get(data)
+		assert.NoError(t, err)
+		assert.NotNil(t, result)
+	})
+
+	t.Run("should return error when failed to get repository and user is application admin", func(t *testing.T) {
+		databaseMock := &database.Mock{}
+		appConfig := &app.Mock{}
+
+		repositoryMock := &repositoryRepository.Mock{}
+		repositoryMock.On("GetRepository").Return(&repositoryEntities.Repository{}, errors.New("test"))
+
+		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
+		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{})
+
+		data.IsApplicationAdmin = true
+		_, err := controller.Get(data)
+		assert.Error(t, err)
+		assert.Equal(t, errors.New("test"), err)
+	})
 }
 
 func TestUpdate(t *testing.T) {
@@ -364,6 +398,26 @@ func TestList(t *testing.T) {
 		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
 			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{})
 
+		result, err := controller.List(data)
+		assert.NoError(t, err)
+		assert.NotNil(t, result)
+	})
+
+	t.Run("should success list repositories when application admin", func(t *testing.T) {
+		databaseMock := &database.Mock{}
+
+		appConfig := &app.Mock{}
+		appConfig.On("GetAuthenticationType").Return(auth.Horusec)
+
+		repositoryMock := &repositoryRepository.Mock{}
+		repositoryMock.On("ListRepositoriesWhenApplicationAdmin").Return(
+			&[]repositoryEntities.Response{}, nil)
+
+		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
+		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{})
+
+		data.IsApplicationAdmin = true
 		result, err := controller.List(data)
 		assert.NoError(t, err)
 		assert.NotNil(t, result)

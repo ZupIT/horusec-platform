@@ -20,6 +20,7 @@ type IRepository interface {
 	GetWorkspace(workspaceID uuid.UUID) (*workspaceEntities.Workspace, error)
 	GetAccountWorkspace(accountID, workspaceID uuid.UUID) (*workspaceEntities.AccountWorkspace, error)
 	ListAllWorkspaceUsers(workspaceID uuid.UUID) (*[]roleEntities.Response, error)
+	ListWorkspacesApplicationAdmin() (*[]workspaceEntities.Response, error)
 }
 
 type Repository struct {
@@ -111,5 +112,18 @@ func (r *Repository) queryListAllWorkspaceUsers() string {
 			FROM accounts AS ac
 			INNER JOIN account_workspace AS aw ON aw.account_id = ac.account_id
 			WHERE aw.workspace_id = ?
+	`
+}
+
+func (r *Repository) ListWorkspacesApplicationAdmin() (*[]workspaceEntities.Response, error) {
+	workspaces := &[]workspaceEntities.Response{}
+
+	return workspaces, r.databaseRead.Raw(r.queryListWorkspacesApplicationAdmin(), workspaces).GetErrorExceptNotFound()
+}
+
+func (r *Repository) queryListWorkspacesApplicationAdmin() string {
+	return `
+			SELECT ws.workspace_id, ws.name, ws.description, 'applicationAdmin' AS role, ws.created_at, ws.updated_at
+			FROM workspaces as ws
 	`
 }
