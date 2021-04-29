@@ -1,0 +1,33 @@
+name: Manager
+on:
+  push:
+    paths: [
+        "manager/**",
+        "**/workflows/manager-pipeline.yml",
+    ]
+jobs:
+  lint-coverage-build-security:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: manager
+    steps:
+      - name: Set up Node 12
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '12'
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+      - name: Install
+        run: npm run install
+      - name: security
+        run: make security
+      - name: lint
+        run: npm run lint
+      - name: build
+        run: npm run build
+      - name: test
+        uses: cypress-io/github-action@v1
+        with:
+          browser: chrome
+          start: npm start
