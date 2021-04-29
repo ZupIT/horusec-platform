@@ -29,3 +29,4 @@ jobs:
         with:
           browser: chrome
           start: npm start
+          working-directory: manager
