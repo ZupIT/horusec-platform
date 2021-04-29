@@ -13,7 +13,7 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/services/database/config"
 	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth"
 	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth/proto"
-	"github.com/ZupIT/horusec-devkit/pkg/services/http"
+	router2 "github.com/ZupIT/horusec-devkit/pkg/services/http/router"
 	"github.com/ZupIT/horusec-devkit/pkg/services/middlewares"
 	"github.com/google/wire"
 
@@ -30,7 +30,7 @@ import (
 
 func Initialize(defaultPort string) (router.IRouter, error) {
 	options := cors.NewCorsConfig()
-	iRouter := http.NewHTTPRouter(options, defaultPort)
+	iRouter := router2.NewHTTPRouter(options, defaultPort)
 	clientConnInterface := auth.NewAuthGRPCConnection()
 	iAuthzMiddleware := middlewares.NewAuthzMiddleware(clientConnInterface)
 	iConfig := config.NewDatabaseConfig()
@@ -55,4 +55,4 @@ func Initialize(defaultPort string) (router.IRouter, error) {
 
 // wire.go:
 
-var providers = wire.NewSet(auth.NewAuthGRPCConnection, proto.NewAuthServiceClient, app.NewAppConfig, config2.NewBrokerConfig, broker.NewBroker, config.NewDatabaseConfig, database.NewDatabaseReadAndWrite, cors.NewCorsConfig, http.NewHTTPRouter, middlewares.NewAuthzMiddleware, dashboard.NewRepoDashboard, dashboard2.NewControllerDashboardWrite, dashboard2.NewControllerDashboardRead, health.NewHealthHandler, dashboard3.NewDashboardHandler, dashboard4.NewDashboardEvent, router.NewHTTPRouter)
+var providers = wire.NewSet(auth.NewAuthGRPCConnection, proto.NewAuthServiceClient, app.NewAppConfig, config2.NewBrokerConfig, broker.NewBroker, config.NewDatabaseConfig, database.NewDatabaseReadAndWrite, cors.NewCorsConfig, router2.NewHTTPRouter, middlewares.NewAuthzMiddleware, dashboard.NewRepoDashboard, dashboard2.NewControllerDashboardWrite, dashboard2.NewControllerDashboardRead, health.NewHealthHandler, dashboard3.NewDashboardHandler, dashboard4.NewDashboardEvent, router.NewHTTPRouter)

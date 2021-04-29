@@ -5,6 +5,7 @@ package providers
 import (
 	"github.com/ZupIT/horusec-devkit/pkg/services/broker"
 	"github.com/ZupIT/horusec-devkit/pkg/services/broker/config"
+	routerHttp "github.com/ZupIT/horusec-devkit/pkg/services/http/router"
 	"github.com/google/wire"
 
 	dashboardEvent "github.com/ZupIT/horusec-platform/analytic/internal/events/dashboard"
@@ -22,12 +23,10 @@ import (
 
 	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth/proto"
 
+	"github.com/ZupIT/horusec-devkit/pkg/services/app"
 	"github.com/ZupIT/horusec-devkit/pkg/services/database"
 	databaseConfig "github.com/ZupIT/horusec-devkit/pkg/services/database/config"
 	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth"
-	"github.com/ZupIT/horusec-devkit/pkg/services/http"
-
-	"github.com/ZupIT/horusec-devkit/pkg/services/app"
 
 	"github.com/ZupIT/horusec-platform/analytic/config/cors"
 )
@@ -44,7 +43,7 @@ var providers = wire.NewSet(
 	database.NewDatabaseReadAndWrite,
 
 	cors.NewCorsConfig,
-	http.NewHTTPRouter,
+	routerHttp.NewHTTPRouter,
 
 	middlewares.NewAuthzMiddleware,
 

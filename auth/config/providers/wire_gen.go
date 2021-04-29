@@ -11,7 +11,7 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/services/cache"
 	"github.com/ZupIT/horusec-devkit/pkg/services/database"
 	"github.com/ZupIT/horusec-devkit/pkg/services/database/config"
-	"github.com/ZupIT/horusec-devkit/pkg/services/http"
+	router2 "github.com/ZupIT/horusec-devkit/pkg/services/http/router"
 	"github.com/google/wire"
 
 	"github.com/ZupIT/horusec-platform/auth/config/app"
@@ -36,7 +36,7 @@ import (
 
 func Initialize(string2 string) (router.IRouter, error) {
 	options := cors.NewCorsConfig()
-	iRouter := http.NewHTTPRouter(options, string2)
+	iRouter := router2.NewHTTPRouter(options, string2)
 	iConfig := config.NewDatabaseConfig()
 	connection, err := database.NewDatabaseReadAndWrite(iConfig)
 	if err != nil {
@@ -68,9 +68,9 @@ func Initialize(string2 string) (router.IRouter, error) {
 
 // wire.go:
 
-var devKitProviders = wire.NewSet(http.NewHTTPRouter, config.NewDatabaseConfig, config2.NewBrokerConfig, broker.NewBroker, database.NewDatabaseReadAndWrite, cache.NewCache)
+var devKitProviders = wire.NewSet(config.NewDatabaseConfig, config2.NewBrokerConfig, broker.NewBroker, database.NewDatabaseReadAndWrite, cache.NewCache, router2.NewHTTPRouter)
 
-var configProviders = wire.NewSet(grpc.NewAuthGRPCServer, cors.NewCorsConfig, router.NewHTTPRouter, app.NewAuthAppConfig)
+var configProviders = wire.NewSet(grpc.NewAuthGRPCServer, cors.NewCorsConfig, app.NewAuthAppConfig, router.NewHTTPRouter)
 
 var controllerProviders = wire.NewSet(authentication3.NewAuthenticationController, account3.NewAccountController)
 

@@ -3,6 +3,7 @@
 package providers
 
 import (
+	routerHttp "github.com/ZupIT/horusec-devkit/pkg/services/http/router"
 	"github.com/google/wire"
 
 	analysisHandler "github.com/ZupIT/horusec-platform/api/internal/handlers/analysis"
@@ -21,8 +22,6 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/services/database"
 	databaseConfig "github.com/ZupIT/horusec-devkit/pkg/services/database/config"
 	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth"
-	"github.com/ZupIT/horusec-devkit/pkg/services/http"
-
 	"github.com/ZupIT/horusec-platform/api/config/cors"
 	analysisController "github.com/ZupIT/horusec-platform/api/internal/controllers/analysis"
 )
@@ -39,7 +38,7 @@ var providers = wire.NewSet(
 	repository.NewRepositoriesRepository,
 	repositoriesToken.NewRepositoriesToken,
 	cors.NewCorsConfig,
-	http.NewHTTPRouter,
+	routerHttp.NewHTTPRouter,
 	appConfiguration.NewAppConfig,
 	analysisController.NewAnalysisController,
 	analysisHandler.NewAnalysisHandler,
