@@ -1,8 +1,8 @@
 FROM golang
 
-WORKDIR /usr/app
+ADD . /auth
 
-COPY . .
+WORKDIR /auth
 
 RUN go get -d ./...
 RUN go get github.com/cosmtrek/air
