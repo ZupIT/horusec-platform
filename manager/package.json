@@ -79,8 +79,6 @@
     "build": "react-scripts build",
     "lint:fix": "eslint './src/**/*.{ts,tsx}' --fix",
     "lint": "eslint './src/**/*.{ts,tsx}'",
-    "test": "react-scripts test --watchAll=false",
-    "test:coverage": "react-scripts test --watchAll=false --coverage",
     "eject": "react-scripts eject",
     "cypress": "cypress run",
     "cypress:open": "cypress open"
