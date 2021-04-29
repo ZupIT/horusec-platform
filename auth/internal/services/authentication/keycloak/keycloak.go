@@ -99,7 +99,6 @@ func (s *Service) checkForMember(role accountEnums.Role) bool {
 }
 
 func (s *Service) checkForSupervisor(role accountEnums.Role) bool {
-
 	return role == accountEnums.Admin || role == accountEnums.Supervisor
 }
 
