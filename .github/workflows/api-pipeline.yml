@@ -1,4 +1,4 @@
-name: Auth
+name: Api
 on:
   push:
     paths: [
