@@ -2,23 +2,25 @@ package webhook
 
 import (
 	"context"
-	"github.com/ZupIT/horusec-devkit/pkg/utils/parser"
-	"github.com/ZupIT/horusec-platform/webhook/internal/entities/webhook"
-	"github.com/go-chi/chi"
-	"github.com/google/uuid"
-	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"net/http"
 	"strings"
 	"testing"
+
+	"github.com/ZupIT/horusec-devkit/pkg/utils/parser"
+	"github.com/go-chi/chi"
+	"github.com/google/uuid"
+	"github.com/stretchr/testify/assert"
+
+	"github.com/ZupIT/horusec-platform/webhook/internal/entities/webhook"
 )
 
 func TestUseCaseWebhook_DecodeWebhookFromIoRead(t *testing.T) {
 	t.Run("Should decode webhook code without error", func(t *testing.T) {
 		wh := &webhook.Webhook{
-			URL:          "http://google.com",
-			Method:       "POST",
-			Headers:      []webhook.Headers{
+			URL:    "http://google.com",
+			Method: "POST",
+			Headers: []webhook.Headers{
 				{Key: "x-authorization", Value: "1243567890"},
 			},
 			RepositoryID: uuid.New(),
@@ -34,9 +36,9 @@ func TestUseCaseWebhook_DecodeWebhookFromIoRead(t *testing.T) {
 	})
 	t.Run("Should decode webhook code with error invalid method type", func(t *testing.T) {
 		wh := &webhook.Webhook{
-			URL:          "http://google.com",
-			Method:       "GET",
-			Headers:      []webhook.Headers{
+			URL:    "http://google.com",
+			Method: "GET",
+			Headers: []webhook.Headers{
 				{Key: "x-authorization", Value: "1243567890"},
 			},
 			RepositoryID: uuid.New(),
@@ -46,9 +48,9 @@ func TestUseCaseWebhook_DecodeWebhookFromIoRead(t *testing.T) {
 		assert.NoError(t, err)
 		r, _ := http.NewRequest(http.MethodPost, "/test", body)
 		uc := NewUseCaseWebhook()
-		entity, err := uc.DecodeWebhookFromIoRead(r)
-		assert.NoError(t, err)
-		assert.NotEmpty(t, entity)
+		_, err = uc.DecodeWebhookFromIoRead(r)
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "method: must be a valid value")
 	})
 	t.Run("Should decode body empty and return nil value", func(t *testing.T) {
 		r, _ := http.NewRequest(http.MethodPost, "/test", ioutil.NopCloser(strings.NewReader(string("some wrong type"))))

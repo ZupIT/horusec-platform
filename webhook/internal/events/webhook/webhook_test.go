@@ -2,14 +2,16 @@ package webhook
 
 import (
 	"errors"
+	"testing"
+	"time"
+
 	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 	"github.com/ZupIT/horusec-devkit/pkg/services/broker"
 	"github.com/ZupIT/horusec-devkit/pkg/services/broker/packet"
-	"github.com/ZupIT/horusec-platform/webhook/internal/controllers/dispatcher"
 	"github.com/streadway/amqp"
 	"github.com/stretchr/testify/assert"
-	"testing"
-	"time"
+
+	"github.com/ZupIT/horusec-platform/webhook/internal/controllers/dispatcher"
 )
 
 func TestNewWebhookEvent(t *testing.T) {

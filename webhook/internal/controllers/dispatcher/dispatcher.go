@@ -3,6 +3,7 @@ package dispatcher
 import (
 	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 	"github.com/ZupIT/horusec-devkit/pkg/services/http/request"
+	"github.com/google/uuid"
 
 	webhookEntity "github.com/ZupIT/horusec-platform/webhook/internal/entities/webhook"
 	"github.com/ZupIT/horusec-platform/webhook/internal/repositories/webhook"
@@ -29,6 +30,9 @@ func (c *Controller) DispatchRequest(entity *analysis.Analysis) error {
 	webhookFound, err := c.repository.ListOne(map[string]interface{}{"repository_id": entity.RepositoryID})
 	if err != nil {
 		return err
+	}
+	if webhookFound.WebhookID == uuid.Nil {
+		return nil
 	}
 	return c.sendHTTPRequest(webhookFound, entity)
 }

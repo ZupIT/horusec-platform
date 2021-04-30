@@ -2,12 +2,14 @@ package webhook
 
 import (
 	"errors"
+	"testing"
+
 	"github.com/ZupIT/horusec-devkit/pkg/services/database"
 	"github.com/ZupIT/horusec-devkit/pkg/services/database/response"
-	"github.com/ZupIT/horusec-platform/webhook/internal/entities/webhook"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
-	"testing"
+
+	"github.com/ZupIT/horusec-platform/webhook/internal/entities/webhook"
 )
 
 func TestRepository_ListAll(t *testing.T) {
@@ -93,7 +95,7 @@ func TestRepository_ListOne(t *testing.T) {
 }
 
 func TestRepository_Save(t *testing.T) {
-	t.Run("Should save new repository without error", func(t *testing.T) {
+	t.Run("Should save new webhook without error", func(t *testing.T) {
 		dbRead := &database.Mock{}
 		dbWrite := &database.Mock{}
 		dbWrite.On("Create").Return(response.NewResponse(0, nil, nil))
@@ -104,7 +106,7 @@ func TestRepository_Save(t *testing.T) {
 		err := NewWebhookRepository(connection).Save(&webhook.Webhook{})
 		assert.NoError(t, err)
 	})
-	t.Run("Should save new repository with error", func(t *testing.T) {
+	t.Run("Should save new webhook with error", func(t *testing.T) {
 		dbRead := &database.Mock{}
 		dbWrite := &database.Mock{}
 		dbWrite.On("Create").Return(response.NewResponse(0, errors.New("unexpected error"), nil))
@@ -118,7 +120,7 @@ func TestRepository_Save(t *testing.T) {
 }
 
 func TestRepository_Update(t *testing.T) {
-	t.Run("Should update repository without error", func(t *testing.T) {
+	t.Run("Should update webhook without error", func(t *testing.T) {
 		dbRead := &database.Mock{}
 		dbWrite := &database.Mock{}
 		dbWrite.On("Update").Return(response.NewResponse(0, nil, nil))
@@ -129,7 +131,7 @@ func TestRepository_Update(t *testing.T) {
 		err := NewWebhookRepository(connection).Update(&webhook.Webhook{}, uuid.New())
 		assert.NoError(t, err)
 	})
-	t.Run("Should update repository with error", func(t *testing.T) {
+	t.Run("Should update webhook with error", func(t *testing.T) {
 		dbRead := &database.Mock{}
 		dbWrite := &database.Mock{}
 		dbWrite.On("Update").Return(response.NewResponse(0, errors.New("unexpected error"), nil))
@@ -154,7 +156,7 @@ func TestRepository_Remove(t *testing.T) {
 		err := NewWebhookRepository(connection).Remove(uuid.New())
 		assert.NoError(t, err)
 	})
-	t.Run("Should update repository with error", func(t *testing.T) {
+	t.Run("Should remove webhook with error", func(t *testing.T) {
 		dbRead := &database.Mock{}
 		dbWrite := &database.Mock{}
 		dbWrite.On("Delete").Return(response.NewResponse(0, errors.New("unexpected error"), nil))
