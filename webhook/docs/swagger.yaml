@@ -1,0 +1,264 @@
+definitions:
+  entities.Response:
+    properties:
+      code:
+        type: integer
+      content:
+        type: object
+      status:
+        type: string
+    type: object
+  webhook.Headers:
+    properties:
+      key:
+        type: string
+      value:
+        type: string
+    type: object
+  webhook.Webhook:
+    properties:
+      createdAt:
+        type: string
+      description:
+        type: string
+      headers:
+        items:
+          $ref: '#/definitions/webhook.Headers'
+        type: array
+      method:
+        enum:
+        - post
+        type: string
+      repositoryID:
+        type: string
+      updatedAt:
+        type: string
+      url:
+        type: string
+      webhookID:
+        type: string
+      workspaceID:
+        type: string
+    type: object
+info:
+  contact:
+    email: horusec@zup.com.br
+    name: Horusec
+    url: https://github.com/ZupIT/horusec-platform
+  description: Service responsible for managing vulnerabilities.
+  termsOfService: http://swagger.io/terms/
+  title: Horusec-Webhook
+paths:
+  /webhook/health:
+    get:
+      consumes:
+      - application/json
+      description: Check if Health of service it's OK!
+      operationId: health
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/entities.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "500":
+          description: INTERNAL SERVER ERROR
+          schema:
+            allOf:
+            - $ref: '#/definitions/entities.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      tags:
+      - Health
+  /webhook/webhook:
+    post:
+      consumes:
+      - application/json
+      description: Save webhook by id
+      operationId: SaveWebhook
+      parameters:
+      - description: update webhook content info
+        in: body
+        name: webhookToSave
+        required: true
+        schema:
+          $ref: '#/definitions/webhook.Webhook'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: NO CONTENT
+          schema:
+            allOf:
+            - $ref: '#/definitions/entities.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "400":
+          description: BAD REQUEST
+          schema:
+            allOf:
+            - $ref: '#/definitions/entities.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "500":
+          description: INTERNAL SERVER ERROR
+          schema:
+            allOf:
+            - $ref: '#/definitions/entities.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Webhook
+  /webhook/webhook/{webhookID}:
+    delete:
+      consumes:
+      - application/json
+      description: Remove webhook by id
+      operationId: RemoveWebhookByID
+      parameters:
+      - description: webhookID of the webhook
+        in: path
+        name: webhookID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: OK
+        "400":
+          description: BAD REQUEST
+          schema:
+            allOf:
+            - $ref: '#/definitions/entities.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "500":
+          description: INTERNAL SERVER ERROR
+          schema:
+            allOf:
+            - $ref: '#/definitions/entities.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Webhook
+    put:
+      consumes:
+      - application/json
+      description: Update webhook by id
+      operationId: UpdateWebhookByID
+      parameters:
+      - description: webhookID of the webhook
+        in: path
+        name: webhookID
+        required: true
+        type: string
+      - description: update webhook content info
+        in: body
+        name: webhookToUpdate
+        required: true
+        schema:
+          $ref: '#/definitions/webhook.Webhook'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: OK
+        "400":
+          description: BAD REQUEST
+          schema:
+            allOf:
+            - $ref: '#/definitions/entities.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "500":
+          description: INTERNAL SERVER ERROR
+          schema:
+            allOf:
+            - $ref: '#/definitions/entities.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Webhook
+  /webhook/webhook/{workspaceID}:
+    get:
+      consumes:
+      - application/json
+      description: Get all webhooks by workspace
+      operationId: GetAllWebhooksByWorkspace
+      parameters:
+      - description: workspaceID of the workspace
+        in: path
+        name: workspaceID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/entities.Response'
+            - properties:
+                content:
+                  items:
+                    $ref: '#/definitions/webhook.Webhook'
+                  type: array
+              type: object
+        "400":
+          description: BAD REQUEST
+          schema:
+            allOf:
+            - $ref: '#/definitions/entities.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "500":
+          description: INTERNAL SERVER ERROR
+          schema:
+            allOf:
+            - $ref: '#/definitions/entities.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Webhook
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: X-Horusec-Authorization
+    type: apiKey
+swagger: "2.0"
