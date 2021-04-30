@@ -16,7 +16,7 @@ Cypress.Commands.add('setHorusecAuthConfig', () => {
   cy.intercept(
     {
       method: 'GET',
-      url: 'api/auth/config',
+      url: 'auth/auth/config',
     },
     { fixture: 'login/horusec/auth-config', statusCode: 200 }
   );
