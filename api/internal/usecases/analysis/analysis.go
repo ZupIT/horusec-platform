@@ -132,7 +132,7 @@ func (au *UseCases) sliceLanguages() []interface{} {
 		languages.Yaml,
 		languages.Shell,
 		languages.Elixir,
-		languages.Unknown,
+		languages.Nginx,
 	}
 }
 
