@@ -1,0 +1,66 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Service responsible for sending emails.",
+        "title": "Horusec-Messages",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "Horusec",
+            "url": "https://github.com/ZupIT/horusec-platform",
+            "email": "horusec@zup.com.br"
+        }
+    },
+    "paths": {
+        "/messages/health": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Check if application is healthy",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Health"
+                ],
+                "operationId": "health",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entities.Response"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "entities.Response": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "content": {
+                    "type": "object"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "ApiKeyAuth": {
+            "type": "apiKey",
+            "name": "X-Horusec-Authorization",
+            "in": "header"
+        }
+    }
+}
