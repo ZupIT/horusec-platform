@@ -15,7 +15,6 @@ jobs:
           node-version: "12"
         id: node
       - uses: actions/checkout@v2
-      - uses: actions/setup-go@v2
       # - name: Install dependencies
       #   run: npm install
       # - name: Security
@@ -27,14 +26,15 @@ jobs:
       - name: Test
         uses: cypress-io/github-action@v2
         with:
-          start: npm start
+          start: npm run start:ci
           working-directory: manager
           browser: chrome
           headless: true
           record: false
-      - uses: actions/upload-artifact@v1
+      - name: Upload cypress videos
+        uses: actions/upload-artifact@v1
         if: failure()
         with:
           name: cypress-videos
-          path: cypress/videos
+          path: manager/cypress/videos
 
