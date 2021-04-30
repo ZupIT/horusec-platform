@@ -34,18 +34,18 @@ func (uc *UseCaseWebhook) DecodeWebhookFromIoRead(r *netHTTP.Request) (entity *w
 
 func (uc *UseCaseWebhook) ExtractWebhookIDFromURL(r *netHTTP.Request) (uuid.UUID, error) {
 	ID, err := uuid.Parse(chi.URLParam(r, "webhookID"))
-	if err != nil {
+	if err != nil || ID == uuid.Nil {
 		return uuid.Nil, enums.ErrorWrongWebhookID
 	}
 	return ID, nil
 }
 
 func (uc *UseCaseWebhook) ExtractWorkspaceIDFromURL(r *netHTTP.Request) (uuid.UUID, error) {
-	vulnerabilityID, err := uuid.Parse(chi.URLParam(r, "workspaceID"))
-	if err != nil {
+	ID, err := uuid.Parse(chi.URLParam(r, "workspaceID"))
+	if err != nil || ID == uuid.Nil {
 		return uuid.Nil, enums.ErrorWrongWorkspaceID
 	}
-	return vulnerabilityID, nil
+	return ID, nil
 }
 
 func (uc *UseCaseWebhook) validateWebhook(entity *webhook.Webhook) error {

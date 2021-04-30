@@ -9,8 +9,8 @@ import (
 type HeaderType []Headers
 
 type Headers struct {
-	Key   string `json:"key"`
-	Value string `json:"value"`
+	Key   string `json:"key" example:"x-authorization"`
+	Value string `json:"value" example:"my-header-value"`
 }
 
 func (h HeaderType) Value() (driver.Value, error) {

@@ -3,6 +3,8 @@ package webhook
 import (
 	netHTTP "net/http"
 
+	enumsWebhook "github.com/ZupIT/horusec-platform/webhook/internal/enums"
+
 	"github.com/google/uuid"
 
 	"github.com/ZupIT/horusec-platform/webhook/internal/entities/webhook"
@@ -144,8 +146,12 @@ func (h *Handler) Save(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	}
 	webhookID, err := h.controller.Save(body)
 	if err != nil {
-		httpUtil.StatusInternalServerError(w, err)
-		return
+		if err == enumsWebhook.ErrorWebhookDuplicate {
+			httpUtil.StatusConflict(w, err)
+		} else {
+			httpUtil.StatusInternalServerError(w, err)
+		}
+	} else {
+		httpUtil.StatusOK(w, webhookID)
 	}
-	httpUtil.StatusOK(w, webhookID)
 }
