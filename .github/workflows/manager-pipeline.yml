@@ -15,12 +15,12 @@ jobs:
           node-version: "12"
         id: node
       - uses: actions/checkout@v2
-      # - name: Install dependencies
-      #   run: npm install
-      # - name: Security
-      #   run: make security
-      # - name: Lint
-      #   run: npm run lint
+      - name: Install dependencies
+        run: npm install
+      - name: Security
+        run: make security
+      - name: Lint
+        run: npm run lint
       - name: Test
         uses: cypress-io/github-action@v2
         with:
