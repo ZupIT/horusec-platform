@@ -29,4 +29,5 @@ jobs:
         with:
           browser: chrome
           start: npm start
+          wait-on-timeout: 60
           working-directory: manager
