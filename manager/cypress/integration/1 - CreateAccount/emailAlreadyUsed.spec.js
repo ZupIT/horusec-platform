@@ -15,6 +15,7 @@ describe('Validation the field of login create account form.', () => {
   });
 
   it('Go to register screen', () => {
+    cy.wait(10000);
     cy.visit('/');
     cy.wait(4200);
 

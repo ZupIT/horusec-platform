@@ -31,3 +31,4 @@ jobs:
           working-directory: manager
           browser: chrome
           headless: true
+          record: false
