@@ -68,29 +68,29 @@ services:
       driver: json-file
       options:
         max-size: 10m
-#  horusec-messages:
-#    build:
-#      context: ../../messages
-#      dockerfile: ./deployments/dockerfiles/Dockerfile.dev
-#    depends_on:
-#      - "rabbit"
-#    restart: always
-#    container_name: horusec-messages
-#    network_mode: "host"
-#    volumes:
-#      - ../:/usr/app
-#    environment:
-#      HORUSEC_PORT: "8004"
-#      HORUSEC_BROKER_HOST: "127.0.0.1"
-#      HORUSEC_BROKER_PORT: "5672"
-#      HORUSEC_BROKER_USERNAME: "guest"
-#      HORUSEC_BROKER_PASSWORD: "guest"
-#      HORUSEC_SMTP_ADDRESS: "smtp.mailtrap.io"
-#      HORUSEC_SMTP_USERNAME: ${HORUSEC_SMTP_USERNAME}
-#      HORUSEC_SMTP_PASSWORD: ${HORUSEC_SMTP_PASSWORD}
-#      HORUSEC_SMTP_HOST: "smtp.mailtrap.io"
-#      HORUSEC_SMTP_PORT: "2525"
-#      HORUSEC_EMAIL_FROM: "horusec@zup.com.br"
+  horusec-messages:
+    build:
+      context: ../../messages
+      dockerfile: ./deployments/dockerfiles/Dockerfile.dev
+    depends_on:
+      - "rabbit"
+    restart: always
+    container_name: horusec-messages
+    network_mode: "host"
+    volumes:
+      - ../:/usr/app
+    environment:
+      HORUSEC_PORT: "8004"
+      HORUSEC_BROKER_HOST: "127.0.0.1"
+      HORUSEC_BROKER_PORT: "5672"
+      HORUSEC_BROKER_USERNAME: "guest"
+      HORUSEC_BROKER_PASSWORD: "guest"
+      HORUSEC_SMTP_ADDRESS: "smtp.mailtrap.io"
+      HORUSEC_SMTP_USERNAME: ${HORUSEC_SMTP_USERNAME}
+      HORUSEC_SMTP_PASSWORD: ${HORUSEC_SMTP_PASSWORD}
+      HORUSEC_SMTP_HOST: "smtp.mailtrap.io"
+      HORUSEC_SMTP_PORT: "2525"
+      HORUSEC_EMAIL_FROM: "horusec@zup.com.br"
   horusec-auth:
     build:
       context: ../../auth

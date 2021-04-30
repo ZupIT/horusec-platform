@@ -1,0 +1,42 @@
+definitions:
+  entities.Response:
+    properties:
+      code:
+        type: integer
+      content:
+        type: object
+      status:
+        type: string
+    type: object
+info:
+  contact:
+    email: horusec@zup.com.br
+    name: Horusec
+    url: https://github.com/ZupIT/horusec-platform
+  description: Service responsible for sending emails.
+  termsOfService: http://swagger.io/terms/
+  title: Horusec-Messages
+paths:
+  /messages/health:
+    get:
+      consumes:
+      - application/json
+      description: Check if application is healthy
+      operationId: health
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.Response'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Health
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: X-Horusec-Authorization
+    type: apiKey
+swagger: "2.0"
