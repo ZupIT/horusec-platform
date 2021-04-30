@@ -25,9 +25,9 @@ jobs:
       - name: Build
         run: npm run build
       - name: Test
-        uses: cypress-io/github-action@v1
+        uses: cypress-io/github-action@v2
         with:
           browser: chrome
           start: npm start
-          wait-on-timeout: 60
+          wait-on-timeout: 120
           working-directory: manager
