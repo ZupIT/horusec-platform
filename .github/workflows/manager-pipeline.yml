@@ -31,3 +31,4 @@ jobs:
           start: npm start
           wait-on-timeout: 120
           working-directory: manager
+          env: is_ci=true

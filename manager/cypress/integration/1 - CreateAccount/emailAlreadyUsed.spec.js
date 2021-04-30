@@ -14,6 +14,13 @@ describe('Validation the field of login create account form.', () => {
     ).as('verifyAlreadyUsed');
   });
 
+  it('Verify if is CI and waiting', () => {
+    if (Cypress.env('is_ci')) {
+      cy.log('CI: Waiting...');
+      cy.wait(60000);
+    }
+  });
+
   it('Go to register screen', () => {
     cy.visit('/');
     cy.wait(4200);
