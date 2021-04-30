@@ -22,9 +22,11 @@ jobs:
         run: make security
       - name: Lint
         run: npm run lint
-      - name: Start application
-        run: npm start
-      - name: Test
-        run: npm run cypress
       - name: Build
         run: npm run build
+      - name: Test
+        uses: cypress-io/github-action@v1
+        with:
+          browser: chrome
+          start: npm start
+          working-directory: manager
