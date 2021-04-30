@@ -29,10 +29,5 @@ jobs:
         with:
           start: npm start
           working-directory: manager
-      - name: Archive cypress tests artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: cypress-tests-results
-          path: |
-            /cypress/screenshots
-            /cypress/videos
+          browser: chrome
+          headless: true
