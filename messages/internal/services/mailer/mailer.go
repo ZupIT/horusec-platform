@@ -49,7 +49,7 @@ func NewMailerService() IService {
 
 func (s *Service) setupDialer() IService {
 	s.dialer = gomail.NewDialer(s.config.GetHost(), s.config.GetPort(), s.config.GetUsername(), s.config.GetPassword())
-	s.dialer.TLSConfig = &tls.Config{InsecureSkipVerify: true} //nolint is necessary to send without use tls check
+	s.dialer.TLSConfig = &tls.Config{InsecureSkipVerify: true} //nolint:gosec // is necessary to send without use tls check
 
 	return s
 }

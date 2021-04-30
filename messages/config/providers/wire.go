@@ -7,13 +7,13 @@ import (
 
 	"github.com/ZupIT/horusec-devkit/pkg/services/broker"
 	brokerConfig "github.com/ZupIT/horusec-devkit/pkg/services/broker/config"
-	"github.com/ZupIT/horusec-devkit/pkg/services/http/router"
 	httpRouter "github.com/ZupIT/horusec-devkit/pkg/services/http/router"
 
 	"github.com/ZupIT/horusec-platform/messages/config/cors"
 	emailController "github.com/ZupIT/horusec-platform/messages/internal/controllers/email"
 	"github.com/ZupIT/horusec-platform/messages/internal/events/email"
 	"github.com/ZupIT/horusec-platform/messages/internal/handlers/health"
+	"github.com/ZupIT/horusec-platform/messages/internal/router"
 	"github.com/ZupIT/horusec-platform/messages/internal/services/mailer"
 )
 
@@ -25,6 +25,7 @@ var devKitProviders = wire.NewSet(
 
 var configProviders = wire.NewSet(
 	cors.NewCorsConfig,
+	router.NewHTTPRouter,
 )
 
 var controllerProviders = wire.NewSet(
@@ -36,7 +37,7 @@ var handleProviders = wire.NewSet(
 )
 
 var eventProviders = wire.NewSet(
-	email.NewEmailEventConsumer,
+	email.NewEmailEventHandler,
 )
 
 var serviceProviders = wire.NewSet(

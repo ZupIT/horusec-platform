@@ -18,8 +18,8 @@ import (
 	"os"
 	"testing"
 
-	"gopkg.in/gomail.v2"
 	"github.com/stretchr/testify/assert"
+	"gopkg.in/gomail.v2"
 
 	"github.com/ZupIT/horusec-platform/messages/internal/services/mailer/config/enums"
 )

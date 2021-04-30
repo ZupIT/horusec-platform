@@ -4,24 +4,32 @@ import (
 	"encoding/json"
 
 	emailEntities "github.com/ZupIT/horusec-devkit/pkg/entities/email"
-	"github.com/ZupIT/horusec-devkit/pkg/services/broker/packet"
+	"github.com/ZupIT/horusec-devkit/pkg/enums/queues"
+	"github.com/ZupIT/horusec-devkit/pkg/services/broker"
+	brokerPacket "github.com/ZupIT/horusec-devkit/pkg/services/broker/packet"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 
 	emailController "github.com/ZupIT/horusec-platform/messages/internal/controllers/email"
 	eventsEnums "github.com/ZupIT/horusec-platform/messages/internal/enums/events"
 )
 
-type Consumer struct {
+type EventHandler struct {
 	controller emailController.IController
+	broker     broker.IBroker
 }
 
-func NewEmailEventConsumer(controller emailController.IController) *Consumer {
-	return &Consumer{
+func NewEmailEventHandler(controller emailController.IController, brokerLib broker.IBroker) *EventHandler {
+	return &EventHandler{
 		controller: controller,
+		broker:     brokerLib,
 	}
 }
 
-func (c *Consumer) ConsumeEmailPacket(packet packet.IPacket) {
+func (e *EventHandler) StartConsumers() {
+	go e.broker.Consume(queues.HorusecEmail.ToString(), "", "", e.handleEmailPacket)
+}
+
+func (e *EventHandler) handleEmailPacket(packet brokerPacket.IPacket) {
 	var emailData *emailEntities.Message
 
 	if err := json.Unmarshal(packet.GetBody(), &emailData); err != nil {
@@ -30,7 +38,7 @@ func (c *Consumer) ConsumeEmailPacket(packet packet.IPacket) {
 		return
 	}
 
-	if err := c.controller.SendEmail(emailData); err != nil {
+	if err := e.controller.SendEmail(emailData); err != nil {
 		logger.LogError(eventsEnums.MessageFailedToSendEmail, err)
 	}
 
