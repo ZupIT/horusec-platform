@@ -81,8 +81,7 @@
     "lint": "eslint './src/**/*.{ts,tsx}'",
     "eject": "react-scripts eject",
     "cypress": "cypress run",
-    "cypress:open": "cypress open",
-    "start:ci": "react-scripts start && sleep 60"
+    "cypress:open": "cypress open"
   },
   "jest": {
     "coverageThreshold": {

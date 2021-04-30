@@ -21,16 +21,14 @@ jobs:
       #   run: make security
       # - name: Lint
       #   run: npm run lint
-      # - name: Build
-      #   run: npm run build
       - name: Test
         uses: cypress-io/github-action@v2
         with:
-          start: npm run start:ci
           working-directory: manager
           browser: chrome
-          headless: true
-          record: false
+          build: npm run build
+          start: npx serve -s build -l 3000
+          wait-on: 'http://localhost:3000'
       - name: Upload cypress videos
         uses: actions/upload-artifact@v1
         if: failure()
