@@ -456,7 +456,8 @@ var doc = `{
                         "Generic",
                         "YAML",
                         "Elixir",
-                        "Shell"
+                        "Shell",
+                        "Nginx"
                     ],
                     "example": "Leaks"
                 },

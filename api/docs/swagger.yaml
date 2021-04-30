@@ -126,6 +126,7 @@ definitions:
         - YAML
         - Elixir
         - Shell
+        - Nginx
         example: Leaks
         type: string
       line:

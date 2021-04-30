@@ -1,8 +1,9 @@
 package router
 
 import (
-	"github.com/ZupIT/horusec-devkit/pkg/services/http/router"
 	"testing"
+
+	"github.com/ZupIT/horusec-devkit/pkg/services/http/router"
 
 	"github.com/go-chi/cors"
 	"github.com/stretchr/testify/assert"

@@ -22,6 +22,7 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/services/database"
 	databaseConfig "github.com/ZupIT/horusec-devkit/pkg/services/database/config"
 	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth"
+
 	"github.com/ZupIT/horusec-platform/api/config/cors"
 	analysisController "github.com/ZupIT/horusec-platform/api/internal/controllers/analysis"
 )
