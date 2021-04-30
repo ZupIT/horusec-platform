@@ -11,13 +11,16 @@ definitions:
   webhook.Headers:
     properties:
       key:
+        example: x-authorization
         type: string
       value:
+        example: my-header-value
         type: string
     type: object
   webhook.Webhook:
     properties:
       createdAt:
+        example: "2021-12-30T23:59:59Z"
         type: string
       description:
         type: string
@@ -27,17 +30,22 @@ definitions:
         type: array
       method:
         enum:
-        - post
+        - POST
+        example: POST
         type: string
       repositoryID:
+        example: 00000000-0000-0000-0000-000000000000
         type: string
       updatedAt:
+        example: "2021-12-30T23:59:59Z"
         type: string
       url:
+        example: http://my-domain.io/api
         type: string
       webhookID:
         type: string
       workspaceID:
+        example: 00000000-0000-0000-0000-000000000000
         type: string
     type: object
 info:

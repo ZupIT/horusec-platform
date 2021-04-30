@@ -424,10 +424,12 @@ var doc = `{
             "type": "object",
             "properties": {
                 "key": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "x-authorization"
                 },
                 "value": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "my-header-value"
                 }
             }
         },
@@ -435,7 +437,8 @@ var doc = `{
             "type": "object",
             "properties": {
                 "createdAt": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "2021-12-30T23:59:59Z"
                 },
                 "description": {
                     "type": "string"
@@ -449,23 +452,28 @@ var doc = `{
                 "method": {
                     "type": "string",
                     "enum": [
-                        "post"
-                    ]
+                        "POST"
+                    ],
+                    "example": "POST"
                 },
                 "repositoryID": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "00000000-0000-0000-0000-000000000000"
                 },
                 "updatedAt": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "2021-12-30T23:59:59Z"
                 },
                 "url": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "http://my-domain.io/api"
                 },
                 "webhookID": {
                     "type": "string"
                 },
                 "workspaceID": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "00000000-0000-0000-0000-000000000000"
                 }
             }
         }
