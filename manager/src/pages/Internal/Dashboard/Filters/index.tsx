@@ -69,10 +69,14 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
 
   const ValidationScheme = Yup.object({
     period: Yup.string().label(t('DASHBOARD_SCREEN.PERIOD')).notRequired(),
-    initialDate: Yup.date()
+    initialDate: Yup.string()
       .label(t('DASHBOARD_SCREEN.START_DATE'))
-      .notRequired(),
-    finalDate: Yup.date().label(t('DASHBOARD_SCREEN.FINAL_DATE')).notRequired(),
+      .notRequired()
+      .nullable(),
+    finalDate: Yup.string()
+      .label(t('DASHBOARD_SCREEN.FINAL_DATE'))
+      .notRequired()
+      .nullable(),
     repositoryID: Yup.string()
       .label(t('DASHBOARD_SCREEN.REPOSITORY'))
       .required(),
@@ -149,7 +153,6 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
           values.initialDate = new Date(values.initialDate);
           values.finalDate = new Date(values.finalDate);
         }
-
         onApply(values);
       }}
     >
@@ -196,6 +199,7 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
             rounded
             width={78}
             type="submit"
+            onClick={() => props.submitForm()}
           />
         </Styled.Container>
       )}

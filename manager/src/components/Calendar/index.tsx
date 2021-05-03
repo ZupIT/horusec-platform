@@ -106,7 +106,6 @@ function CalendarMui({
         minDate={minDate}
         variant="inline"
         size="small"
-        clearable={true}
         InputProps={{
           tabIndex: 0,
           endAdornment: (

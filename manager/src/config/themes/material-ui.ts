@@ -27,6 +27,26 @@ const themeMatUi = createMuiTheme({
         color: theme.colors.button.text,
       },
     },
+    MuiFilledInput: {
+      root: {
+        backgroundColor: 'transparent',
+        borderRadius: '10px !important',
+      },
+      input: {
+        padding: '6px 0px',
+      },
+      underline: {
+        '&:before': {
+          borderBottom: 'none !important',
+        },
+        '&:after': {
+          borderBottom: 'none !important',
+        },
+        '&:hover:not($disabled):before': {
+          borderBottom: 'none !important',
+        },
+      },
+    },
     MuiInputBase: {
       root: {
         color: theme.colors.input.text,
