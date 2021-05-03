@@ -13,9 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-if [-z "$1"]
-  then
-    echo "No argument supplied"
-fi
+migration_name=$1
 
-migrate -path "/horusec-migrations" -database "$HORUSEC_DATABASE_SQL_URI" up "$@" 
+# drop the first argument of the tuple
+$shift
+
+migrate -path "/horusec-migrations/$migration_name" -database "$HORUSEC_DATABASE_SQL_URI" up "$@" 
