@@ -51,6 +51,10 @@ func NewRepositoryHandler(useCases repositoryUseCases.IUseCases, controller repo
 	}
 }
 
+func (h *Handler) Options(w http.ResponseWriter, _ *http.Request) {
+	httpUtil.StatusNoContent(w)
+}
+
 func (h *Handler) getAccountData(r *http.Request) (*proto.GetAccountDataResponse, error) {
 	return h.authGRPC.GetAccountInfo(h.context, &proto.GetAccountData{Token: r.Header.Get(enums.HorusecJWTHeader)})
 }

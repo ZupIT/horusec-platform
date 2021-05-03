@@ -204,5 +204,5 @@ func (c *Controller) ListTokens(workspaceID uuid.UUID) (*[]tokenEntities.Respons
 	tokens := &[]tokenEntities.Response{}
 
 	return tokens, c.databaseRead.Find(tokens, c.tokenUseCases.FilterListWorkspaceTokens(workspaceID),
-		tokenEnums.DatabaseTokens).GetError()
+		tokenEnums.DatabaseTokens).GetErrorExceptNotFound()
 }

@@ -23,6 +23,10 @@ func NewHealthHandler(brokerLib broker.IBroker, mailerService mailer.IService) *
 	}
 }
 
+func (h *Handler) Options(w http.ResponseWriter, _ *http.Request) {
+	httpUtil.StatusNoContent(w)
+}
+
 // @Tags Health
 // @Description Check if application is healthy
 // @ID health
