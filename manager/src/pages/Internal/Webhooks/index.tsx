@@ -51,7 +51,7 @@ const Webhooks: React.FC = () => {
     setLoading(true);
 
     webhookService
-      .getAll(currentWorkspace?.companyID)
+      .getAll(currentWorkspace?.workspaceID)
       .then((result) => {
         setWebhooks(result?.data?.content);
         setFilteredWebhooks(result?.data?.content);
@@ -69,7 +69,7 @@ const Webhooks: React.FC = () => {
 
     webhookService
       .remove(
-        webhookToDelete.companyID,
+        webhookToDelete.workspaceID,
         webhookToDelete.repositoryID,
         webhookToDelete.webhookID
       )

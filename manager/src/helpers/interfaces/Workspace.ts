@@ -15,7 +15,7 @@
  */
 
 export interface Workspace {
-  companyID: string;
+  workspaceID: string;
   name: string;
   description: string;
   role: string;

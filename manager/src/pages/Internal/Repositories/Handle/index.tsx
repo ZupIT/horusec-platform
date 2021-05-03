@@ -19,7 +19,7 @@ import { Dialog, Input } from 'components';
 import { useTranslation } from 'react-i18next';
 import Styled from './styled';
 import { useTheme } from 'styled-components';
-import repositoryService from 'services/repository';
+import core2Service from 'services/core2';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
 import { getCurrentConfig } from 'helpers/localStorage/horusecConfig';
@@ -57,8 +57,8 @@ const HandleRepository: React.FC<Props> = ({
     values: InitialValue,
     actions: FormikHelpers<InitialValue>
   ) => {
-    repositoryService
-      .create(currentWorkspace.companyID, values.name, values.description, {
+    core2Service
+      .create(currentWorkspace.workspaceID, values.name, values.description, {
         authzAdmin: values.authzAdmin,
         authzMember: values.authzMember,
         authzSupervisor: values.authzSupervisor,
@@ -80,9 +80,9 @@ const HandleRepository: React.FC<Props> = ({
     values: InitialValue,
     actions: FormikHelpers<InitialValue>
   ) => {
-    repositoryService
+    core2Service
       .update(
-        repositoryToEdit.companyID,
+        repositoryToEdit.workspaceID,
         repositoryToEdit.repositoryID,
         values.name,
         values.description,

@@ -24,7 +24,7 @@ export interface WebhookHeader {
 export interface Webhook {
   webhookID?: string;
   method: 'get' | 'post';
-  companyID: string;
+  workspaceID: string;
   repositoryID: string;
   repository: Repository;
   url: string;

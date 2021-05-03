@@ -18,7 +18,7 @@ import { LoginParams } from './LoginParams';
 
 interface AuthFunctions {
   login(params?: LoginParams): Promise<any>;
-  logout(): Promise<any>;
+  logout(refreshToken?: string): Promise<any>;
 }
 
 export interface Authenticator {

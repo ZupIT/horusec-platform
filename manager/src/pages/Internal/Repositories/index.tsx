@@ -18,7 +18,7 @@ import React, { useState, useEffect } from 'react';
 import Styled from './styled';
 import { SearchBar, Button, Dialog, Datatable, Datasource } from 'components';
 import { useTranslation } from 'react-i18next';
-import repositoryService from 'services/repository';
+import core2Service from 'services/core2';
 import { Repository } from 'helpers/interfaces/Repository';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 
@@ -68,8 +68,8 @@ const Repositories: React.FC = () => {
 
   const handleConfirmDeleteRepo = () => {
     setDeleteLoading(true);
-    repositoryService
-      .remove(repoToDelete.companyID, repoToDelete.repositoryID)
+    core2Service
+      .remove(repoToDelete.workspaceID, repoToDelete.repositoryID)
       .then(() => {
         showSuccessFlash(t('REPOSITORIES_SCREEN.REMOVE_SUCCESS_REPO'));
         setRepoToDelete(null);
@@ -101,8 +101,8 @@ const Repositories: React.FC = () => {
 
     if (currentWorkspace) {
       setLoading(true);
-      repositoryService
-        .getAll(currentWorkspace?.companyID)
+      core2Service
+        .getAll(currentWorkspace?.workspaceID)
         .then((result: AxiosResponse) => {
           if (!isCancelled) {
             setRepositories(result.data?.content);

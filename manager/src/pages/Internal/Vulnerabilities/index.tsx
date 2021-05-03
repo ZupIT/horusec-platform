@@ -19,7 +19,7 @@ import Styled from './styled';
 import { SearchBar, Select, Icon, Datatable, Datasource } from 'components';
 import { useTranslation } from 'react-i18next';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
-import repositoryService from 'services/repository';
+import core2Service from 'services/core2';
 import { Repository } from 'helpers/interfaces/Repository';
 import { PaginationInfo } from 'helpers/interfaces/Pagination';
 import { Vulnerability } from 'helpers/interfaces/Vulnerability';
@@ -52,7 +52,7 @@ const Vulnerabilities: React.FC = () => {
   const [vulnerabilities, setVulnerabilities] = useState<Vulnerability[]>([]);
   const [selectedVuln, setSelectedVuln] = useState<Vulnerability>(null);
   const [filters, setFilters] = useState<FilterVuln>({
-    companyID: currentWorkspace?.companyID,
+    workspaceID: currentWorkspace?.workspaceID,
     repositoryID: repositories[0]?.repositoryID,
     vulnHash: '',
     vulnSeverity: 'All',
@@ -142,9 +142,9 @@ const Vulnerabilities: React.FC = () => {
     vulnerability: Vulnerability,
     type: string
   ) => {
-    repositoryService
+    core2Service
       .updateVulnerabilityType(
-        filters.companyID,
+        filters.workspaceID,
         filters.repositoryID,
         vulnerability.vulnerabilityID,
         type
@@ -168,9 +168,9 @@ const Vulnerabilities: React.FC = () => {
     vulnerability: Vulnerability,
     severity: string
   ) => {
-    repositoryService
+    core2Service
       .updateVulnerabilitySeverity(
-        filters.companyID,
+        filters.workspaceID,
         filters.repositoryID,
         vulnerability.vulnerabilityID,
         severity
@@ -194,8 +194,8 @@ const Vulnerabilities: React.FC = () => {
     let isCancelled = false;
 
     const fetchRepositories = () => {
-      repositoryService
-        .getAll(currentWorkspace?.companyID)
+      core2Service
+        .getAll(currentWorkspace?.workspaceID)
         .then((result: AxiosResponse) => {
           if (!isCancelled) {
             const response = result.data.content;
@@ -240,7 +240,7 @@ const Vulnerabilities: React.FC = () => {
         if (filterAux.vulnSeverity === 'All') filterAux.vulnSeverity = null;
         if (filterAux.vulnType === 'All') filterAux.vulnType = null;
 
-        repositoryService
+        core2Service
           .getAllVulnerabilities(filterAux, page)
           .then((result: AxiosResponse) => {
             if (!isCancelled) {

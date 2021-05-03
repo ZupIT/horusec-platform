@@ -19,15 +19,17 @@ import Styled from './styled';
 import useAuth from 'helpers/hooks/useAuth';
 import ReactTooltip from 'react-tooltip';
 import { useTranslation } from 'react-i18next';
+import { getRefreshToken } from 'helpers/localStorage/tokens';
 
 const Logout: React.FC = () => {
   const { logout } = useAuth();
   const { t } = useTranslation();
+  const refreshToken = getRefreshToken();
 
   return (
     <>
       <Styled.LogoutIcon
-        onClick={logout}
+        onClick={() => logout(refreshToken)}
         size="16px"
         tabIndex={0}
         ariaLabel={t('SIDE_MENU.LOGOUT')}

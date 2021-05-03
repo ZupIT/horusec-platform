@@ -16,25 +16,25 @@
 
 import http from 'config/axios';
 
-import { SERVICE_ACCOUNT, SERVICE_API } from '../config/endpoints';
+import { SERVICE_CORE } from '../config/endpoints';
 import { FilterVuln } from 'helpers/interfaces/FIlterVuln';
 import { PaginationInfo } from 'helpers/interfaces/Pagination';
 import { LDAPGroups } from 'helpers/interfaces/LDAPGroups';
 
-const getAll = (companyId: string) => {
+const getAll = (workspaceID: string) => {
   return http.get(
-    `${SERVICE_ACCOUNT}/account/companies/${companyId}/repositories`
+    `${SERVICE_CORE}/core/workspaces/${workspaceID}/repositories`
   );
 };
 
 const create = (
-  companyId: string,
+  workspaceID: string,
   name: string,
   description: string,
   ldapGroups?: LDAPGroups
 ) => {
   return http.post(
-    `${SERVICE_ACCOUNT}/account/companies/${companyId}/repositories`,
+    `${SERVICE_CORE}/core/workspaces/${workspaceID}/repositories`,
     {
       name,
       description,
@@ -44,32 +44,32 @@ const create = (
 };
 
 const update = (
-  companyId: string,
+  workspaceID: string,
   repositoryId: string,
   name: string,
   description: string,
   ldapGroups?: LDAPGroups
 ) => {
   return http.patch(
-    `${SERVICE_ACCOUNT}/account/companies/${companyId}/repositories/${repositoryId}`,
+    `${SERVICE_CORE}/core/workspaces/${workspaceID}/repositories/${repositoryId}`,
     { name, description, ...ldapGroups }
   );
 };
 
-const remove = (companyId: string, repositoryId: string) => {
+const remove = (workspaceID: string, repositoryId: string) => {
   return http.delete(
-    `${SERVICE_ACCOUNT}/account/companies/${companyId}/repositories/${repositoryId}`
+    `${SERVICE_CORE}/core/workspaces/${workspaceID}/repositories/${repositoryId}`
   );
 };
 
-const getAllTokens = (companyId: string, repositoryId: string) => {
+const getAllTokens = (workspaceID: string, repositoryId: string) => {
   return http.get(
-    `${SERVICE_API}/api/companies/${companyId}/repositories/${repositoryId}/tokens`
+    `${SERVICE_CORE}/core/workspaces/${workspaceID}/repositories/${repositoryId}/tokens`
   );
 };
 
 const createToken = (
-  companyId: string,
+  workspaceID: string,
   repositoryId: string,
   data: {
     description: string;
@@ -78,7 +78,7 @@ const createToken = (
   }
 ) => {
   return http.post(
-    `${SERVICE_API}/api/companies/${companyId}/repositories/${repositoryId}/tokens`,
+    `${SERVICE_CORE}/core/workspaces/${workspaceID}/repositories/${repositoryId}/tokens`,
     {
       ...data,
     }
@@ -86,54 +86,57 @@ const createToken = (
 };
 
 const removeToken = (
-  companyId: string,
+  workspaceID: string,
   repositoryId: string,
   tokenId: string
 ) => {
   return http.delete(
-    `${SERVICE_API}/api/companies/${companyId}/repositories/${repositoryId}/tokens/${tokenId}`
+    `${SERVICE_CORE}/core/workspaces/${workspaceID}/repositories/${repositoryId}/tokens/${tokenId}`
   );
 };
 
-const getUsersInRepository = (companyId: string, repositoryId: string) => {
+const getUsersInRepository = (workspaceID: string, repositoryId: string) => {
   return http.get(
-    `${SERVICE_ACCOUNT}/account/companies/${companyId}/repositories/${repositoryId}/roles`
+    `${SERVICE_CORE}/core/workspaces/${workspaceID}/repositories/${repositoryId}/roles`
   );
 };
 
 const includeUser = (
-  companyId: string,
+  workspaceID: string,
   repositoryId: string,
   email: string,
-  role: string
+  role: string,
+  accountID: string,
+  username: string
 ) => {
   return http.post(
-    `${SERVICE_ACCOUNT}/account/companies/${companyId}/repositories/${repositoryId}/roles`,
+    `${SERVICE_CORE}/core/workspaces/${workspaceID}/repositories/${repositoryId}/roles`,
     {
       email,
       role,
+      accountID,
+      username,
     }
   );
 };
-
 const removeUser = (
-  companyId: string,
+  workspaceID: string,
   repositoryId: string,
   accountId: string
 ) => {
   return http.delete(
-    `${SERVICE_ACCOUNT}/account/companies/${companyId}/repositories/${repositoryId}/roles/${accountId}`
+    `${SERVICE_CORE}/core/workspaces/${workspaceID}/repositories/${repositoryId}/roles/${accountId}`
   );
 };
 
 const updateUserRole = (
-  companyId: string,
+  workspaceID: string,
   repositoryId: string,
   accountId: string,
   role: string
 ) => {
   return http.patch(
-    `${SERVICE_ACCOUNT}/account/companies/${companyId}/repositories/${repositoryId}/roles/${accountId}`,
+    `${SERVICE_CORE}/core/workspaces/${workspaceID}/repositories/${repositoryId}/roles/${accountId}`,
     {
       role,
     }
@@ -145,7 +148,7 @@ const getAllVulnerabilities = (
   pagination: PaginationInfo
 ) => {
   return http.get(
-    `${SERVICE_API}/api/companies/${filters.companyID}/repositories/${filters.repositoryID}/management`,
+    `${SERVICE_CORE}/core/workspaces/${filters.workspaceID}/repositories/${filters.repositoryID}/management`,
     {
       params: {
         page: pagination.currentPage,
@@ -159,13 +162,13 @@ const getAllVulnerabilities = (
 };
 
 const updateVulnerabilityType = (
-  companyId: string,
+  workspaceID: string,
   repositoryId: string,
   vulnerabilityId: string,
   type: string
 ) => {
   return http.put(
-    `${SERVICE_API}/api/companies/${companyId}/repositories/${repositoryId}/management/${vulnerabilityId}/type`,
+    `${SERVICE_CORE}/core/workspaces/${workspaceID}/repositories/${repositoryId}/management/${vulnerabilityId}/type`,
     {
       type,
     }
@@ -173,13 +176,13 @@ const updateVulnerabilityType = (
 };
 
 const updateVulnerabilitySeverity = (
-  companyId: string,
+  workspaceID: string,
   repositoryId: string,
   vulnerabilityId: string,
   severity: string
 ) => {
   return http.put(
-    `${SERVICE_API}/api/companies/${companyId}/repositories/${repositoryId}/management/${vulnerabilityId}/severity`,
+    `${SERVICE_CORE}/core/workspaces/${workspaceID}/repositories/${repositoryId}/management/${vulnerabilityId}/severity`,
     {
       severity,
     }

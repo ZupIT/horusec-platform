@@ -15,7 +15,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import companyService from 'services/company';
+import coreService from 'services/core';
 import { Workspace } from 'helpers/interfaces/Workspace';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import { useHistory } from 'react-router-dom';
@@ -54,7 +54,7 @@ const WorkspaceProvider = ({ children }: { children: JSX.Element }) => {
   };
 
   const fetchAll = (redirect?: boolean) => {
-    companyService
+    coreService
       .getAll()
       .then((result) => {
         const workspaces = result?.data?.content as Workspace[];

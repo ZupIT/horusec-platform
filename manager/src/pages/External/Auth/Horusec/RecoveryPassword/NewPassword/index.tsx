@@ -19,7 +19,7 @@ import Styled from './styled';
 import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import queryString from 'query-string';
-import accountService from 'services/account';
+import accountService from 'services/auth';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import { Dialog } from 'components';
 import {
@@ -149,7 +149,12 @@ function NewPasswordScreen() {
         }}
       >
         {(props) => (
-          <Styled.Form onSubmit={props.submitForm}>
+          <Styled.Form
+            onSubmit={(e) => {
+              e.preventDefault();
+              props.submitForm();
+            }}
+          >
             <Styled.Field
               label={t('RECOVERY_PASS_SCREEN.PASSWORD')}
               ariaLabel={t('RECOVERY_PASS_SCREEN.ARIA_PASSWORD')}

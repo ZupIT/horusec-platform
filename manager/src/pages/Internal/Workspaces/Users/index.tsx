@@ -18,7 +18,7 @@ import React, { useEffect, useState } from 'react';
 import { Button, SearchBar, Dialog, Datatable, Datasource } from 'components';
 import { useTranslation } from 'react-i18next';
 import Styled from './styled';
-import companyService from 'services/company';
+import coreService from 'services/core';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
 import { Workspace } from 'helpers/interfaces/Workspace';
@@ -64,8 +64,8 @@ const Users: React.FC<Props> = ({ isVisible, onClose, selectedWorkspace }) => {
 
   const fetchData = () => {
     setLoading(true);
-    companyService
-      .getUsersInCompany(selectedWorkspace?.companyID)
+    coreService
+      .getUsersInWorkspace(selectedWorkspace?.workspaceID)
       .then((result) => {
         setUsers(result?.data?.content);
         setFilteredUsers(result?.data?.content);
@@ -80,8 +80,11 @@ const Users: React.FC<Props> = ({ isVisible, onClose, selectedWorkspace }) => {
 
   const handleConfirmDeleteUser = () => {
     setDeleteIsLoading(true);
-    companyService
-      .removeUserInCompany(selectedWorkspace?.companyID, userToDelete.accountID)
+    coreService
+      .removeUserInWorkspace(
+        selectedWorkspace?.workspaceID,
+        userToDelete.accountID
+      )
       .then(() => {
         showSuccessFlash(t('WORKSPACES_SCREEN.USERS.REMOVE_SUCCESS'));
         setUserToDelete(null);

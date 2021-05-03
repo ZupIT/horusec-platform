@@ -15,7 +15,7 @@
  */
 
 export interface RepositoryToken {
-  companyID: string;
+  workspaceID: string;
   createdAt?: string;
   description: string;
   expiresAt?: string;

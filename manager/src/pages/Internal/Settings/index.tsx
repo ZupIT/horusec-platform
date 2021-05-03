@@ -22,7 +22,7 @@ import {
   getCurrentUser,
   clearCurrentUser,
 } from 'helpers/localStorage/currentUser';
-import accountService from 'services/account';
+import accountService from 'services/auth';
 
 import EditAccount from './Edit';
 import ChangePassword from './ChangePassword';

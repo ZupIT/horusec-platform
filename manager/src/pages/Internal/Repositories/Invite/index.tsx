@@ -26,8 +26,8 @@ import {
   Datasource,
 } from 'components';
 import { Account } from 'helpers/interfaces/Account';
-import repositoryService from 'services/repository';
-import companyService from 'services/company';
+import core2Service from 'services/core2';
+import coreService from 'services/core';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import { getCurrentUser } from 'helpers/localStorage/currentUser';
 import { findIndex, cloneDeep } from 'lodash';
@@ -75,12 +75,12 @@ const InviteToRepository: React.FC<Props> = ({
     },
   ];
 
-  const fetchUsersInRepository = (allUsersInCompany: Account[]) => {
-    repositoryService
-      .getUsersInRepository(repoToInvite.companyID, repoToInvite.repositoryID)
+  const fetchUsersInRepository = (allUsersInWorkspace: Account[]) => {
+    core2Service
+      .getUsersInRepository(repoToInvite.workspaceID, repoToInvite.repositoryID)
       .then((result) => {
         const accountIds: string[] = [];
-        const allUsers = cloneDeep(allUsersInCompany);
+        const allUsers = cloneDeep(allUsersInWorkspace);
 
         // eslint-disable-next-line array-callback-return
         result?.data?.content.map((account: Account) => {
@@ -102,10 +102,10 @@ const InviteToRepository: React.FC<Props> = ({
       });
   };
 
-  const fetchAllUsersInCompany = () => {
+  const fetchAllUsersInWorkspace = () => {
     setLoading(true);
-    companyService
-      .getUsersInCompany(repoToInvite.companyID)
+    coreService
+      .getUsersInWorkspace(repoToInvite.workspaceID)
       .then((result) => {
         fetchUsersInRepository(result?.data?.content);
       })
@@ -127,12 +127,14 @@ const InviteToRepository: React.FC<Props> = ({
   };
 
   const inviteUserToRepository = (account: Account) => {
-    repositoryService
+    core2Service
       .includeUser(
-        repoToInvite.companyID,
+        repoToInvite.workspaceID,
         repoToInvite.repositoryID,
         account.email,
-        account.role
+        account.role,
+        account.accountID,
+        account.username
       )
       .then(() => {
         showSuccessFlash(t('REPOSITORIES_SCREEN.SUCCESS_ADD_USER'));
@@ -144,9 +146,9 @@ const InviteToRepository: React.FC<Props> = ({
   };
 
   const removeUserOfRepository = (account: Account) => {
-    repositoryService
+    core2Service
       .removeUser(
-        repoToInvite.companyID,
+        repoToInvite.workspaceID,
         repoToInvite.repositoryID,
         account.accountID
       )
@@ -168,9 +170,9 @@ const InviteToRepository: React.FC<Props> = ({
   };
 
   const handleChangeUserRole = (role: string, account: Account) => {
-    repositoryService
+    core2Service
       .updateUserRole(
-        repoToInvite.companyID,
+        repoToInvite.workspaceID,
         repoToInvite.repositoryID,
         account.accountID,
         role
@@ -189,7 +191,7 @@ const InviteToRepository: React.FC<Props> = ({
 
   useEffect(() => {
     if (repoToInvite) {
-      fetchAllUsersInCompany();
+      fetchAllUsersInWorkspace();
     }
     // eslint-disable-next-line
   }, [repoToInvite]);

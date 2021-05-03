@@ -19,7 +19,7 @@ import Styled from './styled';
 import { Repository } from 'helpers/interfaces/Repository';
 import { useTranslation } from 'react-i18next';
 import { Button, Dialog, Datatable, Datasource } from 'components';
-import repositoryService from 'services/repository';
+import core2Service from 'services/core2';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import { RepositoryToken } from 'helpers/interfaces/RepositoryToken';
 import AddToken from './Add';
@@ -50,9 +50,9 @@ const Tokens: React.FC<Props> = ({
 
   const fetchData = () => {
     setLoading(true);
-    repositoryService
+    core2Service
       .getAllTokens(
-        repoToManagerTokens.companyID,
+        repoToManagerTokens.workspaceID,
         repoToManagerTokens.repositoryID
       )
       .then((result) => {
@@ -68,9 +68,9 @@ const Tokens: React.FC<Props> = ({
 
   const handleConfirmDeleteToken = () => {
     setDeleteIsLoading(true);
-    repositoryService
+    core2Service
       .removeToken(
-        tokenToDelete.companyID,
+        tokenToDelete.workspaceID,
         tokenToDelete.repositoryID,
         tokenToDelete.tokenID
       )
@@ -138,7 +138,7 @@ const Tokens: React.FC<Props> = ({
             const repo: Datasource = {
               ...row,
               id: row.tokenID,
-              token: '***************' + row.suffixValue,
+              token: '*********' + row.suffixValue,
               expiresAt: row.isExpirable
                 ? formatToHumanDate(row.expiresAt)
                 : t('GENERAL.NOT_EXPIRABLE'),

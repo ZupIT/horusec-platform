@@ -28,7 +28,7 @@ import {
   hasUpperCase,
 } from 'helpers/validators';
 import { useTheme } from 'styled-components';
-import accountService from 'services/account';
+import accountService from 'services/auth';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 interface Props {

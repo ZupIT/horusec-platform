@@ -16,14 +16,14 @@
 
 import http from 'config/axios';
 import { WebhookHeader } from 'helpers/interfaces/Webhook';
-import { SERVICE_ACCOUNT } from '../config/endpoints';
+import { SERVICE_CORE } from '../config/endpoints';
 
-const getAll = (companyID: string) => {
-  return http.get(`${SERVICE_ACCOUNT}/account/webhook/${companyID}`);
+const getAll = (workspaceID: string) => {
+  return http.get(`${SERVICE_CORE}/account/webhook/${workspaceID}`);
 };
 
 const create = (
-  companyID: string,
+  workspaceID: string,
   repositoryID: string,
   url: string,
   method: string,
@@ -31,7 +31,7 @@ const create = (
   description: string
 ) => {
   return http.post(
-    `${SERVICE_ACCOUNT}/account/webhook/${companyID}/${repositoryID}`,
+    `${SERVICE_CORE}/account/webhook/${workspaceID}/${repositoryID}`,
     {
       url,
       method,
@@ -42,7 +42,7 @@ const create = (
 };
 
 const update = (
-  companyID: string,
+  workspaceID: string,
   repositoryID: string,
   webhookID: string,
   url: string,
@@ -51,7 +51,7 @@ const update = (
   description: string
 ) => {
   return http.put(
-    `${SERVICE_ACCOUNT}/account/webhook/${companyID}/${repositoryID}/${webhookID}`,
+    `${SERVICE_CORE}/account/webhook/${workspaceID}/${repositoryID}/${webhookID}`,
     {
       url,
       method,
@@ -61,9 +61,13 @@ const update = (
   );
 };
 
-const remove = (companyID: string, repositoryID: string, webhookID: string) => {
+const remove = (
+  workspaceID: string,
+  repositoryID: string,
+  webhookID: string
+) => {
   return http.delete(
-    `${SERVICE_ACCOUNT}/account/webhook/${companyID}/${repositoryID}/${webhookID}`
+    `${SERVICE_CORE}/account/webhook/${workspaceID}/${repositoryID}/${webhookID}`
   );
 };
 
