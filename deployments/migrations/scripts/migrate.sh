@@ -1,3 +1,4 @@
+#!/bin/sh
 # Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,12 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM migrate/migrate:v4.13.0
+if [-z "$1"]
+  then
+    echo "No argument supplied"
+fi
 
-ADD deployments/source /horusec-migrations
-RUN cd /horusec-migrations && ls
-
-# ADD horusec-migration/deployments/scripts/migrate.sh /usr/local/bin
-# RUN chmod +x /usr/local/bin/migrate.sh
-
-# ENTRYPOINT [ "migrate.sh" ] 
+migrate -path "/horusec-migrations" -database "$HORUSEC_DATABASE_SQL_URI" up "$@" 
