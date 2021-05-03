@@ -16,7 +16,13 @@
 
 import React, { CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FormControl, InputLabel, MenuItem, Select } from '@material-ui/core';
+import {
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  SelectProps,
+} from '@material-ui/core';
 import { ObjectLiteral } from 'helpers/interfaces/ObjectLiteral';
 
 interface Props {
@@ -38,6 +44,7 @@ interface Props {
   testId?: string;
   placeholder?: string;
   style?: CSSProperties;
+  variant?: SelectProps['variant'];
 }
 
 const SelectInput: React.FC<Props> = ({
@@ -50,6 +57,7 @@ const SelectInput: React.FC<Props> = ({
   disabled = false,
   placeholder,
   style,
+  variant,
 }) => {
   const { t } = useTranslation();
 
@@ -66,6 +74,7 @@ const SelectInput: React.FC<Props> = ({
         }}
         placeholder={placeholder || t('GENERAL.SELECT') + '...'}
         style={style}
+        variant={variant}
       >
         {options.map((el, index) => (
           <MenuItem key={index} value={el.value}>
