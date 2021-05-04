@@ -1,6 +1,7 @@
 package analysis
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/google/uuid"
@@ -33,10 +34,14 @@ func NewRepositoriesAnalysis(connection *database.Connection) IAnalysis {
 }
 
 func (a *Analysis) FindAnalysisByID(analysisID uuid.UUID) response.IResponse {
-	return a.databaseRead.Find(
-		&analysis.Analysis{},
-		map[string]interface{}{"analysis_id": analysisID},
-		(&analysis.Analysis{}).GetTable())
+	entity := &analysis.Analysis{
+		AnalysisVulnerabilities: []analysis.AnalysisVulnerabilities{},
+	}
+	query := fmt.Sprintf(`SELECT %s FROM analysis
+		INNER JOIN analysis_vulnerabilities ON analysis.analysis_id = analysis_vulnerabilities.analysis_id 
+		INNER JOIN vulnerabilities ON analysis_vulnerabilities.vulnerability_id = vulnerabilities.vulnerability_id
+		WHERE analysis.analysis_id = ?`, a.getFieldsToFindAnalysisByID())
+	return a.databaseRead.Raw(query, entity, analysisID)
 }
 
 func (a *Analysis) CreateFullAnalysis(newAnalysis *analysis.Analysis) error {
@@ -127,4 +132,15 @@ func (a *Analysis) findVulnerabilityByHashInWorkspace(vulnHash string, workspace
 		AND analysis.workspace_id = ?
 	`
 	return a.databaseRead.Raw(query, map[string]interface{}{}, vulnHash, workspaceID)
+}
+
+func (a *Analysis) getFieldsToFindAnalysisByID() string {
+	return `analysis.analysis_id, analysis.repository_id, analysis.repository_name, analysis.workspace_id,
+	analysis.workspace_name, analysis.status, analysis.errors, analysis.created_at, analysis.finished_at,
+	analysis_vulnerabilities.vulnerability_id, analysis_vulnerabilities.analysis_id, analysis_vulnerabilities.created_at,
+	vulnerabilities.vulnerability_id, vulnerabilities.line, vulnerabilities.column, vulnerabilities.confidence,
+	vulnerabilities.file, vulnerabilities.code, vulnerabilities.details, vulnerabilities.security_tool,
+	vulnerabilities.language, vulnerabilities.severity, vulnerabilities.vuln_hash, vulnerabilities.type,
+	vulnerabilities.commit_author, vulnerabilities.commit_email, vulnerabilities.commit_hash,
+	vulnerabilities.commit_message, vulnerabilities.commit_date`
 }

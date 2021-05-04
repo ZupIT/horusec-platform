@@ -14,7 +14,9 @@ require (
 	github.com/prometheus/common v0.23.0 // indirect
 	github.com/stretchr/testify v1.7.0
 	github.com/swaggo/swag v1.7.0
-	golang.org/x/crypto v0.0.0-20210421170649-83a5a9bb288b // indirect
-	google.golang.org/genproto v0.0.0-20210429181445-86c259c2b4ab // indirect
+	golang.org/x/crypto v0.0.0-20210503195802-e9a32991a82e // indirect
+	golang.org/x/net v0.0.0-20210504132125-bbd867fde50d // indirect
+	golang.org/x/sys v0.0.0-20210503173754-0981d6026fa6 // indirect
+	google.golang.org/genproto v0.0.0-20210504143626-3b2ad6ccc450 // indirect
 	gorm.io/gorm v1.21.9 // indirect
 )

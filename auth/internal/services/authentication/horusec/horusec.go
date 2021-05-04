@@ -1,6 +1,7 @@
 package horusec
 
 import (
+	"github.com/ZupIT/horusec-devkit/pkg/services/database/enums"
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
 
@@ -189,12 +190,14 @@ func (s *Service) isRepositoryAdmin(data *authEntities.AuthorizationData) (bool,
 
 func (s *Service) checkRepositoryRequestForWorkspaceAdmin(data *authEntities.AuthorizationData,
 	err error) (bool, error) {
+	if err != enums.ErrorNotFoundRecords {
+		return false, err
+	}
 	isWorkspaceAdmin, workspaceErr := s.isWorkspaceAdmin(data)
 	if workspaceErr != nil {
 		return isWorkspaceAdmin, errors.Wrap(workspaceErr, err.Error())
 	}
-
-	return isWorkspaceAdmin, err
+	return isWorkspaceAdmin, nil
 }
 
 func (s *Service) isApplicationAdmin(data *authEntities.AuthorizationData) (bool, error) {
