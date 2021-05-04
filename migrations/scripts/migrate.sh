@@ -13,9 +13,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-migration_name=$1
-
-# drop the first argument of the tuple
-$shift
-
-migrate -path "/horusec-migrations/$migration_name" -database "$HORUSEC_DATABASE_SQL_URI" up "$@" 
+migrate -path "/horusec-migrations/$MIGRATION_NAME" -database "$HORUSEC_DATABASE_SQL_URI" "$@"

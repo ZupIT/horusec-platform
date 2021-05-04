@@ -1,5 +1,5 @@
 HORUSEC ?= horusec
-IMAGE_NAME ?= horuszup/horusec-migrations
+IMAGE_NAME ?= horuszup/horusec-migrations:local
 
 security:
     ifeq (, $(shell which $(HORUSEC)))
@@ -10,4 +10,4 @@ security:
     endif
 
 build:
-	docker build -t "$(IMAGE_NAME)" -f Dockerfile .
+	docker build --no-cache -t "$(IMAGE_NAME)" -f Dockerfile .

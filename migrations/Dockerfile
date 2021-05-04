@@ -19,4 +19,4 @@ ADD ./source /horusec-migrations
 ADD ./scripts/migrate.sh /usr/local/bin
 RUN chmod +x /usr/local/bin/migrate.sh
 
-ENTRYPOINT [ "migrate.sh" ] 
+ENTRYPOINT [ "migrate.sh" ]
