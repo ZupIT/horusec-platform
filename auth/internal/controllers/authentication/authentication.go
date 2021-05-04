@@ -7,6 +7,7 @@ import (
 	"github.com/ZupIT/horusec-platform/auth/config/app"
 	authEntities "github.com/ZupIT/horusec-platform/auth/internal/entities/authentication"
 	authEnums "github.com/ZupIT/horusec-platform/auth/internal/enums/authentication"
+	accountRepository "github.com/ZupIT/horusec-platform/auth/internal/repositories/account"
 	"github.com/ZupIT/horusec-platform/auth/internal/services/authentication/horusec"
 	"github.com/ZupIT/horusec-platform/auth/internal/services/authentication/keycloak"
 	"github.com/ZupIT/horusec-platform/auth/internal/services/authentication/ldap"
@@ -16,22 +17,25 @@ type IController interface {
 	Login(credentials *authEntities.LoginCredentials) (*authEntities.LoginResponse, error)
 	IsAuthorized(data *authEntities.AuthorizationData) (bool, error)
 	GetAccountInfo(token string) (*proto.GetAccountDataResponse, error)
+	GetAccountInfoByEmail(email string) (*proto.GetAccountDataResponse, error)
 }
 
 type Controller struct {
-	appConfig    app.IConfig
-	horusecAuth  horusec.IService
-	keycloakAuth keycloak.IService
-	ldapAuth     ldap.IService
+	appConfig         app.IConfig
+	horusecAuth       horusec.IService
+	keycloakAuth      keycloak.IService
+	ldapAuth          ldap.IService
+	accountRepository accountRepository.IRepository
 }
 
-func NewAuthenticationController(appConfig app.IConfig, authHorusec horusec.IService,
-	ldapAuth ldap.IService, keycloakAuth keycloak.IService) IController {
+func NewAuthenticationController(appConfig app.IConfig, authHorusec horusec.IService, ldapAuth ldap.IService,
+	keycloakAuth keycloak.IService, repositoryAccount accountRepository.IRepository) IController {
 	return &Controller{
-		appConfig:    appConfig,
-		horusecAuth:  authHorusec,
-		ldapAuth:     ldapAuth,
-		keycloakAuth: keycloakAuth,
+		appConfig:         appConfig,
+		horusecAuth:       authHorusec,
+		ldapAuth:          ldapAuth,
+		keycloakAuth:      keycloakAuth,
+		accountRepository: repositoryAccount,
 	}
 }
 
@@ -72,4 +76,13 @@ func (c *Controller) GetAccountInfo(token string) (*proto.GetAccountDataResponse
 	}
 
 	return nil, authEnums.ErrorAuthTypeInvalid
+}
+
+func (c *Controller) GetAccountInfoByEmail(email string) (*proto.GetAccountDataResponse, error) {
+	account, err := c.accountRepository.GetAccountByEmail(email)
+	if err != nil {
+		return nil, err
+	}
+
+	return account.ToGetAccountDataResponse(nil), nil
 }

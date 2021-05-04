@@ -8,6 +8,7 @@ import (
 	"github.com/google/uuid"
 
 	"github.com/ZupIT/horusec-devkit/pkg/enums/account"
+	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth/proto"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/parser"
 )
 
@@ -25,8 +26,8 @@ func (u *UserData) Validate() error {
 		validation.Field(&u.Role, validation.Required, validation.In(
 			account.Admin, account.Supervisor, account.Member)),
 		validation.Field(&u.Email, validation.Required, validation.Length(1, 255), is.EmailFormat),
-		validation.Field(&u.Username, validation.Required, validation.Length(1, 255)),
-		validation.Field(&u.AccountID, validation.Required, is.UUID),
+		validation.Field(&u.Username, validation.Length(0, 255)),
+		validation.Field(&u.AccountID, is.UUID),
 		validation.Field(&u.WorkspaceID, is.UUID),
 		validation.Field(&u.RepositoryID, is.UUID),
 	)
@@ -43,4 +44,13 @@ func (u *UserData) ToBytes() []byte {
 	bytes, _ := json.Marshal(u)
 
 	return bytes
+}
+
+func (u *UserData) SetWorkspaceIDAndAccountData(workspaceID string, data *proto.GetAccountDataResponse) *UserData {
+	u.WorkspaceID = parser.ParseStringToUUID(workspaceID)
+	u.AccountID = parser.ParseStringToUUID(data.AccountID)
+	u.Email = data.Email
+	u.Username = data.Username
+
+	return u
 }

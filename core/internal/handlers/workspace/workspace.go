@@ -57,6 +57,10 @@ func (h *Handler) getAccountData(r *http.Request) (*proto.GetAccountDataResponse
 	return h.authGRPC.GetAccountInfo(h.context, &proto.GetAccountData{Token: r.Header.Get(enums.HorusecJWTHeader)})
 }
 
+func (h *Handler) getAccountDataByEmail(email string) (*proto.GetAccountDataResponse, error) {
+	return h.authGRPC.GetAccountInfo(h.context, &proto.GetAccountData{Email: email})
+}
+
 // @Tags Workspace
 // @Description Create a new workspace
 // @ID create-workspace
@@ -331,7 +335,12 @@ func (h *Handler) getInviteUserData(r *http.Request) (*roleEntities.UserData, er
 		return nil, err
 	}
 
-	return data.SetIDs(chi.URLParam(r, workspaceEnums.ID), ""), nil
+	accountData, err := h.getAccountDataByEmail(data.Email)
+	if err != nil {
+		return nil, err
+	}
+
+	return data.SetWorkspaceIDAndAccountData(chi.URLParam(r, workspaceEnums.ID), accountData), nil
 }
 
 // @Tags Workspace

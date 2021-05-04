@@ -78,6 +78,8 @@ func (a *Account) ToGetAccountDataResponse(permissions []string) *proto.GetAccou
 		AccountID:          a.AccountID.String(),
 		IsApplicationAdmin: a.IsApplicationAdmin,
 		Permissions:        permissions,
+		Email:              a.Email,
+		Username:           a.Username,
 	}
 }
 

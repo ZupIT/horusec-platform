@@ -51,7 +51,7 @@ func Initialize(string2 string) (router.IRouter, error) {
 	iService := horusec.NewHorusecAuthenticationService(iRepository, appIConfig, iUseCases, authenticationIRepository, iCache)
 	ldapIService := ldap.NewLDAPAuthenticationService(iRepository, iUseCases, appIConfig, authenticationIRepository, iCache)
 	keycloakIService := keycloak.NewKeycloakAuthenticationService(iRepository, appIConfig, iUseCases, authenticationIRepository)
-	iController := authentication3.NewAuthenticationController(appIConfig, iService, ldapIService, keycloakIService)
+	iController := authentication3.NewAuthenticationController(appIConfig, iService, ldapIService, keycloakIService, iRepository)
 	handler := authentication4.NewAuthenticationHandler(appIConfig, iUseCases, iController)
 	iAuthGRPCServer := grpc.NewAuthGRPCServer(handler)
 	configIConfig := config2.NewBrokerConfig()
