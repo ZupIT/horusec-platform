@@ -593,12 +593,21 @@ func TestInviteUser(t *testing.T) {
 		Username:  "test",
 	}
 
+	accountData := &proto.GetAccountDataResponse{
+		AccountID:   uuid.New().String(),
+		Permissions: []string{"test"},
+		Username:    "test",
+		Email:       "test@test.com",
+	}
+
 	t.Run("should return 200 when everything it is ok", func(t *testing.T) {
+		appConfigMock := &app.Mock{}
+
 		controllerMock := &workspaceController.Mock{}
 		controllerMock.On("InviteUser").Return(&role.Response{}, nil)
 
 		authGRPCMock := &proto.Mock{}
-		appConfigMock := &app.Mock{}
+		authGRPCMock.On("GetAccountInfo").Return(accountData, nil)
 
 		handler := NewWorkspaceHandler(controllerMock, workspaceUseCases.NewWorkspaceUseCases(),
 			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases(), tokenUseCases.NewTokenUseCases())
@@ -616,11 +625,13 @@ func TestInviteUser(t *testing.T) {
 	})
 
 	t.Run("should return 500 when something went wrong", func(t *testing.T) {
+		appConfigMock := &app.Mock{}
+
 		controllerMock := &workspaceController.Mock{}
 		controllerMock.On("InviteUser").Return(&role.Response{}, errors.New("test"))
 
 		authGRPCMock := &proto.Mock{}
-		appConfigMock := &app.Mock{}
+		authGRPCMock.On("GetAccountInfo").Return(accountData, nil)
 
 		handler := NewWorkspaceHandler(controllerMock, workspaceUseCases.NewWorkspaceUseCases(),
 			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases(), tokenUseCases.NewTokenUseCases())
@@ -646,6 +657,24 @@ func TestInviteUser(t *testing.T) {
 			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases(), tokenUseCases.NewTokenUseCases())
 
 		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader([]byte("")))
+		w := httptest.NewRecorder()
+
+		handler.InviteUser(w, r)
+
+		assert.Equal(t, http.StatusBadRequest, w.Code)
+	})
+
+	t.Run("should return 400 when failed to get account by email", func(t *testing.T) {
+		controllerMock := &workspaceController.Mock{}
+		appConfigMock := &app.Mock{}
+
+		authGRPCMock := &proto.Mock{}
+		authGRPCMock.On("GetAccountInfo").Return(accountData, errors.New("test"))
+
+		handler := NewWorkspaceHandler(controllerMock, workspaceUseCases.NewWorkspaceUseCases(),
+			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases(), tokenUseCases.NewTokenUseCases())
+
+		r, _ := http.NewRequest(http.MethodPost, "test", bytes.NewReader(roleData.ToBytes()))
 		w := httptest.NewRecorder()
 
 		handler.InviteUser(w, r)

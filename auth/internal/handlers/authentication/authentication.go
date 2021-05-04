@@ -130,7 +130,11 @@ func (h *Handler) IsAuthorized(_ context.Context, data *proto.IsAuthorizedData) 
 }
 
 func (h *Handler) GetAccountInfo(_ context.Context, data *proto.GetAccountData) (*proto.GetAccountDataResponse, error) {
-	return h.controller.GetAccountInfo(data.Token)
+	if data.Token != "" {
+		return h.controller.GetAccountInfo(data.Token)
+	}
+
+	return h.controller.GetAccountInfoByEmail(data.Email)
 }
 
 func (h *Handler) GetAuthConfig(context.Context, *proto.GetAuthConfigData) (*proto.GetAuthConfigResponse, error) {

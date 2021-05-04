@@ -247,11 +247,25 @@ func TestIsAuthorized(t *testing.T) {
 }
 
 func TestGetAccountInfo(t *testing.T) {
-	t.Run("should success get account info", func(t *testing.T) {
+	t.Run("should success get account info with token", func(t *testing.T) {
 		appConfig := &app.Config{}
 
 		controllerMock := &authController.Mock{}
 		controllerMock.On("GetAccountInfo").Return(&proto.GetAccountDataResponse{}, nil)
+
+		handler := NewAuthenticationHandler(appConfig, authUseCases.NewAuthenticationUseCases(), controllerMock)
+
+		result, err := handler.GetAccountInfo(context.Background(), &proto.GetAccountData{Token: "test"})
+
+		assert.NoError(t, err)
+		assert.NotNil(t, result)
+	})
+
+	t.Run("should success get account info with email", func(t *testing.T) {
+		appConfig := &app.Config{}
+
+		controllerMock := &authController.Mock{}
+		controllerMock.On("GetAccountInfoByEmail").Return(&proto.GetAccountDataResponse{}, nil)
 
 		handler := NewAuthenticationHandler(appConfig, authUseCases.NewAuthenticationUseCases(), controllerMock)
 

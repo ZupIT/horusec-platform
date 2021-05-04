@@ -27,3 +27,8 @@ func (m *Mock) GetAccountInfo(_ string) (*proto.GetAccountDataResponse, error) {
 	args := m.MethodCalled("GetAccountInfo")
 	return args.Get(0).(*proto.GetAccountDataResponse), mockUtils.ReturnNilOrError(args, 1)
 }
+
+func (m *Mock) GetAccountInfoByEmail(_ string) (*proto.GetAccountDataResponse, error) {
+	args := m.MethodCalled("GetAccountInfoByEmail")
+	return args.Get(0).(*proto.GetAccountDataResponse), mockUtils.ReturnNilOrError(args, 1)
+}

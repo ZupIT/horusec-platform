@@ -124,12 +124,16 @@ func TestToGetAccountDataResponse(t *testing.T) {
 		account := &Account{
 			AccountID:          uuid.New(),
 			IsApplicationAdmin: true,
+			Email:              "test@test.com",
+			Username:           "test",
 		}
 
 		response := account.ToGetAccountDataResponse([]string{"test"})
 		assert.Equal(t, account.AccountID.String(), response.AccountID)
 		assert.Equal(t, account.IsApplicationAdmin, response.IsApplicationAdmin)
 		assert.Equal(t, []string{"test"}, response.Permissions)
+		assert.Equal(t, "test@test.com", response.Email)
+		assert.Equal(t, "test", response.Username)
 	})
 }
 
