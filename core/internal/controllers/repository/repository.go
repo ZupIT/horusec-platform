@@ -230,5 +230,5 @@ func (c *Controller) ListTokens(data *tokenEntities.Data) (*[]tokenEntities.Resp
 	tokens := &[]tokenEntities.Response{}
 
 	return tokens, c.databaseRead.Find(tokens, c.tokenUseCases.FilterListRepositoryTokens(
-		data.WorkspaceID, data.RepositoryID), tokenEnums.DatabaseTokens).GetError()
+		data.WorkspaceID, data.RepositoryID), tokenEnums.DatabaseTokens).GetErrorExceptNotFound()
 }

@@ -34,6 +34,10 @@ func NewAuthenticationHandler(appConfig app.IConfig, useCases authUseCases.IUseC
 	}
 }
 
+func (h *Handler) Options(w http.ResponseWriter, _ *http.Request) {
+	httpUtil.StatusNoContent(w)
+}
+
 // @Tags Authenticate
 // @Description Get auth config
 // @ID get-config

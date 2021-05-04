@@ -153,7 +153,7 @@ func (s *Service) isRepositoryMember(data *authEntities.AuthorizationData) (bool
 		return false, errors.Wrap(err, horusecAuthEnums.ErrorFailedToGetAccountIDFromToken)
 	}
 
-	role, err := s.authRepository.GetRepositoryRole(accountID, data.WorkspaceID)
+	role, err := s.authRepository.GetRepositoryRole(accountID, data.RepositoryID)
 	if err != nil {
 		return s.checkRepositoryRequestForWorkspaceAdmin(data, err)
 	}
@@ -167,7 +167,7 @@ func (s *Service) isRepositorySupervisor(data *authEntities.AuthorizationData) (
 		return false, errors.Wrap(err, horusecAuthEnums.ErrorFailedToGetAccountIDFromToken)
 	}
 
-	role, err := s.authRepository.GetRepositoryRole(accountID, data.WorkspaceID)
+	role, err := s.authRepository.GetRepositoryRole(accountID, data.RepositoryID)
 	if err != nil {
 		return s.checkRepositoryRequestForWorkspaceAdmin(data, err)
 	}
@@ -181,7 +181,7 @@ func (s *Service) isRepositoryAdmin(data *authEntities.AuthorizationData) (bool,
 		return false, errors.Wrap(err, horusecAuthEnums.ErrorFailedToGetAccountIDFromToken)
 	}
 
-	role, err := s.authRepository.GetRepositoryRole(accountID, data.WorkspaceID)
+	role, err := s.authRepository.GetRepositoryRole(accountID, data.RepositoryID)
 	if err != nil {
 		return s.checkRepositoryRequestForWorkspaceAdmin(data, err)
 	}

@@ -45,6 +45,7 @@ func (r *Router) setRoutes() IRouter {
 
 func (r *Router) healthRoutes() {
 	r.Route(routes.HealthHandler, func(router chi.Router) {
+		router.Options("/", r.healthHandler.Options)
 		router.Get("/", r.healthHandler.Get)
 	})
 }

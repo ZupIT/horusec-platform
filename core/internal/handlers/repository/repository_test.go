@@ -1194,3 +1194,21 @@ func TestListTokens(t *testing.T) {
 		assert.Equal(t, http.StatusBadRequest, w.Code)
 	})
 }
+
+func TestOptions(t *testing.T) {
+	t.Run("should return 204 when options", func(t *testing.T) {
+		authGRPCMock := &proto.Mock{}
+		appConfigMock := &app.Mock{}
+		controllerMock := &repositoryController.Mock{}
+
+		handler := NewRepositoryHandler(repositoryUseCases.NewRepositoryUseCases(), controllerMock,
+			appConfigMock, authGRPCMock, roleUseCases.NewRoleUseCases(), tokenUseCases.NewTokenUseCases())
+
+		r, _ := http.NewRequest(http.MethodOptions, "test", nil)
+		w := httptest.NewRecorder()
+
+		handler.Options(w, r)
+
+		assert.Equal(t, http.StatusNoContent, w.Code)
+	})
+}

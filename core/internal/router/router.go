@@ -53,6 +53,7 @@ func (r *Router) setRoutes() IRouter {
 func (r *Router) workspaceRoutes() {
 	r.Route(routes.WorkspaceHandler, func(router chi.Router) {
 		router.Get("/", r.workspaceHandler.List)
+		router.Options("/", r.workspaceHandler.Options)
 		router.With(r.IsApplicationAdmin).Post("/", r.workspaceHandler.Create)
 		router.With(r.IsWorkspaceMember).Get("/{workspaceID}", r.workspaceHandler.Get)
 		router.With(r.IsWorkspaceAdmin).Patch("/{workspaceID}", r.workspaceHandler.Update)
@@ -69,6 +70,7 @@ func (r *Router) workspaceRoutes() {
 
 func (r *Router) repositoryRoutes() {
 	r.Route(routes.RepositoryHandler, func(router chi.Router) {
+		router.Options("/", r.repositoryHandler.Options)
 		router.With(r.IsWorkspaceAdmin).Post("/", r.repositoryHandler.Create)
 		router.With(r.IsWorkspaceMember).Get("/", r.repositoryHandler.List)
 		router.With(r.IsRepositoryMember).Get("/{repositoryID}", r.repositoryHandler.Get)
@@ -86,6 +88,7 @@ func (r *Router) repositoryRoutes() {
 
 func (r *Router) healthRoutes() {
 	r.Route(routes.HealthHandler, func(router chi.Router) {
+		router.Options("/", r.healthHandler.Options)
 		router.Get("/", r.healthHandler.Get)
 	})
 }

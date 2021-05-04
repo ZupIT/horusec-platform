@@ -68,3 +68,19 @@ func TestGet(t *testing.T) {
 		assert.Equal(t, http.StatusInternalServerError, w.Code)
 	})
 }
+
+func TestOptions(t *testing.T) {
+	t.Run("should return 204 when options", func(t *testing.T) {
+		brokerMock := &broker.Mock{}
+		databaseMock := &database.Mock{}
+
+		handler := NewHealthHandler(&database.Connection{Read: databaseMock, Write: databaseMock}, brokerMock)
+
+		r, _ := http.NewRequest(http.MethodOptions, "test", nil)
+		w := httptest.NewRecorder()
+
+		handler.Options(w, r)
+
+		assert.Equal(t, http.StatusNoContent, w.Code)
+	})
+}

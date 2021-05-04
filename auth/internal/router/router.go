@@ -1,9 +1,9 @@
 package router
 
 import (
-	"github.com/ZupIT/horusec-devkit/pkg/services/http/router"
 	"github.com/go-chi/chi"
 
+	"github.com/ZupIT/horusec-devkit/pkg/services/http/router"
 	"github.com/ZupIT/horusec-devkit/pkg/services/swagger"
 
 	"github.com/ZupIT/horusec-platform/auth/config/grpc"

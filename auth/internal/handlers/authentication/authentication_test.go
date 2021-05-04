@@ -275,3 +275,19 @@ func TestGetAuthConfig(t *testing.T) {
 		assert.NotNil(t, result)
 	})
 }
+
+func TestOptions(t *testing.T) {
+	t.Run("should return 204 when options", func(t *testing.T) {
+		appConfig := &app.Config{}
+		controllerMock := &authController.Mock{}
+
+		handler := NewAuthenticationHandler(appConfig, authUseCases.NewAuthenticationUseCases(), controllerMock)
+
+		r, _ := http.NewRequest(http.MethodOptions, "test", nil)
+		w := httptest.NewRecorder()
+
+		handler.Options(w, r)
+
+		assert.Equal(t, http.StatusNoContent, w.Code)
+	})
+}

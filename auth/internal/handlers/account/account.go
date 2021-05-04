@@ -33,6 +33,10 @@ func NewAccountHandler(useCases accountUseCases.IUseCases, controller accountCon
 	}
 }
 
+func (h *Handler) Options(w http.ResponseWriter, _ *http.Request) {
+	httpUtil.StatusNoContent(w)
+}
+
 // @Tags Account
 // @Description Create account when keycloak auth
 // @ID create-account-keycloak
