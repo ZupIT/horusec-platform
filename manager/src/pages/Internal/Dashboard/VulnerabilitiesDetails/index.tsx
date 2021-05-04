@@ -19,7 +19,7 @@ import Styled from './styled';
 import { useTranslation } from 'react-i18next';
 import { Datatable } from 'components';
 import { FilterValues } from 'helpers/interfaces/FilterValues';
-import analyticService from 'services/analytic';
+import vulnerabilitiesService from 'services/vulnerabilities';
 import { PaginationInfo } from 'helpers/interfaces/Pagination';
 
 interface Props {
@@ -52,7 +52,6 @@ const VulnerabilitiesDetails: React.FC<Props> = ({ filters }) => {
 
   const formatDataValues = (data: any[]) => {
     const formattedData: DatatableValue[] = [];
-
     data.forEach((item) => {
       const {
         language,
@@ -62,7 +61,7 @@ const VulnerabilitiesDetails: React.FC<Props> = ({ filters }) => {
         file,
         line,
         code,
-      } = item?.vulnerability;
+      } = item;
 
       formattedData.push({
         language,
@@ -89,12 +88,21 @@ const VulnerabilitiesDetails: React.FC<Props> = ({ filters }) => {
         page.currentPage = 1;
       }
 
-      analyticService
-        .getVulnerabilitiesDetails(filters, page.currentPage, page.pageSize)
+      vulnerabilitiesService
+        .getAllVulnerabilities(
+          {
+            workspaceID: filters.workspaceID,
+            repositoryID: filters.repositoryID,
+          },
+          {
+            currentPage: page.currentPage,
+            pageSize: page.pageSize,
+          }
+        )
         .then((result) => {
           if (!isCancelled) {
-            formatDataValues(result.data?.content?.data?.analysis);
-            const totalItems = result?.data?.content?.data?.totalItems;
+            formatDataValues(result.data?.content?.data || []);
+            const totalItems = result?.data?.content?.totalItems || 0;
 
             let totalPages = totalItems
               ? Math.ceil(totalItems / page.pageSize)
