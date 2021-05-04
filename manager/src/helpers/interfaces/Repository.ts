@@ -17,7 +17,7 @@
 export interface Repository {
   name: string;
   description: string;
-  companyID: string;
+  workspaceID: string;
   repositoryID?: string;
   role?: string;
   authzAdmin?: string[];

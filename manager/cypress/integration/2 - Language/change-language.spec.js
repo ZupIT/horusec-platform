@@ -2,7 +2,7 @@ import ptBR from '../../../src/config/i18n/ptBR.json';
 import enUS from '../../../src/config/i18n/enUS.json';
 
 /* eslint-disable cypress/no-unnecessary-waiting */
-describe('Login in the application when a correct username and password.', () => {
+describe('In Login screen, alter the language to PTBR and back to ENUS', () => {
   beforeEach(() => {
     cy.restoreLocalStorage();
     cy.setHorusecAuthConfig();

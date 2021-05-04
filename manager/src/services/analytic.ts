@@ -25,9 +25,9 @@ const getTotalDevelopers = (filters: FilterValues) => {
 
   if (filters.type === 'workspace') {
     path = 'companies';
-    ID = filters.companyID;
+    ID = filters.workspaceID;
   } else {
-    path = `companies/${filters.companyID}/repositories`;
+    path = `companies/${filters.workspaceID}/repositories`;
     ID = filters.repositoryID;
   }
 
@@ -45,9 +45,9 @@ const getTotalRepositories = (filters: FilterValues) => {
 
   if (filters.type === 'workspace') {
     path = 'companies';
-    ID = filters.companyID;
+    ID = filters.workspaceID;
   } else {
-    path = `companies/${filters.companyID}/repositories`;
+    path = `companies/${filters.workspaceID}/repositories`;
     ID = filters.repositoryID;
   }
 
@@ -65,9 +65,9 @@ const getAllVulnerabilities = (filters: FilterValues) => {
 
   if (filters.type === 'workspace') {
     path = 'companies';
-    ID = filters.companyID;
+    ID = filters.workspaceID;
   } else {
-    path = `companies/${filters.companyID}/repositories`;
+    path = `companies/${filters.workspaceID}/repositories`;
     ID = filters.repositoryID;
   }
 
@@ -85,9 +85,9 @@ const getVulnerabilitiesByLanguage = (filters: FilterValues) => {
 
   if (filters.type === 'workspace') {
     path = 'companies';
-    ID = filters.companyID;
+    ID = filters.workspaceID;
   } else {
-    path = `companies/${filters.companyID}/repositories`;
+    path = `companies/${filters.workspaceID}/repositories`;
     ID = filters.repositoryID;
   }
 
@@ -105,9 +105,9 @@ const getVulnerabilitiesByDeveloper = (filters: FilterValues) => {
 
   if (filters.type === 'workspace') {
     path = 'companies';
-    ID = filters.companyID;
+    ID = filters.workspaceID;
   } else {
-    path = `companies/${filters.companyID}/repositories`;
+    path = `companies/${filters.workspaceID}/repositories`;
     ID = filters.repositoryID;
   }
 
@@ -125,9 +125,9 @@ const getVulnerabilitiesByRepository = (filters: FilterValues) => {
 
   if (filters.type === 'workspace') {
     path = 'companies';
-    ID = filters.companyID;
+    ID = filters.workspaceID;
   } else {
-    path = `companies/${filters.companyID}/repositories`;
+    path = `companies/${filters.workspaceID}/repositories`;
     ID = filters.repositoryID;
   }
 
@@ -145,9 +145,9 @@ const getVulnerabilitiesTimeLine = (filters: FilterValues) => {
 
   if (filters.type === 'workspace') {
     path = 'companies';
-    ID = filters.companyID;
+    ID = filters.workspaceID;
   } else {
-    path = `companies/${filters.companyID}/repositories`;
+    path = `companies/${filters.workspaceID}/repositories`;
     ID = filters.repositoryID;
   }
 
@@ -170,12 +170,12 @@ const getVulnerabilitiesDetails = (
   let period = '';
 
   if (filters.type === 'workspace') {
-    filter = `companyID: "${filters.companyID}"`;
+    filter = `workspaceID: "${filters.workspaceID}"`;
     path = 'companies';
-    ID = filters.companyID;
+    ID = filters.workspaceID;
   } else {
     filter = `repositoryID: "${filters.repositoryID}"`;
-    path = `companies/${filters.companyID}/repositories`;
+    path = `companies/${filters.workspaceID}/repositories`;
     ID = filters.repositoryID;
   }
 

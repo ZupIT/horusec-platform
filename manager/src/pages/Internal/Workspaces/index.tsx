@@ -22,7 +22,7 @@ import useWorkspace from 'helpers/hooks/useWorkspace';
 import { Workspace } from 'helpers/interfaces/Workspace';
 import { roles } from 'helpers/enums/roles';
 import { formatToHumanDate } from 'helpers/formatters/date';
-import companyService from 'services/company';
+import coreService from 'services/core';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import { getCurrentConfig } from 'helpers/localStorage/horusecConfig';
@@ -69,8 +69,8 @@ const Workspaces: React.FC = () => {
 
   const handleConfirmDeleteWorkspace = () => {
     setDeleteIsLoading(true);
-    companyService
-      .remove(workspaceToDelete.companyID)
+    coreService
+      .deleteWorkspace(workspaceToDelete.workspaceID)
       .then(() => {
         showSuccessFlash(t('WORKSPACES_SCREEN.REMOVE_SUCCESS'));
         setWorkspaceToDelete(null);
@@ -139,7 +139,7 @@ const Workspaces: React.FC = () => {
           datasource={filteredWorkspaces.map((row) => {
             const data: Datasource = {
               ...row,
-              id: row.companyID,
+              id: row.workspaceID,
               date: formatToHumanDate(row.createdAt),
               actions: [],
             };

@@ -18,7 +18,7 @@ import React, { useState, useEffect } from 'react';
 import Styled from './styled';
 import { useTranslation } from 'react-i18next';
 import { Button, Dialog, Datatable, Datasource } from 'components';
-import companyService from 'services/company';
+import coreService from 'services/core';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import { RepositoryToken } from 'helpers/interfaces/RepositoryToken';
 import AddToken from './Add';
@@ -46,8 +46,8 @@ const Tokens: React.FC<Props> = ({ isVisible, onClose, selectedWorkspace }) => {
 
   const fetchData = () => {
     setLoading(true);
-    companyService
-      .getAllTokens(selectedWorkspace.companyID)
+    coreService
+      .getAllTokensOfWorkspace(selectedWorkspace.workspaceID)
       .then((result) => {
         setTokens(result?.data?.content);
       })
@@ -61,8 +61,8 @@ const Tokens: React.FC<Props> = ({ isVisible, onClose, selectedWorkspace }) => {
 
   const handleConfirmDeleteToken = () => {
     setDeleteIsLoading(true);
-    companyService
-      .removeToken(tokenToDelete.companyID, tokenToDelete.tokenID)
+    coreService
+      .removeTokenOfWorkspace(tokenToDelete.workspaceID, tokenToDelete.tokenID)
       .then(() => {
         showSuccessFlash(t('WORKSPACES_SCREEN.REMOVE_SUCCESS_TOKEN'));
         setTokenToDelete(null);
@@ -127,7 +127,7 @@ const Tokens: React.FC<Props> = ({ isVisible, onClose, selectedWorkspace }) => {
             const data: Datasource = {
               ...row,
               id: row.tokenID,
-              token: '***************' + row.suffixValue,
+              token: '********' + row.suffixValue,
               expiresAt: row.isExpirable
                 ? formatToHumanDate(row.expiresAt)
                 : t('GENERAL.NOT_EXPIRABLE'),

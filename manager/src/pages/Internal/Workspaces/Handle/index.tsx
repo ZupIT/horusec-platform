@@ -19,7 +19,7 @@ import { Dialog, Input } from 'components';
 import { useTranslation } from 'react-i18next';
 import Styled from './styled';
 import { useTheme } from 'styled-components';
-import companyService from 'services/company';
+import coreService from 'services/core';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
 import { getCurrentConfig } from 'helpers/localStorage/horusecConfig';
@@ -47,7 +47,6 @@ const HandleWorkspace: React.FC<Props> = ({
   const currentUser = getCurrentUser();
   const { dispatchMessage } = useResponseMessage();
   const { showSuccessFlash } = useFlashMessage();
-  const { applicationAdminEnable } = getCurrentConfig();
 
   const [isLoading, setLoading] = useState(false);
 
@@ -55,8 +54,8 @@ const HandleWorkspace: React.FC<Props> = ({
     values: InitialValue,
     actions: FormikHelpers<InitialValue>
   ) => {
-    companyService
-      .create(values.name, values.description, values.emailAdmin, {
+    coreService
+      .createWorkspace(values.name, values.description, {
         authzAdmin: values.authzAdmin,
         authzMember: values.authzMember,
       })
@@ -77,12 +76,11 @@ const HandleWorkspace: React.FC<Props> = ({
     values: InitialValue,
     actions: FormikHelpers<InitialValue>
   ) => {
-    companyService
-      .update(
-        workspaceToEdit.companyID,
+    coreService
+      .updateWorkspace(
+        workspaceToEdit.workspaceID,
         values.name,
         values.description,
-        values.emailAdmin,
         {
           authzAdmin: values.authzAdmin,
           authzMember: values.authzMember,
@@ -163,16 +161,6 @@ const HandleWorkspace: React.FC<Props> = ({
               label={t('WORKSPACES_SCREEN.TABLE.DESCRIPTION')}
               width="100%"
             />
-
-            {applicationAdminEnable && (
-              <Styled.Wrapper>
-                <Styled.Label>
-                  {t('WORKSPACES_SCREEN.ADMIN_EMAIL')}
-                </Styled.Label>
-
-                <Input name="emailAdmin" label={t('WORKSPACES_SCREEN.EMAIL')} />
-              </Styled.Wrapper>
-            )}
 
             {getCurrentConfig().authType === authTypes.LDAP && (
               <>

@@ -21,7 +21,7 @@ import { getCurrentConfig } from 'helpers/localStorage/horusecConfig';
 import { clearCurrentUser } from 'helpers/localStorage/currentUser';
 import { clearTokens } from 'helpers/localStorage/tokens';
 import { Authenticator } from 'helpers/interfaces/Authenticator';
-import accountService from 'services/account';
+import accountService from 'services/auth';
 import { setCurrenConfig } from 'helpers/localStorage/horusecConfig';
 
 import defaultAuth from './default';
@@ -39,7 +39,7 @@ interface AuthCtx {
   loginInProgress: boolean;
   fetchConfigInProgress: boolean;
   login(params?: LoginParams): Promise<void>;
-  logout(): Promise<void>;
+  logout(refreshToken?: string): Promise<void>;
 }
 
 const getAuthenticator = () => {
@@ -89,13 +89,13 @@ const AuthProvider = ({ children }: AuthProviderPops) => {
     });
   };
 
-  const logout = (): Promise<void> => {
+  const logout = (refreshToken?: string): Promise<void> => {
     const authenticator = getAuthenticator();
 
     if (authenticator) {
       return new Promise((resolve) => {
         getAuthenticator()
-          .logout()
+          .logout(refreshToken)
           .finally(() => {
             resolve();
             clearLocalStorage();

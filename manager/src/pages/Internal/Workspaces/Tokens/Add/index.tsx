@@ -19,7 +19,7 @@ import { Calendar, Checkbox, Dialog } from 'components';
 import { useTranslation } from 'react-i18next';
 import Styled from './styled';
 import { useTheme } from 'styled-components';
-import companyService from 'services/company';
+import coreService from 'services/core';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 
 import SuccessAddToken from './Success';
@@ -78,7 +78,7 @@ const AddToken: React.FC<Props> = ({
     const data = {
       description: values.description,
       isExpirable: values.isExpirable,
-      expiresAt: values.expiresAt,
+      expiresAt: values.expiresAt ? new Date(values.expiresAt) : null,
     };
 
     if (values.isExpirable === false) {
@@ -86,8 +86,8 @@ const AddToken: React.FC<Props> = ({
       delete data.expiresAt;
     }
 
-    companyService
-      .createToken(selectedWorkspace.companyID, data)
+    coreService
+      .createTokenInWorkspace(selectedWorkspace.workspaceID, data)
       .then((res) => {
         onConfirm();
         actions.resetForm();

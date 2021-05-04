@@ -20,7 +20,7 @@ import { useTranslation } from 'react-i18next';
 import { useTheme } from 'styled-components';
 import Styled from './styled';
 import { Field } from 'helpers/interfaces/Field';
-import repositoryService from 'services/repository';
+import coreService from 'services/core';
 import { Repository } from 'helpers/interfaces/Repository';
 import { get } from 'lodash';
 import { isValidURL } from 'helpers/validators';
@@ -83,7 +83,7 @@ const AddWebhook: React.FC<Props> = ({
 
     webhookService
       .create(
-        currentWorkspace?.companyID,
+        currentWorkspace?.workspaceID,
         selectedRepository.repositoryID,
         url.value,
         httpMethod,
@@ -124,9 +124,11 @@ const AddWebhook: React.FC<Props> = ({
 
   useEffect(() => {
     const fetchRepositories = () => {
-      repositoryService.getAll(currentWorkspace?.companyID).then((result) => {
-        setRepositories(result.data.content);
-      });
+      coreService
+        .getAllRepositories(currentWorkspace?.workspaceID)
+        .then((result) => {
+          setRepositories(result.data.content);
+        });
     };
 
     fetchRepositories();

@@ -25,7 +25,7 @@ import {
   setCurrentUser,
 } from 'helpers/localStorage/currentUser';
 import { useTheme } from 'styled-components';
-import accountService from 'services/account';
+import accountService from 'services/auth';
 import useAuth from 'helpers/hooks/useAuth';
 import { useHistory } from 'react-router-dom';
 import { getCurrentConfig } from 'helpers/localStorage/horusecConfig';

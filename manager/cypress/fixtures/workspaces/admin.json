@@ -3,7 +3,7 @@
     {
       "authzAdmin": "",
       "authzMember": "",
-      "companyID": "0f4de453-305f-4efb-8d87-879103738efa",
+      "workspaceID": "0f4de453-305f-4efb-8d87-879103738efa",
       "createdAt": "2020-12-01T00:00:00Z",
       "description": "This is a workspace of example.",
       "name": "Umbrella Corp.",

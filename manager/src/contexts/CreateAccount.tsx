@@ -15,7 +15,7 @@
  */
 
 import React, { useState } from 'react';
-import accountService from 'services/account';
+import accountService from 'services/auth';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 
 interface CreateAccountProps {

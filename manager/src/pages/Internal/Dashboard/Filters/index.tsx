@@ -19,7 +19,7 @@ import Styled from './styled';
 import { useTranslation } from 'react-i18next';
 import { Calendar } from 'components';
 import { FilterValues } from 'helpers/interfaces/FilterValues';
-import repositoryService from 'services/repository';
+import coreService from 'services/core';
 import useWorkspace from 'helpers/hooks/useWorkspace';
 import { Repository } from 'helpers/interfaces/Repository';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
@@ -80,7 +80,7 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
     repositoryID: Yup.string()
       .label(t('DASHBOARD_SCREEN.REPOSITORY'))
       .required(),
-    companyID: Yup.string().required(),
+    workspaceID: Yup.string().required(),
     type: Yup.string().oneOf(['workspace', 'repository']).required(),
   });
 
@@ -89,15 +89,15 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
     initialDate: null,
     finalDate: null,
     repositoryID: repositories[0]?.repositoryID,
-    companyID: repositories[0]?.companyID,
+    workspaceID: repositories[0]?.workspaceID,
     type: type,
   };
 
   useEffect(() => {
     let isCancelled = false;
     const fetchRepositories = () => {
-      repositoryService
-        .getAll(currentWorkspace?.companyID)
+      coreService
+        .getAllRepositories(currentWorkspace?.workspaceID)
         .then((result: AxiosResponse) => {
           if (!isCancelled) {
             const repositories: Repository[] = result.data.content;
@@ -107,7 +107,7 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
               onApply({
                 ...initialValues,
                 repositoryID: repositories[0]?.repositoryID,
-                companyID: repositories[0]?.companyID,
+                workspaceID: repositories[0]?.workspaceID,
               });
             } else {
               showWarningFlash(t('API_ERRORS.EMPTY_REPOSITORY'), 5200);
@@ -122,7 +122,7 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
       } else {
         onApply({
           ...initialValues,
-          companyID: currentWorkspace.companyID,
+          workspaceID: currentWorkspace.workspaceID,
         });
       }
     }

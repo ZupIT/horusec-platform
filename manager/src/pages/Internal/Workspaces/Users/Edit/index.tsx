@@ -18,7 +18,7 @@ import React, { useState } from 'react';
 import { Dialog, Permissions } from 'components';
 import { useTranslation } from 'react-i18next';
 import Styled from './styled';
-import companyService from 'services/company';
+import coreService from 'services/core';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import { Account } from 'helpers/interfaces/Account';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
@@ -81,9 +81,9 @@ const EditUserRole: React.FC<Props> = ({
       onSubmit={(values, actions) => {
         setLoading(true);
 
-        companyService
-          .editUserInCompany(
-            currentWorkspace?.companyID,
+        coreService
+          .editUserInWorkspace(
+            currentWorkspace?.workspaceID,
             userToEdit.accountID,
             values.role
           )

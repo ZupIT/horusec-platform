@@ -19,13 +19,14 @@ import { Dialog, Permissions } from 'components';
 import { useTranslation } from 'react-i18next';
 import Styled from './styled';
 import { useTheme } from 'styled-components';
-import companyService from 'services/company';
+import coreService from 'services/core';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
 import { Workspace } from 'helpers/interfaces/Workspace';
 import * as Yup from 'yup';
 import { Formik } from 'formik';
 import SearchSelect from 'components/SearchSelect';
+
 interface Props {
   isVisible: boolean;
   onCancel: () => void;
@@ -84,9 +85,9 @@ const InviteToCompany: React.FC<Props> = ({
       onSubmit={(value, actions) => {
         setLoading(true);
 
-        companyService
-          .createUserInCompany(
-            selectedWorkspace?.companyID,
+        coreService
+          .createUserInWorkspace(
+            selectedWorkspace?.workspaceID,
             value.email,
             value.role
           )

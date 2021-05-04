@@ -19,7 +19,7 @@ import Styled from './styled';
 import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Dialog } from 'components';
-import accountService from 'services/account';
+import accountService from 'services/auth';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import * as Yup from 'yup';
 import { Formik } from 'formik';

@@ -8,7 +8,7 @@ describe('Show the message of invalid password when enter a invlaid password ou 
     cy.intercept(
       {
         method: 'POST',
-        url: 'auth/auth/authenticate',
+        url: 'auth/authenticate',
       },
       { fixture: 'login/horusec/wrong-password', statusCode: 403 }
     ).as('authenticate');

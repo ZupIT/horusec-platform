@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import accountService from 'services/account';
+import accountService from 'services/auth';
 import { setTokens } from 'helpers/localStorage/tokens';
 import { setCurrentUser } from 'helpers/localStorage/currentUser';
 import { LoginParams } from 'helpers/interfaces/LoginParams';
@@ -35,7 +35,7 @@ const login = (params: LoginParams) => {
   });
 };
 
-const logout = () => accountService.logout();
+const logout = (refreshToken?: string) => accountService.logout(refreshToken);
 
 export default {
   login,

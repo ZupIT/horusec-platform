@@ -16,7 +16,7 @@
 
 import axios, { AxiosRequestConfig, AxiosInstance } from 'axios';
 import { differenceInMinutes } from 'date-fns';
-import accountService from 'services/account';
+import accountService from 'services/auth';
 import {
   getExpiresTokenTime,
   getAccessToken,
@@ -38,7 +38,7 @@ const instance: AxiosInstance = axios.create({
 instance.interceptors.request.use(async (config: AxiosRequestConfig) => {
   const expiresAt = getExpiresTokenTime();
   const expiresRemaining = differenceInMinutes(new Date(expiresAt), new Date());
-  const isRenewTokenRoute = config.url.includes('renew-token');
+  const isRenewTokenRoute = config.url.includes('refresh-token');
   const MINUTES_RENEW = 5;
 
   if (

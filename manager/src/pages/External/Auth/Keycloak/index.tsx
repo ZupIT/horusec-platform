@@ -22,7 +22,7 @@ import useAuth from 'helpers/hooks/useAuth';
 import Styled from './styled';
 import { keycloakInstance } from 'config/keycloak';
 import { useHistory } from 'react-router-dom';
-import accountService from 'services/account';
+import accountService from 'services/auth';
 import { clearTokens, getAccessToken } from 'helpers/localStorage/tokens';
 import { setCurrentUser } from 'helpers/localStorage/currentUser';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
