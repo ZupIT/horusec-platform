@@ -10,9 +10,9 @@ import (
 	accountEnums "github.com/ZupIT/horusec-devkit/pkg/enums/account"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/auth"
 	"github.com/ZupIT/horusec-devkit/pkg/services/cache"
+	"github.com/ZupIT/horusec-devkit/pkg/services/database/enums"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/crypto"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/jwt"
-	"github.com/ZupIT/horusec-devkit/pkg/services/database/enums"
 
 	"github.com/ZupIT/horusec-platform/auth/config/app"
 	accountEntities "github.com/ZupIT/horusec-platform/auth/internal/entities/account"
