@@ -10,6 +10,7 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth/proto"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/jwt"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/parser"
+	"github.com/ZupIT/horusec-devkit/pkg/services/database/enums"
 
 	"github.com/ZupIT/horusec-platform/auth/config/app"
 	accountEntities "github.com/ZupIT/horusec-platform/auth/internal/entities/account"
@@ -191,12 +192,16 @@ func (s *Service) isRepositoryAdmin(data *authEntities.AuthorizationData) (bool,
 
 func (s *Service) checkRepositoryRequestForWorkspaceAdmin(data *authEntities.AuthorizationData,
 	err error) (bool, error) {
+	if err != enums.ErrorNotFoundRecords {
+		return false, err
+	}
+
 	isWorkspaceAdmin, workspaceErr := s.isWorkspaceAdmin(data)
 	if workspaceErr != nil {
 		return isWorkspaceAdmin, errors.Wrap(workspaceErr, err.Error())
 	}
 
-	return isWorkspaceAdmin, err
+	return isWorkspaceAdmin, nil
 }
 
 func (s *Service) isApplicationAdmin(data *authEntities.AuthorizationData) (bool, error) {

@@ -11,6 +11,7 @@ import (
 	accountEnums "github.com/ZupIT/horusec-devkit/pkg/enums/account"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/auth"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/jwt"
+	"github.com/ZupIT/horusec-devkit/pkg/services/database/enums"
 
 	"github.com/ZupIT/horusec-platform/auth/config/app"
 	accountEntities "github.com/ZupIT/horusec-platform/auth/internal/entities/account"
@@ -947,5 +948,133 @@ func TestGetUserInfo(t *testing.T) {
 		result, err := service.GetUserInfo("test")
 		assert.Error(t, err)
 		assert.Nil(t, result)
+	})
+}
+
+func TestCheckRepositoryRequestForWorkspaceAdmin(t *testing.T) {
+	t.Run("should return true for workspace admin", func(t *testing.T) {
+		accountRepositoryMock := &accountRepository.Mock{}
+		appConfig := &app.Config{}
+
+		account := &accountEntities.Account{
+			AccountID:          uuid.New(),
+			IsConfirmed:        true,
+			Email:              "test",
+			Username:           "test",
+			IsApplicationAdmin: true,
+		}
+
+		authRepositoryMock := &authRepository.Mock{}
+		authRepositoryMock.On("GetWorkspaceRole").Return(accountEnums.Admin, nil)
+
+		service := Service{
+			accountRepository: accountRepositoryMock,
+			authUseCases:      authentication.NewAuthenticationUseCases(),
+			authRepository:    authRepositoryMock,
+			appConfig:         appConfig,
+		}
+
+		token, _, _ := jwt.CreateToken(account.ToTokenData(), []string{"test"})
+		data := &authEntities.AuthorizationData{
+			Token: token,
+		}
+
+		result, err := service.checkRepositoryRequestForWorkspaceAdmin(data, enums.ErrorNotFoundRecords)
+		assert.NoError(t, err)
+		assert.True(t, result)
+	})
+
+	t.Run("should return false for workspace admin", func(t *testing.T) {
+		accountRepositoryMock := &accountRepository.Mock{}
+		appConfig := &app.Config{}
+
+		account := &accountEntities.Account{
+			AccountID:          uuid.New(),
+			IsConfirmed:        true,
+			Email:              "test",
+			Username:           "test",
+			IsApplicationAdmin: true,
+		}
+
+		authRepositoryMock := &authRepository.Mock{}
+		authRepositoryMock.On("GetWorkspaceRole").Return(accountEnums.Member, nil)
+
+		service := Service{
+			accountRepository: accountRepositoryMock,
+			authUseCases:      authentication.NewAuthenticationUseCases(),
+			authRepository:    authRepositoryMock,
+			appConfig:         appConfig,
+		}
+
+		token, _, _ := jwt.CreateToken(account.ToTokenData(), []string{"test"})
+		data := &authEntities.AuthorizationData{
+			Token: token,
+		}
+
+		result, err := service.checkRepositoryRequestForWorkspaceAdmin(data, enums.ErrorNotFoundRecords)
+		assert.NoError(t, err)
+		assert.False(t, result)
+	})
+
+	t.Run("should return false and error when failed to check for workspace admin", func(t *testing.T) {
+		accountRepositoryMock := &accountRepository.Mock{}
+		appConfig := &app.Config{}
+
+		account := &accountEntities.Account{
+			AccountID:          uuid.New(),
+			IsConfirmed:        true,
+			Email:              "test",
+			Username:           "test",
+			IsApplicationAdmin: true,
+		}
+
+		authRepositoryMock := &authRepository.Mock{}
+		authRepositoryMock.On("GetWorkspaceRole").Return(accountEnums.Member, errors.New("test"))
+
+		service := Service{
+			accountRepository: accountRepositoryMock,
+			authUseCases:      authentication.NewAuthenticationUseCases(),
+			authRepository:    authRepositoryMock,
+			appConfig:         appConfig,
+		}
+
+		token, _, _ := jwt.CreateToken(account.ToTokenData(), []string{"test"})
+		data := &authEntities.AuthorizationData{
+			Token: token,
+		}
+
+		result, err := service.checkRepositoryRequestForWorkspaceAdmin(data, enums.ErrorNotFoundRecords)
+		assert.Error(t, err)
+		assert.False(t, result)
+	})
+
+	t.Run("should return false and error when error different than not found records", func(t *testing.T) {
+		accountRepositoryMock := &accountRepository.Mock{}
+		authRepositoryMock := &authRepository.Mock{}
+		appConfig := &app.Config{}
+
+		account := &accountEntities.Account{
+			AccountID:          uuid.New(),
+			IsConfirmed:        true,
+			Email:              "test",
+			Username:           "test",
+			IsApplicationAdmin: true,
+		}
+
+		service := Service{
+			accountRepository: accountRepositoryMock,
+			authUseCases:      authentication.NewAuthenticationUseCases(),
+			authRepository:    authRepositoryMock,
+			appConfig:         appConfig,
+		}
+
+		token, _, _ := jwt.CreateToken(account.ToTokenData(), []string{"test"})
+		data := &authEntities.AuthorizationData{
+			Token: token,
+		}
+
+		result, err := service.checkRepositoryRequestForWorkspaceAdmin(data, errors.New("test"))
+		assert.Error(t, err)
+		assert.False(t, result)
 	})
 }

@@ -193,10 +193,12 @@ func (s *Service) checkRepositoryRequestForWorkspaceAdmin(data *authEntities.Aut
 	if err != enums.ErrorNotFoundRecords {
 		return false, err
 	}
+
 	isWorkspaceAdmin, workspaceErr := s.isWorkspaceAdmin(data)
 	if workspaceErr != nil {
 		return isWorkspaceAdmin, errors.Wrap(workspaceErr, err.Error())
 	}
+
 	return isWorkspaceAdmin, nil
 }
 
