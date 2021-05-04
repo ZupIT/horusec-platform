@@ -29,7 +29,7 @@ var doc = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/analytic/dashboard/{workspaceID}/dashboard-charts": {
+        "/analytic/dashboard/{workspaceID}": {
             "get": {
                 "security": [
                     {
@@ -44,7 +44,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "DashboardByWorkspace"
+                    "Dashboard"
                 ],
                 "operationId": "GetAllChartsByWorkspace",
                 "parameters": [
@@ -126,7 +126,7 @@ var doc = `{
                 }
             }
         },
-        "/analytic/dashboard/{workspaceID}/{repositoryID}/dashboard-charts": {
+        "/analytic/dashboard/{workspaceID}/{repositoryID}": {
             "get": {
                 "security": [
                     {
@@ -141,7 +141,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "DashboardByWorkspace"
+                    "Dashboard"
                 ],
                 "operationId": "GetAllChartsByRepository",
                 "parameters": [
