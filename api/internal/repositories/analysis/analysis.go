@@ -33,10 +33,10 @@ func NewRepositoriesAnalysis(connection *database.Connection) IAnalysis {
 }
 
 func (a *Analysis) FindAnalysisByID(analysisID uuid.UUID) response.IResponse {
-	return a.databaseRead.Find(
-		&analysis.Analysis{},
-		map[string]interface{}{"analysis_id": analysisID},
-		(&analysis.Analysis{}).GetTable())
+	entity := &analysis.Analysis{}
+	condition := map[string]interface{}{"analysis_id": analysisID}
+	preloads := []string{"AnalysisVulnerabilities", "AnalysisVulnerabilities.Vulnerability"}
+	return a.databaseRead.FindPreload(entity, condition, preloads, entity.GetTable())
 }
 
 func (a *Analysis) CreateFullAnalysis(newAnalysis *analysis.Analysis) error {

@@ -38,7 +38,7 @@ func (r *Repository) Update(entity *webhook.Webhook, webhookID uuid.UUID) error 
 
 func (r *Repository) ListAll(workspaceID uuid.UUID) (entities *[]webhook.Webhook, err error) {
 	condition := map[string]interface{}{"workspace_id": workspaceID}
-	res := r.dbRead.Find(entities, condition, (&webhook.Webhook{}).GetTable())
+	res := r.dbRead.Find(&[]webhook.Webhook{}, condition, (&webhook.Webhook{}).GetTable())
 	if res.GetErrorExceptNotFound() != nil {
 		return &[]webhook.Webhook{}, res.GetErrorExceptNotFound()
 	}
@@ -49,7 +49,7 @@ func (r *Repository) ListAll(workspaceID uuid.UUID) (entities *[]webhook.Webhook
 }
 
 func (r *Repository) ListOne(condition map[string]interface{}) (entity *webhook.Webhook, err error) {
-	res := r.dbRead.Find(entity, condition, (&webhook.Webhook{}).GetTable())
+	res := r.dbRead.Find(&webhook.Webhook{}, condition, (&webhook.Webhook{}).GetTable())
 	if res.GetErrorExceptNotFound() != nil {
 		return &webhook.Webhook{}, res.GetErrorExceptNotFound()
 	}
