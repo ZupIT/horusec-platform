@@ -406,6 +406,7 @@ const Vulnerabilities: React.FC = () => {
                       colors.vulnerabilities.DEFAULT
                     ),
                   }}
+                  variant="filled"
                   width="150px"
                   value={row.severity}
                   options={severities.slice(1)}
@@ -420,6 +421,7 @@ const Vulnerabilities: React.FC = () => {
                   value={row.type}
                   options={vulnTypes.slice(1)}
                   width="200px"
+                  variant="filled"
                   disabled={!isAdminOrSupervisorOfRepository()}
                   onChangeValue={(value) =>
                     handleUpdateVulnerabilityType(row, value)
