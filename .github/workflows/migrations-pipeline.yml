@@ -13,13 +13,6 @@ jobs:
         working-directory: migrations
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-go@v2
-      - name: lint
-        run: make lint
-      - name: test
-        run: make test
-      - name: coverage
-        run: make coverage
       - name: build
         run: make build
       - name: security
