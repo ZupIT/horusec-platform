@@ -19,7 +19,7 @@ import { Calendar, Checkbox, Dialog } from 'components';
 import { useTranslation } from 'react-i18next';
 import Styled from './styled';
 import { useTheme } from 'styled-components';
-import core2Service from 'services/core2';
+import coreService from 'services/core';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 
 import SuccessAddToken from './Success';
@@ -84,8 +84,8 @@ const AddToken: React.FC<Props> = ({
       delete data.expiresAt;
     }
 
-    core2Service
-      .createToken(
+    coreService
+      .createTokenInRepository(
         currentRepository.workspaceID,
         currentRepository.repositoryID,
         data

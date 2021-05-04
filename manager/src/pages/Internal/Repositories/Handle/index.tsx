@@ -19,7 +19,7 @@ import { Dialog, Input } from 'components';
 import { useTranslation } from 'react-i18next';
 import Styled from './styled';
 import { useTheme } from 'styled-components';
-import core2Service from 'services/core2';
+import coreService from 'services/core';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
 import { getCurrentConfig } from 'helpers/localStorage/horusecConfig';
@@ -57,12 +57,17 @@ const HandleRepository: React.FC<Props> = ({
     values: InitialValue,
     actions: FormikHelpers<InitialValue>
   ) => {
-    core2Service
-      .create(currentWorkspace.workspaceID, values.name, values.description, {
-        authzAdmin: values.authzAdmin,
-        authzMember: values.authzMember,
-        authzSupervisor: values.authzSupervisor,
-      })
+    coreService
+      .createRepository(
+        currentWorkspace.workspaceID,
+        values.name,
+        values.description,
+        {
+          authzAdmin: values.authzAdmin,
+          authzMember: values.authzMember,
+          authzSupervisor: values.authzSupervisor,
+        }
+      )
       .then(() => {
         onConfirm();
         showSuccessFlash(t('REPOSITORIES_SCREEN.SUCCESS_CREATE_REPO'));
@@ -80,8 +85,8 @@ const HandleRepository: React.FC<Props> = ({
     values: InitialValue,
     actions: FormikHelpers<InitialValue>
   ) => {
-    core2Service
-      .update(
+    coreService
+      .updateRepository(
         repositoryToEdit.workspaceID,
         repositoryToEdit.repositoryID,
         values.name,

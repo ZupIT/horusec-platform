@@ -19,7 +19,7 @@ import Styled from './styled';
 import { SearchBar, Select, Icon, Datatable, Datasource } from 'components';
 import { useTranslation } from 'react-i18next';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
-import core2Service from 'services/core2';
+import coreService from 'services/core';
 import { Repository } from 'helpers/interfaces/Repository';
 import { PaginationInfo } from 'helpers/interfaces/Pagination';
 import { Vulnerability } from 'helpers/interfaces/Vulnerability';
@@ -142,8 +142,8 @@ const Vulnerabilities: React.FC = () => {
     vulnerability: Vulnerability,
     type: string
   ) => {
-    core2Service
-      .updateVulnerabilityType(
+    coreService
+      .updateVulnerabilityTypeInRepository(
         filters.workspaceID,
         filters.repositoryID,
         vulnerability.vulnerabilityID,
@@ -168,8 +168,8 @@ const Vulnerabilities: React.FC = () => {
     vulnerability: Vulnerability,
     severity: string
   ) => {
-    core2Service
-      .updateVulnerabilitySeverity(
+    coreService
+      .updateVulnerabilitySeverityInRepository(
         filters.workspaceID,
         filters.repositoryID,
         vulnerability.vulnerabilityID,
@@ -194,8 +194,8 @@ const Vulnerabilities: React.FC = () => {
     let isCancelled = false;
 
     const fetchRepositories = () => {
-      core2Service
-        .getAll(currentWorkspace?.workspaceID)
+      coreService
+        .getAllRepositories(currentWorkspace?.workspaceID)
         .then((result: AxiosResponse) => {
           if (!isCancelled) {
             const response = result.data.content;
@@ -240,8 +240,8 @@ const Vulnerabilities: React.FC = () => {
         if (filterAux.vulnSeverity === 'All') filterAux.vulnSeverity = null;
         if (filterAux.vulnType === 'All') filterAux.vulnType = null;
 
-        core2Service
-          .getAllVulnerabilities(filterAux, page)
+        coreService
+          .getAllVulnerabilitiesInRepository(filterAux, page)
           .then((result: AxiosResponse) => {
             if (!isCancelled) {
               const response = result.data?.content;

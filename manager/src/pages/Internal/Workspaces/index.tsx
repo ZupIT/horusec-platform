@@ -70,7 +70,7 @@ const Workspaces: React.FC = () => {
   const handleConfirmDeleteWorkspace = () => {
     setDeleteIsLoading(true);
     coreService
-      .remove(workspaceToDelete.workspaceID)
+      .deleteWorkspace(workspaceToDelete.workspaceID)
       .then(() => {
         showSuccessFlash(t('WORKSPACES_SCREEN.REMOVE_SUCCESS'));
         setWorkspaceToDelete(null);

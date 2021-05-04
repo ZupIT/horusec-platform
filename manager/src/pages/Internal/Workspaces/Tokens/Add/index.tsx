@@ -87,7 +87,7 @@ const AddToken: React.FC<Props> = ({
     }
 
     coreService
-      .createToken(selectedWorkspace.workspaceID, data)
+      .createTokenInWorkspace(selectedWorkspace.workspaceID, data)
       .then((res) => {
         onConfirm();
         actions.resetForm();

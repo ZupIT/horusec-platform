@@ -19,7 +19,7 @@ import Styled from './styled';
 import { useTranslation } from 'react-i18next';
 import { Calendar } from 'components';
 import { FilterValues } from 'helpers/interfaces/FilterValues';
-import core2Service from 'services/core2';
+import coreService from 'services/core';
 import useWorkspace from 'helpers/hooks/useWorkspace';
 import { Repository } from 'helpers/interfaces/Repository';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
@@ -96,8 +96,8 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
   useEffect(() => {
     let isCancelled = false;
     const fetchRepositories = () => {
-      core2Service
-        .getAll(currentWorkspace?.workspaceID)
+      coreService
+        .getAllRepositories(currentWorkspace?.workspaceID)
         .then((result: AxiosResponse) => {
           if (!isCancelled) {
             const repositories: Repository[] = result.data.content;

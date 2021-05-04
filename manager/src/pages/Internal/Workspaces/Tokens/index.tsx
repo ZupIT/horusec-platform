@@ -47,7 +47,7 @@ const Tokens: React.FC<Props> = ({ isVisible, onClose, selectedWorkspace }) => {
   const fetchData = () => {
     setLoading(true);
     coreService
-      .getAllTokens(selectedWorkspace.workspaceID)
+      .getAllTokensOfWorkspace(selectedWorkspace.workspaceID)
       .then((result) => {
         setTokens(result?.data?.content);
       })
@@ -62,7 +62,7 @@ const Tokens: React.FC<Props> = ({ isVisible, onClose, selectedWorkspace }) => {
   const handleConfirmDeleteToken = () => {
     setDeleteIsLoading(true);
     coreService
-      .removeToken(tokenToDelete.workspaceID, tokenToDelete.tokenID)
+      .removeTokenOfWorkspace(tokenToDelete.workspaceID, tokenToDelete.tokenID)
       .then(() => {
         showSuccessFlash(t('WORKSPACES_SCREEN.REMOVE_SUCCESS_TOKEN'));
         setTokenToDelete(null);

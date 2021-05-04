@@ -17,16 +17,18 @@
 import http from 'config/axios';
 import { LDAPGroups } from 'helpers/interfaces/LDAPGroups';
 import { SERVICE_CORE } from '../config/endpoints';
+import { FilterVuln } from 'helpers/interfaces/FIlterVuln';
+import { PaginationInfo } from 'helpers/interfaces/Pagination';
 
-const getAll = () => {
+const getAllWorkspaces = () => {
   return http.get(`${SERVICE_CORE}/core/workspaces`);
 };
 
-const getOne = (workspaceID: string) => {
+const getOneWorkspace = (workspaceID: string) => {
   return http.get(`${SERVICE_CORE}/core/workspaces/${workspaceID}`);
 };
 
-const create = (
+const createWorkspace = (
   name: string,
   description?: string,
   ldapGroups?: LDAPGroups
@@ -38,7 +40,7 @@ const create = (
   });
 };
 
-const update = (
+const updateWorkspace = (
   workspaceID: string,
   name: string,
   description?: string,
@@ -51,7 +53,7 @@ const update = (
   });
 };
 
-const remove = (workspaceID: string) => {
+const deleteWorkspace = (workspaceID: string) => {
   return http.delete(`${SERVICE_CORE}/core/workspaces/${workspaceID}`);
 };
 
@@ -89,11 +91,11 @@ const removeUserInWorkspace = (workspaceID: string, accountId: string) => {
   );
 };
 
-const getAllTokens = (workspaceID: string) => {
+const getAllTokensOfWorkspace = (workspaceID: string) => {
   return http.get(`${SERVICE_CORE}/core/workspaces/${workspaceID}/tokens`);
 };
 
-const createToken = (
+const createTokenInWorkspace = (
   workspaceID: string,
   data: {
     description: string;
@@ -106,23 +108,208 @@ const createToken = (
   });
 };
 
-const removeToken = (workspaceID: string, tokenId: string) => {
+const removeTokenOfWorkspace = (workspaceID: string, tokenId: string) => {
   return http.delete(
     `${SERVICE_CORE}/core/workspaces/${workspaceID}/tokens/${tokenId}`
   );
 };
 
+const getAllRepositories = (workspaceID: string) => {
+  return http.get(
+    `${SERVICE_CORE}/core/workspaces/${workspaceID}/repositories`
+  );
+};
+
+const createRepository = (
+  workspaceID: string,
+  name: string,
+  description: string,
+  ldapGroups?: LDAPGroups
+) => {
+  return http.post(
+    `${SERVICE_CORE}/core/workspaces/${workspaceID}/repositories`,
+    {
+      name,
+      description,
+      ...ldapGroups,
+    }
+  );
+};
+
+const updateRepository = (
+  workspaceID: string,
+  repositoryId: string,
+  name: string,
+  description: string,
+  ldapGroups?: LDAPGroups
+) => {
+  return http.patch(
+    `${SERVICE_CORE}/core/workspaces/${workspaceID}/repositories/${repositoryId}`,
+    { name, description, ...ldapGroups }
+  );
+};
+
+const deleteRepository = (workspaceID: string, repositoryId: string) => {
+  return http.delete(
+    `${SERVICE_CORE}/core/workspaces/${workspaceID}/repositories/${repositoryId}`
+  );
+};
+
+const getAllTokensOfRepository = (
+  workspaceID: string,
+  repositoryId: string
+) => {
+  return http.get(
+    `${SERVICE_CORE}/core/workspaces/${workspaceID}/repositories/${repositoryId}/tokens`
+  );
+};
+
+const createTokenInRepository = (
+  workspaceID: string,
+  repositoryId: string,
+  data: {
+    description: string;
+    isExpirable?: boolean;
+    expiredAt?: string;
+  }
+) => {
+  return http.post(
+    `${SERVICE_CORE}/core/workspaces/${workspaceID}/repositories/${repositoryId}/tokens`,
+    {
+      ...data,
+    }
+  );
+};
+
+const removeTokenOfRepository = (
+  workspaceID: string,
+  repositoryId: string,
+  tokenId: string
+) => {
+  return http.delete(
+    `${SERVICE_CORE}/core/workspaces/${workspaceID}/repositories/${repositoryId}/tokens/${tokenId}`
+  );
+};
+
+const getUsersInRepository = (workspaceID: string, repositoryId: string) => {
+  return http.get(
+    `${SERVICE_CORE}/core/workspaces/${workspaceID}/repositories/${repositoryId}/roles`
+  );
+};
+
+const includeUserInRepository = (
+  workspaceID: string,
+  repositoryId: string,
+  email: string,
+  role: string,
+  accountID: string,
+  username: string
+) => {
+  return http.post(
+    `${SERVICE_CORE}/core/workspaces/${workspaceID}/repositories/${repositoryId}/roles`,
+    {
+      email,
+      role,
+      accountID,
+      username,
+    }
+  );
+};
+const removeUserOfRepository = (
+  workspaceID: string,
+  repositoryId: string,
+  accountId: string
+) => {
+  return http.delete(
+    `${SERVICE_CORE}/core/workspaces/${workspaceID}/repositories/${repositoryId}/roles/${accountId}`
+  );
+};
+
+const updateUserRoleInRepository = (
+  workspaceID: string,
+  repositoryId: string,
+  accountId: string,
+  role: string
+) => {
+  return http.patch(
+    `${SERVICE_CORE}/core/workspaces/${workspaceID}/repositories/${repositoryId}/roles/${accountId}`,
+    {
+      role,
+    }
+  );
+};
+
+const getAllVulnerabilitiesInRepository = (
+  filters: FilterVuln,
+  pagination: PaginationInfo
+) => {
+  return http.get(
+    `${SERVICE_CORE}/core/workspaces/${filters.workspaceID}/repositories/${filters.repositoryID}/management`,
+    {
+      params: {
+        page: pagination.currentPage,
+        size: pagination.pageSize,
+        vulnSeverity: filters.vulnSeverity,
+        vulnHash: filters.vulnHash,
+        vulnType: filters.vulnType,
+      },
+    }
+  );
+};
+
+const updateVulnerabilityTypeInRepository = (
+  workspaceID: string,
+  repositoryId: string,
+  vulnerabilityId: string,
+  type: string
+) => {
+  return http.put(
+    `${SERVICE_CORE}/core/workspaces/${workspaceID}/repositories/${repositoryId}/management/${vulnerabilityId}/type`,
+    {
+      type,
+    }
+  );
+};
+
+const updateVulnerabilitySeverityInRepository = (
+  workspaceID: string,
+  repositoryId: string,
+  vulnerabilityId: string,
+  severity: string
+) => {
+  return http.put(
+    `${SERVICE_CORE}/core/workspaces/${workspaceID}/repositories/${repositoryId}/management/${vulnerabilityId}/severity`,
+    {
+      severity,
+    }
+  );
+};
+
 export default {
-  getAll,
-  create,
-  update,
-  remove,
-  getOne,
+  getAllWorkspaces,
+  createWorkspace,
+  updateWorkspace,
+  deleteWorkspace,
+  getOneWorkspace,
   getUsersInWorkspace,
   createUserInWorkspace,
   editUserInWorkspace,
   removeUserInWorkspace,
-  createToken,
-  removeToken,
-  getAllTokens,
+  createTokenInWorkspace,
+  removeTokenOfWorkspace,
+  getAllTokensOfWorkspace,
+  getAllRepositories,
+  createRepository,
+  updateRepository,
+  deleteRepository,
+  getAllTokensOfRepository,
+  createTokenInRepository,
+  removeTokenOfRepository,
+  getUsersInRepository,
+  includeUserInRepository,
+  removeUserOfRepository,
+  updateUserRoleInRepository,
+  getAllVulnerabilitiesInRepository,
+  updateVulnerabilityTypeInRepository,
+  updateVulnerabilitySeverityInRepository,
 };

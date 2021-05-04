@@ -26,7 +26,6 @@ import {
   Datasource,
 } from 'components';
 import { Account } from 'helpers/interfaces/Account';
-import core2Service from 'services/core2';
 import coreService from 'services/core';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import { getCurrentUser } from 'helpers/localStorage/currentUser';
@@ -76,7 +75,7 @@ const InviteToRepository: React.FC<Props> = ({
   ];
 
   const fetchUsersInRepository = (allUsersInWorkspace: Account[]) => {
-    core2Service
+    coreService
       .getUsersInRepository(repoToInvite.workspaceID, repoToInvite.repositoryID)
       .then((result) => {
         const accountIds: string[] = [];
@@ -127,8 +126,8 @@ const InviteToRepository: React.FC<Props> = ({
   };
 
   const inviteUserToRepository = (account: Account) => {
-    core2Service
-      .includeUser(
+    coreService
+      .includeUserInRepository(
         repoToInvite.workspaceID,
         repoToInvite.repositoryID,
         account.email,
@@ -146,8 +145,8 @@ const InviteToRepository: React.FC<Props> = ({
   };
 
   const removeUserOfRepository = (account: Account) => {
-    core2Service
-      .removeUser(
+    coreService
+      .removeUserOfRepository(
         repoToInvite.workspaceID,
         repoToInvite.repositoryID,
         account.accountID
@@ -170,8 +169,8 @@ const InviteToRepository: React.FC<Props> = ({
   };
 
   const handleChangeUserRole = (role: string, account: Account) => {
-    core2Service
-      .updateUserRole(
+    coreService
+      .updateUserRoleInRepository(
         repoToInvite.workspaceID,
         repoToInvite.repositoryID,
         account.accountID,

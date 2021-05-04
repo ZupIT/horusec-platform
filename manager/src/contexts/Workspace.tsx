@@ -55,7 +55,7 @@ const WorkspaceProvider = ({ children }: { children: JSX.Element }) => {
 
   const fetchAll = (redirect?: boolean) => {
     coreService
-      .getAll()
+      .getAllWorkspaces()
       .then((result) => {
         const workspaces = result?.data?.content as Workspace[];
 

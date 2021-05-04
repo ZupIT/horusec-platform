@@ -55,7 +55,7 @@ const HandleWorkspace: React.FC<Props> = ({
     actions: FormikHelpers<InitialValue>
   ) => {
     coreService
-      .create(values.name, values.description, {
+      .createWorkspace(values.name, values.description, {
         authzAdmin: values.authzAdmin,
         authzMember: values.authzMember,
       })
@@ -77,10 +77,15 @@ const HandleWorkspace: React.FC<Props> = ({
     actions: FormikHelpers<InitialValue>
   ) => {
     coreService
-      .update(workspaceToEdit.workspaceID, values.name, values.description, {
-        authzAdmin: values.authzAdmin,
-        authzMember: values.authzMember,
-      })
+      .updateWorkspace(
+        workspaceToEdit.workspaceID,
+        values.name,
+        values.description,
+        {
+          authzAdmin: values.authzAdmin,
+          authzMember: values.authzMember,
+        }
+      )
       .then(() => {
         onConfirm();
         showSuccessFlash(t('WORKSPACES_SCREEN.UPDATE_SUCCESS'));

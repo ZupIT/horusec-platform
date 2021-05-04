@@ -19,7 +19,7 @@ import Styled from './styled';
 import { Repository } from 'helpers/interfaces/Repository';
 import { useTranslation } from 'react-i18next';
 import { Button, Dialog, Datatable, Datasource } from 'components';
-import core2Service from 'services/core2';
+import coreService from 'services/core';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import { RepositoryToken } from 'helpers/interfaces/RepositoryToken';
 import AddToken from './Add';
@@ -50,8 +50,8 @@ const Tokens: React.FC<Props> = ({
 
   const fetchData = () => {
     setLoading(true);
-    core2Service
-      .getAllTokens(
+    coreService
+      .getAllTokensOfRepository(
         repoToManagerTokens.workspaceID,
         repoToManagerTokens.repositoryID
       )
@@ -68,8 +68,8 @@ const Tokens: React.FC<Props> = ({
 
   const handleConfirmDeleteToken = () => {
     setDeleteIsLoading(true);
-    core2Service
-      .removeToken(
+    coreService
+      .removeTokenOfRepository(
         tokenToDelete.workspaceID,
         tokenToDelete.repositoryID,
         tokenToDelete.tokenID
