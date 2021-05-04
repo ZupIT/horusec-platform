@@ -1,7 +1,9 @@
 package authentication
 
+import "github.com/lib/pq"
+
 type AuthzGroups struct {
-	AuthzMember     []string `json:"authzMember"`
-	AuthzAdmin      []string `json:"authzAdmin"`
-	AuthzSupervisor []string `json:"authzSupervisor"`
+	AuthzMember     pq.StringArray `json:"authzMember" gorm:"type:text[]"`
+	AuthzAdmin      pq.StringArray `json:"authzAdmin" gorm:"type:text[]"`
+	AuthzSupervisor pq.StringArray `json:"authzSupervisor" gorm:"type:text[]"`
 }
