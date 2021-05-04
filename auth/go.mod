@@ -4,7 +4,7 @@ go 1.16
 
 require (
 	github.com/Nerzal/gocloak/v7 v7.11.0
-	github.com/ZupIT/horusec-devkit v0.0.0-20210504121621-c5bbaaaefd67
+	github.com/ZupIT/horusec-devkit v0.0.0-20210504162412-e540a771dea0
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
 	github.com/go-asn1-ber/asn1-ber v1.5.3 // indirect
 	github.com/go-chi/chi v4.1.2+incompatible
