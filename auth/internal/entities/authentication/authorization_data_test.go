@@ -18,8 +18,8 @@ func TestNewHorusecAuthenticationService(t *testing.T) {
 
 		_ = data.SetGroups(authzGroups)
 
-		assert.Equal(t, authzGroups.AuthzAdmin, data.AuthzAdmin)
-		assert.Equal(t, authzGroups.AuthzSupervisor, data.AuthzSupervisor)
-		assert.Equal(t, authzGroups.AuthzMember, data.AuthzMember)
+		assert.Equal(t, []string(authzGroups.AuthzAdmin), data.AuthzAdmin)
+		assert.Equal(t, []string(authzGroups.AuthzSupervisor), data.AuthzSupervisor)
+		assert.Equal(t, []string(authzGroups.AuthzMember), data.AuthzMember)
 	})
 }
