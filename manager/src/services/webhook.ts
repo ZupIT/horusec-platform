@@ -16,10 +16,10 @@
 
 import http from 'config/axios';
 import { WebhookHeader } from 'helpers/interfaces/Webhook';
-import { SERVICE_CORE } from '../config/endpoints';
+import { SERVICE_WEBHOOK } from '../config/endpoints';
 
 const getAll = (workspaceID: string) => {
-  return http.get(`${SERVICE_CORE}/account/webhook/${workspaceID}`);
+  return http.get(`${SERVICE_WEBHOOK}/webhook/webhook/${workspaceID}`);
 };
 
 const create = (
@@ -31,7 +31,7 @@ const create = (
   description: string
 ) => {
   return http.post(
-    `${SERVICE_CORE}/account/webhook/${workspaceID}/${repositoryID}`,
+    `${SERVICE_WEBHOOK}/webhook/webhook/${workspaceID}/${repositoryID}`,
     {
       url,
       method,
@@ -51,7 +51,7 @@ const update = (
   description: string
 ) => {
   return http.put(
-    `${SERVICE_CORE}/account/webhook/${workspaceID}/${repositoryID}/${webhookID}`,
+    `${SERVICE_WEBHOOK}/webhook/webhook/${workspaceID}/${repositoryID}/${webhookID}`,
     {
       url,
       method,
@@ -67,7 +67,7 @@ const remove = (
   webhookID: string
 ) => {
   return http.delete(
-    `${SERVICE_CORE}/account/webhook/${workspaceID}/${repositoryID}/${webhookID}`
+    `${SERVICE_WEBHOOK}/webhook/webhook/${workspaceID}/${repositoryID}/${webhookID}`
   );
 };
 

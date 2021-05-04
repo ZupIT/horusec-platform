@@ -16,8 +16,8 @@
 
 export interface FilterVuln {
   workspaceID: string;
-  repositoryID: string;
-  vulnSeverity: string;
-  vulnHash: string;
-  vulnType: string;
+  repositoryID?: string;
+  vulnSeverity?: string;
+  vulnHash?: string;
+  vulnType?: string;
 }

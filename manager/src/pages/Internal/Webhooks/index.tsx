@@ -194,6 +194,7 @@ const Webhooks: React.FC = () => {
             return data;
           })}
           isLoading={isLoading}
+          emptyListText={t('WEBHOOK_SCREEN.TABLE.EMPTY')}
         />
       </Styled.Content>
 
