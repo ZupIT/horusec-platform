@@ -1,6 +1,7 @@
 DOCKER_COMPOSE ?= docker-compose
 
 compose-dev:
+	$(DOCKER_COMPOSE) -f deployments/compose/compose-dev.yaml down
 	$(DOCKER_COMPOSE) -f deployments/compose/compose-dev.yaml up -d --build
 
 install: compose-dev migrate
