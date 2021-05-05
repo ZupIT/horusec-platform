@@ -16,12 +16,16 @@
 declare global {
   interface Window {
     REACT_APP_HORUSEC_ENDPOINT_CORE: string;
+    REACT_APP_HORUSEC_ENDPOINT_API: string;
     REACT_APP_HORUSEC_ENDPOINT_ANALYTIC: string;
     REACT_APP_HORUSEC_ENDPOINT_AUTH: string;
     REACT_APP_HORUSEC_ENDPOINT_VULNERABILITY: string;
     REACT_APP_HORUSEC_ENDPOINT_WEBHOOK: string;
   }
 }
+
+const SERVICE_API =
+  window.REACT_APP_HORUSEC_ENDPOINT_API || 'http://127.0.0.1:8000';
 
 const SERVICE_VULNERABILITY =
   window.REACT_APP_HORUSEC_ENDPOINT_VULNERABILITY || 'http://127.0.0.1:8001';
@@ -44,6 +48,7 @@ const isLocalHost = (endpoint: string) =>
 if (
   isLocalHost(SERVICE_AUTH) ||
   isLocalHost(SERVICE_CORE) ||
+  isLocalHost(SERVICE_API) ||
   isLocalHost(SERVICE_VULNERABILITY) ||
   isLocalHost(SERVICE_ANALYTIC) ||
   isLocalHost(SERVICE_WEBHOOK)
@@ -57,6 +62,7 @@ https://horusec.io/docs/tutorials/how-to-run-the-web-application-on-other-host`)
 
 export {
   SERVICE_CORE,
+  SERVICE_API,
   SERVICE_ANALYTIC,
   SERVICE_AUTH,
   SERVICE_VULNERABILITY,

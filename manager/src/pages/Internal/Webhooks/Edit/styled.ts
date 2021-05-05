@@ -17,6 +17,10 @@
 import styled from 'styled-components';
 import { Input, Select, Icon } from 'components';
 
+interface SelectProps {
+  color: string;
+}
+
 const Form = styled.form`
   display: flex;
   flex-direction: column;
@@ -24,7 +28,6 @@ const Form = styled.form`
 
 const Field = styled(Input)`
   display: block;
-  margin-right: 20px;
 `;
 
 const Label = styled.label`
@@ -37,9 +40,11 @@ const Wrapper = styled.div`
   display: flex;
   align-items: center;
   margin-bottom: 25px;
+  gap: 20px;
 `;
 
-const URLSelect = styled(Select)`
+const URLSelect = styled(Select)<SelectProps>`
+  background-color: ${({ color }) => color} !important;
   opacity: 1 !important;
   margin-right: 20px;
 
@@ -48,9 +53,7 @@ const URLSelect = styled(Select)`
   }
 `;
 
-const OptionIcon = styled(Icon)`
-  margin-right: 10px;
-`;
+const OptionIcon = styled(Icon)``;
 
 export default {
   Form,

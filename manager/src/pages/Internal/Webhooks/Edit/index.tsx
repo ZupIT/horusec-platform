@@ -28,8 +28,10 @@ import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import webhookService from 'services/webhook';
 import { Webhook, WebhookHeader } from 'helpers/interfaces/Webhook';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
-import { cloneDeep } from 'lodash';
 import useWorkspace from 'helpers/hooks/useWorkspace';
+import { FieldArray, Formik, FormikHelpers } from 'formik';
+import * as Yup from 'yup';
+import SearchSelect from 'components/SearchSelect';
 
 interface Props {
   isVisible: boolean;
@@ -56,36 +58,26 @@ const AddWebhook: React.FC<Props> = ({
   const [isLoading, setLoading] = useState(false);
   const [httpMethod, setHttpMethod] = useState(webhookToEdit?.method);
   const [repositories, setRepositories] = useState<Repository[]>([]);
-  const [selectedRepository, setSelectedRepository] = useState<Repository>(
-    webhookToEdit?.repository
-  );
-  const [url, setUrl] = useState<Field>({
-    value: webhookToEdit?.url,
-    isValid: false,
-  });
-  const [headers, setHeaders] = useState<WebhookHeader[]>([
-    { key: '', value: '' },
-  ]);
-  const [description, setDescription] = useState<Field>({
-    value: webhookToEdit?.description,
-    isValid: false,
-  });
 
-  const handleConfirmSave = () => {
+  const handleConfirmSave = (
+    values: InitialValue,
+    action: FormikHelpers<InitialValue>
+  ) => {
     setLoading(true);
 
     webhookService
       .update(
         currentWorkspace?.workspaceID,
-        selectedRepository.repositoryID,
-        webhookToEdit.webhookID,
-        url.value,
-        httpMethod,
-        headers,
-        description.value
+        webhookToEdit?.webhookID,
+        values.repositoryID,
+        values.url,
+        values.httpMethod,
+        values.headers,
+        values.description
       )
       .then(() => {
         showSuccessFlash(t('WEBHOOK_SCREEN.SUCCESS_UPDATE'));
+        action.resetForm();
         onConfirm();
       })
       .catch((err) => {
@@ -108,142 +100,139 @@ const AddWebhook: React.FC<Props> = ({
     fetchRepositories();
   }, [currentWorkspace]);
 
-  useEffect(() => {
-    if (webhookToEdit) {
-      const { url, headers, description, method, repository } = webhookToEdit;
+  const ValidationScheme = Yup.object({
+    description: Yup.string().optional(),
+    url: Yup.string()
+      .test('validUrl', t('WEBHOOK_SCREEN.INVALID_URL'), isValidURL)
+      .required(t('WEBHOOK_SCREEN.INVALID_URL')),
+    headers: Yup.array<WebhookHeader[]>().required(),
+    repositoryID: Yup.string().required(),
+    httpMethod: Yup.string().required(),
+  });
 
-      setDescription({ isValid: true, value: description });
-      setUrl({ isValid: true, value: url });
-      setSelectedRepository(repository);
-      setHttpMethod(method);
-      setHeaders(headers);
-    }
-  }, [webhookToEdit]);
+  type InitialValue = Yup.InferType<typeof ValidationScheme>;
 
-  const handleSetHeader = (index: number, key: string, value: string) => {
-    const headersCopy = cloneDeep(headers);
-    const header = { key, value };
-    headersCopy[index] = header;
-    setHeaders(headersCopy);
-  };
-
-  const handleRemoveHeader = () => {
-    const headersCopy = cloneDeep(headers);
-    headersCopy.pop();
-    setHeaders(headersCopy);
+  const initialValues: InitialValue = {
+    description: webhookToEdit?.description || '',
+    url: webhookToEdit?.url || '',
+    headers: webhookToEdit?.headers || [{ key: '', value: '' }],
+    repositoryID: '',
+    httpMethod: '',
   };
 
   return (
-    <Dialog
-      isVisible={isVisible}
-      message={t('WEBHOOK_SCREEN.EDIT')}
-      onCancel={onCancel}
-      onConfirm={handleConfirmSave}
-      confirmText={t('WEBHOOK_SCREEN.SAVE')}
-      disableConfirm={!url.isValid || !selectedRepository}
-      disabledColor={colors.button.disableInDark}
-      loadingConfirm={isLoading}
-      width={600}
-      hasCancel
+    <Formik
+      initialValues={initialValues}
+      enableReinitialize={true}
+      validationSchema={ValidationScheme}
+      onSubmit={(values, actions) => {
+        setLoading(true);
+        handleConfirmSave(values, actions);
+      }}
     >
-      <Styled.Form>
-        <Styled.Label>{t('WEBHOOK_SCREEN.DESCRIPTION_LABEL')}</Styled.Label>
-
-        <Styled.Field
-          label={t('WEBHOOK_SCREEN.DESCRIPTION')}
-          onChangeValue={(field: Field) => setDescription(field)}
-          initialValue={description.value}
-          name="description"
-          type="text"
-          width="100%"
-        />
-
-        <Styled.Label>{t('WEBHOOK_SCREEN.RESPOSITORY_LABEL')}</Styled.Label>
-
-        <Select
-          width="100%"
-          options={repositories.map((el) => ({ label: el.name, value: el }))}
-          value={selectedRepository}
-          label={t('WEBHOOK_SCREEN.REPOSITORY')}
-          onChangeValue={(value) => setSelectedRepository(value)}
-        />
-
-        <Styled.Label>{t('WEBHOOK_SCREEN.URL_LABEL')}</Styled.Label>
-
-        <Styled.Wrapper>
-          <Styled.URLSelect
-            width="100px"
-            value={httpMethod}
-            options={webhookHttpMethods.map((el) => ({
-              label: el.value,
-              value: el.value,
-            }))}
-            onChangeValue={(item) => setHttpMethod(item)}
-            disabled
-            style={{
-              backgroundColor: get(
-                colors.methods,
-                httpMethod?.toLocaleLowerCase()
-              ),
-            }}
-          />
-
-          <Styled.Field
-            label={t('WEBHOOK_SCREEN.URL')}
-            onChangeValue={(field: Field) => setUrl(field)}
-            name="url"
-            type="text"
-            width="400px"
-            validation={isValidURL}
-            invalidMessage={t('WEBHOOK_SCREEN.INVALID_URL')}
-            initialValue={url.value}
-          />
-        </Styled.Wrapper>
-
-        <Styled.Label>{t('WEBHOOK_SCREEN.HEADERS_LABEL')}</Styled.Label>
-
-        {headers?.map((header, index) => (
-          <Styled.Wrapper key={index}>
-            <Styled.Field
-              label={t('WEBHOOK_SCREEN.KEY')}
-              name={`key-${index}`}
-              onChangeValue={({ value }) =>
-                handleSetHeader(index, value, headers[index].value)
-              }
-              width="200px"
-              initialValue={headers[index]?.key}
-            />
+      {(props) => {
+        <Dialog
+          isVisible={isVisible}
+          message={t('WEBHOOK_SCREEN.EDIT')}
+          onCancel={() => {
+            props.resetForm();
+            onCancel();
+          }}
+          onConfirm={props.submitForm}
+          confirmText={t('WEBHOOK_SCREEN.SAVE')}
+          disableConfirm={!props.isValid}
+          disabledColor={colors.button.disableInDark}
+          loadingConfirm={isLoading}
+          width={600}
+          hasCancel
+        >
+          <Styled.Form>
+            <Styled.Label>{t('WEBHOOK_SCREEN.DESCRIPTION_LABEL')}</Styled.Label>
 
             <Styled.Field
-              label={t('WEBHOOK_SCREEN.VALUE')}
-              name={`value-${index}`}
-              type="text"
-              onChangeValue={({ value }) =>
-                handleSetHeader(index, headers[index].key, value)
-              }
-              width="200px"
-              initialValue={headers[index]?.value}
+              label={t('WEBHOOK_SCREEN.DESCRIPTION')}
+              name="description"
+              width="100%"
             />
 
-            {index + 1 === headers.length && headers.length !== 1 ? (
-              <Styled.OptionIcon
-                name="delete"
-                size="20px"
-                onClick={handleRemoveHeader}
-              />
-            ) : null}
+            <Styled.Label>{t('WEBHOOK_SCREEN.RESPOSITORY_LABEL')}</Styled.Label>
 
-            {index + 1 === headers?.length && headers?.length !== 5 ? (
-              <Styled.OptionIcon
-                name="plus"
-                size="20px"
-                onClick={() => setHeaders([...headers, { key: '', value: '' }])}
+            <SearchSelect
+              options={repositories.map((el) => ({
+                label: el.name,
+                value: el.repositoryID,
+              }))}
+              label={t('WEBHOOK_SCREEN.REPOSITORY')}
+              width="100%"
+              name="repositoryID"
+            />
+
+            <Styled.Label>{t('WEBHOOK_SCREEN.URL_LABEL')}</Styled.Label>
+
+            <Styled.Wrapper>
+              <SearchSelect
+                label={t('WEBHOOK_SCREEN.TABLE.METHOD')}
+                name="httpMethod"
+                width="50%"
+                options={webhookHttpMethods.map((el) => ({
+                  label: el.value,
+                  value: el.value,
+                }))}
+                style={{
+                  backgroundColor: get(colors.methods, props.values.httpMethod),
+                }}
               />
-            ) : null}
-          </Styled.Wrapper>
-        ))}
-      </Styled.Form>
-    </Dialog>
+
+              <Styled.Field
+                label={t('WEBHOOK_SCREEN.URL')}
+                name="url"
+                width="100%"
+              />
+            </Styled.Wrapper>
+
+            <Styled.Label>{t('WEBHOOK_SCREEN.HEADERS_LABEL')}</Styled.Label>
+
+            <FieldArray name="headers">
+              {({ push, remove }) => {
+                const { headers } = props.values;
+
+                return headers.map((header, index) => (
+                  <Styled.Wrapper key={index}>
+                    <Styled.Field
+                      label={t('WEBHOOK_SCREEN.KEY')}
+                      name={`headers.${index}.key`}
+                      width="200px"
+                    />
+
+                    <Styled.Field
+                      label={t('WEBHOOK_SCREEN.VALUE')}
+                      name={`headers.${index}.value`}
+                      width="200px"
+                    />
+
+                    {index + 1 === headers.length && headers.length !== 1 ? (
+                      <Styled.OptionIcon
+                        name="delete"
+                        size="20px"
+                        onClick={() => remove(index)}
+                      />
+                    ) : null}
+
+                    {index + 1 === headers.length && headers.length !== 5 ? (
+                      <Styled.OptionIcon
+                        name="plus"
+                        size="20px"
+                        onClick={() => push({ key: '', value: '' })}
+                      />
+                    ) : null}
+                  </Styled.Wrapper>
+                ));
+              }}
+            </FieldArray>
+          </Styled.Form>
+        </Dialog>;
+      }}
+    </Formik>
   );
 };
 
