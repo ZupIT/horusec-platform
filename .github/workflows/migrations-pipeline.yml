@@ -1,0 +1,19 @@
+name: Migrations
+on:
+  push:
+    paths: [
+        "migrations/**",
+        "**/workflows/migrations-pipeline.yml",
+    ]
+jobs:
+  build-and-security:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: migrations
+    steps:
+      - uses: actions/checkout@v2
+      - name: build
+        run: make build
+      - name: security
+        run: make security

@@ -28,7 +28,7 @@ func (h *Handler) Options(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
 }
 
 // GetAllChartsByWorkspace
-// @Tags DashboardByWorkspace
+// @Tags Dashboard
 // @Security ApiKeyAuth
 // @Description Get all charts of dashboard screen
 // @ID GetAllChartsByWorkspace
@@ -40,13 +40,13 @@ func (h *Handler) Options(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
 // @Success 200 {object} entities.Response{content=dashboard.Response} "OK"
 // @Failure 400 {object} entities.Response{content=string} "BAD REQUEST"
 // @Failure 500 {object} entities.Response{content=string} "INTERNAL SERVER ERROR"
-// @Router /analytic/dashboard/{workspaceID}/dashboard-charts [get]
+// @Router /analytic/dashboard/{workspaceID} [get]
 func (h *Handler) GetAllChartsByWorkspace(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	h.getAllCharts(w, r)
 }
 
 // GetAllChartsByRepository
-// @Tags DashboardByWorkspace
+// @Tags Dashboard
 // @Security ApiKeyAuth
 // @Description Get all charts of dashboard screen
 // @ID GetAllChartsByRepository
@@ -59,7 +59,7 @@ func (h *Handler) GetAllChartsByWorkspace(w netHTTP.ResponseWriter, r *netHTTP.R
 // @Success 200 {object} entities.Response{content=dashboard.Response} "OK"
 // @Failure 400 {object} entities.Response{content=string} "BAD REQUEST"
 // @Failure 500 {object} entities.Response{content=string} "INTERNAL SERVER ERROR"
-// @Router /analytic/dashboard/{workspaceID}/{repositoryID}/dashboard-charts [get]
+// @Router /analytic/dashboard/{workspaceID}/{repositoryID} [get]
 func (h *Handler) GetAllChartsByRepository(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	h.getAllCharts(w, r)
 }
