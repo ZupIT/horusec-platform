@@ -19,214 +19,22 @@ import { SERVICE_ANALYTIC } from '../config/endpoints';
 import { FilterValues } from 'helpers/interfaces/FilterValues';
 import { formatInitialAndFinalDate } from 'helpers/formatters/date';
 
-const getTotalDevelopers = (filters: FilterValues) => {
-  let path;
-  let ID;
+import analyticMock from './analytic-mock.json';
 
-  if (filters.type === 'workspace') {
-    path = 'companies';
-    ID = filters.workspaceID;
-  } else {
-    path = `companies/${filters.workspaceID}/repositories`;
-    ID = filters.repositoryID;
-  }
+const getDashboardData = (filters: FilterValues) => {
+  const path = filters.repositoryID
+    ? `/${filters.workspaceID}/${filters.repositoryID}`
+    : `/${filters.workspaceID}`;
 
-  return http.get(
-    `${SERVICE_ANALYTIC}/analytic/dashboard/${path}/${ID}/total-developers`,
-    {
-      params: formatInitialAndFinalDate(filters.initialDate, filters.finalDate),
-    }
-  );
+  return http.get(`${SERVICE_ANALYTIC}/analytic/dashboard/${path}`, {
+    params: formatInitialAndFinalDate(filters.initialDate, filters.finalDate),
+  });
 };
 
-const getTotalRepositories = (filters: FilterValues) => {
-  let path;
-  let ID;
-
-  if (filters.type === 'workspace') {
-    path = 'companies';
-    ID = filters.workspaceID;
-  } else {
-    path = `companies/${filters.workspaceID}/repositories`;
-    ID = filters.repositoryID;
-  }
-
-  return http.get(
-    `${SERVICE_ANALYTIC}/analytic/dashboard/${path}/${ID}/total-repositories`,
-    {
-      params: formatInitialAndFinalDate(filters.initialDate, filters.finalDate),
-    }
-  );
-};
-
-const getAllVulnerabilities = (filters: FilterValues) => {
-  let path;
-  let ID;
-
-  if (filters.type === 'workspace') {
-    path = 'companies';
-    ID = filters.workspaceID;
-  } else {
-    path = `companies/${filters.workspaceID}/repositories`;
-    ID = filters.repositoryID;
-  }
-
-  return http.get(
-    `${SERVICE_ANALYTIC}/analytic/dashboard/${path}/${ID}/all-vulnerabilities`,
-    {
-      params: formatInitialAndFinalDate(filters.initialDate, filters.finalDate),
-    }
-  );
-};
-
-const getVulnerabilitiesByLanguage = (filters: FilterValues) => {
-  let path;
-  let ID;
-
-  if (filters.type === 'workspace') {
-    path = 'companies';
-    ID = filters.workspaceID;
-  } else {
-    path = `companies/${filters.workspaceID}/repositories`;
-    ID = filters.repositoryID;
-  }
-
-  return http.get(
-    `${SERVICE_ANALYTIC}/analytic/dashboard/${path}/${ID}/vulnerabilities-by-language`,
-    {
-      params: formatInitialAndFinalDate(filters.initialDate, filters.finalDate),
-    }
-  );
-};
-
-const getVulnerabilitiesByDeveloper = (filters: FilterValues) => {
-  let path;
-  let ID;
-
-  if (filters.type === 'workspace') {
-    path = 'companies';
-    ID = filters.workspaceID;
-  } else {
-    path = `companies/${filters.workspaceID}/repositories`;
-    ID = filters.repositoryID;
-  }
-
-  return http.get(
-    `${SERVICE_ANALYTIC}/analytic/dashboard/${path}/${ID}/vulnerabilities-by-author`,
-    {
-      params: formatInitialAndFinalDate(filters.initialDate, filters.finalDate),
-    }
-  );
-};
-
-const getVulnerabilitiesByRepository = (filters: FilterValues) => {
-  let path;
-  let ID;
-
-  if (filters.type === 'workspace') {
-    path = 'companies';
-    ID = filters.workspaceID;
-  } else {
-    path = `companies/${filters.workspaceID}/repositories`;
-    ID = filters.repositoryID;
-  }
-
-  return http.get(
-    `${SERVICE_ANALYTIC}/analytic/dashboard/${path}/${ID}/vulnerabilities-by-repository`,
-    {
-      params: formatInitialAndFinalDate(filters.initialDate, filters.finalDate),
-    }
-  );
-};
-
-const getVulnerabilitiesTimeLine = (filters: FilterValues) => {
-  let path;
-  let ID;
-
-  if (filters.type === 'workspace') {
-    path = 'companies';
-    ID = filters.workspaceID;
-  } else {
-    path = `companies/${filters.workspaceID}/repositories`;
-    ID = filters.repositoryID;
-  }
-
-  return http.get(
-    `${SERVICE_ANALYTIC}/analytic/dashboard/${path}/${ID}/vulnerabilities-by-time`,
-    {
-      params: formatInitialAndFinalDate(filters.initialDate, filters.finalDate),
-    }
-  );
-};
-
-const getVulnerabilitiesDetails = (
-  filters: FilterValues,
-  page: number,
-  size: number
-) => {
-  let filter;
-  let path;
-  let ID;
-  let period = '';
-
-  if (filters.type === 'workspace') {
-    filter = `workspaceID: "${filters.workspaceID}"`;
-    path = 'companies';
-    ID = filters.workspaceID;
-  } else {
-    filter = `repositoryID: "${filters.repositoryID}"`;
-    path = `companies/${filters.workspaceID}/repositories`;
-    ID = filters.repositoryID;
-  }
-
-  const { initialDate, finalDate } = formatInitialAndFinalDate(
-    filters.initialDate,
-    filters.finalDate
-  );
-
-  if (initialDate && finalDate) {
-    period = `, initialDate: "${initialDate}", finalDate: "${finalDate}"`;
-  }
-
-  const query = `{
-    totalItems(${filter} ${period})
-    analysis (${filter} ${period}){
-      repositoryName
-      companyName
-      vulnerability {
-        line
-        column
-        confidence
-        file
-        code
-        details
-        securityTool
-        language
-        severity
-        commitAuthor
-        commitEmail
-        commitHash
-        commitMessage
-        commitDate
-      }
-    }
-  }`;
-
-  return http.get(
-    `${SERVICE_ANALYTIC}/analytic/dashboard/${path}/${ID}/details`,
-    {
-      params: { query, page, size },
-    }
-  );
+const getDashboardDataMock = (filters: FilterValues) => {
+  return analyticMock;
 };
 
 export default {
-  getTotalDevelopers,
-  getTotalRepositories,
-  getAllVulnerabilities,
-  getVulnerabilitiesByDeveloper,
-  getVulnerabilitiesByLanguage,
-  getVulnerabilitiesByRepository,
-  getVulnerabilitiesTimeLine,
-  getVulnerabilitiesDetails,
+  getDashboardData,
 };
