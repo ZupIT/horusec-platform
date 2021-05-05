@@ -14,6 +14,8 @@ import (
 	"github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard"
 )
 
+var zeroValue = 0
+
 func TestRepoDashboard_Save(t *testing.T) {
 	t.Run("Should save new content without error", func(t *testing.T) {
 		dbWrite := &database.Mock{}
@@ -95,7 +97,8 @@ func TestRepoDashboard_Inactive(t *testing.T) {
 func TestRepoDashboard_GetDashboardTotalDevelopers(t *testing.T) {
 	t.Run("Should return TotalDevelopers without error", func(t *testing.T) {
 		dbRead := &database.Mock{}
-		dbRead.On("Raw").Return(response.NewResponse(0, nil, 1))
+		count := 1
+		dbRead.On("Raw").Return(response.NewResponse(0, nil, &count))
 		conn := &database.Connection{
 			Read:  dbRead,
 			Write: &database.Mock{},
@@ -113,7 +116,7 @@ func TestRepoDashboard_GetDashboardTotalDevelopers(t *testing.T) {
 	})
 	t.Run("Should return TotalDevelopers without error if error is ErrorNotFoundRecords", func(t *testing.T) {
 		dbRead := &database.Mock{}
-		dbRead.On("Raw").Return(response.NewResponse(0, enums.ErrorNotFoundRecords, 0))
+		dbRead.On("Raw").Return(response.NewResponse(0, enums.ErrorNotFoundRecords, &zeroValue))
 		conn := &database.Connection{
 			Read:  dbRead,
 			Write: &database.Mock{},
@@ -131,7 +134,7 @@ func TestRepoDashboard_GetDashboardTotalDevelopers(t *testing.T) {
 	})
 	t.Run("Should return TotalDevelopers with error", func(t *testing.T) {
 		dbRead := &database.Mock{}
-		dbRead.On("Raw").Return(response.NewResponse(0, errors.New("unknown error"), 0))
+		dbRead.On("Raw").Return(response.NewResponse(0, errors.New("unknown error"), &zeroValue))
 		conn := &database.Connection{
 			Read:  dbRead,
 			Write: &database.Mock{},
@@ -152,7 +155,8 @@ func TestRepoDashboard_GetDashboardTotalDevelopers(t *testing.T) {
 func TestRepoDashboard_GetDashboardTotalRepositories(t *testing.T) {
 	t.Run("Should return TotalRepositories without error", func(t *testing.T) {
 		dbRead := &database.Mock{}
-		dbRead.On("Raw").Return(response.NewResponse(0, nil, 1))
+		count := 1
+		dbRead.On("Raw").Return(response.NewResponse(0, nil, &count))
 		conn := &database.Connection{
 			Read:  dbRead,
 			Write: &database.Mock{},
@@ -170,7 +174,7 @@ func TestRepoDashboard_GetDashboardTotalRepositories(t *testing.T) {
 	})
 	t.Run("Should return TotalRepositories without error if error is ErrorNotFoundRecords", func(t *testing.T) {
 		dbRead := &database.Mock{}
-		dbRead.On("Raw").Return(response.NewResponse(0, enums.ErrorNotFoundRecords, 0))
+		dbRead.On("Raw").Return(response.NewResponse(0, enums.ErrorNotFoundRecords, &zeroValue))
 		conn := &database.Connection{
 			Read:  dbRead,
 			Write: &database.Mock{},
@@ -188,7 +192,7 @@ func TestRepoDashboard_GetDashboardTotalRepositories(t *testing.T) {
 	})
 	t.Run("Should return TotalRepositories with error", func(t *testing.T) {
 		dbRead := &database.Mock{}
-		dbRead.On("Raw").Return(response.NewResponse(0, errors.New("unknown error"), 0))
+		dbRead.On("Raw").Return(response.NewResponse(0, errors.New("unknown error"), &zeroValue))
 		conn := &database.Connection{
 			Read:  dbRead,
 			Write: &database.Mock{},
@@ -284,7 +288,7 @@ func TestRepoDashboard_GetDashboardVulnByAuthor(t *testing.T) {
 	})
 	t.Run("Should return GetDashboardVulnByAuthor without error when data is empty", func(t *testing.T) {
 		dbRead := &database.Mock{}
-		dbRead.On("Raw").Return(response.NewResponse(0, nil, []*dashboard.VulnerabilitiesByAuthor{}))
+		dbRead.On("Raw").Return(response.NewResponse(0, nil, &[]*dashboard.VulnerabilitiesByAuthor{}))
 		conn := &database.Connection{
 			Read:  dbRead,
 			Write: &database.Mock{},
@@ -303,7 +307,7 @@ func TestRepoDashboard_GetDashboardVulnByAuthor(t *testing.T) {
 	t.Run("Should return GetDashboardVulnByAuthor without error", func(t *testing.T) {
 		dbRead := &database.Mock{}
 		vulnID := uuid.New()
-		dbRead.On("Raw").Return(response.NewResponse(0, nil, []*dashboard.VulnerabilitiesByAuthor{{
+		dbRead.On("Raw").Return(response.NewResponse(0, nil, &[]*dashboard.VulnerabilitiesByAuthor{{
 			Vulnerability: dashboard.Vulnerability{VulnerabilityID: vulnID},
 		}}))
 		conn := &database.Connection{
@@ -363,7 +367,7 @@ func TestRepoDashboard_GetDashboardVulnByRepository(t *testing.T) {
 	t.Run("Should return GetDashboardVulnByRepository without error", func(t *testing.T) {
 		dbRead := &database.Mock{}
 		vulnID := uuid.New()
-		dbRead.On("Raw").Return(response.NewResponse(0, nil, []*dashboard.VulnerabilitiesByRepository{{
+		dbRead.On("Raw").Return(response.NewResponse(0, nil, &[]*dashboard.VulnerabilitiesByRepository{{
 			Vulnerability: dashboard.Vulnerability{VulnerabilityID: vulnID},
 		}}))
 		conn := &database.Connection{
@@ -423,7 +427,7 @@ func TestRepoDashboard_GetDashboardVulnByLanguage(t *testing.T) {
 	t.Run("Should return GetDashboardVulnByLanguage without error", func(t *testing.T) {
 		dbRead := &database.Mock{}
 		vulnID := uuid.New()
-		dbRead.On("Raw").Return(response.NewResponse(0, nil, []*dashboard.VulnerabilitiesByLanguage{{
+		dbRead.On("Raw").Return(response.NewResponse(0, nil, &[]*dashboard.VulnerabilitiesByLanguage{{
 			Vulnerability: dashboard.Vulnerability{VulnerabilityID: vulnID},
 		}}))
 		conn := &database.Connection{
@@ -483,7 +487,7 @@ func TestRepoDashboard_GetDashboardVulnByTime(t *testing.T) {
 	t.Run("Should return GetDashboardVulnByTime without error", func(t *testing.T) {
 		dbRead := &database.Mock{}
 		vulnID := uuid.New()
-		dbRead.On("Raw").Return(response.NewResponse(0, nil, []*dashboard.VulnerabilitiesByTime{{
+		dbRead.On("Raw").Return(response.NewResponse(0, nil, &[]*dashboard.VulnerabilitiesByTime{{
 			Vulnerability: dashboard.Vulnerability{VulnerabilityID: vulnID},
 		}}))
 		conn := &database.Connection{
