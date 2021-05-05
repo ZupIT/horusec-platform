@@ -28,13 +28,12 @@ import { AxiosResponse } from 'axios';
 
 interface Props {
   filters?: FilterValues;
+  isLoading: boolean;
 }
 
-const VulnerabilitiesByLanguage: React.FC<Props> = ({ filters }) => {
+const VulnerabilitiesByLanguage: React.FC<Props> = ({ filters, isLoading }) => {
   const { t } = useTranslation();
   const { colors, metrics } = useTheme();
-
-  const [isLoading, setLoading] = useState(false);
 
   const [chartValues, setChartValues] = useState<number[]>([]);
   const [chartLabels, setChartLabels] = useState<string[]>([]);
@@ -112,30 +111,6 @@ const VulnerabilitiesByLanguage: React.FC<Props> = ({ filters }) => {
     },
     [colors]
   );
-
-  useEffect(() => {
-    let isCancelled = false;
-    if (filters) {
-      setLoading(true);
-
-      analyticService
-        .getDashboardData(filters)
-        .then((result: AxiosResponse) => {
-          if (!isCancelled) {
-            formatData(result.data.content);
-          }
-        })
-        .finally(() => {
-          if (!isCancelled) {
-            setLoading(false);
-          }
-        });
-    }
-
-    return () => {
-      isCancelled = true;
-    };
-  }, [filters, formatData]);
 
   return (
     <div className="block max-space">

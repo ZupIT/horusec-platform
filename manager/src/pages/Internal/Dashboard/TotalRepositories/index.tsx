@@ -14,56 +14,24 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Counter } from 'components';
 import { useTranslation } from 'react-i18next';
 import { FilterValues } from 'helpers/interfaces/FilterValues';
 import analyticService from 'services/analytic';
-import { AxiosResponse } from 'axios';
 
 interface Props {
-  filters?: FilterValues;
+  isLoading: boolean;
+  data: number;
 }
 
-const TotalRepositories: React.FC<Props> = ({ filters }) => {
+const TotalRepositories: React.FC<Props> = ({ isLoading, data }) => {
   const { t } = useTranslation();
-
-  const [total, setTotal] = useState(null);
-  const [isLoading, setLoading] = useState(false);
-
-  useEffect(() => {
-    let isCancelled = false;
-
-    if (filters) {
-      setLoading(true);
-
-      analyticService
-        .getDashboardData(filters)
-        .then((result: AxiosResponse) => {
-          if (!isCancelled) {
-            setTotal(result.data.content);
-          }
-        })
-        .catch(() => {
-          if (!isCancelled) {
-            setTotal(null);
-          }
-        })
-        .finally(() => {
-          if (!isCancelled) {
-            setLoading(false);
-          }
-        });
-    }
-    return () => {
-      isCancelled = true;
-    };
-  }, [filters]);
 
   return (
     <div className="block half-space">
       <Counter
-        value={total}
+        value={data}
         isLoading={isLoading}
         title={t('DASHBOARD_SCREEN.TOTAL_REPOSITORIES')}
       />

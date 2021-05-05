@@ -20,9 +20,10 @@ import { FilterValues } from 'helpers/interfaces/FilterValues';
 import { formatInitialAndFinalDate } from 'helpers/formatters/date';
 
 const getDashboardData = (filters: FilterValues) => {
-  const path = filters.repositoryID
-    ? `${filters.workspaceID}/${filters.repositoryID}`
-    : filters.workspaceID;
+  const path =
+    filters.type === 'repository'
+      ? `${filters.workspaceID}/${filters.repositoryID}`
+      : filters.workspaceID;
 
   return http.get(`${SERVICE_ANALYTIC}/analytic/dashboard/${path}`, {
     params: formatInitialAndFinalDate(filters.initialDate, filters.finalDate),

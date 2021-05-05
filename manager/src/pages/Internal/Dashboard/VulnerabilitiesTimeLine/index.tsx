@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import ReactApexChart from 'react-apexcharts';
 import { ApexOptions } from 'apexcharts';
 import Styled from './styled';
@@ -22,19 +22,17 @@ import { useTranslation } from 'react-i18next';
 import { useTheme } from 'styled-components';
 import { Icon } from 'components';
 import { FilterValues } from 'helpers/interfaces/FilterValues';
-import analyticService from 'services/analytic';
 import { ChartBarStacked } from 'helpers/interfaces/ChartData';
-import { formatChartStacked } from 'helpers/formatters/chartData';
 
 interface Props {
   filters?: FilterValues;
+  isLoading: boolean;
 }
 
-const VulnerabilitiesTimeLine: React.FC<Props> = ({ filters }) => {
+const VulnerabilitiesTimeLine: React.FC<Props> = ({ filters, isLoading }) => {
   const { t } = useTranslation();
   const { colors, metrics } = useTheme();
 
-  const [isLoading, setLoading] = useState(false);
   const [chartData, setChartData] = useState<ChartBarStacked>({
     categories: [],
     series: [],
@@ -96,31 +94,6 @@ const VulnerabilitiesTimeLine: React.FC<Props> = ({ filters }) => {
       },
     },
   };
-
-  useEffect(() => {
-    let isCancelled = false;
-
-    if (filters) {
-      setLoading(true);
-
-      analyticService
-        .getDashboardData(filters)
-        .then((result) => {
-          if (!isCancelled) {
-            setChartData(formatChartStacked(result.data.content, 'time', true));
-          }
-        })
-        .finally(() => {
-          if (!isCancelled) {
-            setLoading(false);
-          }
-        });
-    }
-
-    return () => {
-      isCancelled = true;
-    };
-  }, [filters]);
 
   return (
     <div className="block max-space">

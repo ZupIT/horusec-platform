@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Styled from './styled';
 import Filters from './Filters';
 import { FilterValues } from 'helpers/interfaces/FilterValues';
 import { useTranslation } from 'react-i18next';
+import { DashboardData } from 'helpers/interfaces/DashboardData';
+import analyticService from 'services/analytic';
+import { AxiosResponse } from 'axios';
 
 import TotalDevelopers from './TotalDevelopers';
 import TotalRepositories from './TotalRepositories';
@@ -37,7 +40,40 @@ interface Props {
 
 const Dashboard: React.FC<Props> = ({ type }) => {
   const [filters, setFilters] = useState<FilterValues>(null);
+  const [dashboardData, setDashboardData] = useState<DashboardData>();
+  const [isLoading, setLoading] = useState(false);
+
   const { t } = useTranslation();
+
+  useEffect(() => {
+    let isCancelled = false;
+    if (filters) {
+      setLoading(true);
+
+      analyticService
+        .getDashboardData(filters)
+        .then((result: AxiosResponse) => {
+          if (!isCancelled) {
+            const data = result?.data?.content as DashboardData;
+            setDashboardData(data);
+          }
+        })
+        .catch(() => {
+          if (!isCancelled) {
+            setDashboardData(null);
+          }
+        })
+        .finally(() => {
+          if (!isCancelled) {
+            setLoading(false);
+          }
+        });
+    }
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [filters]);
 
   return (
     <Styled.Wrapper>
@@ -50,33 +86,56 @@ const Dashboard: React.FC<Props> = ({ type }) => {
       <Filters type={type} onApply={(values) => setFilters(values)} />
 
       <Styled.Row>
-        <TotalDevelopers filters={filters} />
+        <TotalDevelopers
+          isLoading={isLoading}
+          data={dashboardData?.totalAuthors}
+        />
 
-        {type === 'workspace' ? <TotalRepositories filters={filters} /> : null}
+        {type === 'workspace' ? (
+          <TotalRepositories
+            data={dashboardData?.totalRepositories}
+            isLoading={isLoading}
+          />
+        ) : null}
 
-        <AllVulnerabilities filters={filters} />
+        <AllVulnerabilities
+          data={dashboardData?.vulnerabilityBySeverity}
+          isLoading={isLoading}
+        />
       </Styled.Row>
 
       <Styled.Row>
-        <VulnerabilitiesByDeveloper filters={filters} />
+        <VulnerabilitiesByDeveloper
+          isLoading={isLoading}
+          data={dashboardData?.vulnerabilitiesByAuthor}
+        />
 
         {type === 'workspace' ? (
-          <VulnerabilitiesByRepository filters={filters} />
+          <VulnerabilitiesByRepository
+            isLoading={isLoading}
+            filters={filters}
+          />
         ) : null}
       </Styled.Row>
 
       <Styled.Row>
-        <NewVulnerabilitiesByDeveloper filters={filters} />
+        <NewVulnerabilitiesByDeveloper
+          isLoading={isLoading}
+          data={dashboardData?.vulnerabilitiesByAuthor}
+        />
 
         {type === 'workspace' ? (
-          <VulnerabilitiesByRepository filters={filters} />
+          <VulnerabilitiesByRepository
+            isLoading={isLoading}
+            filters={filters}
+          />
         ) : null}
       </Styled.Row>
 
       <Styled.Row>
-        <VulnerabilitiesByLanguage filters={filters} />
+        <VulnerabilitiesByLanguage isLoading={isLoading} filters={filters} />
 
-        <VulnerabilitiesTimeLine filters={filters} />
+        <VulnerabilitiesTimeLine isLoading={isLoading} filters={filters} />
       </Styled.Row>
 
       <Styled.Row>
