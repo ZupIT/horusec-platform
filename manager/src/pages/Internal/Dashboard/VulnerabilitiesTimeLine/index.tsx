@@ -104,7 +104,7 @@ const VulnerabilitiesTimeLine: React.FC<Props> = ({ filters }) => {
       setLoading(true);
 
       analyticService
-        .getVulnerabilitiesTimeLine(filters)
+        .getDashboardData(filters)
         .then((result) => {
           if (!isCancelled) {
             setChartData(formatChartStacked(result.data.content, 'time', true));

@@ -110,7 +110,7 @@ const AllVulnerabilities: React.FC<Props> = ({ filters }) => {
       setLoading(true);
 
       analyticService
-        .getAllVulnerabilities(filters)
+        .getDashboardData(filters)
         .then((result: AxiosResponse) => {
           if (!isCancelled) {
             formatData(result.data?.content);

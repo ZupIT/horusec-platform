@@ -119,7 +119,7 @@ const VulnerabilitiesByLanguage: React.FC<Props> = ({ filters }) => {
       setLoading(true);
 
       analyticService
-        .getVulnerabilitiesByLanguage(filters)
+        .getDashboardData(filters)
         .then((result: AxiosResponse) => {
           if (!isCancelled) {
             formatData(result.data.content);

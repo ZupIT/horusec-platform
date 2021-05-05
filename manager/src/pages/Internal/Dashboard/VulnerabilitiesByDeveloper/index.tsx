@@ -106,7 +106,7 @@ const VulnerabilitiesByDeveloper: React.FC<Props> = ({ filters }) => {
       setLoading(true);
 
       analyticService
-        .getVulnerabilitiesByDeveloper(filters)
+        .getDashboardData(filters)
         .then((result: AxiosResponse) => {
           if (!isCancelled) {
             setChartData(formatChartStacked(result.data.content, 'developer'));

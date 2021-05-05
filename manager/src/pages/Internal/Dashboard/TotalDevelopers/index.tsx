@@ -37,7 +37,7 @@ const TotalDevelopers: React.FC<Props> = ({ filters }) => {
       setLoading(true);
 
       analyticService
-        .getTotalDevelopers(filters)
+        .getDashboardData(filters)
         .then((result: AxiosResponse) => {
           if (!isCancelled) {
             setTotal(result.data.content);

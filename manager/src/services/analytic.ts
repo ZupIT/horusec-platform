@@ -19,20 +19,14 @@ import { SERVICE_ANALYTIC } from '../config/endpoints';
 import { FilterValues } from 'helpers/interfaces/FilterValues';
 import { formatInitialAndFinalDate } from 'helpers/formatters/date';
 
-import analyticMock from './analytic-mock.json';
-
 const getDashboardData = (filters: FilterValues) => {
   const path = filters.repositoryID
-    ? `/${filters.workspaceID}/${filters.repositoryID}`
-    : `/${filters.workspaceID}`;
+    ? `${filters.workspaceID}/${filters.repositoryID}`
+    : filters.workspaceID;
 
   return http.get(`${SERVICE_ANALYTIC}/analytic/dashboard/${path}`, {
     params: formatInitialAndFinalDate(filters.initialDate, filters.finalDate),
   });
-};
-
-const getDashboardDataMock = (filters: FilterValues) => {
-  return analyticMock;
 };
 
 export default {

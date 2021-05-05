@@ -106,7 +106,7 @@ const VulnerabilitiesByRepository: React.FC<Props> = ({ filters }) => {
       setLoading(true);
 
       analyticService
-        .getVulnerabilitiesByRepository(filters)
+        .getDashboardData(filters)
         .then((result: AxiosResponse) => {
           if (!isCancelled) {
             setChartData(formatChartStacked(result.data.content, 'repository'));

@@ -38,7 +38,7 @@ const TotalRepositories: React.FC<Props> = ({ filters }) => {
       setLoading(true);
 
       analyticService
-        .getTotalRepositories(filters)
+        .getDashboardData(filters)
         .then((result: AxiosResponse) => {
           if (!isCancelled) {
             setTotal(result.data.content);

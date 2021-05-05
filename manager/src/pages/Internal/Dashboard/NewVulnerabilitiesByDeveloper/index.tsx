@@ -77,7 +77,7 @@ const NewVulnerabilitiesByDeveloper: React.FC<Props> = ({ filters }) => {
       setLoading(true);
 
       analyticService
-        .getVulnerabilitiesByDeveloper(filters)
+        .getDashboardData(filters)
         .then((result: AxiosResponse) => {
           if (!isCancelled) {
             setAllData(result?.data?.content || []);
