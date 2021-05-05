@@ -119,7 +119,6 @@ function PasswordForm() {
       <Formik
         initialValues={initialValues}
         validationSchema={ValidationScheme}
-        validateOnMount
         validate={(values) => handlePasswordValue(values.password)}
         onSubmit={(values) => {
           createAccount(values.password);
