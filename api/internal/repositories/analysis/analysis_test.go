@@ -35,7 +35,7 @@ func TestAnalysis_FindAnalysisByID(t *testing.T) {
 			FinishedAt:     time.Now(),
 		}
 		mockRead := &database.Mock{}
-		mockRead.On("Find").Return(response.NewResponse(0, nil, data))
+		mockRead.On("FindPreload").Return(response.NewResponse(0, nil, data))
 		connectionMock := &database.Connection{
 			Read: mockRead,
 		}
@@ -57,7 +57,7 @@ func TestAnalysis_FindAnalysisByID(t *testing.T) {
 			FinishedAt:     time.Now(),
 		}
 		mockRead := &database.Mock{}
-		mockRead.On("Find").Return(response.NewResponse(0, nil, data))
+		mockRead.On("FindPreload").Return(response.NewResponse(0, nil, data))
 		connectionMock := &database.Connection{
 			Read: mockRead,
 		}

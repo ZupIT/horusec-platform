@@ -124,7 +124,7 @@ func (c *Controller) createNewAnalysis(newAnalysis *analysis.Analysis) error {
 
 func (c *Controller) extractBaseOfTheAnalysis(analysisEntity *analysis.Analysis) *analysis.Analysis {
 	return &analysis.Analysis{
-		ID:             uuid.New(),
+		ID:             analysisEntity.ID,
 		RepositoryID:   analysisEntity.RepositoryID,
 		RepositoryName: analysisEntity.RepositoryName,
 		WorkspaceID:    analysisEntity.WorkspaceID,

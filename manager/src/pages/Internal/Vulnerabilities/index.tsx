@@ -20,6 +20,7 @@ import { SearchBar, Select, Icon, Datatable, Datasource } from 'components';
 import { useTranslation } from 'react-i18next';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import coreService from 'services/core';
+import vulnerabilitiesService from 'services/vulnerabilities';
 import { Repository } from 'helpers/interfaces/Repository';
 import { PaginationInfo } from 'helpers/interfaces/Pagination';
 import { Vulnerability } from 'helpers/interfaces/Vulnerability';
@@ -55,8 +56,8 @@ const Vulnerabilities: React.FC = () => {
     workspaceID: currentWorkspace?.workspaceID,
     repositoryID: repositories[0]?.repositoryID,
     vulnHash: '',
-    vulnSeverity: 'All',
-    vulnType: 'All',
+    vulnSeverity: 'ALL',
+    vulnType: 'ALL',
   });
   const [pagination, setPagination] = useState<PaginationInfo>({
     currentPage: INITIAL_PAGE,
@@ -73,7 +74,7 @@ const Vulnerabilities: React.FC = () => {
   const vulnTypes = [
     {
       label: t('VULNERABILITIES_SCREEN.ALL_STATUS'),
-      value: 'All',
+      value: 'ALL',
     },
     {
       label: t('VULNERABILITIES_SCREEN.STATUS.VULNERABILITY'),
@@ -96,7 +97,7 @@ const Vulnerabilities: React.FC = () => {
   const severities = [
     {
       label: t('VULNERABILITIES_SCREEN.ALL_SEVERITIES'),
-      value: 'All',
+      value: 'ALL',
     },
     {
       label: 'CRITICAL',
@@ -138,51 +139,26 @@ const Vulnerabilities: React.FC = () => {
     }));
   }, 800);
 
-  const handleUpdateVulnerabilityType = (
-    vulnerability: Vulnerability,
-    type: string
-  ) => {
-    coreService
-      .updateVulnerabilityTypeInRepository(
-        filters.workspaceID,
-        filters.repositoryID,
-        vulnerability.vulnerabilityID,
-        type
-      )
-      .then((response: AxiosResponse) => {
-        const result: Vulnerability = response.data.content;
-        setVulnerabilities((state) =>
-          state.map((el) =>
-            el.vulnerabilityID === result.vulnerabilityID ? result : el
-          )
-        );
-        showSuccessFlash(t('VULNERABILITIES_SCREEN.SUCCESS_UPDATE'));
-      })
-      .catch((err: AxiosError) => {
-        setRefresh((state) => state);
-        dispatchMessage(err?.response?.data);
-      });
-  };
-
-  const handleUpdateVulnerabilitySeverity = (
-    vulnerability: Vulnerability,
+  const handleUpdateVulnerability = (
+    vulnerabilityID: string,
+    type: string,
     severity: string
   ) => {
-    coreService
-      .updateVulnerabilitySeverityInRepository(
-        filters.workspaceID,
-        filters.repositoryID,
-        vulnerability.vulnerabilityID,
-        severity
-      )
-      .then((response: AxiosResponse) => {
-        showSuccessFlash(t('VULNERABILITIES_SCREEN.SUCCESS_UPDATE'));
-        const result: Vulnerability = response.data.content;
+    vulnerabilitiesService
+      .updateVulnerability(filters.workspaceID, vulnerabilityID, type, severity)
+      .then(() => {
         setVulnerabilities((state) =>
           state.map((el) =>
-            el.vulnerabilityID === result.vulnerabilityID ? result : el
+            el.vulnerabilityID === vulnerabilityID
+              ? {
+                  ...el,
+                  severity,
+                  type,
+                }
+              : el
           )
         );
+        showSuccessFlash(t('VULNERABILITIES_SCREEN.SUCCESS_UPDATE'));
       })
       .catch((err: AxiosError) => {
         setRefresh((state) => state);
@@ -237,11 +213,8 @@ const Vulnerabilities: React.FC = () => {
 
         setFilters(filter);
 
-        if (filterAux.vulnSeverity === 'All') filterAux.vulnSeverity = null;
-        if (filterAux.vulnType === 'All') filterAux.vulnType = null;
-
-        coreService
-          .getAllVulnerabilitiesInRepository(filterAux, page)
+        vulnerabilitiesService
+          .getAllVulnerabilities(filterAux, page)
           .then((result: AxiosResponse) => {
             if (!isCancelled) {
               const response = result.data?.content;
@@ -412,7 +385,11 @@ const Vulnerabilities: React.FC = () => {
                   options={severities.slice(1)}
                   disabled={!isAdminOrSupervisorOfRepository()}
                   onChangeValue={(value) =>
-                    handleUpdateVulnerabilitySeverity(row, value)
+                    handleUpdateVulnerability(
+                      row.vulnerabilityID,
+                      row.type,
+                      value
+                    )
                   }
                 />
               ),
@@ -424,7 +401,11 @@ const Vulnerabilities: React.FC = () => {
                   variant="filled"
                   disabled={!isAdminOrSupervisorOfRepository()}
                   onChangeValue={(value) =>
-                    handleUpdateVulnerabilityType(row, value)
+                    handleUpdateVulnerability(
+                      row.vulnerabilityID,
+                      value,
+                      row.severity
+                    )
                   }
                 />
               ),

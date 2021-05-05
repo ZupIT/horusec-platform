@@ -17,8 +17,6 @@
 import http from 'config/axios';
 import { LDAPGroups } from 'helpers/interfaces/LDAPGroups';
 import { SERVICE_CORE } from '../config/endpoints';
-import { FilterVuln } from 'helpers/interfaces/FIlterVuln';
-import { PaginationInfo } from 'helpers/interfaces/Pagination';
 
 const getAllWorkspaces = () => {
   return http.get(`${SERVICE_CORE}/core/workspaces`);
@@ -239,52 +237,6 @@ const updateUserRoleInRepository = (
   );
 };
 
-const getAllVulnerabilitiesInRepository = (
-  filters: FilterVuln,
-  pagination: PaginationInfo
-) => {
-  return http.get(
-    `${SERVICE_CORE}/core/workspaces/${filters.workspaceID}/repositories/${filters.repositoryID}/management`,
-    {
-      params: {
-        page: pagination.currentPage,
-        size: pagination.pageSize,
-        vulnSeverity: filters.vulnSeverity,
-        vulnHash: filters.vulnHash,
-        vulnType: filters.vulnType,
-      },
-    }
-  );
-};
-
-const updateVulnerabilityTypeInRepository = (
-  workspaceID: string,
-  repositoryId: string,
-  vulnerabilityId: string,
-  type: string
-) => {
-  return http.put(
-    `${SERVICE_CORE}/core/workspaces/${workspaceID}/repositories/${repositoryId}/management/${vulnerabilityId}/type`,
-    {
-      type,
-    }
-  );
-};
-
-const updateVulnerabilitySeverityInRepository = (
-  workspaceID: string,
-  repositoryId: string,
-  vulnerabilityId: string,
-  severity: string
-) => {
-  return http.put(
-    `${SERVICE_CORE}/core/workspaces/${workspaceID}/repositories/${repositoryId}/management/${vulnerabilityId}/severity`,
-    {
-      severity,
-    }
-  );
-};
-
 export default {
   getAllWorkspaces,
   createWorkspace,
@@ -309,7 +261,4 @@ export default {
   includeUserInRepository,
   removeUserOfRepository,
   updateUserRoleInRepository,
-  getAllVulnerabilitiesInRepository,
-  updateVulnerabilityTypeInRepository,
-  updateVulnerabilitySeverityInRepository,
 };

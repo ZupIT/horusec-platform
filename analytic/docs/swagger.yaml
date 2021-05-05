@@ -143,7 +143,61 @@ info:
   termsOfService: http://swagger.io/terms/
   title: Horusec-Analytic
 paths:
-  /analytic/dashboard/{workspaceID}/{repositoryID}/dashboard-charts:
+  /analytic/dashboard/{workspaceID}:
+    get:
+      consumes:
+      - application/json
+      description: Get all charts of dashboard screen
+      operationId: GetAllChartsByWorkspace
+      parameters:
+      - description: workspaceID of the workspace
+        in: path
+        name: workspaceID
+        required: true
+        type: string
+      - description: initialDate query string
+        in: query
+        name: initialDate
+        type: string
+      - description: finalDate query string
+        in: query
+        name: finalDate
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/entities.Response'
+            - properties:
+                content:
+                  $ref: '#/definitions/dashboard.Response'
+              type: object
+        "400":
+          description: BAD REQUEST
+          schema:
+            allOf:
+            - $ref: '#/definitions/entities.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "500":
+          description: INTERNAL SERVER ERROR
+          schema:
+            allOf:
+            - $ref: '#/definitions/entities.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Dashboard
+  /analytic/dashboard/{workspaceID}/{repositoryID}:
     get:
       consumes:
       - application/json
@@ -201,61 +255,7 @@ paths:
       security:
       - ApiKeyAuth: []
       tags:
-      - DashboardByWorkspace
-  /analytic/dashboard/{workspaceID}/dashboard-charts:
-    get:
-      consumes:
-      - application/json
-      description: Get all charts of dashboard screen
-      operationId: GetAllChartsByWorkspace
-      parameters:
-      - description: workspaceID of the workspace
-        in: path
-        name: workspaceID
-        required: true
-        type: string
-      - description: initialDate query string
-        in: query
-        name: initialDate
-        type: string
-      - description: finalDate query string
-        in: query
-        name: finalDate
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/entities.Response'
-            - properties:
-                content:
-                  $ref: '#/definitions/dashboard.Response'
-              type: object
-        "400":
-          description: BAD REQUEST
-          schema:
-            allOf:
-            - $ref: '#/definitions/entities.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-        "500":
-          description: INTERNAL SERVER ERROR
-          schema:
-            allOf:
-            - $ref: '#/definitions/entities.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-      security:
-      - ApiKeyAuth: []
-      tags:
-      - DashboardByWorkspace
+      - Dashboard
   /analytic/health:
     get:
       consumes:
