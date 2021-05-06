@@ -51,7 +51,7 @@ func (r *RepoDashboard) GetDashboardTotalDevelopers(
 	if result.GetData() == nil || result.GetErrorExceptNotFound() != nil {
 		return 0, result.GetErrorExceptNotFound()
 	}
-	return result.GetData().(int), result.GetErrorExceptNotFound()
+	return *result.GetData().(*int), result.GetErrorExceptNotFound()
 }
 
 func (r *RepoDashboard) GetDashboardTotalRepositories(
@@ -63,7 +63,7 @@ func (r *RepoDashboard) GetDashboardTotalRepositories(
 	if result.GetData() == nil || result.GetErrorExceptNotFound() != nil {
 		return 0, result.GetErrorExceptNotFound()
 	}
-	return result.GetData().(int), result.GetErrorExceptNotFound()
+	return *result.GetData().(*int), result.GetErrorExceptNotFound()
 }
 
 func (r *RepoDashboard) GetDashboardVulnBySeverity(
@@ -72,7 +72,7 @@ func (r *RepoDashboard) GetDashboardVulnBySeverity(
 	condition, args := r.getConditionFilter(filter)
 	query := fmt.Sprintf(`SELECT %s FROM %s WHERE %s AND active = true GROUP BY "workspace_id", "active" %s LIMIT 1`,
 		r.querySelectFieldsDefault(), (&dashboard.VulnerabilitiesByTime{}).GetTable(), condition, r.orderByDefault())
-	result := r.databaseRead.Raw(query, &vuln, args...)
+	result := r.databaseRead.Raw(query, vuln, args...)
 	if result.GetData() == nil || result.GetErrorExceptNotFound() != nil {
 		return &dashboard.Vulnerability{}, result.GetErrorExceptNotFound()
 	}
@@ -90,7 +90,7 @@ func (r *RepoDashboard) GetDashboardVulnByAuthor(
 	if result.GetData() == nil || result.GetErrorExceptNotFound() != nil {
 		return []*dashboard.VulnerabilitiesByAuthor{}, result.GetErrorExceptNotFound()
 	}
-	return result.GetData().([]*dashboard.VulnerabilitiesByAuthor), result.GetErrorExceptNotFound()
+	return *result.GetData().(*[]*dashboard.VulnerabilitiesByAuthor), result.GetErrorExceptNotFound()
 }
 
 // nolint:dupl // method is not duplicate
@@ -104,7 +104,7 @@ func (r *RepoDashboard) GetDashboardVulnByRepository(
 	if result.GetData() == nil || result.GetErrorExceptNotFound() != nil {
 		return []*dashboard.VulnerabilitiesByRepository{}, result.GetErrorExceptNotFound()
 	}
-	return result.GetData().([]*dashboard.VulnerabilitiesByRepository), result.GetErrorExceptNotFound()
+	return *result.GetData().(*[]*dashboard.VulnerabilitiesByRepository), result.GetErrorExceptNotFound()
 }
 
 // nolint:dupl // method is not duplicate
@@ -118,7 +118,7 @@ func (r *RepoDashboard) GetDashboardVulnByLanguage(
 	if result.GetData() == nil || result.GetErrorExceptNotFound() != nil {
 		return []*dashboard.VulnerabilitiesByLanguage{}, result.GetErrorExceptNotFound()
 	}
-	return result.GetData().([]*dashboard.VulnerabilitiesByLanguage), result.GetErrorExceptNotFound()
+	return *result.GetData().(*[]*dashboard.VulnerabilitiesByLanguage), result.GetErrorExceptNotFound()
 }
 
 // nolint:dupl // method is not duplicate
@@ -132,7 +132,7 @@ func (r *RepoDashboard) GetDashboardVulnByTime(
 	if result.GetData() == nil || result.GetErrorExceptNotFound() != nil {
 		return []*dashboard.VulnerabilitiesByTime{}, result.GetErrorExceptNotFound()
 	}
-	return result.GetData().([]*dashboard.VulnerabilitiesByTime), result.GetErrorExceptNotFound()
+	return *result.GetData().(*[]*dashboard.VulnerabilitiesByTime), result.GetErrorExceptNotFound()
 }
 
 func (r *RepoDashboard) getConditionFilter(
