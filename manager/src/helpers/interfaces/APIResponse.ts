@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-export interface APIResponse {
+export interface APIResponse<T = string> {
   code: number;
-  content: string;
+  content: T;
   status: string;
 }

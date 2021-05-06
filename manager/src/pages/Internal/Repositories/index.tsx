@@ -42,7 +42,7 @@ const Repositories: React.FC = () => {
   const [filteredRepos, setFilteredRepos] = useState<Repository[]>([]);
 
   const [isLoading, setLoading] = useState(false);
-  const [refresh, setRefresh] = useState(false);
+  const [refresh, setRefresh] = useState(0);
 
   const [handleRepositoryVisible, sethandleRepositoryVisible] = useState(false);
   const [deleteIsLoading, setDeleteLoading] = useState(false);
@@ -73,7 +73,7 @@ const Repositories: React.FC = () => {
       .then(() => {
         showSuccessFlash(t('REPOSITORIES_SCREEN.REMOVE_SUCCESS_REPO'));
         setRepoToDelete(null);
-        setRefresh((state) => !state);
+        setRefresh((state) => state++);
       })
       .catch((err) => {
         dispatchMessage(err?.response?.data);
@@ -91,9 +91,10 @@ const Repositories: React.FC = () => {
     setRepoToEdit(repository || null);
   };
 
-  const handleConfirmRepositoryEdit = () => {
+  const handleConfirmRepositoryEdit = (repository: Repository) => {
+    console.log(repository);
     setVisibleHandleModal(false);
-    setRefresh((state) => !state);
+    setRefresh((state) => state++);
   };
 
   useEffect(() => {
@@ -124,7 +125,7 @@ const Repositories: React.FC = () => {
     return () => {
       isCancelled = true;
     };
-  }, [currentWorkspace, refresh, dispatchMessage]);
+  }, [refresh]);
 
   return (
     <Styled.Wrapper>

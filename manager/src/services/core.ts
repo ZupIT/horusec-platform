@@ -15,7 +15,9 @@
  */
 
 import http from 'config/axios';
+import { APIResponse } from 'helpers/interfaces/APIResponse';
 import { LDAPGroups } from 'helpers/interfaces/LDAPGroups';
+import { Repository } from 'helpers/interfaces/Repository';
 import { SERVICE_CORE } from '../config/endpoints';
 
 const getAllWorkspaces = () => {
@@ -124,7 +126,7 @@ const createRepository = (
   description: string,
   ldapGroups?: LDAPGroups
 ) => {
-  return http.post(
+  return http.post<APIResponse<Repository>>(
     `${SERVICE_CORE}/core/workspaces/${workspaceID}/repositories`,
     {
       name,
@@ -141,7 +143,7 @@ const updateRepository = (
   description: string,
   ldapGroups?: LDAPGroups
 ) => {
-  return http.patch(
+  return http.patch<APIResponse<Repository>>(
     `${SERVICE_CORE}/core/workspaces/${workspaceID}/repositories/${repositoryId}`,
     { name, description, ...ldapGroups }
   );
