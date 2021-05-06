@@ -1,5 +1,7 @@
 FROM golang:alpine AS builder-backend
 
+RUN apk add build-base
+
 ADD . .
 
 RUN cd auth && go get -t -v -d ./...
@@ -20,9 +22,6 @@ RUN cd vulnerability && OOS=linux go build -a -o /bin/horusec-vulnerability-main
 RUN cd webhook && go get -t -v -d ./...
 RUN cd webhook && OOS=linux go build -a -o /bin/horusec-webhook-main ./cmd/app/main.go
 
-RUN cd messages && go get -t -v -d ./...
-RUN cd messages && OOS=linux go build -a -o /bin/horusec-messages-main ./cmd/app/main.go
-
 FROM node:alpine AS builder-manager
 
 WORKDIR /usr/src/app
@@ -34,6 +33,8 @@ RUN cd manager && npm run build
 
 FROM docker:dind
 
+ENV HORUSEC_DISABLE_BROKER=true
+
 RUN apk add nginx
 RUN mkdir -p /run/nginx
 
@@ -43,7 +44,6 @@ COPY --from=builder-backend /bin/horusec-api-main /bin/horusec-api-main
 COPY --from=builder-backend /bin/horusec-analytic-main /bin/horusec-analytic-main
 COPY --from=builder-backend /bin/horusec-vulnerability-main /bin/horusec-vulnerability-main
 COPY --from=builder-backend /bin/horusec-webhook-main /bin/horusec-webhook-main
-COPY --from=builder-backend /bin/horusec-messages-main /bin/horusec-messages-main
 
 COPY deployments/dockerfiles/all-in-one/entrypoint.sh /usr/local/bin
 RUN chmod +x /usr/local/bin/entrypoint.sh
@@ -55,12 +55,5 @@ COPY migrations/source /migrations/source
 
 COPY --from=builder-manager /usr/src/app/manager/build /var/www
 COPY ./manager/deployments/nginx.conf /etc/nginx/conf.d/default.conf
-
-EXPOSE 8000
-EXPOSE 8003
-EXPOSE 8004
-EXPOSE 8005
-EXPOSE 8006
-EXPOSE 8043
 
 ENTRYPOINT [ "entrypoint.sh" ]
