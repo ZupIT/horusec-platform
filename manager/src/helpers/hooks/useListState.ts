@@ -14,33 +14,48 @@
  * limitations under the License.
  */
 
-import { useState } from "react"
+import { useCallback, useState } from 'react';
 
-type Operation<T = {}> = (obj: T) => void
+type Operation<T> = (obj: T) => void;
 
-export function useListState<T = {}>(
-    initialState: T[],
-    identificationFn: (a: T, b: T) => boolean
-): [data: T[], add: Operation<T>, update: Operation<T>, remove: Operation<T>] {
-    const [state, setState] = useState(initialState)
+export function useListState<T>(
+  initialState: T[],
+  identificationFn: (a: T, b: T) => boolean
+): [T[], Operation<T | T[]>, Operation<T>, Operation<T>] {
+  const [state, setState] = useState(initialState);
 
-    const add: Operation<T> = (data) => {
-        setState(state => [...state, data]);
+  const add: Operation<T | T[]> = useCallback((data) => {
+    if (Array.isArray(data)) {
+      setState(data);
+      return;
     }
 
-    const update: Operation<T> = (data) => {
-        setState(state => state.map(item => {
-            if (identificationFn(item, data)) {
-                return data
-            }
+    setState((state) => [...state, data]);
+  }, []);
 
-            return item
-        }))
-    }
+  const update: Operation<T> = useCallback(
+    (data) => {
+      setState((state) => [
+        ...state.map((item) => {
+          if (identificationFn(item, data)) {
+            return data;
+          }
 
-    const remove: Operation<T> = (data) => {
-        setState(state => state.filter(item => !identificationFn(item, data)))
-    }
+          return item;
+        }),
+      ]);
+    },
+    [identificationFn]
+  );
 
-    return [state, add, update, remove]
+  const remove: Operation<T> = useCallback(
+    (data) => {
+      setState((state) =>
+        state.filter((item) => !identificationFn(item, data))
+      );
+    },
+    [identificationFn]
+  );
+
+  return [state, add, update, remove];
 }

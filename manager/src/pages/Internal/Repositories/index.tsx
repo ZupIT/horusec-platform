@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Styled from './styled';
 import { SearchBar, Button, Dialog, Datatable, Datasource } from 'components';
 import { useTranslation } from 'react-i18next';
@@ -30,6 +30,8 @@ import useWorkspace from 'helpers/hooks/useWorkspace';
 import { getCurrentConfig } from 'helpers/localStorage/horusecConfig';
 import { authTypes } from 'helpers/enums/authTypes';
 import { AxiosError, AxiosResponse } from 'axios';
+import { useListState } from 'helpers/hooks/useListState';
+import { update } from 'lodash';
 
 const Repositories: React.FC = () => {
   const { t } = useTranslation();
@@ -38,11 +40,13 @@ const Repositories: React.FC = () => {
   const { showSuccessFlash } = useFlashMessage();
   const { authType } = getCurrentConfig();
 
-  const [repositories, setRepositories] = useState<Repository[]>([]);
-  const [filteredRepos, setFilteredRepos] = useState<Repository[]>([]);
-
+  const [
+    repositories,
+    addRepositories,
+    updateRepository,
+    removeRepository,
+  ] = useListState<Repository>([], (a, b) => a.repositoryID === b.repositoryID);
   const [isLoading, setLoading] = useState(false);
-  const [refresh, setRefresh] = useState(0);
 
   const [handleRepositoryVisible, sethandleRepositoryVisible] = useState(false);
   const [deleteIsLoading, setDeleteLoading] = useState(false);
@@ -54,17 +58,12 @@ const Repositories: React.FC = () => {
   const [repoToEdit, setRepoToEdit] = useState<Repository>(null);
   const [repoToInvite, setRepoToInvite] = useState<Repository>(null);
 
-  const onSearchRepository = (search: string) => {
-    if (search) {
-      const filtered = repositories.filter((repo) =>
-        repo.name.toLocaleLowerCase().includes(search.toLocaleLowerCase())
-      );
+  const [searchQuery, setSearchQuery] = useState('');
 
-      setFilteredRepos(filtered);
-    } else {
-      setFilteredRepos(repositories);
-    }
-  };
+  const filteredRepositories = () =>
+    repositories.filter((repo) =>
+      repo.name.toLocaleLowerCase().includes(searchQuery.toLocaleLowerCase())
+    );
 
   const handleConfirmDeleteRepo = () => {
     setDeleteLoading(true);
@@ -72,8 +71,8 @@ const Repositories: React.FC = () => {
       .deleteRepository(repoToDelete.workspaceID, repoToDelete.repositoryID)
       .then(() => {
         showSuccessFlash(t('REPOSITORIES_SCREEN.REMOVE_SUCCESS_REPO'));
+        removeRepository(repoToDelete);
         setRepoToDelete(null);
-        setRefresh((state) => state++);
       })
       .catch((err) => {
         dispatchMessage(err?.response?.data);
@@ -93,7 +92,12 @@ const Repositories: React.FC = () => {
 
   const handleConfirmRepositoryEdit = (repository: Repository) => {
     setVisibleHandleModal(false);
-    setRefresh((state) => state++);
+    if (!repoToEdit) {
+      addRepositories(repository);
+      return;
+    }
+
+    updateRepository(repository);
   };
 
   useEffect(() => {
@@ -105,8 +109,7 @@ const Repositories: React.FC = () => {
         .getAllRepositories(currentWorkspace?.workspaceID)
         .then((result: AxiosResponse) => {
           if (!isCancelled) {
-            setRepositories(result.data?.content);
-            setFilteredRepos(result.data?.content);
+            addRepositories(result.data?.content);
           }
         })
         .catch((err: AxiosError) => {
@@ -124,16 +127,15 @@ const Repositories: React.FC = () => {
     return () => {
       isCancelled = true;
     };
-  }, [refresh]);
+  }, [currentWorkspace]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Styled.Wrapper>
       <Styled.Options>
         <SearchBar
           placeholder={t('REPOSITORIES_SCREEN.SEARCH_REPO')}
-          onSearch={(value) => onSearchRepository(value)}
+          onSearch={(value) => setSearchQuery(value)}
         />
-
         {isAdminOfWorkspace ? (
           <Button
             text={t('REPOSITORIES_SCREEN.CREATE_REPO')}
@@ -166,7 +168,7 @@ const Repositories: React.FC = () => {
               type: 'actions',
             },
           ]}
-          datasource={filteredRepos.map((row) => {
+          datasource={filteredRepositories().map((row) => {
             const repo: Datasource = {
               ...row,
               id: row.repositoryID,
