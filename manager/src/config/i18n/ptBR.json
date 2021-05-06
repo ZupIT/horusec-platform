@@ -432,6 +432,7 @@
   "NEW_WORKSPACE_SCREEN": {
     "MESSAGE": "Adicione um novo Workspace para começar a usar o Horusec.",
     "ACTION": "Adicionar workspace",
-    "ALT_IMG": "Desenho ilustrando uma paisagem com nuvens no alto, abaixo um banco de madeira e uma mulher branca de cabelo ruivo com blusa laranja e calça verde levando uma luneta com a mão direita até o olho esquerdo. Ela apoia seu pé esquerdo sobre o banco."
+    "ALT_IMG": "Desenho ilustrando uma paisagem com nuvens no alto, abaixo um banco de madeira e uma mulher branca de cabelo ruivo com blusa laranja e calça verde levando uma luneta com a mão direita até o olho esquerdo. Ela apoia seu pé esquerdo sobre o banco.",
+    "APPLICATION_ADMIN": "Você não faz parte de nenhum workspace. Verifique com o Administrador da aplicação."
   }
 }

@@ -43,7 +43,7 @@ const AddWorkspace: React.FC = () => {
           />
         </>
       ) : (
-        <Styled.Message>{t('NEW_WORKSPACE_SCREEN.MESSAGE')}</Styled.Message>
+        <Styled.Message>{t('NEW_WORKSPACE_SCREEN.APPLICATION_ADMIN')}</Styled.Message>
       )}
     </Styled.Content>
   );
