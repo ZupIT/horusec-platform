@@ -14,3 +14,9 @@ migrate-drop:
 migrate-up:
 	chmod +x ./deployments/scripts/migration-run.sh
 	./deployments/scripts/migration-run.sh up
+
+make run:
+	docker run --privileged -name horusec-all-in-one all-in-one:latest
+
+make stop:
+	docker stop horusec-all-in-one
