@@ -120,16 +120,10 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
         });
     };
 
-    if (currentWorkspace) {
-      if (type === 'repository') {
-        fetchRepositories();
-      } else {
-        onApply({
-          ...initialValues,
-          workspaceID: currentWorkspace.workspaceID,
-        });
-      }
+    if (type === 'repository') {
+      fetchRepositories();
     }
+
     return function () {
       isCancelled = true;
     };
@@ -153,7 +147,6 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
         values.initialDate = getRangeOfPeriod[values.period][0];
         values.finalDate = getRangeOfPeriod[values.period][1];
         onApply(values);
-        console.log(values);
       }}
     >
       {(props) => (
@@ -199,7 +192,6 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
             rounded
             width={78}
             type="submit"
-            onClick={() => props.submitForm()}
           />
         </Styled.Container>
       )}
