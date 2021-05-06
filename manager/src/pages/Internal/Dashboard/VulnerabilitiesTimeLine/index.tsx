@@ -34,10 +34,9 @@ const VulnerabilitiesTimeLine: React.FC<Props> = ({ data, isLoading }) => {
   const { t } = useTranslation();
   const { colors, metrics } = useTheme();
 
-  const [chartData, setChartData] = useState<ChartBarStacked>({
-    categories: [],
-    series: [],
-  });
+  const [chartData, setChartData] = useState<ChartBarStacked>(
+    formatChartStacked(data, 'time', true)
+  );
 
   const options: ApexOptions = {
     markers: {
@@ -97,7 +96,7 @@ const VulnerabilitiesTimeLine: React.FC<Props> = ({ data, isLoading }) => {
   };
 
   useEffect(() => {
-    if (data) setChartData(formatChartStacked(data, 'time', true));
+    setChartData(formatChartStacked(data, 'time', true));
   }, [data]);
 
   return (

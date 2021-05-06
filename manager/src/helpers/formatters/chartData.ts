@@ -33,6 +33,10 @@ const formatChartStacked = (
   const info: number[] = [];
   const unknown: number[] = [];
 
+  if (!listOfData) {
+    return formattedData;
+  }
+
   listOfData.forEach((item) => {
     formattedData.categories.push(
       labeIsDate ? formatToHumanDate(item[labelKey]) : item[labelKey]
