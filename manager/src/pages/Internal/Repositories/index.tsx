@@ -92,7 +92,6 @@ const Repositories: React.FC = () => {
   };
 
   const handleConfirmRepositoryEdit = (repository: Repository) => {
-    console.log(repository);
     setVisibleHandleModal(false);
     setRefresh((state) => state++);
   };
