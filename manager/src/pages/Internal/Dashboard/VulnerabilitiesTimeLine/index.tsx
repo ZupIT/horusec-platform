@@ -14,22 +14,23 @@
  * limitations under the License.
  */
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ReactApexChart from 'react-apexcharts';
 import { ApexOptions } from 'apexcharts';
 import Styled from './styled';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from 'styled-components';
 import { Icon } from 'components';
-import { FilterValues } from 'helpers/interfaces/FilterValues';
 import { ChartBarStacked } from 'helpers/interfaces/ChartData';
+import { VulnerabilityByTime } from 'helpers/interfaces/DashboardData';
+import { formatChartStacked } from 'helpers/formatters/chartData';
 
 interface Props {
-  filters?: FilterValues;
+  data: VulnerabilityByTime[];
   isLoading: boolean;
 }
 
-const VulnerabilitiesTimeLine: React.FC<Props> = ({ filters, isLoading }) => {
+const VulnerabilitiesTimeLine: React.FC<Props> = ({ data, isLoading }) => {
   const { t } = useTranslation();
   const { colors, metrics } = useTheme();
 
@@ -94,6 +95,10 @@ const VulnerabilitiesTimeLine: React.FC<Props> = ({ filters, isLoading }) => {
       },
     },
   };
+
+  useEffect(() => {
+    if (data) setChartData(formatChartStacked(data, 'time', true));
+  }, [data]);
 
   return (
     <div className="block max-space">

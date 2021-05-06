@@ -96,9 +96,17 @@ const AllVulnerabilities: React.FC<Props> = ({ isLoading, data }) => {
         );
       });
 
-      setChartColors(itemColors);
-      setChartLabels(labels);
-      setChartValues(values);
+      const total = values.reduce((item, current) => item + current);
+
+      if (total > 0) {
+        setChartColors(itemColors);
+        setChartLabels(labels);
+        setChartValues(values);
+      } else {
+        setChartColors([]);
+        setChartLabels([]);
+        setChartValues([]);
+      }
     };
 
     if (data) formatData(data);

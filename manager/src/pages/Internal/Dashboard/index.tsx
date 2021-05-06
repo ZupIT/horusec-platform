@@ -133,9 +133,15 @@ const Dashboard: React.FC<Props> = ({ type }) => {
       </Styled.Row>
 
       <Styled.Row>
-        <VulnerabilitiesByLanguage isLoading={isLoading} filters={filters} />
+        <VulnerabilitiesByLanguage
+          isLoading={isLoading}
+          data={dashboardData?.vulnerabilitiesByLanguage}
+        />
 
-        <VulnerabilitiesTimeLine isLoading={isLoading} filters={filters} />
+        <VulnerabilitiesTimeLine
+          isLoading={isLoading}
+          data={dashboardData?.vulnerabilityByTime}
+        />
       </Styled.Row>
 
       <Styled.Row>

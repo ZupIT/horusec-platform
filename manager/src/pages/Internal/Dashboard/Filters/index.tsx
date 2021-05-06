@@ -64,6 +64,7 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
   const today = new Date();
   const lastWeek = new Date(new Date().setDate(today.getDate() - 7));
   const lastMonth = new Date(new Date().setDate(today.getDate() - 30));
+  const firstYear = new Date(2019, 1, 1);
 
   const [repositories, setRepositories] = useState<Repository[]>([]);
 
@@ -86,8 +87,8 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
 
   const initialValues: FilterValues = {
     period: fixedRanges[0].value,
-    initialDate: null,
-    finalDate: null,
+    initialDate: firstYear,
+    finalDate: today,
     repositoryID: repositories[0]?.repositoryID,
     workspaceID: repositories[0]?.workspaceID,
     type: type,
@@ -133,7 +134,7 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
   }, [currentWorkspace]);
 
   const getRangeOfPeriod: ObjectLiteral = {
-    beginning: [null, null],
+    beginning: [firstYear, today],
     customRange: [today, today],
     today: [today, today],
     lastWeek: [lastWeek, today],
@@ -146,14 +147,10 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
       enableReinitialize={true}
       validationSchema={ValidationScheme}
       onSubmit={(values) => {
-        if (values.period !== fixedRanges[1].value) {
-          values.initialDate = getRangeOfPeriod[values.period][0];
-          values.finalDate = getRangeOfPeriod[values.period][1];
-        } else {
-          values.initialDate = new Date(values.initialDate);
-          values.finalDate = new Date(values.finalDate);
-        }
+        values.initialDate = getRangeOfPeriod[values.period][0];
+        values.finalDate = getRangeOfPeriod[values.period][1];
         onApply(values);
+        console.log(values);
       }}
     >
       {(props) => (

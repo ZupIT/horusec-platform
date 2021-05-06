@@ -39,7 +39,7 @@ export interface VulnerabilitiesByAuthor extends DashboardCriticality {
   author: string;
 }
 
-export interface VulnerabilitiesByLanguage extends DashboardCriticality {
+export interface VulnerabilitiesByLanguageData extends DashboardCriticality {
   language: string;
 }
 
@@ -57,7 +57,7 @@ export interface DashboardData {
   totalAuthors: number;
   totalRepositories: number;
   vulnerabilitiesByAuthor: VulnerabilitiesByAuthor[];
-  vulnerabilitiesByLanguage: VulnerabilitiesByLanguage[];
+  vulnerabilitiesByLanguage: VulnerabilitiesByLanguageData[];
   vulnerabilitiesByRepository: VulnerabilitiesByRepository[];
   vulnerabilityBySeverity: VulnerabilityBySeverity[];
   vulnerabilityByTime: VulnerabilityByTime[];
