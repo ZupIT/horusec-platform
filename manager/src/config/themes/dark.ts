@@ -120,6 +120,14 @@ export default {
       DEFAULT: '#8E8E93',
     },
 
+    vulnerabilitiesStatus: {
+      CORRECTED: '#095626',
+      FALSEPOSITIVE: '#953c01',
+      RISKACCEPTED: '#6d0c95',
+      VULNERABILITY: '#7b1b11',
+      DEFAULT: '#8E8E93',
+    },
+
     languages: {
       GO: '#66d1dd',
       'C#': '#6508bf',
