@@ -93,7 +93,6 @@ const Workspaces: React.FC = () => {
   useEffect(() => {
     setFilteredWorkspaces(allWorkspaces);
   }, [allWorkspaces]);
-  console.log(isApplicationAdmin());
   return (
     <Styled.Wrapper>
       <Styled.Options>
