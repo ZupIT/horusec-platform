@@ -56,7 +56,6 @@ const Dashboard: React.FC<Props> = ({ type }) => {
         .then((result: AxiosResponse) => {
           if (!isCancelled) {
             const data = result?.data?.content as DashboardData;
-            console.log(data);
             setDashboardData(data);
           }
         })
