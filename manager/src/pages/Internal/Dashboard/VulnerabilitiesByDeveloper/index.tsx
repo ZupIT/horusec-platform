@@ -99,7 +99,7 @@ const VulnerabilitiesByDeveloper: React.FC<Props> = ({ data, isLoading }) => {
   };
 
   useEffect(() => {
-    if (data) setChartData(formatChartStacked(data, 'author', false));
+    setChartData(formatChartStacked(data, 'author', false));
   }, [data]);
 
   return (

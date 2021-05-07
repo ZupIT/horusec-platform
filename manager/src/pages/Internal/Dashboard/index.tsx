@@ -49,6 +49,7 @@ const Dashboard: React.FC<Props> = ({ type }) => {
     let isCancelled = false;
     if (filters) {
       setLoading(true);
+      setDashboardData(null);
 
       analyticService
         .getDashboardData(filters)
@@ -56,11 +57,6 @@ const Dashboard: React.FC<Props> = ({ type }) => {
           if (!isCancelled) {
             const data = result?.data?.content as DashboardData;
             setDashboardData(data);
-          }
-        })
-        .catch(() => {
-          if (!isCancelled) {
-            setDashboardData(null);
           }
         })
         .finally(() => {

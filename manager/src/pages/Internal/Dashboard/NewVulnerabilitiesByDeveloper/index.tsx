@@ -42,7 +42,7 @@ const NewVulnerabilitiesByDeveloper: React.FC<Props> = ({
   const [chatData, setChartData] = useState<BarCharRow[]>([]);
 
   const formatFirstLayer = (data: VulnerabilitiesByAuthor[]) => {
-    const formatted = data.map((item) => {
+    const formatted = (data || []).map((item) => {
       let value = 0;
 
       Object.values(item).forEach((i) => {
@@ -119,10 +119,8 @@ const NewVulnerabilitiesByDeveloper: React.FC<Props> = ({
   };
 
   useEffect(() => {
-    if (data) {
-      formatFirstLayer(data);
-      setAllData(data);
-    }
+    formatFirstLayer(data);
+    setAllData(data);
   }, [data]);
 
   return (
