@@ -91,7 +91,7 @@ const VulnerabilitiesByLanguage: React.FC<Props> = ({ data, isLoading }) => {
       const labels: string[] = [];
       const values: number[] = [];
 
-      data.forEach((item) => {
+      (data || []).forEach((item) => {
         const total =
           item.critical.count +
           item.high.count +
@@ -116,7 +116,7 @@ const VulnerabilitiesByLanguage: React.FC<Props> = ({ data, isLoading }) => {
       setChartValues(values);
     };
 
-    if (data) formatData(data);
+    formatData(data);
   }, [colors.languages, data]);
 
   return (

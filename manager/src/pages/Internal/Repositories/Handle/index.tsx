@@ -34,7 +34,7 @@ interface Props {
   isVisible: boolean;
   repositoryToEdit?: Repository;
   onCancel: () => void;
-  onConfirm: () => void;
+  onConfirm: (repository: Repository) => void;
 }
 
 const HandleRepository: React.FC<Props> = ({
@@ -68,8 +68,8 @@ const HandleRepository: React.FC<Props> = ({
           authzSupervisor: values.authzSupervisor,
         }
       )
-      .then(() => {
-        onConfirm();
+      .then((result) => {
+        onConfirm(result.data?.content);
         showSuccessFlash(t('REPOSITORIES_SCREEN.SUCCESS_CREATE_REPO'));
         actions.resetForm();
       })
@@ -97,8 +97,8 @@ const HandleRepository: React.FC<Props> = ({
           authzSupervisor: values.authzSupervisor,
         }
       )
-      .then(() => {
-        onConfirm();
+      .then((result) => {
+        onConfirm(result.data?.content);
         showSuccessFlash(t('REPOSITORIES_SCREEN.SUCCESS_EDIT_REPO'));
         actions.resetForm();
       })
