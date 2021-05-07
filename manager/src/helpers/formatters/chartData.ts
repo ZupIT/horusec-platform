@@ -33,16 +33,20 @@ const formatChartStacked = (
   const info: number[] = [];
   const unknown: number[] = [];
 
+  if (!listOfData) {
+    return formattedData;
+  }
+
   listOfData.forEach((item) => {
     formattedData.categories.push(
       labeIsDate ? formatToHumanDate(item[labelKey]) : item[labelKey]
     );
-    critical.push(item?.critical);
-    high.push(item?.high);
-    medium.push(item?.medium);
-    low.push(item?.low);
-    info.push(item?.info);
-    unknown.push(item?.unknown);
+    critical.push(item?.critical?.count);
+    high.push(item?.high?.count);
+    medium.push(item?.medium?.count);
+    low.push(item?.low?.count);
+    info.push(item?.info?.count);
+    unknown.push(item?.unknown?.count);
   });
 
   formattedData.series = [

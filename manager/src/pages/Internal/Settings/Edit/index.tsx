@@ -46,7 +46,7 @@ const EditAccount: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
   const { showSuccessFlash } = useFlashMessage();
   const { logout } = useAuth();
   const history = useHistory();
-  const { disabledBroker } = getCurrentConfig();
+  const { disableEmails } = getCurrentConfig();
 
   const [isLoading, setLoading] = useState(false);
   const [successDialogIsOpen, setSuccessDialogIsOpen] = useState(false);
@@ -83,7 +83,7 @@ const EditAccount: React.FC<Props> = ({ isVisible, onCancel, onConfirm }) => {
           accountService
             .update(username, email)
             .then(() => {
-              if (email !== currentUser.email && !disabledBroker) {
+              if (email !== currentUser.email && !disableEmails) {
                 setSuccessDialogIsOpen(true);
               }
 

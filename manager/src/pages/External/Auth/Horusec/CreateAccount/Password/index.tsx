@@ -32,7 +32,7 @@ import { Formik } from 'formik';
 
 function PasswordForm() {
   const { t } = useTranslation();
-  const { disabledBroker } = getCurrentConfig();
+  const { disableEmails } = getCurrentConfig();
   const history = useHistory();
   const { isLoading, createAccount, successDialogVisible } = useContext(
     CreateAccountContext
@@ -119,7 +119,6 @@ function PasswordForm() {
       <Formik
         initialValues={initialValues}
         validationSchema={ValidationScheme}
-        validateOnMount
         validate={(values) => handlePasswordValue(values.password)}
         onSubmit={(values) => {
           createAccount(values.password);
@@ -165,7 +164,7 @@ function PasswordForm() {
         isVisible={successDialogVisible}
         confirmText={t('CREATE_ACCOUNT_SCREEN.CONFIRM')}
         message={
-          disabledBroker
+          disableEmails
             ? t('CREATE_ACCOUNT_SCREEN.SUCCESS_CREATE_ACCOUNT')
             : t('CREATE_ACCOUNT_SCREEN.SUCCESS_CREATE_ACCOUNT_WITH_CONFIRM')
         }

@@ -20,7 +20,7 @@ type IConfig interface {
 	GetAuthenticationType() auth.AuthenticationType
 	ToConfigResponse() map[string]interface{}
 	IsApplicationAdmEnabled() bool
-	IsBrokerDisabled() bool
+	IsEmailsDisabled() bool
 	ToGetAuthConfigResponse() *proto.GetAuthConfigResponse
 	GetHorusecAuthURL() string
 	GetHorusecManagerURL() string
@@ -33,7 +33,7 @@ type IConfig interface {
 type Config struct {
 	HorusecAuthURL         string
 	AuthType               auth.AuthenticationType
-	DisableBroker          bool
+	DisableEmails          bool
 	EnableApplicationAdmin bool
 	ApplicationAdminData   string
 	EnableDefaultUser      bool
@@ -46,7 +46,7 @@ func NewAuthAppConfig(connection *database.Connection) IConfig {
 	config := &Config{
 		HorusecAuthURL:         env.GetEnvOrDefault(enums.EnvAuthURL, "http://localhost:8006"),
 		AuthType:               auth.AuthenticationType(env.GetEnvOrDefault(enums.EnvAuthType, auth.Horusec.ToString())),
-		DisableBroker:          env.GetEnvOrDefaultBool(enums.EnvDisableBroker, false),
+		DisableEmails:          env.GetEnvOrDefaultBool(enums.EnvDisableEmails, false),
 		EnableApplicationAdmin: env.GetEnvOrDefaultBool(enums.EnvEnableApplicationAdmin, false),
 		ApplicationAdminData:   env.GetEnvOrDefault(enums.EnvApplicationAdminData, enums.ApplicationAdminDefaultData),
 		EnableDefaultUser:      env.GetEnvOrDefaultBool(enums.EnvEnableDefaultUser, true),
@@ -66,7 +66,7 @@ func (c *Config) ToConfigResponse() map[string]interface{} {
 	return map[string]interface{}{
 		"enableApplicationAdmin": c.EnableApplicationAdmin,
 		"authType":               c.AuthType,
-		"disableBroker":          c.DisableBroker,
+		"disableEmails":          c.DisableEmails,
 	}
 }
 
@@ -74,15 +74,15 @@ func (c *Config) IsApplicationAdmEnabled() bool {
 	return c.EnableApplicationAdmin
 }
 
-func (c *Config) IsBrokerDisabled() bool {
-	return c.DisableBroker
+func (c *Config) IsEmailsDisabled() bool {
+	return c.DisableEmails
 }
 
 func (c *Config) ToGetAuthConfigResponse() *proto.GetAuthConfigResponse {
 	return &proto.GetAuthConfigResponse{
 		EnableApplicationAdmin: c.EnableApplicationAdmin,
 		AuthType:               c.AuthType.ToString(),
-		DisableBroker:          c.DisableBroker,
+		DisableEmails:          c.DisableEmails,
 	}
 }
 
