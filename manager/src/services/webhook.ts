@@ -30,7 +30,7 @@ const create = (
   headers: WebhookHeader[],
   description: string
 ) => {
-  return http.post(`${SERVICE_WEBHOOK}/webhook/webhook`, {
+  return http.post(`${SERVICE_WEBHOOK}/webhook/webhook/${workspaceID}`, {
     url,
     method,
     headers,
@@ -49,18 +49,23 @@ const update = (
   headers: WebhookHeader[],
   description: string
 ) => {
-  return http.put(`${SERVICE_WEBHOOK}/webhook/webhook/${webhookID}`, {
-    url,
-    method,
-    headers,
-    description,
-    workspaceID,
-    repositoryID,
-  });
+  return http.put(
+    `${SERVICE_WEBHOOK}/webhook/webhook/${workspaceID}/${webhookID}`,
+    {
+      url,
+      method,
+      headers,
+      description,
+      workspaceID,
+      repositoryID,
+    }
+  );
 };
 
-const remove = (webhookID: string) => {
-  return http.delete(`${SERVICE_WEBHOOK}/webhook/webhook/${webhookID}`);
+const remove = (webhookID: string, workspaceID: string) => {
+  return http.delete(
+    `${SERVICE_WEBHOOK}/webhook/webhook/${workspaceID}/${webhookID}`
+  );
 };
 
 export default {

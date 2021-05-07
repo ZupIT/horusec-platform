@@ -31,20 +31,23 @@ import useWorkspace from 'helpers/hooks/useWorkspace';
 import { FieldArray, Formik, FormikHelpers } from 'formik';
 import SearchSelect from 'components/SearchSelect';
 import * as Yup from 'yup';
+
 interface Props {
   isVisible: boolean;
-  webhookToCopy: Webhook;
+  isNew: boolean;
+  webhookInitial: Webhook;
   onCancel: () => void;
   onConfirm: () => void;
 }
 
 const webhookHttpMethods = [{ value: 'POST' }, { value: 'GET' }];
 
-const AddWebhook: React.FC<Props> = ({
+const HandleWebhook: React.FC<Props> = ({
   isVisible,
+  isNew,
   onCancel,
   onConfirm,
-  webhookToCopy,
+  webhookInitial,
 }) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
@@ -56,7 +59,36 @@ const AddWebhook: React.FC<Props> = ({
   const [isLoading, setLoading] = useState(false);
   const [repositories, setRepositories] = useState<Repository[]>([]);
 
-  const handleConfirmSave = (
+  const updateWebhook = (
+    values: InitialValue,
+    action: FormikHelpers<InitialValue>
+  ) => {
+    setLoading(true);
+
+    webhookService
+      .update(
+        currentWorkspace?.workspaceID,
+        values.repositoryID,
+        webhookInitial.webhookID,
+        values.url,
+        values.httpMethod,
+        values.headers,
+        values.description
+      )
+      .then(() => {
+        showSuccessFlash(t('WEBHOOK_SCREEN.SUCCESS_UPDATE'));
+        action.resetForm();
+        onConfirm();
+      })
+      .catch((err) => {
+        dispatchMessage(err?.response?.data);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
+  const createWebhook = (
     values: InitialValue,
     action: FormikHelpers<InitialValue>
   ) => {
@@ -84,6 +116,14 @@ const AddWebhook: React.FC<Props> = ({
       });
   };
 
+  const handleConfirmSave = (
+    values: InitialValue,
+    action: FormikHelpers<InitialValue>
+  ) => {
+    if (isNew) createWebhook(values, action);
+    else updateWebhook(values, action);
+  };
+
   useEffect(() => {
     const fetchRepositories = () => {
       coreService
@@ -109,11 +149,11 @@ const AddWebhook: React.FC<Props> = ({
   type InitialValue = Yup.InferType<typeof ValidationScheme>;
 
   const initialValues: InitialValue = {
-    description: webhookToCopy?.description || '',
-    url: webhookToCopy?.url || '',
-    headers: webhookToCopy?.headers || [{ key: '', value: '' }],
-    repositoryID: '',
-    httpMethod: '',
+    description: webhookInitial?.description || '',
+    url: webhookInitial?.url || '',
+    headers: webhookInitial?.headers || [{ key: '', value: '' }],
+    repositoryID: webhookInitial?.repositoryID || '',
+    httpMethod: webhookInitial?.method || 'POST',
   };
 
   return (
@@ -129,7 +169,7 @@ const AddWebhook: React.FC<Props> = ({
       {(props) => (
         <Dialog
           isVisible={isVisible}
-          message={t('WEBHOOK_SCREEN.ADD')}
+          message={isNew ? t('WEBHOOK_SCREEN.ADD') : t('WEBHOOK_SCREEN.EDIT')}
           onCancel={() => {
             props.resetForm();
             onCancel();
@@ -169,6 +209,7 @@ const AddWebhook: React.FC<Props> = ({
               <SearchSelect
                 label={t('WEBHOOK_SCREEN.TABLE.METHOD')}
                 name="httpMethod"
+                isDisabled={true}
                 width="50%"
                 options={webhookHttpMethods.map((el) => ({
                   label: el.value,
@@ -232,4 +273,4 @@ const AddWebhook: React.FC<Props> = ({
   );
 };
 
-export default AddWebhook;
+export default HandleWebhook;
