@@ -1,10 +1,6 @@
 name: Api
-on:
-  push:
-    paths: [
-        "api/**",
-        "**/workflows/api-pipeline.yml",
-    ]
+on: ["push"]
+
 jobs:
   lint-coverage-build-security:
     runs-on: ubuntu-latest

@@ -35,7 +35,10 @@ func NewRepositoriesAnalysis(connection *database.Connection) IAnalysis {
 func (a *Analysis) FindAnalysisByID(analysisID uuid.UUID) response.IResponse {
 	entity := &analysis.Analysis{}
 	condition := map[string]interface{}{"analysis_id": analysisID}
-	preloads := []string{"AnalysisVulnerabilities", "AnalysisVulnerabilities.Vulnerability"}
+	preloads := map[string][]interface{}{
+		"AnalysisVulnerabilities":               {},
+		"AnalysisVulnerabilities.Vulnerability": {},
+	}
 	return a.databaseRead.FindPreload(entity, condition, preloads, entity.GetTable())
 }
 
