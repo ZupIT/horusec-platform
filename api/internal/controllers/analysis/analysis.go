@@ -17,17 +17,16 @@ package analysis
 import (
 	"time"
 
-	"github.com/ZupIT/horusec-devkit/pkg/enums/exchange"
-
 	"github.com/google/uuid"
 
-	repoAnalysis "github.com/ZupIT/horusec-platform/api/internal/repositories/analysis"
-	"github.com/ZupIT/horusec-platform/api/internal/repositories/repository"
-
 	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
+	"github.com/ZupIT/horusec-devkit/pkg/enums/exchange"
 	appConfiguration "github.com/ZupIT/horusec-devkit/pkg/services/app"
 	brokerService "github.com/ZupIT/horusec-devkit/pkg/services/broker"
 	"github.com/ZupIT/horusec-devkit/pkg/services/database/enums"
+
+	repoAnalysis "github.com/ZupIT/horusec-platform/api/internal/repositories/analysis"
+	"github.com/ZupIT/horusec-platform/api/internal/repositories/repository"
 )
 
 type IController interface {
@@ -73,7 +72,7 @@ func (c *Controller) SaveAnalysis(analysisEntity *analysis.Analysis) (uuid.UUID,
 	if err != nil {
 		return uuid.Nil, err
 	}
-	if err := c.publishInBroker(analysisDecorated); err != nil {
+	if err := c.publishInBroker(analysisDecorated.ID); err != nil {
 		return uuid.Nil, err
 	}
 	return analysisDecorated.ID, nil
@@ -147,10 +146,16 @@ func (c *Controller) hasDuplicatedHash(
 	return false
 }
 
-func (c *Controller) publishInBroker(analysisData *analysis.Analysis) error {
+func (c *Controller) publishInBroker(analysisID uuid.UUID) error {
 	if !c.appConfig.IsEmailsDisabled() {
+		analysisFound, err := c.GetAnalysis(analysisID)
+		if err != nil {
+			return err
+		}
+
 		return c.broker.Publish("", exchange.NewAnalysis.ToString(),
-			exchange.Fanout.ToString(), analysisData.ToBytes())
+			exchange.Fanout.ToString(), analysisFound.ToBytes())
 	}
+
 	return nil
 }

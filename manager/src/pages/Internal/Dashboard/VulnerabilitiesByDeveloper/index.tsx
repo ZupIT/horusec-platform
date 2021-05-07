@@ -22,20 +22,19 @@ import { useTranslation } from 'react-i18next';
 import { useTheme } from 'styled-components';
 import { Icon } from 'components';
 import { FilterValues } from 'helpers/interfaces/FilterValues';
-import analyticService from 'services/analytic';
 import { ChartBarStacked } from 'helpers/interfaces/ChartData';
+import { VulnerabilitiesByAuthor } from 'helpers/interfaces/DashboardData';
 import { formatChartStacked } from 'helpers/formatters/chartData';
-import { AxiosResponse } from 'axios';
 
 interface Props {
-  filters?: FilterValues;
+  isLoading: boolean;
+  data: VulnerabilitiesByAuthor[];
 }
 
-const VulnerabilitiesByDeveloper: React.FC<Props> = ({ filters }) => {
+const VulnerabilitiesByDeveloper: React.FC<Props> = ({ data, isLoading }) => {
   const { t } = useTranslation();
   const { colors, metrics } = useTheme();
 
-  const [isLoading, setLoading] = useState(false);
   const [chartData, setChartData] = useState<ChartBarStacked>({
     categories: [],
     series: [],
@@ -100,29 +99,8 @@ const VulnerabilitiesByDeveloper: React.FC<Props> = ({ filters }) => {
   };
 
   useEffect(() => {
-    let isCancelled = false;
-
-    if (filters) {
-      setLoading(true);
-
-      analyticService
-        .getVulnerabilitiesByDeveloper(filters)
-        .then((result: AxiosResponse) => {
-          if (!isCancelled) {
-            setChartData(formatChartStacked(result.data.content, 'developer'));
-          }
-        })
-        .finally(() => {
-          if (!isCancelled) {
-            setLoading(false);
-          }
-        });
-    }
-
-    return () => {
-      isCancelled = true;
-    };
-  }, [filters]);
+    if (data) setChartData(formatChartStacked(data, 'author', false));
+  }, [data]);
 
   return (
     <div className="block max-space">

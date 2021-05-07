@@ -109,6 +109,13 @@ func TestController_SaveAnalysis(t *testing.T) {
 		repoAnalysisMock := &repoAnalysis.Mock{}
 		repoAnalysisMock.On("CreateFullAnalysisResponse").Return(nil)
 		repoAnalysisMock.On("CreateFullAnalysisArguments").Return(func(any *analysis.Analysis) {})
+		repoAnalysisMock.On("FindAnalysisByID").Return(response.NewResponse(0, nil, &analysis.Analysis{
+			ID:         uuid.New(),
+			Status:     analysisEnum.Success,
+			Errors:     "",
+			CreatedAt:  time.Now(),
+			FinishedAt: time.Now(),
+		}))
 		controller := NewAnalysisController(
 			brokerMock,
 			appConfigMock,
@@ -137,6 +144,13 @@ func TestController_SaveAnalysis(t *testing.T) {
 		repoAnalysisMock := &repoAnalysis.Mock{}
 		repoAnalysisMock.On("CreateFullAnalysisResponse").Return(nil)
 		repoAnalysisMock.On("CreateFullAnalysisArguments").Return(func(any *analysis.Analysis) {})
+		repoAnalysisMock.On("FindAnalysisByID").Return(response.NewResponse(0, nil, &analysis.Analysis{
+			ID:         uuid.New(),
+			Status:     analysisEnum.Success,
+			Errors:     "",
+			CreatedAt:  time.Now(),
+			FinishedAt: time.Now(),
+		}))
 		controller := NewAnalysisController(
 			brokerMock,
 			appConfigMock,
@@ -193,6 +207,13 @@ func TestController_SaveAnalysis(t *testing.T) {
 		repoAnalysisMock.On("CreateFullAnalysisArguments").Return(func(arguments *analysis.Analysis) {
 			assert.Len(t, arguments.AnalysisVulnerabilities, 1)
 		})
+		repoAnalysisMock.On("FindAnalysisByID").Return(response.NewResponse(0, nil, &analysis.Analysis{
+			ID:         uuid.New(),
+			Status:     analysisEnum.Success,
+			Errors:     "",
+			CreatedAt:  time.Now(),
+			FinishedAt: time.Now(),
+		}))
 		controller := NewAnalysisController(
 			brokerMock,
 			appConfigMock,
@@ -273,6 +294,13 @@ func TestController_SaveAnalysis(t *testing.T) {
 		repoAnalysisMock := &repoAnalysis.Mock{}
 		repoAnalysisMock.On("CreateFullAnalysisResponse").Return(nil)
 		repoAnalysisMock.On("CreateFullAnalysisArguments").Return(func(any *analysis.Analysis) {})
+		repoAnalysisMock.On("FindAnalysisByID").Return(response.NewResponse(0, nil, &analysis.Analysis{
+			ID:         uuid.New(),
+			Status:     analysisEnum.Success,
+			Errors:     "",
+			CreatedAt:  time.Now(),
+			FinishedAt: time.Now(),
+		}))
 		controller := NewAnalysisController(
 			brokerMock,
 			appConfigMock,
@@ -384,6 +412,13 @@ func TestController_SaveAnalysis(t *testing.T) {
 		repoAnalysisMock := &repoAnalysis.Mock{}
 		repoAnalysisMock.On("CreateFullAnalysisResponse").Return(errors.New("unexpected error"))
 		repoAnalysisMock.On("CreateFullAnalysisArguments").Return(func(any *analysis.Analysis) {})
+		repoAnalysisMock.On("FindAnalysisByID").Return(response.NewResponse(0, nil, &analysis.Analysis{
+			ID:         uuid.New(),
+			Status:     analysisEnum.Success,
+			Errors:     "",
+			CreatedAt:  time.Now(),
+			FinishedAt: time.Now(),
+		}))
 		controller := NewAnalysisController(
 			brokerMock,
 			appConfigMock,
@@ -413,6 +448,13 @@ func TestController_SaveAnalysis(t *testing.T) {
 		repoAnalysisMock := &repoAnalysis.Mock{}
 		repoAnalysisMock.On("CreateFullAnalysisResponse").Return(nil)
 		repoAnalysisMock.On("CreateFullAnalysisArguments").Return(func(any *analysis.Analysis) {})
+		repoAnalysisMock.On("FindAnalysisByID").Return(response.NewResponse(0, nil, &analysis.Analysis{
+			ID:         uuid.New(),
+			Status:     analysisEnum.Success,
+			Errors:     "",
+			CreatedAt:  time.Now(),
+			FinishedAt: time.Now(),
+		}))
 		controller := NewAnalysisController(
 			brokerMock,
 			appConfigMock,
@@ -433,7 +475,7 @@ func TestController_SaveAnalysis(t *testing.T) {
 		assert.NoError(t, err)
 		assert.NotEqual(t, res, uuid.Nil)
 	})
-	t.Run("Should save analysis with error when publish to webhook queue", func(t *testing.T) {
+	t.Run("Should save analysis with error when get analysis to publish in broker queue", func(t *testing.T) {
 		brokerMock := &broker.Mock{}
 		brokerMock.On("Publish").Return(errors.New("unexpected error"))
 		appConfigMock := &appConfiguration.Mock{}
@@ -442,6 +484,43 @@ func TestController_SaveAnalysis(t *testing.T) {
 		repoAnalysisMock := &repoAnalysis.Mock{}
 		repoAnalysisMock.On("CreateFullAnalysisResponse").Return(nil)
 		repoAnalysisMock.On("CreateFullAnalysisArguments").Return(func(any *analysis.Analysis) {})
+		repoAnalysisMock.On("FindAnalysisByID").Return(response.NewResponse(0, errors.New("unexpected error"), nil))
+		controller := NewAnalysisController(
+			brokerMock,
+			appConfigMock,
+			repoRepositoryMock,
+			repoAnalysisMock,
+		)
+		res, err := controller.SaveAnalysis(&analysis.Analysis{
+			ID:             uuid.New(),
+			WorkspaceID:    uuid.New(),
+			WorkspaceName:  uuid.NewString(),
+			RepositoryID:   uuid.New(),
+			RepositoryName: uuid.NewString(),
+			Status:         analysisEnum.Success,
+			Errors:         "",
+			CreatedAt:      time.Now(),
+			FinishedAt:     time.Now(),
+		})
+		assert.Error(t, err)
+		assert.Equal(t, res, uuid.Nil)
+	})
+	t.Run("Should save analysis with error when publish in broker queue", func(t *testing.T) {
+		brokerMock := &broker.Mock{}
+		brokerMock.On("Publish").Return(errors.New("unexpected error"))
+		appConfigMock := &appConfiguration.Mock{}
+		appConfigMock.On("IsEmailsDisabled").Return(false)
+		repoRepositoryMock := &repository.Mock{}
+		repoAnalysisMock := &repoAnalysis.Mock{}
+		repoAnalysisMock.On("CreateFullAnalysisResponse").Return(nil)
+		repoAnalysisMock.On("CreateFullAnalysisArguments").Return(func(any *analysis.Analysis) {})
+		repoAnalysisMock.On("FindAnalysisByID").Return(response.NewResponse(0, nil, &analysis.Analysis{
+			ID:         uuid.New(),
+			Status:     analysisEnum.Success,
+			Errors:     "",
+			CreatedAt:  time.Now(),
+			FinishedAt: time.Now(),
+		}))
 		controller := NewAnalysisController(
 			brokerMock,
 			appConfigMock,
