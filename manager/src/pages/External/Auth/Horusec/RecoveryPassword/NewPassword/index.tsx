@@ -165,12 +165,12 @@ function NewPasswordScreen() {
             <Styled.Field
               label={t('RECOVERY_PASS_SCREEN.CONFIRM_PASS')}
               ariaLabel={t('RECOVERY_PASS_SCREEN.ARIA_CONFIRM_PASS')}
-              name="confirm-pass"
+              name="confirmPass"
               type="password"
             />
 
             <Styled.Submit
-              isDisabled={!props.isValid}
+              isDisabled={!props.isValid || !props.dirty}
               text={t('RECOVERY_PASS_SCREEN.UPDATE_PASS')}
               type="submit"
               rounded

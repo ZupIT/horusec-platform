@@ -370,6 +370,9 @@ const Vulnerabilities: React.FC = () => {
               ...row,
               id: row.vulnerabilityID,
               hash: row.vulnHash,
+              description: `${row.file} (${row.line || '-'}:${
+                row.column || '-'
+              })`,
               severity: (
                 <Select
                   style={{

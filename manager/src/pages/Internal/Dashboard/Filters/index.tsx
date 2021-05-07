@@ -25,7 +25,7 @@ import { Repository } from 'helpers/interfaces/Repository';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
 import { ObjectLiteral } from 'helpers/interfaces/ObjectLiteral';
 import { AxiosResponse } from 'axios';
-import { Formik } from 'formik';
+import { Formik, yupToFormErrors } from 'formik';
 import * as Yup from 'yup';
 import SearchSelect from 'components/SearchSelect';
 interface FilterProps {
@@ -80,7 +80,10 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
       .nullable(),
     repositoryID: Yup.string()
       .label(t('DASHBOARD_SCREEN.REPOSITORY'))
-      .required(),
+      .when('type', {
+        is: 'repository',
+        then: Yup.string().required(),
+      }),
     workspaceID: Yup.string().required(),
     type: Yup.string().oneOf(['workspace', 'repository']).required(),
   });
@@ -90,8 +93,8 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
     initialDate: firstYear,
     finalDate: today,
     repositoryID: repositories[0]?.repositoryID,
-    workspaceID: repositories[0]?.workspaceID,
-    type: type,
+    workspaceID: currentWorkspace?.workspaceID,
+    type,
   };
 
   useEffect(() => {
@@ -117,16 +120,10 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
         });
     };
 
-    if (currentWorkspace) {
-      if (type === 'repository') {
-        fetchRepositories();
-      } else {
-        onApply({
-          ...initialValues,
-          workspaceID: currentWorkspace.workspaceID,
-        });
-      }
+    if (type === 'repository') {
+      fetchRepositories();
     }
+
     return function () {
       isCancelled = true;
     };
@@ -195,7 +192,6 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
             rounded
             width={78}
             type="submit"
-            onClick={() => props.submitForm()}
           />
         </Styled.Container>
       )}
