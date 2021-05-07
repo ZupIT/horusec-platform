@@ -394,5 +394,5 @@ func (h *Handler) getUpdateAccountData(r *http.Request) (*accountEntities.Update
 		return nil, err
 	}
 
-	return data.SetAccountIDAndIsConfirmed(accountID, h.appConfig.IsBrokerDisabled()), nil
+	return data.SetAccountIDAndIsConfirmed(accountID, h.appConfig.IsEmailsDisabled()), nil
 }

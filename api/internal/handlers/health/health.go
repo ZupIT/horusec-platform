@@ -87,7 +87,7 @@ func (h *Handler) databaseNotAvailable() bool {
 	return !h.databaseRead.IsAvailable() || !h.databaseWrite.IsAvailable()
 }
 func (h *Handler) brokerNotAvailable() bool {
-	return !h.appConfig.IsBrokerDisabled() && !h.broker.IsAvailable()
+	return !h.appConfig.IsEmailsDisabled() && !h.broker.IsAvailable()
 }
 func (h *Handler) grpcAvailable() (bool, string) {
 	return h.grpcHealthCheckService.IsAvailable()

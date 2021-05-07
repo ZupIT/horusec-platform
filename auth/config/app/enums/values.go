@@ -3,7 +3,7 @@ package enums
 const (
 	EnvAuthURL                  = "HORUSEC_AUTH_URL"
 	EnvAuthType                 = "HORUSEC_AUTH_TYPE"
-	EnvDisableBroker            = "HORUSEC_DISABLE_BROKER"
+	EnvDisableEmails            = "HORUSEC_DISABLE_EMAILS"
 	EnvEnableApplicationAdmin   = "HORUSEC_ENABLE_APPLICATION_ADMIN"
 	EnvApplicationAdminData     = "HORUSEC_APPLICATION_ADMIN_DATA"
 	EnvEnableDefaultUser        = "HORUSEC_ENABLE_DEFAULT_USER"

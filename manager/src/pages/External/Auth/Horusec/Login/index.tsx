@@ -29,7 +29,7 @@ function LoginScreen() {
   const history = useHistory();
   const { path } = useRouteMatch();
   const { login, loginInProgress } = useAuth();
-  const { disabledBroker } = getCurrentConfig();
+  const { disableEmails } = getCurrentConfig();
 
   const ValidationScheme = Yup.object({
     email: Yup.string()
@@ -72,7 +72,7 @@ function LoginScreen() {
             type="password"
           />
 
-          {!disabledBroker ? (
+          {!disableEmails ? (
             <Styled.ForgotPass
               onClick={() => history.push(`${path}/recovery-password`)}
             >
