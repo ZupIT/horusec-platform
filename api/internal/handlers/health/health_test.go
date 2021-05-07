@@ -58,7 +58,7 @@ func TestGet(t *testing.T) {
 		dbMockWrite := &database.Mock{}
 		dbMockWrite.On("IsAvailable").Return(true)
 		mockAppConfig := &appConfiguration.Mock{}
-		mockAppConfig.On("IsBrokerDisabled").Return(true)
+		mockAppConfig.On("IsEmailsDisabled").Return(true)
 
 		handler := Handler{
 			broker:                 brokerMock,
@@ -88,7 +88,7 @@ func TestGet(t *testing.T) {
 		dbMockWrite := &database.Mock{}
 		dbMockWrite.On("IsAvailable").Return(true)
 		mockAppConfig := &appConfiguration.Mock{}
-		mockAppConfig.On("IsBrokerDisabled").Return(true)
+		mockAppConfig.On("IsEmailsDisabled").Return(true)
 		handler := Handler{
 			broker:                 brokerMock,
 			brokerConfig:           brokerConfigMock,
@@ -116,7 +116,7 @@ func TestGet(t *testing.T) {
 		dbMockWrite := &database.Mock{}
 		dbMockWrite.On("IsAvailable").Return(true)
 		mockAppConfig := &appConfiguration.Mock{}
-		mockAppConfig.On("IsBrokerDisabled").Return(false)
+		mockAppConfig.On("IsEmailsDisabled").Return(false)
 
 		handler := Handler{
 			broker:                 brokerMock,
@@ -145,7 +145,7 @@ func TestGet(t *testing.T) {
 		dbMockWrite := &database.Mock{}
 		dbMockWrite.On("IsAvailable").Return(false)
 		mockAppConfig := &appConfiguration.Mock{}
-		mockAppConfig.On("IsBrokerDisabled").Return(true)
+		mockAppConfig.On("IsEmailsDisabled").Return(true)
 
 		handler := Handler{
 			broker:                 brokerMock,
@@ -174,7 +174,7 @@ func TestGet(t *testing.T) {
 		dbMockWrite := &database.Mock{}
 		dbMockWrite.On("IsAvailable").Return(true)
 		mockAppConfig := &appConfiguration.Mock{}
-		mockAppConfig.On("IsBrokerDisabled").Return(true)
+		mockAppConfig.On("IsEmailsDisabled").Return(true)
 
 		handler := Handler{
 			broker:                 brokerMock,
@@ -203,7 +203,7 @@ func TestGet(t *testing.T) {
 		dbMockWrite := &database.Mock{}
 		dbMockWrite.On("IsAvailable").Return(true)
 		mockAppConfig := &appConfiguration.Mock{}
-		mockAppConfig.On("IsBrokerDisabled").Return(true)
+		mockAppConfig.On("IsEmailsDisabled").Return(true)
 
 		handler := Handler{
 			broker:                 brokerMock,

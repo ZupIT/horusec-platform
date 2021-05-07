@@ -148,7 +148,7 @@ func (c *Controller) hasDuplicatedHash(
 }
 
 func (c *Controller) publishInBroker(analysisData *analysis.Analysis) error {
-	if !c.appConfig.IsBrokerDisabled() {
+	if !c.appConfig.IsEmailsDisabled() {
 		return c.broker.Publish("", exchange.NewAnalysis.ToString(),
 			exchange.Fanout.ToString(), analysisData.ToBytes())
 	}
