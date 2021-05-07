@@ -21,20 +21,17 @@ import Styled from './styled';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from 'styled-components';
 import { Icon } from 'components';
-import { FilterValues } from 'helpers/interfaces/FilterValues';
-import analyticService from 'services/analytic';
 import { get } from 'lodash';
-import { AxiosResponse } from 'axios';
+import { VulnerabilitiesByLanguageData } from 'helpers/interfaces/DashboardData';
 
 interface Props {
-  filters?: FilterValues;
+  data: VulnerabilitiesByLanguageData[];
+  isLoading: boolean;
 }
 
-const VulnerabilitiesByLanguage: React.FC<Props> = ({ filters }) => {
+const VulnerabilitiesByLanguage: React.FC<Props> = ({ data, isLoading }) => {
   const { t } = useTranslation();
   const { colors, metrics } = useTheme();
-
-  const [isLoading, setLoading] = useState(false);
 
   const [chartValues, setChartValues] = useState<number[]>([]);
   const [chartLabels, setChartLabels] = useState<string[]>([]);
@@ -88,15 +85,23 @@ const VulnerabilitiesByLanguage: React.FC<Props> = ({ filters }) => {
     },
   };
 
-  const formatData = useCallback(
-    (data: [{ language: string; total: number }]) => {
+  useEffect(() => {
+    const formatData = (data: VulnerabilitiesByLanguageData[]) => {
       const itemColors: string[] = [];
       const labels: string[] = [];
       const values: number[] = [];
 
       data.forEach((item) => {
+        const total =
+          item.critical.count +
+          item.high.count +
+          item.info.count +
+          item.medium.count +
+          item.low.count +
+          item.unknown.count;
+
         labels.push(item.language);
-        values.push(item.total);
+        values.push(total);
         itemColors.push(
           get(
             colors.languages,
@@ -109,33 +114,10 @@ const VulnerabilitiesByLanguage: React.FC<Props> = ({ filters }) => {
       setChartColors(itemColors);
       setChartLabels(labels);
       setChartValues(values);
-    },
-    [colors]
-  );
-
-  useEffect(() => {
-    let isCancelled = false;
-    if (filters) {
-      setLoading(true);
-
-      analyticService
-        .getVulnerabilitiesByLanguage(filters)
-        .then((result: AxiosResponse) => {
-          if (!isCancelled) {
-            formatData(result.data.content);
-          }
-        })
-        .finally(() => {
-          if (!isCancelled) {
-            setLoading(false);
-          }
-        });
-    }
-
-    return () => {
-      isCancelled = true;
     };
-  }, [filters, formatData]);
+
+    if (data) formatData(data);
+  }, [colors.languages, data]);
 
   return (
     <div className="block max-space">

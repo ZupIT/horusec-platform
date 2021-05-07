@@ -93,9 +93,27 @@ func (a *Analysis) createVulnerabilityIfNotExists(vuln *vulnerability.Vulnerabil
 		if !exists {
 			return vuln.VulnerabilityID, tsx.Create(vuln, vuln.GetTable()).GetError()
 		}
-		return uuid.Parse(res.GetData().(map[string]interface{})["vulnerability_id"].(string))
+		return a.updateCommitAuthors(vuln, res.GetData(), tsx)
 	}
 	return uuid.Nil, err
+}
+
+func (a *Analysis) updateCommitAuthors(vuln *vulnerability.Vulnerability, resFindVuln interface{},
+	tsx database.IDatabaseWrite) (uuid.UUID, error) {
+	vulnID, err := uuid.Parse(resFindVuln.(map[string]interface{})["vulnerability_id"].(string))
+	if err != nil {
+		return uuid.Nil, err
+	}
+	tableName := (&vulnerability.Vulnerability{}).GetTable()
+	condition := map[string]interface{}{"vulnerability_id": vulnID}
+	entity := map[string]interface{}{
+		"commit_author":  vuln.CommitAuthor,
+		"commit_email":   vuln.CommitEmail,
+		"commit_hash":    vuln.CommitHash,
+		"commit_message": vuln.CommitMessage,
+		"commit_date":    vuln.CommitDate,
+	}
+	return vulnID, tsx.Update(entity, condition, tableName).GetErrorExceptNotFound()
 }
 
 func (a *Analysis) checkIfAlreadyExistsVulnerability(res response.IResponse) (bool, error) {
