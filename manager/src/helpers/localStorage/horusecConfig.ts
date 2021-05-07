@@ -20,7 +20,7 @@ import { HorusecConfig } from 'helpers/interfaces/HorusecConfig';
 const initialValues: HorusecConfig = {
   authType: 'horusec',
   applicationAdminEnable: false,
-  disabledBroker: true,
+  disableEmails: true,
 };
 
 const getCurrentConfig = (): HorusecConfig => {
