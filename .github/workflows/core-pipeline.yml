@@ -1,10 +1,6 @@
 name: Core
-on:
-  push:
-    paths: [
-        "core/**",
-        "**/workflows/core-pipeline.yml",
-    ]
+on: ["push"]
+
 jobs:
   lint-coverage-build-security:
     runs-on: ubuntu-latest

@@ -147,15 +147,10 @@ func (c *Controller) hasDuplicatedHash(
 }
 
 func (c *Controller) publishInBroker(analysisID uuid.UUID) error {
-	if !c.appConfig.IsEmailsDisabled() {
-		analysisFound, err := c.GetAnalysis(analysisID)
-		if err != nil {
-			return err
-		}
-
-		return c.broker.Publish("", exchange.NewAnalysis.ToString(),
-			exchange.Fanout.ToString(), analysisFound.ToBytes())
+	analysisFound, err := c.GetAnalysis(analysisID)
+	if err != nil {
+		return err
 	}
-
-	return nil
+	return c.broker.Publish("", exchange.NewAnalysis.ToString(),
+		exchange.Fanout.ToString(), analysisFound.ToBytes())
 }
