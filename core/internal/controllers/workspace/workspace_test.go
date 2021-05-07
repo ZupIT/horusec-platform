@@ -474,7 +474,7 @@ func TestInviteUser(t *testing.T) {
 		databaseMock.On("Create").Return(&response.Response{})
 
 		appConfig := &app.Mock{}
-		appConfig.On("IsBrokerDisabled").Return(true)
+		appConfig.On("IsEmailsDisabled").Return(true)
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection, appConfig,
@@ -493,7 +493,7 @@ func TestInviteUser(t *testing.T) {
 		databaseMock.On("Create").Return(&response.Response{})
 
 		appConfig := &app.Mock{}
-		appConfig.On("IsBrokerDisabled").Return(false)
+		appConfig.On("IsEmailsDisabled").Return(false)
 
 		brokerMock := &broker.Mock{}
 		brokerMock.On("Publish").Return(nil)

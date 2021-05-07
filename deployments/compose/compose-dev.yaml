@@ -97,7 +97,7 @@ services:
     volumes:
       - ../:/usr/app
     environment:
-      HORUSEC_PORT: "8004"
+      HORUSEC_PORT: "8002"
       HORUSEC_BROKER_HOST: "127.0.0.1"
       HORUSEC_BROKER_PORT: "5672"
       HORUSEC_BROKER_USERNAME: "guest"

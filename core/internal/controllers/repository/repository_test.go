@@ -516,7 +516,7 @@ func TestInviteUser(t *testing.T) {
 
 	t.Run("should success invite user with broker enabled", func(t *testing.T) {
 		appConfig := &app.Mock{}
-		appConfig.On("IsBrokerDisabled").Return(false)
+		appConfig.On("IsEmailsDisabled").Return(false)
 
 		repositoryMock := &repositoryRepository.Mock{}
 		repositoryMock.On("IsNotMemberOfWorkspace").Return(false)
@@ -539,7 +539,7 @@ func TestInviteUser(t *testing.T) {
 
 	t.Run("should success invite user with broker disabled", func(t *testing.T) {
 		appConfig := &app.Mock{}
-		appConfig.On("IsBrokerDisabled").Return(true)
+		appConfig.On("IsEmailsDisabled").Return(true)
 
 		repositoryMock := &repositoryRepository.Mock{}
 		repositoryMock.On("IsNotMemberOfWorkspace").Return(false)

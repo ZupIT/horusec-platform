@@ -58,7 +58,6 @@ func TestGet(t *testing.T) {
 		dbMockWrite := &database.Mock{}
 		dbMockWrite.On("IsAvailable").Return(true)
 		mockAppConfig := &appConfiguration.Mock{}
-		mockAppConfig.On("IsBrokerDisabled").Return(true)
 
 		handler := Handler{
 			broker:                 brokerMock,
@@ -76,36 +75,6 @@ func TestGet(t *testing.T) {
 
 		assert.Equal(t, http.StatusOK, w.Code)
 	})
-
-	t.Run("should return 200 everything its ok and broker disable", func(t *testing.T) {
-		mockGrpcService := &health.MockHealthCheckClient{}
-		mockGrpcService.On("IsAvailable").Return(true, "")
-		brokerMock := &broker.Mock{}
-		brokerMock.On("IsAvailable").Return(true)
-		brokerConfigMock := brokerConfig.NewBrokerConfig()
-		dbMockRead := &database.Mock{}
-		dbMockRead.On("IsAvailable").Return(true)
-		dbMockWrite := &database.Mock{}
-		dbMockWrite.On("IsAvailable").Return(true)
-		mockAppConfig := &appConfiguration.Mock{}
-		mockAppConfig.On("IsBrokerDisabled").Return(true)
-		handler := Handler{
-			broker:                 brokerMock,
-			brokerConfig:           brokerConfigMock,
-			databaseRead:           dbMockRead,
-			databaseWrite:          dbMockWrite,
-			grpcHealthCheckService: mockGrpcService,
-			appConfig:              mockAppConfig,
-		}
-
-		r, _ := http.NewRequest(http.MethodGet, "/test", nil)
-		w := httptest.NewRecorder()
-
-		handler.Get(w, r)
-
-		assert.Equal(t, http.StatusOK, w.Code)
-	})
-
 	t.Run("should return 500 when broker is not healthy", func(t *testing.T) {
 		mockGrpcService := &health.MockHealthCheckClient{}
 		mockGrpcService.On("IsAvailable").Return(true, "")
@@ -116,7 +85,6 @@ func TestGet(t *testing.T) {
 		dbMockWrite := &database.Mock{}
 		dbMockWrite.On("IsAvailable").Return(true)
 		mockAppConfig := &appConfiguration.Mock{}
-		mockAppConfig.On("IsBrokerDisabled").Return(false)
 
 		handler := Handler{
 			broker:                 brokerMock,
@@ -145,7 +113,6 @@ func TestGet(t *testing.T) {
 		dbMockWrite := &database.Mock{}
 		dbMockWrite.On("IsAvailable").Return(false)
 		mockAppConfig := &appConfiguration.Mock{}
-		mockAppConfig.On("IsBrokerDisabled").Return(true)
 
 		handler := Handler{
 			broker:                 brokerMock,
@@ -174,7 +141,6 @@ func TestGet(t *testing.T) {
 		dbMockWrite := &database.Mock{}
 		dbMockWrite.On("IsAvailable").Return(true)
 		mockAppConfig := &appConfiguration.Mock{}
-		mockAppConfig.On("IsBrokerDisabled").Return(true)
 
 		handler := Handler{
 			broker:                 brokerMock,
@@ -203,7 +169,6 @@ func TestGet(t *testing.T) {
 		dbMockWrite := &database.Mock{}
 		dbMockWrite.On("IsAvailable").Return(true)
 		mockAppConfig := &appConfiguration.Mock{}
-		mockAppConfig.On("IsBrokerDisabled").Return(true)
 
 		handler := Handler{
 			broker:                 brokerMock,
