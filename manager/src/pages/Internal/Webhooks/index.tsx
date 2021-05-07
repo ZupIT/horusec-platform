@@ -68,11 +68,7 @@ const Webhooks: React.FC = () => {
     setDeleteIsLoading(true);
 
     webhookService
-      .remove(
-        webhookToDelete.workspaceID,
-        webhookToDelete.repositoryID,
-        webhookToDelete.webhookID
-      )
+      .remove(webhookToDelete.webhookID)
       .then(() => {
         showSuccessFlash(t('WEBHOOK_SCREEN.SUCCESS_DELETE'));
       })
