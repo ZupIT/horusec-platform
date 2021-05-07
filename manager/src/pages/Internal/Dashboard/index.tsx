@@ -32,8 +32,6 @@ import VulnerabilitiesByRepository from './VulnerabilitiesByRepository';
 import VulnerabilitiesTimeLine from './VulnerabilitiesTimeLine';
 import VulnerabilitiesDetails from './VulnerabilitiesDetails';
 
-import NewVulnerabilitiesByDeveloper from './NewVulnerabilitiesByDeveloper';
-
 interface Props {
   type: 'workspace' | 'repository';
 }
@@ -106,34 +104,20 @@ const Dashboard: React.FC<Props> = ({ type }) => {
           data={dashboardData?.vulnerabilitiesByAuthor}
         />
 
-        {type === 'workspace' ? (
-          <VulnerabilitiesByRepository
-            isLoading={isLoading}
-            filters={filters}
-          />
-        ) : null}
-      </Styled.Row>
-
-      <Styled.Row>
-        <NewVulnerabilitiesByDeveloper
-          isLoading={isLoading}
-          data={dashboardData?.vulnerabilitiesByAuthor}
-        />
-
-        {type === 'workspace' ? (
-          <VulnerabilitiesByRepository
-            isLoading={isLoading}
-            filters={filters}
-          />
-        ) : null}
-      </Styled.Row>
-
-      <Styled.Row>
         <VulnerabilitiesByLanguage
           isLoading={isLoading}
           data={dashboardData?.vulnerabilitiesByLanguage}
         />
 
+        {type === 'workspace' ? (
+          <VulnerabilitiesByRepository
+            isLoading={isLoading}
+            filters={filters}
+          />
+        ) : null}
+      </Styled.Row>
+
+      <Styled.Row>
         <VulnerabilitiesTimeLine
           isLoading={isLoading}
           data={dashboardData?.vulnerabilityByTime}

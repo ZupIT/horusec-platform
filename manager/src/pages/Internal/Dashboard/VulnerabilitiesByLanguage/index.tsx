@@ -70,7 +70,8 @@ const VulnerabilitiesByLanguage: React.FC<Props> = ({ data, isLoading }) => {
     dataLabels: {
       enabled: true,
       style: {
-        fontSize: metrics.fontSize.small,
+        fontSize: metrics.fontSize.xsmall,
+        fontWeight: 100,
       },
     },
     stroke: {

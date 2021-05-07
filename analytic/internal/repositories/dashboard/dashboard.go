@@ -125,9 +125,8 @@ func (r *RepoDashboard) GetDashboardVulnByLanguage(
 func (r *RepoDashboard) GetDashboardVulnByTime(
 	filter *dashboard.FilterDashboard) (vulns []*dashboard.VulnerabilitiesByTime, err error) {
 	condition, args := r.getConditionFilter(filter)
-	query := fmt.Sprintf(`
-		SELECT created_at, %s FROM %s WHERE %s AND active = true group by "created_at", "active" %s LIMIT 5`,
-		r.querySelectFieldsDefault(), (&dashboard.VulnerabilitiesByTime{}).GetTable(), condition, r.orderByDefault())
+	query := fmt.Sprintf(`SELECT * FROM %s WHERE %s AND active = true %s`,
+		(&dashboard.VulnerabilitiesByTime{}).GetTable(), condition, r.orderByDefault())
 	result := r.databaseRead.Raw(query, &vulns, args...)
 	if result.GetData() == nil || result.GetErrorExceptNotFound() != nil {
 		return []*dashboard.VulnerabilitiesByTime{}, result.GetErrorExceptNotFound()

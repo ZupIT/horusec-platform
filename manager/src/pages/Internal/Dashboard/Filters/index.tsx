@@ -147,7 +147,6 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
         values.initialDate = getRangeOfPeriod[values.period][0];
         values.finalDate = getRangeOfPeriod[values.period][1];
         onApply(values);
-        console.log(values);
       }}
     >
       {(props) => (

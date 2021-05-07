@@ -65,11 +65,12 @@ func (h *Handler) ListAll(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 // @ID RemoveWebhookByID
 // @Accept  json
 // @Produce  json
+// @Param workspaceID path string true "workspaceID of the workspace"
 // @Param webhookID path string true "webhookID of the webhook"
 // @Success 204    "OK"
 // @Failure 400 {object} entities.Response{content=string} "BAD REQUEST"
 // @Failure 500 {object} entities.Response{content=string} "INTERNAL SERVER ERROR"
-// @Router /webhook/webhook/{webhookID} [delete]
+// @Router /webhook/webhook/{workspaceID}/{webhookID} [delete]
 func (h *Handler) Remove(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	webhookID, err := h.useCase.ExtractWebhookIDFromURL(r)
 	if err != nil {
@@ -94,12 +95,13 @@ func (h *Handler) Remove(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 // @ID UpdateWebhookByID
 // @Accept  json
 // @Produce  json
+// @Param workspaceID path string true "workspaceID of the workspace"
 // @Param webhookID path string true "webhookID of the webhook"
 // @Param webhookToUpdate body webhook.Webhook true "update webhook content info"
 // @Success 204    "OK"
 // @Failure 400 {object} entities.Response{content=string} "BAD REQUEST"
 // @Failure 500 {object} entities.Response{content=string} "INTERNAL SERVER ERROR"
-// @Router /webhook/webhook/{webhookID} [put]
+// @Router /webhook/webhook/{workspaceID}/{webhookID} [put]
 func (h *Handler) Update(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	webhookID, err := h.useCase.ExtractWebhookIDFromURL(r)
 	if err != nil {
@@ -133,11 +135,12 @@ func (h *Handler) updateWebhook(w netHTTP.ResponseWriter, body *webhook.Webhook,
 // @ID SaveWebhook
 // @Accept  json
 // @Produce  json
+// @Param workspaceID path string true "workspaceID of the workspace"
 // @Param webhookToSave body webhook.Webhook true "update webhook content info"
 // @Success 200 {object} entities.Response{content=string} "NO CONTENT"
 // @Failure 400 {object} entities.Response{content=string} "BAD REQUEST"
 // @Failure 500 {object} entities.Response{content=string} "INTERNAL SERVER ERROR"
-// @Router /webhook/webhook [post]
+// @Router /webhook/webhook/{workspaceID} [post]
 func (h *Handler) Save(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	body, err := h.useCase.DecodeWebhookFromIoRead(r)
 	if err != nil {

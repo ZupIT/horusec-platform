@@ -14,7 +14,7 @@ import "github.com/ZupIT/horusec-platform/messages/config/providers"
 // @in header
 // @name X-Horusec-Authorization
 func main() {
-	router, err := providers.Initialize("8004")
+	router, err := providers.Initialize("8002")
 	if err != nil {
 		panic(err)
 	}
