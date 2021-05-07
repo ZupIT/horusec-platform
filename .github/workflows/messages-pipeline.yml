@@ -1,10 +1,6 @@
 name: Messages
-on:
-  push:
-    paths: [
-        "messages/**",
-        "**/workflows/messages-pipeline.yml",
-    ]
+on: ["push"]
+
 jobs:
   lint-coverage-build-security:
     runs-on: ubuntu-latest

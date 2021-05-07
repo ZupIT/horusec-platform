@@ -103,8 +103,8 @@ func TestController_GetAnalysis(t *testing.T) {
 func TestController_SaveAnalysis(t *testing.T) {
 	t.Run("Should save analysis with success simple", func(t *testing.T) {
 		brokerMock := &broker.Mock{}
+		brokerMock.On("Publish").Return(nil)
 		appConfigMock := &appConfiguration.Mock{}
-		appConfigMock.On("IsEmailsDisabled").Return(true)
 		repoRepositoryMock := &repository.Mock{}
 		repoAnalysisMock := &repoAnalysis.Mock{}
 		repoAnalysisMock.On("CreateFullAnalysisResponse").Return(nil)
@@ -138,8 +138,8 @@ func TestController_SaveAnalysis(t *testing.T) {
 	})
 	t.Run("Should save analysis with success when exists vulnerability", func(t *testing.T) {
 		brokerMock := &broker.Mock{}
+		brokerMock.On("Publish").Return(nil)
 		appConfigMock := &appConfiguration.Mock{}
-		appConfigMock.On("IsEmailsDisabled").Return(true)
 		repoRepositoryMock := &repository.Mock{}
 		repoAnalysisMock := &repoAnalysis.Mock{}
 		repoAnalysisMock.On("CreateFullAnalysisResponse").Return(nil)
@@ -199,8 +199,8 @@ func TestController_SaveAnalysis(t *testing.T) {
 	})
 	t.Run("Should save analysis with success when exists vulnerability with duplicated hash and sent only one vulnerability to save", func(t *testing.T) {
 		brokerMock := &broker.Mock{}
+		brokerMock.On("Publish").Return(nil)
 		appConfigMock := &appConfiguration.Mock{}
-		appConfigMock.On("IsEmailsDisabled").Return(true)
 		repoRepositoryMock := &repository.Mock{}
 		repoAnalysisMock := &repoAnalysis.Mock{}
 		repoAnalysisMock.On("CreateFullAnalysisResponse").Return(nil)
@@ -287,8 +287,8 @@ func TestController_SaveAnalysis(t *testing.T) {
 	})
 	t.Run("Should save analysis with success and not create repository because already exists", func(t *testing.T) {
 		brokerMock := &broker.Mock{}
+		brokerMock.On("Publish").Return(nil)
 		appConfigMock := &appConfiguration.Mock{}
-		appConfigMock.On("IsEmailsDisabled").Return(true)
 		repoRepositoryMock := &repository.Mock{}
 		repoRepositoryMock.On("FindRepository").Return(uuid.New(), nil)
 		repoAnalysisMock := &repoAnalysis.Mock{}
@@ -406,8 +406,8 @@ func TestController_SaveAnalysis(t *testing.T) {
 	})
 	t.Run("Should return error when create analysis", func(t *testing.T) {
 		brokerMock := &broker.Mock{}
+		brokerMock.On("Publish").Return(nil)
 		appConfigMock := &appConfiguration.Mock{}
-		appConfigMock.On("IsEmailsDisabled").Return(true)
 		repoRepositoryMock := &repository.Mock{}
 		repoAnalysisMock := &repoAnalysis.Mock{}
 		repoAnalysisMock.On("CreateFullAnalysisResponse").Return(errors.New("unexpected error"))
@@ -443,7 +443,6 @@ func TestController_SaveAnalysis(t *testing.T) {
 		brokerMock := &broker.Mock{}
 		brokerMock.On("Publish").Return(nil)
 		appConfigMock := &appConfiguration.Mock{}
-		appConfigMock.On("IsEmailsDisabled").Return(false)
 		repoRepositoryMock := &repository.Mock{}
 		repoAnalysisMock := &repoAnalysis.Mock{}
 		repoAnalysisMock.On("CreateFullAnalysisResponse").Return(nil)
@@ -479,7 +478,6 @@ func TestController_SaveAnalysis(t *testing.T) {
 		brokerMock := &broker.Mock{}
 		brokerMock.On("Publish").Return(errors.New("unexpected error"))
 		appConfigMock := &appConfiguration.Mock{}
-		appConfigMock.On("IsEmailsDisabled").Return(false)
 		repoRepositoryMock := &repository.Mock{}
 		repoAnalysisMock := &repoAnalysis.Mock{}
 		repoAnalysisMock.On("CreateFullAnalysisResponse").Return(nil)
@@ -509,7 +507,6 @@ func TestController_SaveAnalysis(t *testing.T) {
 		brokerMock := &broker.Mock{}
 		brokerMock.On("Publish").Return(errors.New("unexpected error"))
 		appConfigMock := &appConfiguration.Mock{}
-		appConfigMock.On("IsEmailsDisabled").Return(false)
 		repoRepositoryMock := &repository.Mock{}
 		repoAnalysisMock := &repoAnalysis.Mock{}
 		repoAnalysisMock.On("CreateFullAnalysisResponse").Return(nil)

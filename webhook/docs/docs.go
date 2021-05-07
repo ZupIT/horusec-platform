@@ -82,7 +82,93 @@ var doc = `{
                 }
             }
         },
-        "/webhook/webhook": {
+        "/webhook/webhook/{workspaceID}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get all webhooks by workspace",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Webhook"
+                ],
+                "operationId": "GetAllWebhooksByWorkspace",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "workspaceID of the workspace",
+                        "name": "workspaceID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/entities.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/webhook.Webhook"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "BAD REQUEST",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/entities.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "INTERNAL SERVER ERROR",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/entities.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
             "post": {
                 "security": [
                     {
@@ -101,6 +187,13 @@ var doc = `{
                 ],
                 "operationId": "SaveWebhook",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "workspaceID of the workspace",
+                        "name": "workspaceID",
+                        "in": "path",
+                        "required": true
+                    },
                     {
                         "description": "update webhook content info",
                         "name": "webhookToSave",
@@ -169,7 +262,7 @@ var doc = `{
                 }
             }
         },
-        "/webhook/webhook/{webhookID}": {
+        "/webhook/webhook/{workspaceID}/{webhookID}": {
             "put": {
                 "security": [
                     {
@@ -188,6 +281,13 @@ var doc = `{
                 ],
                 "operationId": "UpdateWebhookByID",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "workspaceID of the workspace",
+                        "name": "workspaceID",
+                        "in": "path",
+                        "required": true
+                    },
                     {
                         "type": "string",
                         "description": "webhookID of the webhook",
@@ -267,6 +367,13 @@ var doc = `{
                 "parameters": [
                     {
                         "type": "string",
+                        "description": "workspaceID of the workspace",
+                        "name": "workspaceID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
                         "description": "webhookID of the webhook",
                         "name": "webhookID",
                         "in": "path",
@@ -276,94 +383,6 @@ var doc = `{
                 "responses": {
                     "204": {
                         "description": "OK"
-                    },
-                    "400": {
-                        "description": "BAD REQUEST",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/entities.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "content": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "500": {
-                        "description": "INTERNAL SERVER ERROR",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/entities.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "content": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/webhook/webhook/{workspaceID}": {
-            "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "description": "Get all webhooks by workspace",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Webhook"
-                ],
-                "operationId": "GetAllWebhooksByWorkspace",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "workspaceID of the workspace",
-                        "name": "workspaceID",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/entities.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "content": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/webhook.Webhook"
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
-                        }
                     },
                     "400": {
                         "description": "BAD REQUEST",

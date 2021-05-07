@@ -1,10 +1,6 @@
 name: Migrations
-on:
-  push:
-    paths: [
-        "migrations/**",
-        "**/workflows/migrations-pipeline.yml",
-    ]
+on: ["push"]
+
 jobs:
   build-and-security:
     runs-on: ubuntu-latest

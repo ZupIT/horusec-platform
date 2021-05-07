@@ -1,10 +1,6 @@
 name: Auth
-on:
-  push:
-    paths: [
-        "auth/**",
-        "**/workflows/auth-pipeline.yml",
-    ]
+on: ["push"]
+
 jobs:
   lint-coverage-build-security:
     runs-on: ubuntu-latest

@@ -1,7 +1,6 @@
 name: Manager
-on:
-  push:
-    paths: ["manager/**", "**/workflows/manager-pipeline.yml"]
+on: ["push"]
+
 jobs:
   lint-coverage-build-security:
     runs-on: ubuntu-latest
