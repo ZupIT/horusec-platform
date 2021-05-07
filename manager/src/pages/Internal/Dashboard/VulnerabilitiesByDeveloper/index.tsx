@@ -14,116 +14,132 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect } from 'react';
-import ReactApexChart from 'react-apexcharts';
-import { ApexOptions } from 'apexcharts';
-import Styled from './styled';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useTheme } from 'styled-components';
-import { Icon } from 'components';
 import { FilterValues } from 'helpers/interfaces/FilterValues';
-import { ChartBarStacked } from 'helpers/interfaces/ChartData';
+import { BarCharRow } from 'helpers/interfaces/BarChartRow';
+import { BarChart } from 'components';
+import { get } from 'lodash';
+import { useTheme } from 'styled-components';
 import { VulnerabilitiesByAuthor } from 'helpers/interfaces/DashboardData';
-import { formatChartStacked } from 'helpers/formatters/chartData';
 
 interface Props {
-  isLoading: boolean;
   data: VulnerabilitiesByAuthor[];
+  isLoading: boolean;
 }
 
-const VulnerabilitiesByDeveloper: React.FC<Props> = ({ data, isLoading }) => {
+const VulnerabilitiesByDeveloper: React.FC<Props> = ({ isLoading, data }) => {
   const { t } = useTranslation();
-  const { colors, metrics } = useTheme();
+  const { colors } = useTheme();
 
-  const [chartData, setChartData] = useState<ChartBarStacked>({
-    categories: [],
-    series: [],
-  });
+  const [layeredDeveloper, setLayeredDeveloper] = useState<string>('');
+  const [isLastLayer, setLastLayer] = useState(false);
 
-  const options: ApexOptions = {
-    markers: {
-      size: 0,
-    },
-    colors: Object.values(colors.vulnerabilities),
-    noData: {
-      text: t('DASHBOARD_SCREEN.CHART_NO_DATA'),
-      style: {
-        color: colors.chart.legend,
-        fontSize: metrics.fontSize.large,
-      },
-    },
-    legend: {
-      position: 'top',
-      horizontalAlign: 'left',
-      offsetX: 40,
-      labels: {
-        colors: colors.chart.legend,
-      },
-    },
-    chart: {
-      fontFamily: 'SFRegular',
-      stacked: true,
-      animations: {
-        enabled: true,
-      },
-      toolbar: {
-        show: false,
-      },
-    },
-    plotOptions: {
-      bar: {
-        horizontal: true,
-      },
-    },
-    xaxis: {
-      labels: {
-        style: {
-          colors: colors.chart.legend,
-          fontSize: metrics.fontSize.small,
-        },
-      },
-      categories: [],
-    },
-    yaxis: {
-      title: {
-        text: undefined,
-      },
-      labels: {
-        maxWidth: 280,
-        style: {
-          colors: colors.chart.legend,
-          fontSize: metrics.fontSize.small,
-        },
-      },
-    },
+  const [allData, setAllData] = useState<VulnerabilitiesByAuthor[]>([]);
+  const [chatData, setChartData] = useState<BarCharRow[]>([]);
+
+  const formatFirstLayer = (data: VulnerabilitiesByAuthor[]) => {
+    const formatted = (data || []).map((item) => {
+      let value = 0;
+
+      Object.values(item).forEach((i) => {
+        if (i?.count) {
+          value = value + i.count;
+        }
+      });
+
+      return {
+        value,
+        legend: item.author,
+      };
+    });
+
+    setLayeredDeveloper(null);
+    setLastLayer(false);
+    setChartData(formatted);
+  };
+
+  const formatSecondLayer = (rowKey: string) => {
+    setLayeredDeveloper(rowKey);
+
+    const data = allData.find((item) => item.author === rowKey);
+
+    const formatted = Object.entries(data).map((item) => {
+      const value = item[1]?.count;
+      const legend = item[0].toUpperCase();
+      const color = get(
+        colors.vulnerabilities,
+        legend,
+        colors.vulnerabilities.DEFAULT
+      );
+
+      return {
+        value,
+        legend,
+        color,
+      };
+    });
+
+    delete formatted[0];
+    setChartData(formatted);
+  };
+
+  const formatThirdLayer = (rowKey: string) => {
+    if (!isLastLayer) {
+      setLastLayer(true);
+
+      const authorData = allData.find(
+        (item) => item.author === layeredDeveloper
+      );
+
+      const data = get(authorData, rowKey.toLocaleLowerCase(), { types: [] })
+        ?.types;
+
+      const formatted = Object.entries(data).map((item) => {
+        const legend = item[0].toUpperCase();
+        const value = (item[1] as number) || 0;
+        const color = get(
+          colors.vulnerabilitiesStatus,
+          legend,
+          colors.vulnerabilitiesStatus.DEFAULT
+        );
+
+        return {
+          value,
+          legend,
+          color,
+        };
+      });
+
+      setChartData(formatted);
+    }
   };
 
   useEffect(() => {
-    setChartData(formatChartStacked(data, 'author', false));
+    formatFirstLayer(data);
+    setAllData(data);
   }, [data]);
 
   return (
     <div className="block max-space">
-      <Styled.Wrapper tabIndex={0}>
-        <Styled.Title>
-          {t('DASHBOARD_SCREEN.VULNERABILITIES_BY_DEV')}
-        </Styled.Title>
-
-        <Styled.LoadingWrapper isLoading={isLoading}>
-          <Icon name="loading" size="200px" className="loading" />
-        </Styled.LoadingWrapper>
-
-        <ReactApexChart
-          height={250}
-          width="100%"
-          options={{
-            ...options,
-            xaxis: { ...options.xaxis, categories: chartData.categories },
-          }}
-          series={chartData.series}
-          type="bar"
-        />
-      </Styled.Wrapper>
+      <BarChart
+        isLoading={isLoading}
+        data={chatData}
+        title={
+          layeredDeveloper
+            ? `${t(
+                'DASHBOARD_SCREEN.VULNERABILITIES_BY_DEV'
+              )}: ${layeredDeveloper}`
+            : t('DASHBOARD_SCREEN.VULNERABILITIES_BY_DEV')
+        }
+        onClickRow={(row) =>
+          !layeredDeveloper
+            ? formatSecondLayer(row.legend)
+            : formatThirdLayer(row.legend)
+        }
+        onClickBack={() => formatFirstLayer(allData)}
+        showBackOption={!!layeredDeveloper}
+      />
     </div>
   );
 };

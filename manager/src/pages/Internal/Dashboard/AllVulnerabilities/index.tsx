@@ -64,7 +64,8 @@ const AllVulnerabilities: React.FC<Props> = ({ isLoading, data }) => {
     dataLabels: {
       enabled: true,
       style: {
-        fontSize: metrics.fontSize.small,
+        fontSize: metrics.fontSize.xsmall,
+        fontWeight: 100,
       },
     },
     stroke: {
