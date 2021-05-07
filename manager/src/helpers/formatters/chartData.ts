@@ -33,7 +33,7 @@ const formatChartStacked = (
   const info: number[] = [];
   const unknown: number[] = [];
 
-  if (!listOfData) {
+  if (!listOfData || typeof listOfData === 'undefined') {
     return formattedData;
   }
 

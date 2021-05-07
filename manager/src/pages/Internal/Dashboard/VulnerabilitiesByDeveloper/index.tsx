@@ -21,7 +21,6 @@ import Styled from './styled';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from 'styled-components';
 import { Icon } from 'components';
-import { FilterValues } from 'helpers/interfaces/FilterValues';
 import { ChartBarStacked } from 'helpers/interfaces/ChartData';
 import { VulnerabilitiesByAuthor } from 'helpers/interfaces/DashboardData';
 import { formatChartStacked } from 'helpers/formatters/chartData';
