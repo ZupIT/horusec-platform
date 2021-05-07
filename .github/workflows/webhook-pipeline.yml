@@ -1,10 +1,6 @@
 name: Webhook
-on:
-  push:
-    paths: [
-        "webhook/**",
-        "**/workflows/webhook-pipeline.yml",
-    ]
+on: ["push"]
+
 jobs:
   lint-coverage-build-security:
     runs-on: ubuntu-latest

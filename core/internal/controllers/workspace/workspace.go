@@ -167,7 +167,7 @@ func (c *Controller) InviteUser(data *roleEntities.UserData) (*roleEntities.Resp
 }
 
 func (c *Controller) sendInviteUserEmail(email, username, workspaceName string) error {
-	if c.appConfig.IsBrokerDisabled() {
+	if c.appConfig.IsEmailsDisabled() {
 		return nil
 	}
 

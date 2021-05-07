@@ -65,7 +65,7 @@ func (r *Router) routerHealth() {
 func (r *Router) routerWebhook() {
 	r.Route(enums.WebhookRouter, func(router chi.Router) {
 		router.Options("/", r.webhookHandler.Options)
-		router.With(r.IsWorkspaceAdmin).Get("/{workspaceID}", r.webhookHandler.ListAll)
+		router.With(r.IsWorkspaceAdmin).Get("/", r.webhookHandler.ListAll)
 		router.With(r.IsWorkspaceAdmin).Post("/", r.webhookHandler.Save)
 		router.With(r.IsWorkspaceAdmin).Put("/{webhookID}", r.webhookHandler.Update)
 		router.With(r.IsWorkspaceAdmin).Delete("/{webhookID}", r.webhookHandler.Remove)

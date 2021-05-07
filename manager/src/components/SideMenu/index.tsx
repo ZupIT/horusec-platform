@@ -37,7 +37,7 @@ const SideMenu: React.FC = () => {
     handleSetCurrentWorkspace,
   } = useWorkspace();
   const { t } = useTranslation();
-  const { authType, disabledBroker } = getCurrentConfig();
+  const { authType, disableEmails } = getCurrentConfig();
   const [selectedRoute, setSelectedRoute] = useState<InternalRoute>();
   const [selectedSubRoute, setSelectedSubRoute] = useState<InternalRoute>();
 
@@ -85,7 +85,6 @@ const SideMenu: React.FC = () => {
       path: '/home/webhooks',
       type: 'route',
       roles: ['admin'],
-      rule: () => !disabledBroker,
     },
   ];
 

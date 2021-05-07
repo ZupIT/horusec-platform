@@ -24,7 +24,7 @@ func getMockedConnection() *database.Connection {
 func setDefaultEnvs() {
 	_ = os.Setenv(enums.EnvAuthURL, "http://localhost:8006")
 	_ = os.Setenv(enums.EnvAuthType, auth.Horusec.ToString())
-	_ = os.Setenv(enums.EnvDisableBroker, "false")
+	_ = os.Setenv(enums.EnvDisableEmails, "false")
 	_ = os.Setenv(enums.EnvEnableApplicationAdmin, "false")
 	_ = os.Setenv(enums.EnvApplicationAdminData, enums.ApplicationAdminDefaultData)
 	_ = os.Setenv(enums.EnvDefaultUserData, enums.DefaultUserData)
@@ -125,7 +125,7 @@ func TestToConfigResponse(t *testing.T) {
 		assert.NotPanics(t, func() {
 			assert.Equal(t, false, result["enableApplicationAdmin"])
 			assert.Equal(t, auth.Horusec, result["authType"])
-			assert.Equal(t, false, result["disableBroker"])
+			assert.Equal(t, false, result["disableEmails"])
 		})
 	})
 }
@@ -138,11 +138,11 @@ func TestIsApplicationAdminEnabled(t *testing.T) {
 	})
 }
 
-func TestIsDisableBroker(t *testing.T) {
+func TestIsDisableEmails(t *testing.T) {
 	t.Run("should return false when not active", func(t *testing.T) {
 		appConfig := NewAuthAppConfig(getMockedConnection())
 
-		assert.False(t, appConfig.IsBrokerDisabled())
+		assert.False(t, appConfig.IsEmailsDisabled())
 	})
 }
 
@@ -152,7 +152,7 @@ func TestToGetAuthConfigResponse(t *testing.T) {
 
 		result := appConfig.ToGetAuthConfigResponse()
 		assert.Equal(t, false, result.EnableApplicationAdmin)
-		assert.Equal(t, false, result.DisableBroker)
+		assert.Equal(t, false, result.DisableEmails)
 		assert.Equal(t, auth.Horusec.ToString(), result.AuthType)
 	})
 }

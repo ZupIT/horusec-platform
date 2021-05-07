@@ -86,13 +86,65 @@ paths:
               type: object
       tags:
       - Health
-  /webhook/webhook:
+  /webhook/webhook/{workspaceID}:
+    get:
+      consumes:
+      - application/json
+      description: Get all webhooks by workspace
+      operationId: GetAllWebhooksByWorkspace
+      parameters:
+      - description: workspaceID of the workspace
+        in: path
+        name: workspaceID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/entities.Response'
+            - properties:
+                content:
+                  items:
+                    $ref: '#/definitions/webhook.Webhook'
+                  type: array
+              type: object
+        "400":
+          description: BAD REQUEST
+          schema:
+            allOf:
+            - $ref: '#/definitions/entities.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+        "500":
+          description: INTERNAL SERVER ERROR
+          schema:
+            allOf:
+            - $ref: '#/definitions/entities.Response'
+            - properties:
+                content:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Webhook
     post:
       consumes:
       - application/json
       description: Save webhook by id
       operationId: SaveWebhook
       parameters:
+      - description: workspaceID of the workspace
+        in: path
+        name: workspaceID
+        required: true
+        type: string
       - description: update webhook content info
         in: body
         name: webhookToSave
@@ -133,13 +185,18 @@ paths:
       - ApiKeyAuth: []
       tags:
       - Webhook
-  /webhook/webhook/{webhookID}:
+  /webhook/webhook/{workspaceID}/{webhookID}:
     delete:
       consumes:
       - application/json
       description: Remove webhook by id
       operationId: RemoveWebhookByID
       parameters:
+      - description: workspaceID of the workspace
+        in: path
+        name: workspaceID
+        required: true
+        type: string
       - description: webhookID of the webhook
         in: path
         name: webhookID
@@ -178,6 +235,11 @@ paths:
       description: Update webhook by id
       operationId: UpdateWebhookByID
       parameters:
+      - description: workspaceID of the workspace
+        in: path
+        name: workspaceID
+        required: true
+        type: string
       - description: webhookID of the webhook
         in: path
         name: webhookID
@@ -194,54 +256,6 @@ paths:
       responses:
         "204":
           description: OK
-        "400":
-          description: BAD REQUEST
-          schema:
-            allOf:
-            - $ref: '#/definitions/entities.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-        "500":
-          description: INTERNAL SERVER ERROR
-          schema:
-            allOf:
-            - $ref: '#/definitions/entities.Response'
-            - properties:
-                content:
-                  type: string
-              type: object
-      security:
-      - ApiKeyAuth: []
-      tags:
-      - Webhook
-  /webhook/webhook/{workspaceID}:
-    get:
-      consumes:
-      - application/json
-      description: Get all webhooks by workspace
-      operationId: GetAllWebhooksByWorkspace
-      parameters:
-      - description: workspaceID of the workspace
-        in: path
-        name: workspaceID
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/entities.Response'
-            - properties:
-                content:
-                  items:
-                    $ref: '#/definitions/webhook.Webhook'
-                  type: array
-              type: object
         "400":
           description: BAD REQUEST
           schema:
