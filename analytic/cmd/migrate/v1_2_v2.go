@@ -1,15 +1,25 @@
 package main
 
 import (
-	"github.com/ZupIT/horusec-devkit/pkg/services/broker"
-	"github.com/ZupIT/horusec-devkit/pkg/services/broker/config"
+	"flag"
+	"fmt"
+
+	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
 func main() {
-	brokerConfig := config.NewBrokerConfig()
-	broker, err := broker.NewBroker(brokerConfig)
+	// brokerConfig := brokerconfig.NewBrokerConfig()
+	// broker, err := broker.NewBroker(brokerConfig)
 
-	if err != nil {
-		return
-	}
+	databaseURI := flag.String("v1-database-uri", "", "")
+	flag.Parse()
+
+	conn, _ := gorm.Open(postgres.Open(string(*databaseURI)), &gorm.Config{})
+
+	analysis := &analysis.Analysis{}
+	conn.Table("analysis").Preload("AnalysisVulnerabilities").Find(analysis)
+
+	fmt.Printf(`%+v\n`, analysis)
 }
