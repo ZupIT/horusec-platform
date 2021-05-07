@@ -31,6 +31,7 @@ import { authTypes } from 'helpers/enums/authTypes';
 import HandleWorkspace from './Handle';
 import Tokens from './Tokens';
 import Users from './Users';
+import { isApplicationAdmin } from 'helpers/localStorage/currentUser';
 
 const Workspaces: React.FC = () => {
   const { t } = useTranslation();
@@ -92,7 +93,6 @@ const Workspaces: React.FC = () => {
   useEffect(() => {
     setFilteredWorkspaces(allWorkspaces);
   }, [allWorkspaces]);
-
   return (
     <Styled.Wrapper>
       <Styled.Options>
@@ -101,13 +101,15 @@ const Workspaces: React.FC = () => {
           onSearch={(value) => onSearch(value)}
         />
 
-        <Button
-          text={t('WORKSPACES_SCREEN.ADD')}
-          rounded
-          width={220}
-          icon="plus"
-          onClick={() => setVisibleHandleModal(true)}
-        />
+        {isApplicationAdmin() && (
+          <Button
+            text={t('WORKSPACES_SCREEN.ADD')}
+            rounded
+            width={220}
+            icon="plus"
+            onClick={() => setVisibleHandleModal(true)}
+          />
+        )}
       </Styled.Options>
 
       <Styled.Content>

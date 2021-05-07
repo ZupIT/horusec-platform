@@ -17,17 +17,16 @@ package analysis
 import (
 	"time"
 
-	"github.com/ZupIT/horusec-devkit/pkg/enums/exchange"
-
 	"github.com/google/uuid"
 
-	repoAnalysis "github.com/ZupIT/horusec-platform/api/internal/repositories/analysis"
-	"github.com/ZupIT/horusec-platform/api/internal/repositories/repository"
-
 	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
+	"github.com/ZupIT/horusec-devkit/pkg/enums/exchange"
 	appConfiguration "github.com/ZupIT/horusec-devkit/pkg/services/app"
 	brokerService "github.com/ZupIT/horusec-devkit/pkg/services/broker"
 	"github.com/ZupIT/horusec-devkit/pkg/services/database/enums"
+
+	repoAnalysis "github.com/ZupIT/horusec-platform/api/internal/repositories/analysis"
+	"github.com/ZupIT/horusec-platform/api/internal/repositories/repository"
 )
 
 type IController interface {

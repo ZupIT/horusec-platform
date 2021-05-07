@@ -133,7 +133,7 @@ func TestCreateAccountHorusec(t *testing.T) {
 	})
 
 	t.Run("should success create a new account with email disabled", func(t *testing.T) {
-		appConfig := &app.Config{DisableBroker: true}
+		appConfig := &app.Config{DisableEmails: true}
 		serviceMock := &authServices.Mock{}
 
 		accountRepositoryMock := &accountRepository.Mock{}
@@ -153,7 +153,7 @@ func TestCreateAccountHorusec(t *testing.T) {
 	})
 
 	t.Run("should return error when failed to create account", func(t *testing.T) {
-		appConfig := &app.Config{DisableBroker: true}
+		appConfig := &app.Config{DisableEmails: true}
 		serviceMock := &authServices.Mock{}
 
 		accountRepositoryMock := &accountRepository.Mock{}
@@ -222,7 +222,7 @@ func TestSendResetPasswordCode(t *testing.T) {
 	})
 
 	t.Run("should not send email when it is disabled", func(t *testing.T) {
-		appConfig := &app.Config{DisableBroker: true}
+		appConfig := &app.Config{DisableEmails: true}
 		serviceMock := &authServices.Mock{}
 
 		brokerMock := &broker.Mock{}

@@ -20,6 +20,7 @@ import { useTranslation } from 'react-i18next';
 
 import WorkspaceVector from 'assets/svg/not_found.svg';
 import { useHistory } from 'react-router-dom';
+import { isApplicationAdmin } from 'helpers/localStorage/currentUser';
 
 const AddWorkspace: React.FC = () => {
   const { t } = useTranslation();
@@ -32,13 +33,20 @@ const AddWorkspace: React.FC = () => {
         src={WorkspaceVector}
       />
 
-      <Styled.Message>{t('NEW_WORKSPACE_SCREEN.MESSAGE')}</Styled.Message>
-
-      <Styled.BackBtn
-        rounded
-        text={t('NEW_WORKSPACE_SCREEN.ACTION')}
-        onClick={() => history.push('workspaces')}
-      />
+      {isApplicationAdmin() ? (
+        <>
+          <Styled.Message>{t('NEW_WORKSPACE_SCREEN.MESSAGE')}</Styled.Message>
+          <Styled.BackBtn
+            rounded
+            text={t('NEW_WORKSPACE_SCREEN.ACTION')}
+            onClick={() => history.push('workspaces')}
+          />
+        </>
+      ) : (
+        <Styled.Message>
+          {t('NEW_WORKSPACE_SCREEN.APPLICATION_ADMIN')}
+        </Styled.Message>
+      )}
     </Styled.Content>
   );
 };

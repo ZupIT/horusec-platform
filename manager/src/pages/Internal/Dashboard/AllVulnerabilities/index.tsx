@@ -14,27 +14,24 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import ReactApexChart from 'react-apexcharts';
 import { ApexOptions } from 'apexcharts';
 import Styled from './styled';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from 'styled-components';
 import { Icon } from 'components';
-import { FilterValues } from 'helpers/interfaces/FilterValues';
-import analyticService from 'services/analytic';
 import { get } from 'lodash';
-import { AxiosResponse } from 'axios';
+import { VulnerabilityBySeverity } from 'helpers/interfaces/DashboardData';
 
 interface Props {
-  filters?: FilterValues;
+  isLoading: boolean;
+  data: VulnerabilityBySeverity[];
 }
 
-const AllVulnerabilities: React.FC<Props> = ({ filters }) => {
+const AllVulnerabilities: React.FC<Props> = ({ isLoading, data }) => {
   const { t } = useTranslation();
   const { colors, metrics } = useTheme();
-
-  const [isLoading, setLoading] = useState(false);
 
   const [chartValues, setChartValues] = useState<number[]>([]);
   const [chartLabels, setChartLabels] = useState<string[]>([]);
@@ -82,52 +79,38 @@ const AllVulnerabilities: React.FC<Props> = ({ filters }) => {
     },
   };
 
-  const formatData = (data: [{ severity: string; total: number }]) => {
-    const itemColors: string[] = [];
-    const labels: string[] = [];
-    const values: number[] = [];
-
-    data.forEach((item) => {
-      labels.push(item.severity);
-      values.push(item.total);
-      itemColors.push(
-        get(
-          colors.vulnerabilities,
-          item.severity,
-          colors.vulnerabilities.DEFAULT
-        )
-      );
-    });
-
-    setChartColors(itemColors);
-    setChartLabels(labels);
-    setChartValues(values);
-  };
-
   useEffect(() => {
-    let isCancelled = false;
-    if (filters) {
-      setLoading(true);
+    const formatData = (data: VulnerabilityBySeverity[]) => {
+      const itemColors: string[] = [];
+      const labels: string[] = [];
+      const values: number[] = [];
 
-      analyticService
-        .getAllVulnerabilities(filters)
-        .then((result: AxiosResponse) => {
-          if (!isCancelled) {
-            formatData(result.data?.content);
-          }
-        })
-        .finally(() => {
-          if (!isCancelled) {
-            setLoading(false);
-          }
-        });
-    }
+      Object.keys(data).forEach((key) => {
+        const label = key.toUpperCase();
+        const value = get(data, key, { count: 0 }).count;
 
-    return () => {
-      isCancelled = true;
+        labels.push(key.toUpperCase());
+        values.push(value);
+        itemColors.push(
+          get(colors.vulnerabilities, label, colors.vulnerabilities.DEFAULT)
+        );
+      });
+
+      const total = values.reduce((item, current) => item + current);
+
+      if (total > 0) {
+        setChartColors(itemColors);
+        setChartLabels(labels);
+        setChartValues(values);
+      } else {
+        setChartColors([]);
+        setChartLabels([]);
+        setChartValues([]);
+      }
     };
-    // eslint-disable-next-line
-  }, [filters]);
+
+    if (data) formatData(data);
+  }, [colors.vulnerabilities, data]);
 
   return (
     <div className="block max-space">

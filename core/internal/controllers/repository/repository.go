@@ -198,7 +198,7 @@ func (c *Controller) createRepositoryRelationAndSendEmail(data *roleEntities.Use
 }
 
 func (c *Controller) sendInviteUserEmail(email, username, repositoryName string) error {
-	if c.appConfig.IsBrokerDisabled() {
+	if c.appConfig.IsEmailsDisabled() {
 		return nil
 	}
 
