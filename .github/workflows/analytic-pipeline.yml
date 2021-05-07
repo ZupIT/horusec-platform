@@ -1,10 +1,6 @@
 name: Analytic
-on:
-  push:
-    paths: [
-        "analytic/**",
-        "**/workflows/analytic-pipeline.yml",
-    ]
+on: ["push"]
+
 jobs:
   lint-coverage-build-security:
     runs-on: ubuntu-latest
