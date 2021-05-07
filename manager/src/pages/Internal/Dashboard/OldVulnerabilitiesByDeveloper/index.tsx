@@ -14,36 +14,35 @@
  * limitations under the License.
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ReactApexChart from 'react-apexcharts';
 import { ApexOptions } from 'apexcharts';
 import Styled from './styled';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from 'styled-components';
 import { Icon } from 'components';
+import { FilterValues } from 'helpers/interfaces/FilterValues';
 import { ChartBarStacked } from 'helpers/interfaces/ChartData';
-import { VulnerabilityByTime } from 'helpers/interfaces/DashboardData';
+import { VulnerabilitiesByAuthor } from 'helpers/interfaces/DashboardData';
 import { formatChartStacked } from 'helpers/formatters/chartData';
 
 interface Props {
-  data: VulnerabilityByTime[];
   isLoading: boolean;
+  data: VulnerabilitiesByAuthor[];
 }
 
-const VulnerabilitiesTimeLine: React.FC<Props> = ({ data, isLoading }) => {
+const VulnerabilitiesByDeveloper: React.FC<Props> = ({ data, isLoading }) => {
   const { t } = useTranslation();
   const { colors, metrics } = useTheme();
 
-  const [chartData, setChartData] = useState<ChartBarStacked>(
-    formatChartStacked(data, 'time', true)
-  );
+  const [chartData, setChartData] = useState<ChartBarStacked>({
+    categories: [],
+    series: [],
+  });
 
   const options: ApexOptions = {
     markers: {
-      size: 4,
-    },
-    stroke: {
-      curve: 'smooth',
+      size: 0,
     },
     colors: Object.values(colors.vulnerabilities),
     noData: {
@@ -56,17 +55,16 @@ const VulnerabilitiesTimeLine: React.FC<Props> = ({ data, isLoading }) => {
     legend: {
       position: 'top',
       horizontalAlign: 'left',
-      offsetX: -20,
-      offsetY: -5,
+      offsetX: 40,
       labels: {
         colors: colors.chart.legend,
       },
     },
     chart: {
       fontFamily: 'SFRegular',
-      stacked: false,
+      stacked: true,
       animations: {
-        enabled: false,
+        enabled: true,
       },
       toolbar: {
         show: false,
@@ -81,48 +79,34 @@ const VulnerabilitiesTimeLine: React.FC<Props> = ({ data, isLoading }) => {
       labels: {
         style: {
           colors: colors.chart.legend,
-          fontSize: metrics.fontSize.xsmall,
-          fontWeight: 200,
+          fontSize: metrics.fontSize.small,
         },
       },
       categories: [],
-      axisBorder: {
-        show: false,
-      },
-      axisTicks: {
-        show: true,
-      },
-      type: 'datetime',
     },
     yaxis: {
       title: {
         text: undefined,
       },
       labels: {
+        maxWidth: 280,
         style: {
           colors: colors.chart.legend,
-          fontSize: metrics.fontSize.xsmall,
-          fontWeight: 200,
+          fontSize: metrics.fontSize.small,
         },
-      },
-      axisBorder: {
-        show: false,
-      },
-      axisTicks: {
-        show: false,
       },
     },
   };
 
   useEffect(() => {
-    setChartData(formatChartStacked(data, 'time', true));
+    setChartData(formatChartStacked(data, 'author', false));
   }, [data]);
 
   return (
     <div className="block max-space">
       <Styled.Wrapper tabIndex={0}>
         <Styled.Title>
-          {t('DASHBOARD_SCREEN.VULNERABILITY_TIMELINE')}
+          {t('DASHBOARD_SCREEN.VULNERABILITIES_BY_DEV')}
         </Styled.Title>
 
         <Styled.LoadingWrapper isLoading={isLoading}>
@@ -137,11 +121,11 @@ const VulnerabilitiesTimeLine: React.FC<Props> = ({ data, isLoading }) => {
             xaxis: { ...options.xaxis, categories: chartData.categories },
           }}
           series={chartData.series}
-          type="line"
+          type="bar"
         />
       </Styled.Wrapper>
     </div>
   );
 };
 
-export default VulnerabilitiesTimeLine;
+export default VulnerabilitiesByDeveloper;
