@@ -98,7 +98,6 @@ const VulnerabilitiesByRepository: React.FC<Props> = ({ isLoading, data }) => {
   };
 
   useEffect(() => {
-    console.log(data);
     setChartData(formatChartStacked(data, 'repositoryName', false));
   }, [data]);
 
