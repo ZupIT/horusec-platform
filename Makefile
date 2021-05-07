@@ -4,6 +4,9 @@ compose-dev:
 	$(DOCKER_COMPOSE) -f deployments/compose/compose-dev.yaml down
 	$(DOCKER_COMPOSE) -f deployments/compose/compose-dev.yaml up -d --build
 
+compose-dev-down:
+	$(DOCKER_COMPOSE) -f deployments/compose/compose-dev.yaml down
+
 install: compose-dev migrate
 
 migrate: migrate-drop migrate-up

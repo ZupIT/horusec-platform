@@ -47,7 +47,7 @@ const useResponseMessage = () => {
         '{ACCOUNT} repository name already in use': t(
           'API_ERRORS.REPO_NAME_IN_USE'
         ),
-        'already exists webhook to repository selected': t(
+        '{HORUSEC} webhook already exists to repository selected': t(
           'WEBHOOK_SCREEN.ALREADY_TO_REPOSITORY'
         ),
         '{ACCOUNT} admin ldap group should be a valid one for this user': t(

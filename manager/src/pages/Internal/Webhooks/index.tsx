@@ -23,8 +23,7 @@ import { useTheme } from 'styled-components';
 import { get } from 'lodash';
 import webhookService from 'services/webhook';
 
-import AddWebhook from './Add';
-import EditWebhook from './Edit';
+import HandleWebhook from './Handle';
 
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
@@ -68,11 +67,7 @@ const Webhooks: React.FC = () => {
     setDeleteIsLoading(true);
 
     webhookService
-      .remove(
-        webhookToDelete.workspaceID,
-        webhookToDelete.repositoryID,
-        webhookToDelete.webhookID
-      )
+      .remove(webhookToDelete.webhookID, webhookToDelete.workspaceID)
       .then(() => {
         showSuccessFlash(t('WEBHOOK_SCREEN.SUCCESS_DELETE'));
       })
@@ -198,25 +193,28 @@ const Webhooks: React.FC = () => {
         />
       </Styled.Content>
 
-      <AddWebhook
-        isVisible={addWebhookVisible}
-        onCancel={() => {
-          setAddWebhookVisible(false);
-          setWebhookToCopy(null);
-        }}
-        webhookToCopy={webhookToCopy}
+      <HandleWebhook
+        isVisible={!!webhookToEdit}
+        isNew={false}
+        onCancel={() => setWebhookToEdit(null)}
+        webhookInitial={webhookToEdit}
         onConfirm={() => {
-          setAddWebhookVisible(false);
+          setWebhookToEdit(null);
           fetchData();
         }}
       />
 
-      <EditWebhook
-        isVisible={!!webhookToEdit}
-        onCancel={() => setWebhookToEdit(null)}
-        webhookToEdit={webhookToEdit}
+      <HandleWebhook
+        isVisible={addWebhookVisible}
+        isNew={true}
+        onCancel={() => {
+          setWebhookToCopy(null);
+          setAddWebhookVisible(false);
+        }}
+        webhookInitial={webhookToCopy}
         onConfirm={() => {
-          setWebhookToEdit(null);
+          setWebhookToCopy(null);
+          setAddWebhookVisible(false);
           fetchData();
         }}
       />

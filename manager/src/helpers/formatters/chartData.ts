@@ -38,9 +38,7 @@ const formatChartStacked = (
   }
 
   listOfData.forEach((item) => {
-    formattedData.categories.push(
-      labeIsDate ? formatToHumanDate(item[labelKey]) : item[labelKey]
-    );
+    formattedData.categories.push(item[labelKey]);
     critical.push(item?.critical?.count);
     high.push(item?.high?.count);
     medium.push(item?.medium?.count);

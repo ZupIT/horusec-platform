@@ -29,12 +29,14 @@ interface InputProps {
   name: string;
   options: Option[];
   width?: string;
+  isDisabled?: boolean;
 }
 
 function SelectInput({
   label,
   name,
   options,
+  isDisabled,
   width = '100%',
 }: InputProps & TextFieldProps) {
   const { t } = useTranslation();
@@ -55,6 +57,7 @@ function SelectInput({
     <div style={{ display: 'block', width: width }}>
       <Autocomplete
         id={`select-${name}`}
+        disabled={isDisabled}
         options={options}
         getOptionLabel={(option) => option.label || ''}
         getOptionSelected={(option, value) => {

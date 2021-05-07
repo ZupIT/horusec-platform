@@ -100,9 +100,11 @@ const HandleWorkspace: React.FC<Props> = ({
   };
 
   const ValidationScheme = Yup.object({
-    name: Yup.string().required(),
-    description: Yup.string().optional(),
-    emailAdmin: Yup.string().required(),
+    name: Yup.string().required(t('WORKSPACES_SCREEN.INVALID_WORKSPACE_NAME')),
+    description: Yup.string().optional().notRequired(),
+    emailAdmin: Yup.string().required(
+      t('WORKSPACES_SCREEN.INVALID_EMAIL_ADMIN')
+    ),
     authzAdmin: Yup.array<string[]>().notRequired(),
     authzMember: Yup.array<string[]>().notRequired(),
   });

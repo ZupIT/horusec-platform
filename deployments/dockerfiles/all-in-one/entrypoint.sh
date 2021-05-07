@@ -33,6 +33,8 @@ sleep 5
 
 docker exec horusec-postgres createdb horusec_analytic_db
 
+sleep 3
+
 docker run -v "$(pwd)/migrations/source/platform:/migrations" \
        --network host migrate/migrate \
        -path=/migrations/ \
@@ -56,6 +58,8 @@ sleep 5
 /bin/horusec-messages-main &
 /bin/horusec-webhook-main &
 
-nginx -g "daemon off;" &
+sleep 3
 
-echo HORUSEC WEB IS UP AND CAN BE ACCESSED IN '-> http://localhost:8043/auth'
+echo HORUSEC WEB IS UP AND CAN BE ACCESSED IN '-> http://localhost:8043/auth' &
+
+nginx -g "daemon off;"
