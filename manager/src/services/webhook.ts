@@ -30,15 +30,14 @@ const create = (
   headers: WebhookHeader[],
   description: string
 ) => {
-  return http.post(
-    `${SERVICE_WEBHOOK}/webhook/webhook/${workspaceID}/${repositoryID}`,
-    {
-      url,
-      method,
-      headers,
-      description,
-    }
-  );
+  return http.post(`${SERVICE_WEBHOOK}/webhook/webhook/${workspaceID}`, {
+    url,
+    method,
+    headers,
+    description,
+    repositoryID,
+    workspaceID,
+  });
 };
 
 const update = (
@@ -51,23 +50,21 @@ const update = (
   description: string
 ) => {
   return http.put(
-    `${SERVICE_WEBHOOK}/webhook/webhook/${workspaceID}/${repositoryID}/${webhookID}`,
+    `${SERVICE_WEBHOOK}/webhook/webhook/${workspaceID}/${webhookID}`,
     {
       url,
       method,
       headers,
       description,
+      workspaceID,
+      repositoryID,
     }
   );
 };
 
-const remove = (
-  workspaceID: string,
-  repositoryID: string,
-  webhookID: string
-) => {
+const remove = (webhookID: string, workspaceID: string) => {
   return http.delete(
-    `${SERVICE_WEBHOOK}/webhook/webhook/${workspaceID}/${repositoryID}/${webhookID}`
+    `${SERVICE_WEBHOOK}/webhook/webhook/${workspaceID}/${webhookID}`
   );
 };
 
