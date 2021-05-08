@@ -74,7 +74,7 @@ const Item = styled.li<ItemProps>`
       span,
       svg,
       * {
-        color: ${({ theme }) => theme.colors.button.secundary};
+        color: ${({ theme }) => theme.colors.active};
       }
     `};
 
@@ -82,7 +82,7 @@ const Item = styled.li<ItemProps>`
     span,
     svg,
     * {
-      color: ${({ theme }) => theme.colors.button.secundary};
+      color: ${({ theme }) => theme.colors.active};
     }
   }
 `;

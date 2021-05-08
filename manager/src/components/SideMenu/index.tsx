@@ -21,7 +21,6 @@ import { useTranslation } from 'react-i18next';
 import { Icon } from 'components';
 import { useHistory } from 'react-router-dom';
 import { InternalRoute } from 'helpers/interfaces/InternalRoute';
-import { find } from 'lodash';
 import useWorkspace from 'helpers/hooks/useWorkspace';
 import SelectMenu from 'components/SelectMenu';
 import { Workspace } from 'helpers/interfaces/Workspace';
@@ -34,8 +33,6 @@ const SideMenu: React.FC = () => {
     handleSetCurrentWorkspace,
   } = useWorkspace();
   const { t } = useTranslation();
-  const [selectedRoute, setSelectedRoute] = useState<InternalRoute>();
-  const [selectedSubRoute, setSelectedSubRoute] = useState<InternalRoute>();
 
   const routes: InternalRoute[] = [
     {
@@ -84,31 +81,19 @@ const SideMenu: React.FC = () => {
     },
   ];
 
+  const [selectedRoute, setSelectedRoute] = useState<InternalRoute>(routes[0]);
+
   const handleSelectedRoute = (route: InternalRoute) => {
     if (route.type === 'route') {
       setSelectedRoute((state) => {
-        if (
-          state &&
-          state?.subRoutes &&
-          route?.subRoutes &&
-          !selectedSubRoute
-        ) {
+        if (state && state?.subRoutes && route?.subRoutes) {
           return null;
         }
         return route;
       });
-      setSelectedSubRoute(null);
 
-      if (!route?.subRoutes) {
-        history.push(route.path);
-      } else {
-        setTimeout(() => {
-          const firstItemSubRoute = document.getElementById('sub-route-0');
-          firstItemSubRoute?.focus();
-        }, 1000);
-      }
+      history.push(route.path);
     } else {
-      setSelectedSubRoute(route);
       history.push(route.path);
     }
   };
@@ -117,40 +102,32 @@ const SideMenu: React.FC = () => {
     if (route.roles.includes(currentWorkspace?.role)) {
       if (!route?.rule || (route?.rule && route?.rule())) {
         return (
-          <Styled.RouteItem
-            key={index}
-            tabIndex={0}
-            isActive={route.path === selectedRoute?.path}
-            onClick={() => handleSelectedRoute(route)}
-            onKeyPress={() => handleSelectedRoute(route)}
-          >
-            <Icon name={route.icon} size="15" />
+          <div key={index}>
+            <Styled.RouteItem
+              tabIndex={0}
+              isActive={window.location.pathname.includes(route?.path)}
+              onClick={() => handleSelectedRoute(route)}
+              onKeyPress={() => handleSelectedRoute(route)}
+            >
+              <Icon name={route.icon} size="15" />
 
-            <Styled.RouteName>{route.name}</Styled.RouteName>
-          </Styled.RouteItem>
+              <Styled.RouteName>{route.name}</Styled.RouteName>
+            </Styled.RouteItem>
+
+            <Styled.SubRoutes>
+              {route?.subRoutes?.map((subRoute, index) => (
+                <Styled.SubRouteItem
+                  isActive={window.location.pathname === subRoute.path}
+                  key={index}
+                  onClick={() => handleSelectedRoute(subRoute)}
+                >
+                  ◌ {subRoute?.name}
+                </Styled.SubRouteItem>
+              ))}
+            </Styled.SubRoutes>
+          </div>
         );
       }
-    }
-  };
-
-  const fetchSubRoutes = () =>
-    find(routes, { path: selectedRoute?.path })?.subRoutes || [];
-
-  const renderSubRoute = (subRoute: InternalRoute, index: number) => {
-    if (subRoute.roles.includes(currentWorkspace?.role)) {
-      return (
-        <Styled.SubRouteItem
-          id={`sub-route-${index}`}
-          key={index}
-          tabIndex={0}
-          isActive={subRoute.path === selectedSubRoute?.path}
-          onClick={() => handleSelectedRoute(subRoute)}
-        >
-          <Icon name={subRoute.icon} size="15" />
-
-          <Styled.RouteName>{subRoute.name}</Styled.RouteName>
-        </Styled.SubRouteItem>
-      );
     }
   };
 
@@ -158,7 +135,6 @@ const SideMenu: React.FC = () => {
     handleSetCurrentWorkspace(workspace);
     history.replace('/home/dashboard');
     setSelectedRoute(null);
-    setSelectedSubRoute(null);
   };
 
   return (
@@ -184,21 +160,13 @@ const SideMenu: React.FC = () => {
             </Styled.SelectWrapper>
           ) : null}
 
-          <nav aria-label={t('SIDE_MENU.ARIA_TITLE')}>
+          <Styled.Nav aria-label={t('SIDE_MENU.ARIA_TITLE')}>
             <Styled.RoutesList>
               {routes.map((route, index) => renderRoute(route, index))}
             </Styled.RoutesList>
-          </nav>
+          </Styled.Nav>
         </Styled.WrapperLogoRoutes>
       </Styled.SideMenu>
-
-      <Styled.SubMenu isActive={!!selectedRoute?.subRoutes}>
-        <Styled.SubRoutesList>
-          {fetchSubRoutes().map((subRoute, index) =>
-            renderSubRoute(subRoute, index)
-          )}
-        </Styled.SubRoutesList>
-      </Styled.SubMenu>
     </>
   );
 };
