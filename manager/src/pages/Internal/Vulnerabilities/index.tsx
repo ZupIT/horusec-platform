@@ -335,7 +335,6 @@ const Vulnerabilities: React.FC = () => {
       </Styled.Options>
 
       <Styled.Content>
-        <Styled.Title>{t('VULNERABILITIES_SCREEN.TITLE')}</Styled.Title>
         <Datatable
           columns={[
             {

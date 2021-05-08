@@ -16,7 +16,7 @@
 
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Dialog, Datatable } from 'components';
+import { Dialog, Button, Icon } from 'components';
 import Styled from './styled';
 import {
   getCurrentUser,
@@ -30,12 +30,13 @@ import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
 import { clearTokens } from 'helpers/localStorage/tokens';
 import { useHistory } from 'react-router-dom';
+import useLanguage from 'helpers/hooks/useLanguage';
 
 const Settings: React.FC = () => {
   const { t } = useTranslation();
-  const { email, username } = getCurrentUser();
   const { dispatchMessage } = useResponseMessage();
   const { showSuccessFlash } = useFlashMessage();
+  const { allLanguages, currentLanguage, setUserLanguage } = useLanguage();
   const history = useHistory();
 
   const [deleteDialogIsOpen, setOpenDeleteDialog] = useState(false);
@@ -64,47 +65,61 @@ const Settings: React.FC = () => {
       <Styled.Content>
         <Styled.Title>{t('SETTINGS_SCREEN.TITLE')}</Styled.Title>
 
-        <Datatable
-          columns={[
-            {
-              label: t('SETTINGS_SCREEN.TABLE.USER'),
-              property: 'username',
-              type: 'text',
-            },
-            {
-              label: t('SETTINGS_SCREEN.TABLE.EMAIL'),
-              property: 'email',
-              type: 'text',
-            },
-            {
-              label: t('SETTINGS_SCREEN.TABLE.ACTION'),
-              property: 'actions',
-              type: 'actions',
-            },
-          ]}
-          datasource={[
-            {
-              username,
-              email,
-              actions: [
-                {
-                  title: t('SETTINGS_SCREEN.TABLE.EDIT'),
-                  icon: 'edit',
-                  function: () => setOpenEditDialog(true),
-                },
-                {
-                  title: t('SETTINGS_SCREEN.TABLE.PASSWORD'),
-                  icon: 'lock',
-                  function: () => setOpenChangePassDialog(true),
-                },
-                {
-                  title: t('SETTINGS_SCREEN.TABLE.DELETE'),
-                  icon: 'delete',
-                  function: () => setOpenDeleteDialog(true),
-                },
-              ],
-            },
-          ]}
+        <Styled.Subtitle>
+          {t('SETTINGS_SCREEN.ACCOUNT_SUBTITLE')}
+        </Styled.Subtitle>
+
+        <Styled.BtnsWrapper>
+          <Button
+            text={t('SETTINGS_SCREEN.CHANGE_USER_DATA')}
+            icon="edit"
+            onClick={() => setOpenEditDialog(true)}
+            outline
+          />
+
+          <Button
+            text={t('SETTINGS_SCREEN.CHANGE_PASS')}
+            icon="lock"
+            onClick={() => setOpenChangePassDialog(true)}
+            outline
+          />
+        </Styled.BtnsWrapper>
+      </Styled.Content>
+
+      <Styled.Content>
+        <Styled.Title>{t('SETTINGS_SCREEN.LANGUAGE')}</Styled.Title>
+
+        <Styled.Subtitle>
+          {t('SETTINGS_SCREEN.CHANGE_LANGUAGE')}
+        </Styled.Subtitle>
+
+        <Styled.LanguageList>
+          {allLanguages.map((language, index) => (
+            <Styled.LanguageItem
+              key={index}
+              onClick={() => setUserLanguage(language)}
+              id={language.i18nValue}
+              active={currentLanguage?.name === language.name}
+            >
+              <Icon name={language.icon} size="30px" />
+
+              <Styled.LanguageName>{language.description}</Styled.LanguageName>
+            </Styled.LanguageItem>
+          ))}
+        </Styled.LanguageList>
+      </Styled.Content>
+
+      <Styled.Content>
+        <Styled.Title isDanger>
+          {t('SETTINGS_SCREEN.DELETE_ACCOUNT')}
+        </Styled.Title>
+
+        <Styled.Subtitle>{t('SETTINGS_SCREEN.SURE_DELETE')}</Styled.Subtitle>
+
+        <Button
+          text={t('SETTINGS_SCREEN.DELETE')}
+          onClick={() => setOpenDeleteDialog(true)}
+          outline
         />
       </Styled.Content>
 

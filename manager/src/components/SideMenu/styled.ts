@@ -42,6 +42,7 @@ const OptionsList = styled.ul`
   display: flex;
   flex-direction: column;
   padding: 20px 0px 20px 7.5px;
+  list-style: none;
 `;
 
 const Logo = styled.img`
@@ -114,15 +115,6 @@ const SubMenu = styled.nav<SubMenuProps>`
     `};
 `;
 
-const OptionItem = styled.li``;
-
-const Config = styled(Icon)`
-  width: 30px;
-  cursor: pointer;
-  margin: 0 0 20px 15px;
-  nav-index: 1;
-`;
-
 const SelectWrapper = styled.div`
   margin-left: 17px;
 `;
@@ -138,7 +130,5 @@ export default {
   SubMenu,
   SubRoutesList,
   SubRouteItem,
-  OptionItem,
-  Config,
   SelectWrapper,
 };

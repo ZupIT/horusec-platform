@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import Styled from './styled';
 import { SearchBar, Button, Dialog, Datatable, Datasource } from 'components';
 import { useTranslation } from 'react-i18next';
@@ -148,8 +148,6 @@ const Repositories: React.FC = () => {
       </Styled.Options>
 
       <Styled.Content>
-        <Styled.Title>{t('REPOSITORIES_SCREEN.TITLE')}</Styled.Title>
-
         <Datatable
           columns={[
             {

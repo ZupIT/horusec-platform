@@ -23,7 +23,7 @@ const Container = styled(Form)`
   border-radius: 4px;
   padding: 20px;
   display: flex;
-  width: min-content;
+  width: 100%;
   align-items: center;
 `;
 
@@ -40,6 +40,7 @@ const CalendarWrapper = styled(Wrapper)`
 
 const ApplyButton = styled(Button)`
   margin: 0px 15px;
+  font-size: ${({ theme }) => theme.metrics.fontSize.medium};
 `;
 
 export default { Container, CalendarWrapper, Wrapper, ApplyButton };

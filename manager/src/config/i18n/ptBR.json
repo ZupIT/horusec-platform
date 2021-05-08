@@ -369,6 +369,13 @@
   },
   "SETTINGS_SCREEN": {
     "TITLE": "Configurações da conta",
+    "ACCOUNT_SUBTITLE": "Alterar as informações pessoais da conta Horusec.",
+    "CHANGE_USER_DATA": "Editar informações",
+    "DELETE_ACCOUNT": "Deletar a conta Horusec",
+    "LANGUAGE": "Idioma",
+    "CHANGE_LANGUAGE": "Alterar o idioma da plataforma.",
+    "SURE_DELETE": "Depois de excluir sua conta, não há como voltar atrás. Por favor, esteja certo.",
+    "DELETE": "Deletar",
     "TABLE": {
       "USER": "Usuário",
       "EMAIL": "Email",
@@ -434,5 +441,18 @@
     "ACTION": "Adicionar workspace",
     "ALT_IMG": "Desenho ilustrando uma paisagem com nuvens no alto, abaixo um banco de madeira e uma mulher branca de cabelo ruivo com blusa laranja e calça verde levando uma luneta com a mão direita até o olho esquerdo. Ela apoia seu pé esquerdo sobre o banco.",
     "APPLICATION_ADMIN": "Você não faz parte de nenhum workspace. Verifique com o Administrador da aplicação."
+  },
+  "HEADER": {
+    "TITLE": {
+      "DASHBOARDREPOSITORY": "Dashboard / Repositório",
+      "DASHBOARDWORKSPACE": "Dashboard / Workspace",
+      "VULNERABILITIES": "Vulnerabilidades",
+      "REPOSITORIES": "Repositórios",
+      "WEBHOOKS": "Webhooks",
+      "CONFIGURATION": "Configuração",
+      "HELPER": "Ajuda",
+      "WORKSPACES": "Workspaces",
+      "DEFAULT": "Horusec"
+    }
   }
 }

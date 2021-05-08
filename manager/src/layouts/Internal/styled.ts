@@ -21,4 +21,10 @@ const Wrapper = styled.div`
   height: 96.3vh;
 `;
 
-export default { Wrapper };
+const Content = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+`;
+
+export default { Wrapper, Content };

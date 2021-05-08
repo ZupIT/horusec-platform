@@ -37,7 +37,15 @@ const allLanguages: LanguageItem[] = [
     htmlValue: 'pt-BR',
     icon: 'brazil',
     dateFormat: 'dd/MM/yyyy',
-    description: 'Português - Brazil',
+    description: 'Português - Brasil',
+  },
+  {
+    name: 'es',
+    i18nValue: 'es',
+    htmlValue: 'es',
+    icon: 'spain',
+    dateFormat: 'yyy/dd/mm',
+    description: 'Español',
   },
 ];
 

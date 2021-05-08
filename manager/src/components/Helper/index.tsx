@@ -18,16 +18,19 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import Styled from './styled';
 
-const Helper: React.FC = () => {
+interface HelperInterface {
+  url: string;
+}
+
+const Helper: React.FC<HelperInterface> = ({ url }) => {
   const { t } = useTranslation();
 
   return (
-    <Styled.HelpIcon
-      ariaLabel={t('SIDE_MENU.HELPER')}
-      tabIndex={0}
-      name="help"
-      size="15px"
-    />
+    <Styled.Link href={url} target="_blank">
+      <Styled.HelpIcon name="help" size="20px" />
+
+      <Styled.Text>{t('SIDE_MENU.HELPER')}</Styled.Text>
+    </Styled.Link>
   );
 };
 

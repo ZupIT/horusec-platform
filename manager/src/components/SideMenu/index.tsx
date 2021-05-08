@@ -18,16 +18,13 @@ import React, { useState } from 'react';
 import Styled from './styled';
 import HorusecLogo from 'assets/logos/horusec.svg';
 import { useTranslation } from 'react-i18next';
-import { Icon, Language, Logout, Helper } from 'components';
+import { Icon } from 'components';
 import { useHistory } from 'react-router-dom';
 import { InternalRoute } from 'helpers/interfaces/InternalRoute';
 import { find } from 'lodash';
-import ReactTooltip from 'react-tooltip';
 import useWorkspace from 'helpers/hooks/useWorkspace';
-import { getCurrentConfig } from 'helpers/localStorage/horusecConfig';
-import { authTypes } from 'helpers/enums/authTypes';
-import { Workspace } from 'helpers/interfaces/Workspace';
 import SelectMenu from 'components/SelectMenu';
+import { Workspace } from 'helpers/interfaces/Workspace';
 
 const SideMenu: React.FC = () => {
   const history = useHistory();
@@ -37,7 +34,6 @@ const SideMenu: React.FC = () => {
     handleSetCurrentWorkspace,
   } = useWorkspace();
   const { t } = useTranslation();
-  const { authType, disableEmails } = getCurrentConfig();
   const [selectedRoute, setSelectedRoute] = useState<InternalRoute>();
   const [selectedSubRoute, setSelectedSubRoute] = useState<InternalRoute>();
 
@@ -137,12 +133,6 @@ const SideMenu: React.FC = () => {
     }
   };
 
-  const goToSettings = () => {
-    history.replace('/home/settings');
-    setSelectedRoute(null);
-    setSelectedSubRoute(null);
-  };
-
   const fetchSubRoutes = () =>
     find(routes, { path: selectedRoute?.path })?.subRoutes || [];
 
@@ -200,36 +190,6 @@ const SideMenu: React.FC = () => {
             </Styled.RoutesList>
           </nav>
         </Styled.WrapperLogoRoutes>
-
-        <Styled.OptionsList>
-          <Styled.OptionItem>
-            {authType === authTypes.HORUSEC ? (
-              <Styled.Config
-                dataFor="side-options"
-                dataTip={t('SIDE_MENU.CONFIG')}
-                name="config"
-                size="15"
-                onClick={goToSettings}
-                tabIndex={0}
-                ariaLabel={t('SIDE_MENU.CONFIG')}
-              />
-            ) : null}
-          </Styled.OptionItem>
-
-          <Styled.OptionItem>
-            <Helper />
-          </Styled.OptionItem>
-
-          <Styled.OptionItem>
-            <Logout />
-          </Styled.OptionItem>
-
-          <Styled.OptionItem>
-            <Language />
-          </Styled.OptionItem>
-
-          <ReactTooltip id="side-options" place="top" type="dark" insecure />
-        </Styled.OptionsList>
       </Styled.SideMenu>
 
       <Styled.SubMenu isActive={!!selectedRoute?.subRoutes}>

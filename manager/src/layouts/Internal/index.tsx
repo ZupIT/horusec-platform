@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { SideMenu, Footer } from 'components';
+import { SideMenu, Footer, Header } from 'components';
 import Styled from './styled';
 import { WorkspaceProvider } from 'contexts/Workspace';
 import { keycloakInstance } from 'config/keycloak';
@@ -35,7 +35,10 @@ function InternalLayout({ children }: { children: JSX.Element }) {
         <Styled.Wrapper>
           <SideMenu />
 
-          {children}
+          <Styled.Content>
+            <Header />
+            {children}
+          </Styled.Content>
         </Styled.Wrapper>
 
         <Footer />
