@@ -34,12 +34,12 @@ func main() {
 	dashboardController := dashboardcontroller.NewControllerDashboardWrite(dashboardRepository)
 
 	analysis := []analysis.Analysis{}
-	coreConn.Table("analysis").Preload("AnalysisVulnerabilities").Preload("AnalysisVulnerabilities.Vulnerability").Find(&analysis)
+	coreConn.Table("analysis").Order("CreatedAt").Preload("AnalysisVulnerabilities").Preload("AnalysisVulnerabilities.Vulnerability").Find(&analysis)
 
 	for _, analyse := range analysis {
-		_ = dashboardController.AddVulnerabilitiesByAuthor(&analyse)
-		_ = dashboardController.AddVulnerabilitiesByLanguage(&analyse)
-		_ = dashboardController.AddVulnerabilitiesByRepository(&analyse)
-		_ = dashboardController.AddVulnerabilitiesByTime(&analyse)
+		// _ = dashboardController.AddVulnerabilitiesByAuthor(&analyse)
+		// _ = dashboardController.AddVulnerabilitiesByLanguage(&analyse)
+		// _ = dashboardController.AddVulnerabilitiesByRepository(&analyse)
+		// _ = dashboardController.AddVulnerabilitiesByTime(&analyse)
 	}
 }
