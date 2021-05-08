@@ -86,7 +86,7 @@ const Language: React.FC = () => {
             >
               <Icon name={language.icon} size="30px" />
 
-              {language.name}
+              <Styled.LanguageName>{language.name}</Styled.LanguageName>
             </Styled.LanguageItem>
           ))}
         </Styled.LanguagesList>

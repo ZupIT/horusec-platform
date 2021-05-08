@@ -112,7 +112,7 @@ const Dashboard: React.FC<Props> = ({ type }) => {
         {type === 'workspace' ? (
           <VulnerabilitiesByRepository
             isLoading={isLoading}
-            filters={filters}
+            data={dashboardData?.vulnerabilitiesByRepository}
           />
         ) : null}
       </Styled.Row>

@@ -27,19 +27,16 @@ const Logout: React.FC = () => {
   const refreshToken = getRefreshToken();
 
   return (
-    <>
+    <Styled.Button onClick={() => logout(refreshToken)}>
       <Styled.LogoutIcon
-        onClick={() => logout(refreshToken)}
         size="16px"
         tabIndex={0}
         ariaLabel={t('SIDE_MENU.LOGOUT')}
         name="logout"
-        dataFor="logout"
-        dataTip={t('SIDE_MENU.LOGOUT')}
       />
 
-      <ReactTooltip id="logout" place="top" type="dark" insecure />
-    </>
+      <Styled.Text>{t('SIDE_MENU.LOGOUT')}</Styled.Text>
+    </Styled.Button>
   );
 };
 

@@ -16,7 +16,6 @@
 
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FilterValues } from 'helpers/interfaces/FilterValues';
 import { BarCharRow } from 'helpers/interfaces/BarChartRow';
 import { BarChart } from 'components';
 import { get } from 'lodash';
