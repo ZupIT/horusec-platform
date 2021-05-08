@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 
 	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 	"github.com/ZupIT/horusec-devkit/pkg/services/database"
@@ -16,10 +17,19 @@ func main() {
 	databaseURI := flag.String("v1-database-uri", "", "")
 	flag.Parse()
 
-	coreConn, _ := gorm.Open(postgres.Open(string(*databaseURI)), &gorm.Config{})
+	coreConn, err := gorm.Open(postgres.Open(string(*databaseURI)), &gorm.Config{})
+	if err != nil {
+		fmt.Print(err)
+		return
+	}
 
 	databaseConfig := databaseconfig.NewDatabaseConfig()
 	conn, _ := database.NewDatabaseReadAndWrite(databaseConfig)
+	if err != nil {
+		fmt.Print(err)
+		return
+	}
+
 	dashboardRepository := dashboardrepository.NewRepoDashboard(conn)
 	dashboardController := dashboardcontroller.NewControllerDashboardWrite(dashboardRepository)
 
