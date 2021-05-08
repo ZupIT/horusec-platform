@@ -17,17 +17,14 @@
 import styled, { css } from 'styled-components';
 import { Button, Select as SelectComponent } from 'components';
 
-interface LoadingWrapperProps {
-  isLoading: boolean;
-}
-
 interface TagProps {
   color: string;
 }
 
 const Wrapper = styled.div`
+  padding: 35px;
   width: 100%;
-  padding: 35px 40px 10px 35px;
+  max-width: 90vw;
 `;
 
 const Options = styled.div`
@@ -44,158 +41,7 @@ const Content = styled.div`
   padding: 25px 15px 10px 25px;
   background-color: ${({ theme }) => theme.colors.background.secundary};
   border-radius: 4px;
-  position: relative;
-`;
-
-const Title = styled.h1`
-  color: ${({ theme }) => theme.colors.text.secundary};
-  font-weight: normal;
-  font-size: ${({ theme }) => theme.metrics.fontSize.xlarge};
-`;
-
-const Table = styled.div`
-  margin-top: 30px;
-`;
-
-const Head = styled.div`
-  display: flex;
-  flex-direction: row;
-  padding: 0px 20px;
-`;
-
-const Column = styled.span`
-  text-align: left;
-  font-size: ${({ theme }) => theme.metrics.fontSize.small};
-  color: ${({ theme }) => theme.colors.dataTable.column.text};
-  font-weight: normal;
-  width: 100%;
-  display: block;
-  margin-right: 20px;
-
-  &:nth-child(1) {
-    max-width: 250px;
-  }
-
-  &:nth-child(2) {
-    max-width: 580px;
-    margin-right: -10px;
-  }
-
-  &:nth-child(3) {
-    max-width: 130px;
-    padding-left: 25px;
-  }
-
-  &:nth-child(4) {
-    margin-right: 0px;
-    margin-left: 15px;
-  }
-
-  &:nth-child(5) {
-    max-width: 30px;
-    margin-right: 40px;
-  }
-`;
-
-const Row = styled.div`
-  background-color: ${({ theme }) => theme.colors.dataTable.row.background};
-  margin-bottom: 4px;
-  border-radius: 4px;
-  padding: 10px 20px;
-  display: flex;
-  flex-direction: row;
-  position: relative;
-`;
-
-const Cell = styled.span`
-  text-align: left;
-  font-size: ${({ theme }) => theme.metrics.fontSize.small};
-  color: ${({ theme }) => theme.colors.dataTable.row.text};
-  font-weight: normal;
-  white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;
-  display: block;
-  width: 100%;
-  margin-right: 20px;
-  line-height: 30px;
-  padding: 2px;
-
-  &:nth-child(1) {
-    max-width: 250px;
-  }
-
-  &:nth-child(2) {
-    max-width: 580px;
-  }
-
-  &:nth-child(3) {
-    max-width: 130px;
-  }
-
-  &:nth-child(5) {
-    max-width: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    i {
-      cursor: pointer;
-    }
-  }
-
-  &.center {
-    display: flex;
-    align-items: center;
-  }
-
-  .select-type {
-    position: absolute !important;
-  }
-`;
-
-const Body = styled.div`
-  overflow-y: scroll;
-  max-height: 400px;
-  min-height: 180px;
-  margin-top: 10px;
-  padding-right: 10px;
-
-  ::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background: ${({ theme }) => theme.colors.scrollbar};
-    border-radius: 4px;
-  }
-`;
-
-const LoadingWrapper = styled.div<LoadingWrapperProps>`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  position: absolute;
-  width: 100%;
-  left: 0;
-  background-color: ${({ theme }) => theme.colors.background.secundary};
-  z-index: 2;
-  visibility: hidden;
-
-  ${({ isLoading }) =>
-    isLoading &&
-    css`
-      visibility: visible;
-    `};
-`;
-
-const EmptyText = styled.span`
-  color: ${({ theme }) => theme.colors.dataTable.column.text};
-  font-size: ${({ theme }) => theme.metrics.fontSize.medium};
-  text-align: center;
-  display: block;
-  line-height: 170px;
 `;
 
 const Select = styled(SelectComponent)`
@@ -225,14 +71,5 @@ export default {
   Select,
   Options,
   Content,
-  Title,
-  Table,
-  Head,
-  Row,
-  Cell,
-  Body,
-  Column,
-  LoadingWrapper,
-  EmptyText,
   ApplyButton,
 };

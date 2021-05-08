@@ -18,9 +18,38 @@ import styled from 'styled-components';
 import { Icon } from 'components';
 
 const HelpIcon = styled(Icon)`
-  cursor: help;
-  margin-left: 15px;
-  nav-index: 2;
+  color: ${({ theme }) => theme.colors.text.opaque};
+
+  :hover {
+    transform: scale(1.1);
+  }
 `;
 
-export default { HelpIcon };
+const Link = styled.a`
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+
+  i {
+    margin: 0;
+  }
+
+  :hover {
+    span,
+    svg,
+    * {
+      color: ${({ theme }) => theme.colors.button.secundary};
+    }
+  }
+`;
+
+const Text = styled.span`
+  color: ${({ theme }) => theme.colors.text.opaque};
+  transition: all ease 0.2s;
+  font-size: ${({ theme }) => theme.metrics.fontSize.small};
+  margin-left: 5px;
+`;
+
+export default { HelpIcon, Link, Text };

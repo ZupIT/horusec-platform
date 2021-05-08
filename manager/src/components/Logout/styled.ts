@@ -17,14 +17,37 @@
 import { Icon } from 'components';
 import styled from 'styled-components';
 
-const LogoutIcon = styled(Icon)`
+const Button = styled.button`
+  background: none;
+  border: none;
   cursor: pointer;
-  margin: 25px 15px;
-  nav-index: 3;
+  display: flex;
+  align-items: center;
+
+  i {
+    margin: 0;
+  }
 
   :hover {
-    transform: scale(1.3);
+    span,
+    svg,
+    * {
+      color: ${({ theme }) => theme.colors.button.secundary};
+    }
   }
 `;
 
-export default { LogoutIcon };
+const LogoutIcon = styled(Icon)`
+  cursor: pointer;
+  margin: 25px 15px;
+  color: ${({ theme }) => theme.colors.text.opaque};
+`;
+
+const Text = styled.span`
+  color: ${({ theme }) => theme.colors.text.opaque};
+  transition: all ease 0.2s;
+  font-size: ${({ theme }) => theme.metrics.fontSize.small};
+  margin-left: 5px;
+`;
+
+export default { Button, Text, LogoutIcon };

@@ -72,10 +72,16 @@ const LanguageItem = styled.li`
   transition: all 2s;
 `;
 
+const LanguageName = styled.span`
+  display: block;
+  min-width: 40px;
+`;
+
 export default {
   Wrapper,
   CurrentLanguage,
   Button,
   LanguagesList,
   LanguageItem,
+  LanguageName,
 };

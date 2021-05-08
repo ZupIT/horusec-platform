@@ -26,7 +26,9 @@ const useDynamicImport = (name: string) => {
       const abortController = new Promise((resolve) => {
         abort = resolve;
       });
-      const svgData = import(`assets/svg/${name}.svg`);
+      const svgData = name
+        ? import(`assets/svg/${name}.svg`)
+        : import(`assets/svg/help.svg`);
       Promise.race([abortController, svgData]).then((data: any) => {
         if (data) {
           setUri(data?.default || '');

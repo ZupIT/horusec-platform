@@ -367,6 +367,13 @@
   },
   "SETTINGS_SCREEN": {
     "TITLE": "Account configurations",
+    "ACCOUNT_SUBTITLE": "Change the personal information of the Horusec account.",
+    "CHANGE_USER_DATA": "Edit Information",
+    "DELETE_ACCOUNT": "Delete Horusec account",
+    "LANGUAGE": "Language",
+    "CHANGE_LANGUAGE": "Change the language of the platform.",
+    "SURE_DELETE": "Once you delete your account, there is no going back. Please be certain.",
+    "DELETE": "Delete",
     "TABLE": {
       "USER": "User",
       "EMAIL": "Email",
@@ -432,5 +439,18 @@
     "ACTION": "Add workspace",
     "ALT_IMG": "Drawing illustrating a landscape with clouds overhead, below a wooden bench and a white woman with red hair with orange blouse and green pants carrying a spyglass with her right hand to her left eye. She rests her left foot on the bench.",
     "APPLICATION_ADMIN": "You are not part of any workspace. Check with the Application Administrator."
+  },
+  "HEADER": {
+    "TITLE": {
+      "DASHBOARDREPOSITORY": "Dashboard / Repository",
+      "DASHBOARDWORKSPACE": "Dashboard / Workspace",
+      "VULNERABILITIES": "Vulnerabilities",
+      "REPOSITORIES": "Repositories",
+      "WEBHOOKS": "Webhooks",
+      "CONFIGURATION": "Settings",
+      "HELPER": "Helper",
+      "WORKSPACES": "Workspaces",
+      "DEFAULT": "Horusec"
+    }
   }
 }

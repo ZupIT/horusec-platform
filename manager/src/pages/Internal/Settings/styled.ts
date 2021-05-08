@@ -14,7 +14,15 @@
  * limitations under the License.
  */
 
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
+
+interface TitlesProps {
+  isDanger?: boolean;
+}
+
+interface LanguageProps {
+  active?: boolean;
+}
 
 const Wrapper = styled.section`
   padding: 35px;
@@ -29,96 +37,82 @@ const Content = styled.div`
   position: relative;
 `;
 
-const Title = styled.h1`
+const Title = styled.h1<TitlesProps>`
   color: ${({ theme }) => theme.colors.text.secundary};
   font-weight: normal;
   font-size: ${({ theme }) => theme.metrics.fontSize.xlarge};
+
+  ${({ isDanger }) =>
+    isDanger &&
+    css`
+      color: ${({ theme }) => theme.colors.input.error};
+    `};
 `;
 
-const Table = styled.div`
-  margin-top: 30px;
+const Subtitle = styled.span`
+  display: block;
+  margin: 20px 0;
+  color: ${({ theme }) => theme.colors.text.secundary};
+  font-weight: normal;
+  font-size: ${({ theme }) => theme.metrics.fontSize.medium};
 `;
 
-const Head = styled.div`
+const BtnsWrapper = styled.div`
   display: flex;
-  flex-direction: row;
-  padding: 0px 20px;
-`;
 
-const Column = styled.span`
-  text-align: left;
-  font-size: ${({ theme }) => theme.metrics.fontSize.small};
-  color: ${({ theme }) => theme.colors.dataTable.column.text};
-  font-weight: normal;
-  width: 100%;
-  display: block;
-  margin-right: 20px;
-
-  &:nth-child(1) {
-    max-width: 180px;
+  button {
+    margin-right: 15px;
   }
 `;
 
-const Cell = styled.span`
-  text-align: left;
-  font-size: ${({ theme }) => theme.metrics.fontSize.small};
-  color: ${({ theme }) => theme.colors.dataTable.row.text};
-  font-weight: normal;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: block;
-  width: 100%;
+const LanguageList = styled.ul`
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+`;
+
+const LanguageItem = styled.li<LanguageProps>`
+  display: flex;
+  align-items: center;
   margin-right: 20px;
-  line-height: 30px;
-  padding: 2px;
+  border: 1px solid ${({ theme }) => theme.colors.secondary};
+  border-radius: 3px;
+  padding: 3px 8px;
+  min-width: 130px;
 
-  &:nth-child(1) {
-    max-width: 180px;
-  }
+  ${({ active }) =>
+    active &&
+    css`
+      border: 1px solid ${({ theme }) => theme.colors.button.secundary};
+      span {
+        color: ${({ theme }) => theme.colors.button.secundary};
+      }
+    `};
 
-  &.row {
-    display: flex;
-    flex-direction: row;
-
-    button {
-      margin-right: 10px;
+  :hover {
+    border: 1px solid ${({ theme }) => theme.colors.button.secundary};
+    span {
+      color: ${({ theme }) => theme.colors.button.secundary};
     }
   }
 `;
 
-const Row = styled.div`
-  background-color: ${({ theme }) => theme.colors.dataTable.row.background};
-  margin-bottom: 4px;
-  border-radius: 4px;
-  padding: 10px 20px;
-  display: flex;
-  flex-direction: row;
-`;
-
-const Body = styled.div`
-  overflow-y: scroll;
-  margin-top: 10px;
-  padding-right: 10px;
-
-  ::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background: ${({ theme }) => theme.colors.scrollbar};
-    border-radius: 4px;
-  }
+const LanguageName = styled.span`
+  display: block;
+  margin-left: 10px;
+  color: ${({ theme }) => theme.colors.secondary};
 `;
 
 export default {
   Wrapper,
   Content,
   Title,
-  Body,
-  Cell,
-  Row,
-  Column,
-  Head,
-  Table,
+  Subtitle,
+  BtnsWrapper,
+  LanguageList,
+  LanguageItem,
+  LanguageName,
 };
