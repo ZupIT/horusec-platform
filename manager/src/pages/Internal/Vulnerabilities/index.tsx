@@ -19,9 +19,7 @@ import Styled from './styled';
 import { SearchBar, Select, Icon, Datatable, Datasource } from 'components';
 import { useTranslation } from 'react-i18next';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
-import coreService from 'services/core';
 import vulnerabilitiesService from 'services/vulnerabilities';
-import { Repository } from 'helpers/interfaces/Repository';
 import { PaginationInfo } from 'helpers/interfaces/Pagination';
 import { Vulnerability } from 'helpers/interfaces/Vulnerability';
 import { debounce, get } from 'lodash';
@@ -29,11 +27,11 @@ import Details from './Details';
 import { FilterVuln } from 'helpers/interfaces/FIlterVuln';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
 import { useTheme } from 'styled-components';
-import { find } from 'lodash';
 import useWorkspace from 'helpers/hooks/useWorkspace';
 import { AxiosError, AxiosResponse } from 'axios';
 import { Autocomplete } from '@material-ui/lab';
 import { TextField } from '@material-ui/core';
+import useRepository from 'helpers/hooks/useRepository';
 
 const INITIAL_PAGE = 1;
 interface RefreshInterface {
@@ -42,19 +40,25 @@ interface RefreshInterface {
 }
 
 const Vulnerabilities: React.FC = () => {
+  const { currentWorkspace } = useWorkspace();
+  const {
+    currentRepository,
+    setCurrentRepository,
+    allRepositories,
+    isMemberOfRepository,
+  } = useRepository();
+
   const { t } = useTranslation();
   const { colors } = useTheme();
   const { dispatchMessage } = useResponseMessage();
-
   const { showSuccessFlash } = useFlashMessage();
-  const { currentWorkspace } = useWorkspace();
+
   const [isLoading, setLoading] = useState(false);
-  const [repositories, setRepositories] = useState<Repository[]>([]);
   const [vulnerabilities, setVulnerabilities] = useState<Vulnerability[]>([]);
   const [selectedVuln, setSelectedVuln] = useState<Vulnerability>(null);
   const [filters, setFilters] = useState<FilterVuln>({
     workspaceID: currentWorkspace?.workspaceID,
-    repositoryID: repositories[0]?.repositoryID,
+    repositoryID: currentRepository?.repositoryID,
     vulnHash: '',
     vulnSeverity: 'ALL',
     vulnType: 'ALL',
@@ -125,13 +129,6 @@ const Vulnerabilities: React.FC = () => {
     },
   ];
 
-  const isAdminOrSupervisorOfRepository = () => {
-    const repository = find(repositories, {
-      repositoryID: filters.repositoryID,
-    });
-    return repository.role === 'admin' || repository.role === 'supervisor';
-  };
-
   const handleSearch = debounce((searchString: string) => {
     setRefresh((state) => ({
       ...state,
@@ -169,29 +166,8 @@ const Vulnerabilities: React.FC = () => {
   useEffect(() => {
     let isCancelled = false;
 
-    const fetchRepositories = () => {
-      coreService
-        .getAllRepositories(currentWorkspace?.workspaceID)
-        .then((result: AxiosResponse) => {
-          if (!isCancelled) {
-            const response = result.data.content;
-            setRepositories(response);
-          }
-        });
-    };
-
-    fetchRepositories();
-
-    return () => {
-      isCancelled = true;
-    };
-  }, [currentWorkspace]);
-
-  useEffect(() => {
-    let isCancelled = false;
-
     const fetchVulnerabilities = () => {
-      if (repositories.length > 0) {
+      if (currentRepository?.repositoryID) {
         setLoading(true);
 
         const page = refresh.page;
@@ -202,7 +178,7 @@ const Vulnerabilities: React.FC = () => {
         }
 
         if (!filter.repositoryID) {
-          filter.repositoryID = repositories[0].repositoryID;
+          filter.repositoryID = currentRepository?.repositoryID;
         }
 
         const filterAux = {
@@ -255,13 +231,12 @@ const Vulnerabilities: React.FC = () => {
       isCancelled = true;
     };
     // eslint-disable-next-line
-  }, [refresh, repositories.length, pagination.pageSize]);
+  }, [refresh, currentRepository, pagination.pageSize]);
 
   const getValueRepo = () => {
-    const repo = repositories.find(
-      (x) => x.repositoryID === filters.repositoryID
-    );
-    return repo ? { label: repo.name, value: repo.repositoryID } : null;
+    return currentRepository
+      ? { label: currentRepository.name, value: currentRepository.repositoryID }
+      : null;
   };
 
   return (
@@ -306,7 +281,7 @@ const Vulnerabilities: React.FC = () => {
 
         <Autocomplete
           style={{ width: '250px' }}
-          options={repositories.map((el) => ({
+          options={allRepositories.map((el) => ({
             label: el.name,
             value: el.repositoryID,
           }))}
@@ -320,6 +295,7 @@ const Vulnerabilities: React.FC = () => {
               filter: { ...filters, repositoryID: value.value },
               page: { ...pagination, currentPage: INITIAL_PAGE },
             });
+            setCurrentRepository(value.value);
           }}
           renderInput={(params) => (
             <TextField
@@ -385,7 +361,7 @@ const Vulnerabilities: React.FC = () => {
                   width="150px"
                   value={row.severity}
                   options={severities.slice(1)}
-                  disabled={!isAdminOrSupervisorOfRepository()}
+                  disabled={isMemberOfRepository}
                   onChangeValue={(value) =>
                     handleUpdateVulnerability(
                       row.vulnerabilityID,
@@ -401,7 +377,7 @@ const Vulnerabilities: React.FC = () => {
                   options={vulnTypes.slice(1)}
                   width="200px"
                   variant="filled"
-                  disabled={!isAdminOrSupervisorOfRepository()}
+                  disabled={isMemberOfRepository}
                   onChangeValue={(value) =>
                     handleUpdateVulnerability(
                       row.vulnerabilityID,

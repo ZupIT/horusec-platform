@@ -14,20 +14,17 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import Styled from './styled';
 import { useTranslation } from 'react-i18next';
 import { Calendar } from 'components';
 import { FilterValues } from 'helpers/interfaces/FilterValues';
-import coreService from 'services/core';
 import useWorkspace from 'helpers/hooks/useWorkspace';
-import { Repository } from 'helpers/interfaces/Repository';
-import useFlashMessage from 'helpers/hooks/useFlashMessage';
 import { ObjectLiteral } from 'helpers/interfaces/ObjectLiteral';
-import { AxiosResponse } from 'axios';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import SearchSelect from 'components/SearchSelect';
+import useRepository from 'helpers/hooks/useRepository';
 interface FilterProps {
   onApply: (values: FilterValues) => void;
   type: 'workspace' | 'repository';
@@ -35,8 +32,12 @@ interface FilterProps {
 
 const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
   const { t } = useTranslation();
-  const { showWarningFlash } = useFlashMessage();
   const { currentWorkspace } = useWorkspace();
+  const {
+    currentRepository,
+    setCurrentRepository,
+    allRepositories,
+  } = useRepository();
 
   const fixedRanges = [
     {
@@ -66,8 +67,6 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
   const lastMonth = new Date(new Date().setDate(today.getDate() - 30));
   const firstYear = new Date(2019, 1, 1);
 
-  const [repositories, setRepositories] = useState<Repository[]>([]);
-
   const ValidationScheme = Yup.object({
     period: Yup.string().label(t('DASHBOARD_SCREEN.PERIOD')).notRequired(),
     initialDate: Yup.string()
@@ -92,45 +91,19 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
     period: fixedRanges[0].value,
     initialDate: firstYear,
     finalDate: today,
-    repositoryID: repositories[0]?.repositoryID,
+    repositoryID: currentRepository?.repositoryID,
     workspaceID: currentWorkspace?.workspaceID,
     type,
   };
 
   useEffect(() => {
-    let isCancelled = false;
-    const fetchRepositories = () => {
-      coreService
-        .getAllRepositories(currentWorkspace?.workspaceID)
-        .then((result: AxiosResponse) => {
-          if (!isCancelled) {
-            const repositories: Repository[] = result.data.content;
-            setRepositories(repositories);
-
-            if (repositories.length > 0) {
-              onApply({
-                ...initialValues,
-                repositoryID: repositories[0]?.repositoryID,
-                workspaceID: repositories[0]?.workspaceID,
-              });
-            } else {
-              showWarningFlash(t('API_ERRORS.EMPTY_REPOSITORY'), 5200);
-            }
-          }
-        });
-    };
-
-    if (type === 'repository') {
-      fetchRepositories();
+    if (type === 'repository' && !currentRepository?.repositoryID) {
+      return;
     } else {
       onApply(initialValues);
     }
-
-    return function () {
-      isCancelled = true;
-    };
     // eslint-disable-next-line
-  }, [currentWorkspace]);
+  }, [currentWorkspace, currentRepository]);
 
   const getRangeOfPeriod: ObjectLiteral = {
     beginning: [firstYear, today],
@@ -149,6 +122,7 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
         values.initialDate = getRangeOfPeriod[values.period][0];
         values.finalDate = getRangeOfPeriod[values.period][1];
         onApply(values);
+        if (values?.repositoryID) setCurrentRepository(values.repositoryID);
       }}
     >
       {(props) => (
@@ -186,7 +160,7 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
               <SearchSelect
                 name="repositoryID"
                 label={t('DASHBOARD_SCREEN.REPOSITORY')}
-                options={repositories.map((el) => ({
+                options={allRepositories.map((el) => ({
                   label: el.name,
                   value: el.repositoryID,
                 }))}

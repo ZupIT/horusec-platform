@@ -131,7 +131,7 @@ export default function SelectMenu({ title, options, value, fixItem }: Props) {
                       id={kebabCase(fixItem.title)}
                       style={{
                         ...fixItem?.style,
-                        color: theme.colors.select.highlight,
+                        color: theme.colors.active,
                         textDecoration: 'underline',
                       }}
                     >
