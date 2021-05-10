@@ -121,7 +121,7 @@ const SideMenu: React.FC = () => {
                   key={index}
                   onClick={() => handleSelectedRoute(subRoute)}
                 >
-                  ◌ {subRoute?.name}
+                  {subRoute?.name}
                 </Styled.SubRouteItem>
               ))}
             </Styled.SubRoutes>
