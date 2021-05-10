@@ -37,9 +37,17 @@ func main() {
 	coreConn.Table("analysis").Order("CreatedAt").Preload("AnalysisVulnerabilities").Preload("AnalysisVulnerabilities.Vulnerability").Find(&analysis)
 
 	for _, analyse := range analysis {
-		_ = dashboardController.AddVulnerabilitiesByAuthor(&analyse)
-		_ = dashboardController.AddVulnerabilitiesByLanguage(&analyse)
-		_ = dashboardController.AddVulnerabilitiesByRepository(&analyse)
-		_ = dashboardController.AddVulnerabilitiesByTime(&analyse)
+		conn.Write.StartTransaction()
+		err = dashboardController.AddVulnerabilitiesByAuthor(&analyse)
+		err = dashboardController.AddVulnerabilitiesByLanguage(&analyse)
+		err = dashboardController.AddVulnerabilitiesByRepository(&analyse)
+		err = dashboardController.AddVulnerabilitiesByTime(&analyse)
+
+		if err != nil {
+			conn.Write.RollbackTransaction()
+			return
+		}
+
+		conn.Write.CommitTransaction()
 	}
 }
