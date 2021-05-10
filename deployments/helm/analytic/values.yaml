@@ -88,7 +88,7 @@ env:
 
 envFromSecret:
   - name: "HORUSEC_DATABASE_SQL_URI"
-    key: "database-uri"
+    key: "-analytic-database-uri"
   - name: "HORUSEC_JWT_SECRET_KEY"
     key: "jwt-token"
   
