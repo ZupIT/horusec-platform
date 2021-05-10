@@ -32,6 +32,7 @@ import { authTypes } from 'helpers/enums/authTypes';
 import { AxiosError, AxiosResponse } from 'axios';
 import { useListState } from 'helpers/hooks/useListState';
 import { update } from 'lodash';
+import { getCurrentUser } from 'helpers/localStorage/currentUser';
 
 const Repositories: React.FC = () => {
   const { t } = useTranslation();
@@ -173,7 +174,7 @@ const Repositories: React.FC = () => {
               actions: [],
             };
 
-            if (row.role === 'admin') {
+            if (row.role === 'admin' || getCurrentUser().isApplicationAdmin) {
               repo.actions.push({
                 title: t('REPOSITORIES_SCREEN.EDIT'),
                 icon: 'edit',
