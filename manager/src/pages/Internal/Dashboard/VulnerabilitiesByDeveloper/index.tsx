@@ -91,8 +91,9 @@ const VulnerabilitiesByDeveloper: React.FC<Props> = ({ isLoading, data }) => {
         (item) => item.author === layeredDeveloper
       );
 
-      const data = get(authorData, rowKey.toLocaleLowerCase(), { types: [] })
-        ?.types;
+      const data = get(authorData, rowKey.toLocaleLowerCase(), {
+        types: [],
+      })?.types;
 
       const formatted = Object.entries(data).map((item) => {
         const legend = item[0].toUpperCase();

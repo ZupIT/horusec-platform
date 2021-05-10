@@ -40,9 +40,8 @@ function SelectInput({
   width = '100%',
 }: InputProps & TextFieldProps) {
   const { t } = useTranslation();
-  const [field, { error, touched, initialValue }, { setValue }] = useField(
-    name
-  );
+  const [field, { error, touched, initialValue }, { setValue }] =
+    useField(name);
   const getOption = options.find((el) => el.value === initialValue) || null;
 
   const [state, setState] = useState<Option | null>(getOption);

@@ -41,20 +41,15 @@ const Repositories: React.FC = () => {
   const { showSuccessFlash } = useFlashMessage();
   const { authType } = getCurrentConfig();
 
-  const [
-    repositories,
-    addRepositories,
-    updateRepository,
-    removeRepository,
-  ] = useListState<Repository>([], (a, b) => a.repositoryID === b.repositoryID);
+  const [repositories, addRepositories, updateRepository, removeRepository] =
+    useListState<Repository>([], (a, b) => a.repositoryID === b.repositoryID);
   const [isLoading, setLoading] = useState(false);
 
   const [handleRepositoryVisible, sethandleRepositoryVisible] = useState(false);
   const [deleteIsLoading, setDeleteLoading] = useState(false);
 
-  const [repoToManagerTokens, setRepoToManagerTokens] = useState<Repository>(
-    null
-  );
+  const [repoToManagerTokens, setRepoToManagerTokens] =
+    useState<Repository>(null);
   const [repoToDelete, setRepoToDelete] = useState<Repository>(null);
   const [repoToEdit, setRepoToEdit] = useState<Repository>(null);
   const [repoToInvite, setRepoToInvite] = useState<Repository>(null);
