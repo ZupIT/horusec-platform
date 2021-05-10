@@ -5,6 +5,7 @@ go 1.16
 require (
 	github.com/ZupIT/horusec-devkit v0.0.0-20210507152639-edb8e286079b
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
+	github.com/briandowns/spinner v1.12.0
 	github.com/go-chi/chi v4.1.2+incompatible
 	github.com/go-chi/cors v1.2.0
 	github.com/go-ozzo/ozzo-validation/v4 v4.3.0
@@ -18,4 +19,6 @@ require (
 	golang.org/x/sys v0.0.0-20210503173754-0981d6026fa6 // indirect
 	google.golang.org/genproto v0.0.0-20210504143626-3b2ad6ccc450 // indirect
 	google.golang.org/grpc v1.37.0
+	gorm.io/driver/postgres v1.0.8
+	gorm.io/gorm v1.21.9
 )
