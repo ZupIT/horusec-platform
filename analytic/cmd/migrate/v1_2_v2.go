@@ -41,7 +41,7 @@ func main() {
 	migrationCounter := make(map[string][]string)
 
 	for i := range analysis {
-		conn.Write.StartTransaction()
+		tx := conn.Write.StartTransaction()
 		s := spinner.New(spinner.CharSets[11], 100*time.Millisecond)
 		s.Suffix = fmt.Sprintf(
 			` repository %s | date %s | vulnerabilities %d`,
@@ -59,13 +59,13 @@ func main() {
 		err = dashboardController.AddVulnerabilitiesByTime(&analysis[i])
 
 		if err != nil {
-			conn.Write.RollbackTransaction()
+			tx.Write.RollbackTransaction()
 			migrationCounter["failed"] = append(migrationCounter["failed"], analysis[i].ID.String())
 			continue
 		}
 
 		migrationCounter["successfuly"] = append(migrationCounter["successfuly"], analysis[i].ID.String())
-		conn.Write.CommitTransaction()
+		tx.Write.CommitTransaction()
 
 		time.Sleep(2 * time.Second)
 
