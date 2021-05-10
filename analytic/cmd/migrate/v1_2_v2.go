@@ -108,7 +108,7 @@ func main() {
 	}
 
 	if len(summary["failed"]) > 0 {
-		f, _ := os.Create("/tmp/v1-2v2-horusec-analytic-log-error")
+		f, _ := os.Create("/tmp/v1-2-v2-horusec-analytic-log-error")
 		w := bufio.NewWriter(f)
 		w.WriteString(logError)
 		w.Flush()
