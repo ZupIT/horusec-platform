@@ -67,13 +67,19 @@ const RouteItem = styled.li<RouterItemProps>`
 
   :hover {
     background-color: ${({ theme }) => theme.colors.background.secundary};
+    border-left: 3px solid ${({ theme }) => theme.colors.active};
   }
 
   ${({ isActive }) =>
     isActive &&
     css`
+      color: ${({ theme }) => theme.colors.active};
       background-color: ${({ theme }) => theme.colors.background.secundary};
       border-left: 3px solid ${({ theme }) => theme.colors.active};
+
+      svg {
+        color: ${({ theme }) => theme.colors.active};
+      }
     `};
 `;
 
@@ -110,6 +116,11 @@ const SubRouteItem = styled.li<RouterItemProps>`
     isActive &&
     css`
       color: ${({ theme }) => theme.colors.active};
+
+      &::before {
+        content: '↠';
+        margin-right: 5px;
+      }
     `};
 `;
 

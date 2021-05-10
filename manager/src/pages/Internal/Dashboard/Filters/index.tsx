@@ -122,6 +122,8 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
 
     if (type === 'repository') {
       fetchRepositories();
+    } else {
+      onApply(initialValues);
     }
 
     return function () {

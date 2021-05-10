@@ -72,6 +72,11 @@ const Footer: React.FC = () => {
         helper:
           'https://docs.horusec.io/docs/web/services/manager/account-management/',
       },
+      '/home/add-workspace': {
+        text: '',
+        icon: 'zup',
+        helper: 'https://docs.horusec.io/docs/web/overview/',
+      },
     };
 
     return get(titles, path, t('HEADER.TITLE.DEFAULT'));

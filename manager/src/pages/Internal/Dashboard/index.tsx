@@ -45,6 +45,7 @@ const Dashboard: React.FC<Props> = ({ type }) => {
 
   useEffect(() => {
     let isCancelled = false;
+    console.log(filters);
     if (filters) {
       setLoading(true);
       setDashboardData(null);
