@@ -1,3 +1,4 @@
+// nolint
 package main
 
 import (
@@ -38,7 +39,9 @@ func main() {
 
 	migrationCounter := make(map[string][]string)
 
-	for _, analyse := range analysis {
+	for i := range analysis {
+		analyse := analysis[i]
+
 		conn.Write.StartTransaction()
 		err = dashboardController.AddVulnerabilitiesByAuthor(&analyse)
 		err = dashboardController.AddVulnerabilitiesByLanguage(&analyse)
