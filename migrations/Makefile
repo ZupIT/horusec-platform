@@ -1,5 +1,5 @@
 HORUSEC ?= horusec
-IMAGE_NAME ?= horuszup/horusec-:local
+IMAGE_NAME ?= horuszup/horusec-migrations:local
 
 security:
     ifeq (, $(shell which $(HORUSEC)))
