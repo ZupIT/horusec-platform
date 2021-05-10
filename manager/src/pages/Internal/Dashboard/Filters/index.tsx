@@ -190,7 +190,8 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
           <Styled.ApplyButton
             text={t('DASHBOARD_SCREEN.APPLY')}
             rounded
-            width={78}
+            width={130}
+            height={38}
             type="submit"
           />
         </Styled.Container>

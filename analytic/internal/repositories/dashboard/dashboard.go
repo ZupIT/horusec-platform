@@ -121,7 +121,6 @@ func (r *RepoDashboard) GetDashboardVulnByLanguage(
 	return *result.GetData().(*[]*dashboard.VulnerabilitiesByLanguage), result.GetErrorExceptNotFound()
 }
 
-// nolint:dupl // method is not duplicate
 func (r *RepoDashboard) GetDashboardVulnByTime(
 	filter *dashboard.FilterDashboard) (vulns []*dashboard.VulnerabilitiesByTime, err error) {
 	condition, args := r.getConditionFilter(filter)

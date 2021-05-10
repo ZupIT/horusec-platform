@@ -20,6 +20,7 @@ import { getCurrentLanguage } from 'helpers/localStorage/currentLanguage';
 
 import enUSTranslation from './enUS.json';
 import ptBRTranslation from './ptBR.json';
+import esTranslation from './es.json';
 
 const currentLanguage = getCurrentLanguage();
 
@@ -29,6 +30,9 @@ const resources = {
   },
   enUS: {
     translation: enUSTranslation,
+  },
+  es: {
+    translation: esTranslation,
   },
 };
 

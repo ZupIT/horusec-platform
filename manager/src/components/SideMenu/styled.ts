@@ -21,10 +21,6 @@ interface RouterItemProps {
   isActive: boolean;
 }
 
-interface SubMenuProps {
-  isActive: boolean;
-}
-
 const SideMenu = styled.div`
   background-color: ${({ theme }) => theme.colors.background.primary};
   min-width: 165px;
@@ -42,6 +38,7 @@ const OptionsList = styled.ul`
   display: flex;
   flex-direction: column;
   padding: 20px 0px 20px 7.5px;
+  list-style: none;
 `;
 
 const Logo = styled.img`
@@ -55,9 +52,7 @@ const RoutesList = styled.ul`
   margin-top: 20px;
 `;
 
-const SubRoutesList = styled(RoutesList)`
-  margin-top: 50px;
-`;
+const Nav = styled.nav``;
 
 const RouteItem = styled.li<RouterItemProps>`
   cursor: pointer;
@@ -78,18 +73,7 @@ const RouteItem = styled.li<RouterItemProps>`
     isActive &&
     css`
       background-color: ${({ theme }) => theme.colors.background.secundary};
-    `};
-`;
-
-const SubRouteItem = styled(RouteItem)`
-  :hover {
-    background-color: ${({ theme }) => theme.colors.background.highlight};
-  }
-
-  ${({ isActive }) =>
-    isActive &&
-    css`
-      background-color: ${({ theme }) => theme.colors.background.highlight};
+      border-left: 3px solid ${({ theme }) => theme.colors.active};
     `};
 `;
 
@@ -98,36 +82,39 @@ const RouteName = styled.span`
   margin-left: 13px;
 `;
 
-const SubMenu = styled.nav<SubMenuProps>`
-  background-color: ${({ theme }) => theme.colors.background.secundary};
-  min-width: 180px;
-  top: 0;
-  left: -165px;
-  transition: left 0.6s;
-  position: absolute;
-
-  ${({ isActive }) =>
-    isActive &&
-    css`
-      left: 0;
-      position: relative;
-    `};
-`;
-
-const OptionItem = styled.li``;
-
-const Config = styled(Icon)`
-  width: 30px;
-  cursor: pointer;
-  margin: 0 0 20px 15px;
-  nav-index: 1;
-`;
-
 const SelectWrapper = styled.div`
   margin-left: 17px;
 `;
 
+const SubRoutes = styled.ul`
+  margin-bottom: 20px;
+`;
+
+const SubRouteItem = styled.li<RouterItemProps>`
+  cursor: pointer;
+  color: ${({ theme }) => theme.colors.text.primary};
+  font-size: ${({ theme }) => theme.metrics.fontSize.small};
+  padding: 10px;
+  padding-left: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  position: relative;
+  transition: background-color 0.6s;
+
+  :hover {
+    color: ${({ theme }) => theme.colors.active};
+  }
+
+  ${({ isActive }) =>
+    isActive &&
+    css`
+      color: ${({ theme }) => theme.colors.active};
+    `};
+`;
+
 export default {
+  Nav,
   SideMenu,
   Logo,
   RoutesList,
@@ -135,10 +122,7 @@ export default {
   RouteName,
   WrapperLogoRoutes,
   OptionsList,
-  SubMenu,
-  SubRoutesList,
-  SubRouteItem,
-  OptionItem,
-  Config,
   SelectWrapper,
+  SubRoutes,
+  SubRouteItem,
 };

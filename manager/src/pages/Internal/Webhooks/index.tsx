@@ -116,10 +116,6 @@ const Webhooks: React.FC = () => {
       </Styled.Options>
 
       <Styled.Content>
-        <Styled.TitleWrapper>
-          <Styled.Title>{t('WEBHOOK_SCREEN.TITLE')}</Styled.Title>
-        </Styled.TitleWrapper>
-
         <Datatable
           columns={[
             {

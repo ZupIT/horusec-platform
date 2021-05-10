@@ -72,115 +72,6 @@ const SubTitle = styled.div`
   margin-bottom: 20px;
 `;
 
-const Table = styled.div`
-  margin-top: 30px;
-  position: relative;
-`;
-
-const Head = styled.div`
-  display: flex;
-  flex-direction: row;
-  padding: 0px 20px;
-`;
-
-const Column = styled.span`
-  text-align: left;
-  font-size: ${({ theme }) => theme.metrics.fontSize.small};
-  color: ${({ theme }) => theme.colors.dataTable.column.text};
-  font-weight: normal;
-  width: 100%;
-  display: block;
-  margin-right: 20px;
-
-  &:nth-child(1) {
-    max-width: 50px;
-  }
-`;
-
-const Row = styled.div`
-  background-color: ${({ theme }) => theme.colors.dataTable.row.background};
-  margin-bottom: 4px;
-  border-radius: 4px;
-  padding: 10px 20px;
-  display: flex;
-  flex-direction: row;
-  position: relative;
-`;
-
-const Cell = styled.span`
-  text-align: left;
-  font-size: ${({ theme }) => theme.metrics.fontSize.small};
-  color: ${({ theme }) => theme.colors.dataTable.row.text};
-  font-weight: normal;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: block;
-  width: 100%;
-  margin-right: 20px;
-  line-height: 30px;
-  padding: 2px;
-
-  &:nth-child(1) {
-    max-width: 50px;
-  }
-
-  &.flex-row-center {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-  }
-
-  .select-role {
-    position: absolute !important;
-    margin-top: 2px;
-  }
-`;
-
-const Body = styled.div`
-  overflow-y: scroll;
-  max-height: 400px;
-  min-height: 180px;
-  margin-top: 10px;
-  padding-right: 10px;
-
-  ::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background: ${({ theme }) => theme.colors.scrollbar};
-    border-radius: 4px;
-  }
-`;
-
-const LoadingWrapper = styled.div<LoadingWrapperProps>`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  position: absolute;
-  width: 100%;
-  left: 0;
-  background-color: ${({ theme }) => theme.colors.background.secundary};
-  z-index: 2;
-  visibility: hidden;
-
-  ${({ isLoading }) =>
-    isLoading &&
-    css`
-      visibility: visible;
-    `};
-`;
-
-const EmptyText = styled.span`
-  color: ${({ theme }) => theme.colors.dataTable.column.text};
-  font-size: ${({ theme }) => theme.metrics.fontSize.medium};
-  text-align: center;
-  display: block;
-  line-height: 170px;
-`;
-
 const HelpIcon = styled(Icon)`
   cursor: pointer;
 
@@ -196,13 +87,5 @@ export default {
   Title,
   Close,
   SubTitle,
-  Table,
-  Column,
-  Head,
-  Row,
-  Cell,
-  EmptyText,
-  LoadingWrapper,
-  Body,
   HelpIcon,
 };

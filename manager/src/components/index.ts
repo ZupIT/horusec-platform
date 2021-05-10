@@ -36,6 +36,7 @@ import Pagination from './Pagination';
 import Splash from './Splash';
 import Datatable, { TableColumn, Datasource } from './Datatable';
 import BarChart from './BarChart';
+import Header from './Header';
 
 export {
   Button,
@@ -60,6 +61,7 @@ export {
   Splash,
   Datatable,
   BarChart,
+  Header,
 };
 
 export type { TableColumn, Datasource };

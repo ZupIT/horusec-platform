@@ -14,11 +14,7 @@
  * limitations under the License.
  */
 
-import styled, { css } from 'styled-components';
-
-interface LoadingWrapperProps {
-  isLoading: boolean;
-}
+import styled from 'styled-components';
 
 const Wrapper = styled.div`
   background-color: ${({ theme }) => theme.colors.dataTable.background};
@@ -29,25 +25,6 @@ const Wrapper = styled.div`
   position: relative;
 `;
 
-const LoadingWrapper = styled.div<LoadingWrapperProps>`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: calc(100% - 60px);
-  position: absolute;
-  width: 100%;
-  left: 0;
-  background-color: ${({ theme }) => theme.colors.background.secundary};
-  z-index: 2;
-  visibility: hidden;
-
-  ${({ isLoading }) =>
-    isLoading &&
-    css`
-      visibility: visible;
-    `};
-`;
-
 const Title = styled.h2`
   color: ${({ theme }) => theme.colors.dataTable.title};
   font-size: ${({ theme }) => theme.metrics.fontSize.xlarge};
@@ -56,89 +33,6 @@ const Title = styled.h2`
   font-weight: normal;
   display: block;
   min-height: 60px;
-`;
-
-const Table = styled.div``;
-
-const Head = styled.div`
-  display: flex;
-  flex-direction: row;
-  padding: 0px 20px;
-`;
-
-const Column = styled.span`
-  text-align: left;
-  font-size: ${({ theme }) => theme.metrics.fontSize.small};
-  color: ${({ theme }) => theme.colors.dataTable.column.text};
-  font-weight: normal;
-  width: 100%;
-  display: block;
-  margin-right: 20px;
-
-  &:nth-child(1),
-  &:nth-child(2),
-  &:nth-child(6) {
-    max-width: 100px;
-  }
-`;
-
-const Row = styled.div`
-  background-color: ${({ theme }) => theme.colors.dataTable.row.background};
-  margin-bottom: 4px;
-  border-radius: 4px;
-  padding: 15px 20px;
-  display: flex;
-  flex-direction: row;
-`;
-
-const Cell = styled.span`
-  text-align: left;
-  font-size: ${({ theme }) => theme.metrics.fontSize.small};
-  color: ${({ theme }) => theme.colors.dataTable.row.text};
-  font-weight: normal;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: block;
-  width: 100%;
-  margin-right: 20px;
-
-  &:nth-child(1),
-  &:nth-child(2),
-  &:nth-child(6) {
-    max-width: 100px;
-  }
-`;
-
-const Body = styled.div`
-  overflow-y: scroll;
-  height: 220px;
-  margin-top: 10px;
-  padding-right: 10px;
-
-  ::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background: ${({ theme }) => theme.colors.scrollbar};
-    border-radius: 4px;
-  }
-`;
-
-const EmptyText = styled.span`
-  color: ${({ theme }) => theme.colors.dataTable.column.text};
-  font-size: ${({ theme }) => theme.metrics.fontSize.medium};
-  text-align: center;
-  display: block;
-  line-height: 170px;
-`;
-
-const Pagination = styled.div`
-  margin-top: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
 `;
 
 const Button = styled.button`
@@ -153,23 +47,7 @@ const Button = styled.button`
   }
 `;
 
-const CurrentPage = styled.span`
-  color: ${({ theme }) => theme.colors.dataTable.column.text};
-  margin: 0px 10px;
-`;
-
 export default {
   Wrapper,
   Title,
-  LoadingWrapper,
-  Table,
-  Head,
-  Row,
-  Cell,
-  Body,
-  Column,
-  EmptyText,
-  Pagination,
-  Button,
-  CurrentPage,
 };
