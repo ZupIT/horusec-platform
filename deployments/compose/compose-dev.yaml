@@ -263,7 +263,7 @@ services:
   horusec-manager:
     build:
       context: ../../manager
-      dockerfile: ./deployments/Dockerfile
+      dockerfile: ./deployments/dockerfiles/Dockerfile
     restart: always
     container_name: horusec-manager
     ports:

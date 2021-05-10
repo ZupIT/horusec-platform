@@ -40,18 +40,7 @@ function SelectInput({
   width = '100%',
 }: InputProps & TextFieldProps) {
   const { t } = useTranslation();
-  const [field, { error, touched, initialValue }, { setValue }] = useField(
-    name
-  );
-  const getOption = options.find((el) => el.value === initialValue) || null;
-
-  const [state, setState] = useState<Option | null>(getOption);
-
-  useEffect(() => {
-    if (isEmpty(state) && options.length && initialValue) {
-      setState(getOption);
-    }
-  }, [initialValue, getOption, state, options.length]);
+  const [field, { error, touched }, { setValue }] = useField(name);
 
   return (
     <div style={{ display: 'block', width: width }}>
@@ -63,9 +52,8 @@ function SelectInput({
         getOptionSelected={(option, value) => {
           return value !== undefined ? option.value === value.value : false;
         }}
-        value={state}
+        value={options.find((el) => el.value === field.value) || null}
         onChange={(_event, value: any) => {
-          setState(value);
           setValue(value ? value.value : '');
         }}
         onBlur={field.onBlur}
