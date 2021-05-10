@@ -36,6 +36,8 @@ func main() {
 	analysis := []analysis.Analysis{}
 	coreConn.Table("analysis").Order("created_at").Preload("AnalysisVulnerabilities").Preload("AnalysisVulnerabilities.Vulnerability").Find(&analysis)
 
+	migrationCounter := make(map[string][]string)
+
 	for _, analyse := range analysis {
 		conn.Write.StartTransaction()
 		err = dashboardController.AddVulnerabilitiesByAuthor(&analyse)
@@ -45,9 +47,11 @@ func main() {
 
 		if err != nil {
 			conn.Write.RollbackTransaction()
-			return
+			migrationCounter["failed"] = append(migrationCounter["failed"], analyse.ID.String())
+			continue
 		}
 
+		migrationCounter["successfuly"] = append(migrationCounter["successfuly"], analyse.ID.String())
 		conn.Write.CommitTransaction()
 	}
 }
