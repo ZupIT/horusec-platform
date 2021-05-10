@@ -121,7 +121,7 @@ resetAlphaRcToMaster () {
 }
 
 rollback_version_packagejson () {
-    if [[ "$SERVICE_NAME" == "horusec-manager" ]]
+    if [[ "$SERVICE_NAME" == "manager" ]]
     then
         sed -i -e "s/\"version\": \"$LATEST_VERSION\"/\"version\": \"0.1.0\"/g" "./manager/package.json"
     fi
