@@ -15,6 +15,14 @@ import (
 	"gorm.io/gorm"
 )
 
+const (
+	InfoColor    = "\033[1;34m%s\033[0m"
+	NoticeColor  = "\033[1;36m%s\033[0m"
+	WarningColor = "\033[1;33m%s\033[0m"
+	ErrorColor   = "\033[1;31m%s\033[0m"
+	DebugColor   = "\033[0;36m%s\033[0m"
+)
+
 func main() {
 	databaseURI := flag.String("v1-database-uri", "", "")
 	flag.Parse()
@@ -43,12 +51,13 @@ func main() {
 	for i := range analysis {
 		tx := conn.Write.StartTransaction()
 		s := spinner.New(spinner.CharSets[11], 100*time.Millisecond)
-		s.Suffix = fmt.Sprintf(
+		msg := fmt.Sprintf(
 			` repository %s | date %s | vulnerabilities %d`,
 			analysis[i].RepositoryName,
 			analysis[i].CreatedAt,
 			len(analysis[i].AnalysisVulnerabilities),
 		)
+		s.Suffix = msg
 		s.Color("cyan")
 
 		s.Start()
@@ -59,16 +68,22 @@ func main() {
 		err = dashboardController.AddVulnerabilitiesByTime(&analysis[i])
 
 		if err != nil {
-			tx.Write.RollbackTransaction()
+			tx.RollbackTransaction()
 			migrationCounter["failed"] = append(migrationCounter["failed"], analysis[i].ID.String())
+			s.FinalMSG = fmt.Sprintf(ErrorColor, msg)
+
+			time.Sleep(2 * time.Second)
+			s.Stop()
+			fmt.Println()
 			continue
 		}
 
 		migrationCounter["successfuly"] = append(migrationCounter["successfuly"], analysis[i].ID.String())
-		tx.Write.CommitTransaction()
+		tx.CommitTransaction()
+		s.FinalMSG = fmt.Sprintf(NoticeColor, msg)
 
 		time.Sleep(2 * time.Second)
-
 		s.Stop()
+		fmt.Println()
 	}
 }
