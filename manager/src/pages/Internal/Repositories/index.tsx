@@ -29,10 +29,9 @@ import useFlashMessage from 'helpers/hooks/useFlashMessage';
 import useWorkspace from 'helpers/hooks/useWorkspace';
 import { getCurrentConfig } from 'helpers/localStorage/horusecConfig';
 import { authTypes } from 'helpers/enums/authTypes';
-import { AxiosError, AxiosResponse } from 'axios';
 import { useListState } from 'helpers/hooks/useListState';
-import { update } from 'lodash';
 import { getCurrentUser } from 'helpers/localStorage/currentUser';
+import useRepository from 'helpers/hooks/useRepository';
 
 const Repositories: React.FC = () => {
   const { t } = useTranslation();
@@ -47,7 +46,8 @@ const Repositories: React.FC = () => {
     updateRepository,
     removeRepository,
   ] = useListState<Repository>([], (a, b) => a.repositoryID === b.repositoryID);
-  const [isLoading, setLoading] = useState(false);
+
+  const { allRepositories } = useRepository();
 
   const [handleRepositoryVisible, sethandleRepositoryVisible] = useState(false);
   const [deleteIsLoading, setDeleteLoading] = useState(false);
@@ -102,33 +102,9 @@ const Repositories: React.FC = () => {
   };
 
   useEffect(() => {
-    let isCancelled = false;
-
-    if (currentWorkspace) {
-      setLoading(true);
-      coreService
-        .getAllRepositories(currentWorkspace?.workspaceID)
-        .then((result: AxiosResponse) => {
-          if (!isCancelled) {
-            addRepositories(result.data?.content);
-          }
-        })
-        .catch((err: AxiosError) => {
-          if (!isCancelled) {
-            dispatchMessage(err.response?.data);
-          }
-        })
-        .finally(() => {
-          if (!isCancelled) {
-            setLoading(false);
-          }
-        });
-    }
-
-    return () => {
-      isCancelled = true;
-    };
-  }, [currentWorkspace]); // eslint-disable-line react-hooks/exhaustive-deps
+    addRepositories(allRepositories);
+    //eslint-disable-next-line
+  }, []);
 
   return (
     <Styled.Wrapper>
@@ -205,7 +181,6 @@ const Repositories: React.FC = () => {
             }
             return repo;
           })}
-          isLoading={isLoading}
           emptyListText={t('REPOSITORIES_SCREEN.NO_REPOSITORIES')}
         />
       </Styled.Content>

@@ -14,15 +14,12 @@
  * limitations under the License.
  */
 
-export interface Repository {
-  name: string;
-  description: string;
-  workspaceID: string;
-  repositoryID?: string;
-  role?: 'member' | 'admin' | 'supervisor';
-  authzAdmin?: string[];
-  authzMember?: string[];
-  authzSupervisor?: string[];
-  createdAt?: string;
-  updatedAt?: string;
-}
+import { useContext } from 'react';
+import { RepositoryContext } from 'contexts/Repository';
+
+const useRepository = () => {
+  const context = useContext(RepositoryContext);
+  return { ...context };
+};
+
+export default useRepository;
