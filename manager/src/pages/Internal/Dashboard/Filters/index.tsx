@@ -25,7 +25,7 @@ import { Repository } from 'helpers/interfaces/Repository';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
 import { ObjectLiteral } from 'helpers/interfaces/ObjectLiteral';
 import { AxiosResponse } from 'axios';
-import { Formik, yupToFormErrors } from 'formik';
+import { Formik } from 'formik';
 import * as Yup from 'yup';
 import SearchSelect from 'components/SearchSelect';
 interface FilterProps {
@@ -143,8 +143,8 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
   return (
     <Formik
       initialValues={initialValues}
-      enableReinitialize={true}
       validationSchema={ValidationScheme}
+      enableReinitialize
       onSubmit={(values) => {
         values.initialDate = getRangeOfPeriod[values.period][0];
         values.finalDate = getRangeOfPeriod[values.period][1];
@@ -160,23 +160,27 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
               options={fixedRanges}
             />
           </Styled.Wrapper>
-          {props.values.period === fixedRanges[1].value ? (
-            <>
-              <Styled.CalendarWrapper>
-                <Calendar
-                  name="initialDate"
-                  label={t('DASHBOARD_SCREEN.START_DATE')}
-                />
-              </Styled.CalendarWrapper>
 
-              <Styled.CalendarWrapper>
-                <Calendar
-                  name="finalDate"
-                  label={t('DASHBOARD_SCREEN.FINAL_DATE')}
-                />
-              </Styled.CalendarWrapper>
-            </>
-          ) : null}
+          <div
+            style={{
+              display:
+                props.values.period === fixedRanges[1].value ? 'flex' : 'none',
+            }}
+          >
+            <Styled.CalendarWrapper>
+              <Calendar
+                name="initialDate"
+                label={t('DASHBOARD_SCREEN.START_DATE')}
+              />
+            </Styled.CalendarWrapper>
+
+            <Styled.CalendarWrapper>
+              <Calendar
+                name="finalDate"
+                label={t('DASHBOARD_SCREEN.FINAL_DATE')}
+              />
+            </Styled.CalendarWrapper>
+          </div>
           {type === 'repository' ? (
             <Styled.Wrapper>
               <SearchSelect
