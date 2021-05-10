@@ -20,7 +20,7 @@ DIRECTORY=""
 IMAGE_NAME=""
 
 installSemver () {
-    mkdir bin
+    mkdir -p bin
     curl -fsSL -o ./bin/install-semver.sh https://raw.githubusercontent.com/ZupIT/horusec-devkit/main/scripts/install-semver.sh
     chmod +x ./bin/install-semver.sh
     ./bin/install-semver.sh
@@ -79,14 +79,27 @@ updateVersion () {
     declare -a StringArray=("core" "auth" "analytic" "api" "manager" "messages" "webhook" "vulnerability" "migrations" )
 
     for SERVICE in ${StringArray[@]}; do
-        echo "Building and deploy service $SERVICE"
+        echo "Building service $SERVICE"
         cd $SERVICE
         if [ "$IS_TO_UPDATE_LATEST" == "true" ]
         then
-            docker build -t "horuszup/horusec-$SERVICE:latest" -f ./deployments/dockerfiles/Dockerfile .
+            if ! docker build -t "horuszup/horusec-$SERVICE:latest" -f ./deployments/dockerfiles/Dockerfile .; then
+                exit 1
+            fi
+        fi
+        if ! docker build -t "horuszup/horusec-$SERVICE:$LATEST_VERSION" -f ./deployments/dockerfiles/Dockerfile .; then
+            exit 1
+        fi
+        cd ..
+    done
+
+    for SERVICE in ${StringArray[@]}; do
+        echo "Deploy service $SERVICE"
+        cd $SERVICE
+        if [ "$IS_TO_UPDATE_LATEST" == "true" ]
+        then
             docker push "horuszup/horusec-$SERVICE:latest"
         fi
-        docker build -t "horuszup/horusec-$SERVICE:$LATEST_VERSION" -f ./deployments/dockerfiles/Dockerfile .
         docker push "horuszup/horusec-$SERVICE:$LATEST_VERSION"
         cd ..
     done

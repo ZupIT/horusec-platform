@@ -1,13 +1,15 @@
 DOCKER_COMPOSE ?= docker-compose
+COMPOSE_FILE_NAME ?= compose.yaml
 
-compose-dev:
-	$(DOCKER_COMPOSE) -f deployments/compose/compose-dev.yaml down
-	$(DOCKER_COMPOSE) -f deployments/compose/compose-dev.yaml up -d --build
+compose: compose-down compose-up
 
-compose-dev-down:
-	$(DOCKER_COMPOSE) -f deployments/compose/compose-dev.yaml down
+compose-down:
+	$(DOCKER_COMPOSE) -f deployments/compose/$(COMPOSE_FILE_NAME) down
 
-install: compose-dev migrate
+compose-up:
+	$(DOCKER_COMPOSE) -f deployments/compose/$(COMPOSE_FILE_NAME) up -d --build
+
+install: compose migrate
 
 migrate: migrate-up
 

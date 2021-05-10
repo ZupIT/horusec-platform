@@ -4,6 +4,7 @@
     "**/.vscode/**",
     "**/*_test.go",
     "**/deployments/**",
-    "**/docs/**"
+    "**/docs/**",
+    "**/cmd/migrate/**"
   ]
 }
