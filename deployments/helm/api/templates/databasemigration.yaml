@@ -26,6 +26,8 @@ spec:
         image: "horuszup/horusec-migration:latest"
         command: ["migrate.sh"]
         env:          
+          - name: MIGRATION_NAME
+            value: "platform"
         {{- range .Values.env }}
           - name: {{ .name }}
             value: "{{ .value }}" 
