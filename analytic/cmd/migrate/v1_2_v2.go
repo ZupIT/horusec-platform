@@ -1,8 +1,11 @@
 package main
 
 import (
+	"bufio"
 	"flag"
 	"fmt"
+	"os"
+	"strings"
 	"time"
 
 	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
@@ -46,7 +49,8 @@ func main() {
 	analysis := []analysis.Analysis{}
 	coreConn.Table("analysis").Order("created_at DESC").Preload("AnalysisVulnerabilities").Preload("AnalysisVulnerabilities.Vulnerability").Find(&analysis)
 
-	migrationCounter := make(map[string][]string)
+	summary := make(map[string][]string)
+	var logError string
 
 	for i := range analysis {
 		tx := conn.Write.StartTransaction()
@@ -63,34 +67,57 @@ func main() {
 		s.Start()
 
 		err = dashboardController.AddVulnerabilitiesByAuthor(&analysis[i])
+		if err != nil {
+			summary[analysis[i].ID.String()] = append(summary[analysis[i].ID.String()], err.Error())
+		}
+
 		err = dashboardController.AddVulnerabilitiesByLanguage(&analysis[i])
+		if err != nil {
+			summary[analysis[i].ID.String()] = append(summary[analysis[i].ID.String()], err.Error())
+		}
+
 		err = dashboardController.AddVulnerabilitiesByRepository(&analysis[i])
+		if err != nil {
+			summary[analysis[i].ID.String()] = append(summary[analysis[i].ID.String()], err.Error())
+		}
+
 		err = dashboardController.AddVulnerabilitiesByTime(&analysis[i])
+		if err != nil {
+			summary[analysis[i].ID.String()] = append(summary[analysis[i].ID.String()], err.Error())
+		}
 
 		if err != nil {
 			tx.RollbackTransaction()
-			migrationCounter["failed"] = append(migrationCounter["failed"], analysis[i].ID.String())
-			s.FinalMSG = fmt.Sprintf(ErrorColor, msg)
 
-			time.Sleep(2 * time.Second)
+			summary["failed"] = append(summary["failed"], analysis[i].ID.String())
+
+			logError += fmt.Sprintf("%s\n\n%s\n\n\n\n", msg, strings.Join(summary[analysis[i].ID.String()], "\n"))
+
+			s.FinalMSG = fmt.Sprintf(ErrorColor, msg)
 			s.Stop()
 			fmt.Println()
 			continue
 		}
 
-		migrationCounter["successfuly"] = append(migrationCounter["successfuly"], analysis[i].ID.String())
+		summary["successfuly"] = append(summary["successfuly"], analysis[i].ID.String())
 		tx.CommitTransaction()
 		s.FinalMSG = fmt.Sprintf(NoticeColor, msg)
 
-		time.Sleep(2 * time.Second)
 		s.Stop()
 		fmt.Println()
+	}
+
+	if len(summary["failed"]) > 0 {
+		f, _ := os.Create("/tmp/v1-2v2-horusec-analytic-log-error")
+		w := bufio.NewWriter(f)
+		w.WriteString(logError)
+		w.Flush()
 	}
 
 	fmt.Println()
 	fmt.Print("the analytic data migration is finished:")
 	fmt.Println()
-	fmt.Printf(NoticeColor, fmt.Sprintf(`successfuly: %d`, len(migrationCounter["successfuly"])))
+	fmt.Printf(NoticeColor, fmt.Sprintf(`successfuly: %d`, len(summary["successfuly"])))
 	fmt.Println()
-	fmt.Printf(ErrorColor, fmt.Sprintf(`failed: %d`, len(migrationCounter["failed"])))
+	fmt.Printf(ErrorColor, fmt.Sprintf(`failed: %d`, len(summary["failed"])))
 }
