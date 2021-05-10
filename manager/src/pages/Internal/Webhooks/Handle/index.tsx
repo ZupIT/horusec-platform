@@ -31,6 +31,7 @@ import useWorkspace from 'helpers/hooks/useWorkspace';
 import { FieldArray, Formik, FormikHelpers } from 'formik';
 import SearchSelect from 'components/SearchSelect';
 import * as Yup from 'yup';
+import useRepository from 'helpers/hooks/useRepository';
 
 interface Props {
   isVisible: boolean;
@@ -51,13 +52,14 @@ const HandleWebhook: React.FC<Props> = ({
 }) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
+
   const { currentWorkspace } = useWorkspace();
+  const { allRepositories } = useRepository();
 
   const { dispatchMessage } = useResponseMessage();
   const { showSuccessFlash } = useFlashMessage();
 
   const [isLoading, setLoading] = useState(false);
-  const [repositories, setRepositories] = useState<Repository[]>([]);
 
   const updateWebhook = (
     values: InitialValue,
@@ -124,18 +126,6 @@ const HandleWebhook: React.FC<Props> = ({
     else updateWebhook(values, action);
   };
 
-  useEffect(() => {
-    const fetchRepositories = () => {
-      coreService
-        .getAllRepositories(currentWorkspace?.workspaceID)
-        .then((result) => {
-          setRepositories(result.data.content);
-        });
-    };
-
-    fetchRepositories();
-  }, [currentWorkspace]);
-
   const ValidationScheme = Yup.object({
     description: Yup.string().optional(),
     url: Yup.string()
@@ -194,7 +184,7 @@ const HandleWebhook: React.FC<Props> = ({
             <Styled.Label>{t('WEBHOOK_SCREEN.RESPOSITORY_LABEL')}</Styled.Label>
 
             <SearchSelect
-              options={repositories.map((el) => ({
+              options={allRepositories.map((el) => ({
                 label: el.name,
                 value: el.repositoryID,
               }))}

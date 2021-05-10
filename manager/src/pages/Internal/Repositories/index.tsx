@@ -29,27 +29,19 @@ import useFlashMessage from 'helpers/hooks/useFlashMessage';
 import useWorkspace from 'helpers/hooks/useWorkspace';
 import { getCurrentConfig } from 'helpers/localStorage/horusecConfig';
 import { authTypes } from 'helpers/enums/authTypes';
-import { AxiosError, AxiosResponse } from 'axios';
-import { useListState } from 'helpers/hooks/useListState';
-import { update } from 'lodash';
 import { getCurrentUser } from 'helpers/localStorage/currentUser';
+import useRepository from 'helpers/hooks/useRepository';
 
 const Repositories: React.FC = () => {
   const { t } = useTranslation();
-  const { currentWorkspace, isAdminOfWorkspace } = useWorkspace();
+  const { isAdminOfWorkspace } = useWorkspace();
   const { dispatchMessage } = useResponseMessage();
   const { showSuccessFlash } = useFlashMessage();
   const { authType } = getCurrentConfig();
 
-  const [
-    repositories,
-    addRepositories,
-    updateRepository,
-    removeRepository,
-  ] = useListState<Repository>([], (a, b) => a.repositoryID === b.repositoryID);
-  const [isLoading, setLoading] = useState(false);
+  const { allRepositories, fetchAllRepositories } = useRepository();
 
-  const [handleRepositoryVisible, sethandleRepositoryVisible] = useState(false);
+  const [handleRepositoryVisible, setHandleRepositoryVisible] = useState(false);
   const [deleteIsLoading, setDeleteLoading] = useState(false);
 
   const [repoToManagerTokens, setRepoToManagerTokens] = useState<Repository>(
@@ -62,7 +54,7 @@ const Repositories: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
 
   const filteredRepositories = () =>
-    repositories.filter((repo) =>
+    allRepositories.filter((repo) =>
       repo.name.toLocaleLowerCase().includes(searchQuery.toLocaleLowerCase())
     );
 
@@ -72,7 +64,7 @@ const Repositories: React.FC = () => {
       .deleteRepository(repoToDelete.workspaceID, repoToDelete.repositoryID)
       .then(() => {
         showSuccessFlash(t('REPOSITORIES_SCREEN.REMOVE_SUCCESS_REPO'));
-        removeRepository(repoToDelete);
+        fetchAllRepositories(repoToDelete?.workspaceID);
         setRepoToDelete(null);
       })
       .catch((err) => {
@@ -87,48 +79,14 @@ const Repositories: React.FC = () => {
     isVisible: boolean,
     repository?: Repository
   ) => {
-    sethandleRepositoryVisible(isVisible);
+    setHandleRepositoryVisible(isVisible);
     setRepoToEdit(repository || null);
   };
 
   const handleConfirmRepositoryEdit = (repository: Repository) => {
     setVisibleHandleModal(false);
-    if (!repoToEdit) {
-      addRepositories(repository);
-      return;
-    }
-
-    updateRepository(repository);
+    fetchAllRepositories(repository?.workspaceID);
   };
-
-  useEffect(() => {
-    let isCancelled = false;
-
-    if (currentWorkspace) {
-      setLoading(true);
-      coreService
-        .getAllRepositories(currentWorkspace?.workspaceID)
-        .then((result: AxiosResponse) => {
-          if (!isCancelled) {
-            addRepositories(result.data?.content);
-          }
-        })
-        .catch((err: AxiosError) => {
-          if (!isCancelled) {
-            dispatchMessage(err.response?.data);
-          }
-        })
-        .finally(() => {
-          if (!isCancelled) {
-            setLoading(false);
-          }
-        });
-    }
-
-    return () => {
-      isCancelled = true;
-    };
-  }, [currentWorkspace]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Styled.Wrapper>
@@ -205,7 +163,6 @@ const Repositories: React.FC = () => {
             }
             return repo;
           })}
-          isLoading={isLoading}
           emptyListText={t('REPOSITORIES_SCREEN.NO_REPOSITORIES')}
         />
       </Styled.Content>
