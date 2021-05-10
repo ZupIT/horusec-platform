@@ -25,6 +25,7 @@ interface RepositoryCtxInterface {
   currentRepository: Repository;
   allRepositories: Repository[];
   isMemberOfRepository: boolean;
+  setAllRepositories: (repositories: Repository[]) => void;
   setCurrentRepository: (repository: string | Repository) => void;
   fetchAllRepositories: (workspaceID: string) => void;
 }
@@ -32,6 +33,7 @@ interface RepositoryCtxInterface {
 const RepositoryContext = React.createContext<RepositoryCtxInterface>({
   currentRepository: null,
   allRepositories: [],
+  setAllRepositories: null,
   isMemberOfRepository: false,
   setCurrentRepository: null,
   fetchAllRepositories: null,
@@ -68,9 +70,17 @@ const RepositoryProvider = ({ children }: { children: JSX.Element }) => {
         const repositories = (result?.data?.content as Repository[]) || [];
         setAllRepositories(repositories);
 
-        repositories.length > 0
-          ? setCurrentRepository(repositories[0])
-          : setCurrentRepository(null);
+        const hasCurrent = repositories.some(
+          (repo) => repo.repositoryID === currentRepository?.repositoryID
+        );
+
+        if (hasCurrent) {
+          setCurrentRepository(currentRepository);
+        } else {
+          repositories.length > 0
+            ? setCurrentRepository(repositories[0])
+            : setCurrentRepository(null);
+        }
       })
       .catch((err) => {
         dispatchMessage(err?.response?.data);
@@ -91,6 +101,7 @@ const RepositoryProvider = ({ children }: { children: JSX.Element }) => {
         setCurrentRepository,
         fetchAllRepositories,
         isMemberOfRepository,
+        setAllRepositories,
       }}
     >
       {children}
