@@ -31,7 +31,10 @@ import { authTypes } from 'helpers/enums/authTypes';
 import HandleWorkspace from './Handle';
 import Tokens from './Tokens';
 import Users from './Users';
-import { isApplicationAdmin } from 'helpers/localStorage/currentUser';
+import {
+  getCurrentUser,
+  isApplicationAdmin,
+} from 'helpers/localStorage/currentUser';
 
 const Workspaces: React.FC = () => {
   const { t } = useTranslation();
@@ -146,7 +149,10 @@ const Workspaces: React.FC = () => {
               actions: [],
             };
 
-            if (row.role === roles.ADMIN) {
+            if (
+              row.role === roles.ADMIN ||
+              getCurrentUser().isApplicationAdmin
+            ) {
               data.actions.push({
                 title: t('WORKSPACES_SCREEN.TABLE.EDIT'),
                 icon: 'edit',
