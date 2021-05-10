@@ -1,0 +1,41 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "{{ .Release.Name }}-migration"
+  labels:
+    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
+    app.kubernetes.io/instance: {{ .Release.Name | quote }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    helm.sh/chart: "{{ .Chart.Name }}-migration-{{ .Chart.Version }}"
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": hook-succeeded
+spec:
+  template:
+    metadata:
+      name: "{{ .Release.Name }}-migration"
+      labels:
+        app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
+        app.kubernetes.io/instance: {{ .Release.Name | quote }}
+        helm.sh/chart: "{{ .Chart.Name }}-migration-{{ .Chart.Version }}"
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: horusec-database-migration
+        image: "horuszup/horusec-analytic:2.11.0-rc"
+        command: "./horusec-analytic-v1-2-v2-migrate $HORUSEC_CORE_DATABASE_URI"
+        env:          
+          - name: MIGRATION_NAME
+            value: "platform"
+        {{- range .Values.env }}
+          - name: {{ .name }}
+            value: "{{ .value }}" 
+        {{- end }}
+        {{- range .Values.envFromSecret }}
+          - name: {{ .name }}
+            valueFrom:
+              secretKeyRef:
+                name: {{ .key }}
+                key: {{ .key }}
+        {{- end }}
