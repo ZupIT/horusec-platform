@@ -19,6 +19,8 @@ import Styled from './styled';
 import { Button, Icon, Pagination } from 'components';
 import { PaginationInfo } from 'helpers/interfaces/Pagination';
 import ReactTooltip, { TooltipProps } from 'react-tooltip';
+import { IconButton, Menu, MenuItem } from '@material-ui/core';
+import { MoreHoriz } from '@material-ui/icons';
 import { kebabCase } from 'lodash';
 
 export interface TableColumn {
@@ -65,6 +67,16 @@ const Datatable: React.FC<DatatableInterface> = (props) => {
     tooltip,
     fixed = true,
   } = props;
+
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   return (
     <>
@@ -138,20 +150,43 @@ const Datatable: React.FC<DatatableInterface> = (props) => {
                               className={column.cssClass?.join(' ')}
                             >
                               <div className="row">
-                                {row[column.type].map((action, actionId) => (
-                                  <Button
-                                    key={actionId}
-                                    rounded
-                                    outline
-                                    opaque
-                                    id={`action-${kebabCase(action.title)}`}
-                                    text={action.title}
-                                    width={'100%'}
-                                    height={30}
-                                    icon={action.icon}
-                                    onClick={action.function}
-                                  />
-                                ))}
+                                <IconButton
+                                  aria-controls={`action-menu-${columnId}-${dataId}`}
+                                  aria-haspopup="true"
+                                  onClick={handleClick}
+                                >
+                                  <MoreHoriz />
+                                </IconButton>
+                                <Menu
+                                  id={`action-menu-${columnId}-${dataId}`}
+                                  anchorEl={anchorEl}
+                                  keepMounted
+                                  open={Boolean(anchorEl)}
+                                  onClose={handleClose}
+                                >
+                                  {row[column.type].map((action, actionId) => (
+                                    <MenuItem
+                                      key={actionId}
+                                      onClick={() => {
+                                        action.function();
+                                        handleClose();
+                                      }}
+                                    >
+                                      <Button
+                                        id={`action-${kebabCase(
+                                          action.title
+                                        )}-${columnId}-${dataId}`}
+                                        rounded
+                                        outline
+                                        opaque
+                                        text={action.title}
+                                        width={'100%'}
+                                        height={30}
+                                        icon={action.icon}
+                                      />
+                                    </MenuItem>
+                                  ))}
+                                </Menu>
                               </div>
                             </Styled.Cell>
                           );
