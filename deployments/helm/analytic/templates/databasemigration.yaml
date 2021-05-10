@@ -27,7 +27,7 @@ spec:
         command: ["migrate.sh"]
         env:          
           - name: MIGRATION_NAME
-            value: "platform"
+            value: "analytic"
         {{- range .Values.env }}
           - name: {{ .name }}
             value: "{{ .value }}" 

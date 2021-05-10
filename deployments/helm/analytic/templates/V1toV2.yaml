@@ -1,30 +1,30 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: "{{ .Release.Name }}-migration"
+  name: "{{ .Release.Name }}-v1-2-v2"
   labels:
     app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
     app.kubernetes.io/instance: {{ .Release.Name | quote }}
     app.kubernetes.io/version: {{ .Chart.AppVersion }}
-    helm.sh/chart: "{{ .Chart.Name }}-migration-{{ .Chart.Version }}"
+    helm.sh/chart: "{{ .Chart.Name }}-v1-2-v2-{{ .Chart.Version }}"
   annotations:
     "helm.sh/hook": pre-install,pre-upgrade
-    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-weight": "-4"
     "helm.sh/hook-delete-policy": hook-succeeded
 spec:
   template:
     metadata:
-      name: "{{ .Release.Name }}-migration"
+      name: "{{ .Release.Name }}-v1-2-v2"
       labels:
         app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
         app.kubernetes.io/instance: {{ .Release.Name | quote }}
-        helm.sh/chart: "{{ .Chart.Name }}-migration-{{ .Chart.Version }}"
+        helm.sh/chart: "{{ .Chart.Name }}-v1-2-v2-{{ .Chart.Version }}"
     spec:
       restartPolicy: Never
       containers:
-      - name: horusec-database-migration
-        image: "horuszup/horusec-migrations:latest"
-        command: ["migrate.sh"]
+      - name: horusec-analytic-v1-2-v2
+        image: "horuszup/horusec-analytic:2.11.0-rc"
+        command: "./horusec-analytic-v1-2-v2-migrate $HORUSEC_CORE_DATABASE_URI"
         env:          
           - name: MIGRATION_NAME
             value: "platform"

@@ -23,9 +23,11 @@ spec:
       restartPolicy: Never
       containers:
       - name: horusec-database-migration
-        image: "horuszup/horusec-migration:latest"
+        image: "horuszup/horusec-migrations:latest"
         command: ["migrate.sh"]
         env:          
+          - name: MIGRATION_NAME
+            value: "platform"
         {{- range .Values.env }}
           - name: {{ .name }}
             value: "{{ .value }}" 
