@@ -1,4 +1,3 @@
-//nolint:the document will be revisited
 package main
 
 import (

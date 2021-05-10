@@ -130,6 +130,7 @@ run:
     - examples/
     - tmp
     - e2e/
+    - cmd/migrate
   skip-files:
     - .*_test.go
     - .*_mock.go
