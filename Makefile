@@ -11,7 +11,9 @@ compose-up:
 
 install: compose migrate
 
-migrate: migrate-drop migrate-up
+migrate: migrate-up
+
+cleanup-migrate: migrate-drop migrate-up
 
 migrate-drop:
 	chmod +x ./deployments/scripts/migration-run.sh
