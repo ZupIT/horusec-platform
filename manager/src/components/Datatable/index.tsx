@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-import React from 'react';
+import React, { Ref } from 'react';
 import Styled from './styled';
 import { Button, Icon, Pagination } from 'components';
 import { PaginationInfo } from 'helpers/interfaces/Pagination';
 import ReactTooltip, { TooltipProps } from 'react-tooltip';
 import { IconButton, Menu, MenuItem } from '@material-ui/core';
 import { MoreHoriz } from '@material-ui/icons';
+import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
 import { kebabCase } from 'lodash';
 
 export interface TableColumn {
@@ -67,16 +68,6 @@ const Datatable: React.FC<DatatableInterface> = (props) => {
     tooltip,
     fixed = true,
   } = props;
-
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
 
   return (
     <>
@@ -149,45 +140,55 @@ const Datatable: React.FC<DatatableInterface> = (props) => {
                               key={columnId}
                               className={column.cssClass?.join(' ')}
                             >
-                              <div className="row">
-                                <IconButton
-                                  aria-controls={`action-menu-${columnId}-${dataId}`}
-                                  aria-haspopup="true"
-                                  onClick={handleClick}
-                                >
-                                  <MoreHoriz />
-                                </IconButton>
-                                <Menu
-                                  id={`action-menu-${columnId}-${dataId}`}
-                                  anchorEl={anchorEl}
-                                  keepMounted
-                                  open={Boolean(anchorEl)}
-                                  onClose={handleClose}
-                                >
-                                  {row[column.type].map((action, actionId) => (
-                                    <MenuItem
-                                      key={actionId}
-                                      onClick={() => {
-                                        action.function();
-                                        handleClose();
-                                      }}
-                                    >
-                                      <Button
-                                        id={`action-${kebabCase(
-                                          action.title
-                                        )}-${columnId}-${dataId}`}
-                                        rounded
-                                        outline
-                                        opaque
-                                        text={action.title}
-                                        width={'100%'}
-                                        height={30}
-                                        icon={action.icon}
-                                      />
-                                    </MenuItem>
-                                  ))}
-                                </Menu>
-                              </div>
+                              {row[column.type].length >= 1 ? (
+                                <div className="row">
+                                  <PopupState
+                                    variant="popover"
+                                    popupId={`popup-menu-${dataId}`}
+                                  >
+                                    {(popupState) => (
+                                      <React.Fragment>
+                                        <IconButton
+                                          {...bindTrigger(popupState)}
+                                        >
+                                          <MoreHoriz />
+                                        </IconButton>
+                                        <Menu {...bindMenu(popupState)}>
+                                          {row[column.type].map(
+                                            (
+                                              action: Datasource,
+                                              actionId: React.Key
+                                            ) => (
+                                              <MenuItem
+                                                key={actionId}
+                                                onClick={() => {
+                                                  action.function();
+                                                  popupState.close();
+                                                }}
+                                              >
+                                                <Button
+                                                  id={`action-${kebabCase(
+                                                    action.title
+                                                  )}-${columnId}-${dataId}`}
+                                                  rounded
+                                                  outline
+                                                  opaque
+                                                  text={action.title}
+                                                  width={'100%'}
+                                                  height={30}
+                                                  icon={action.icon}
+                                                />
+                                              </MenuItem>
+                                            )
+                                          )}
+                                        </Menu>
+                                      </React.Fragment>
+                                    )}
+                                  </PopupState>
+                                </div>
+                              ) : (
+                                '-'
+                              )}
                             </Styled.Cell>
                           );
                         }
