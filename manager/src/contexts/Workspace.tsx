@@ -63,7 +63,7 @@ const WorkspaceProvider = ({ children }: { children: JSX.Element }) => {
     coreService
       .getAllWorkspaces()
       .then((result) => {
-        const workspaces = result?.data?.content as Workspace[];
+        const workspaces = (result?.data?.content as Workspace[]) || [];
 
         setAllWorkspaces(workspaces);
 
@@ -80,12 +80,12 @@ const WorkspaceProvider = ({ children }: { children: JSX.Element }) => {
       })
       .catch((err) => {
         dispatchMessage(err?.response?.data);
+        if (redirect) history.replace('/home/add-workspace');
       });
   };
 
   useEffect(() => {
     if (isLogged()) fetchAll(true);
-
     // eslint-disable-next-line
   }, []);
 

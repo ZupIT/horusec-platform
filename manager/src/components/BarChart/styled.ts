@@ -35,7 +35,7 @@ const Wrapper = styled.div`
   min-height: 330px;
   display: flex;
   flex-direction: column;
-  padding: 25px 50px;
+  padding: 25px;
 `;
 
 const Header = styled.div`
@@ -193,7 +193,7 @@ const Bar = styled.div<BarProps>`
 const Legend = styled.span<LoadingProps>`
   color: ${({ theme }) => theme.colors.chart.legend};
   margin-left: 20px;
-  min-width: 200px;
+  min-width: 150px;
   text-align: start;
   white-space: nowrap;
   overflow: auto;
