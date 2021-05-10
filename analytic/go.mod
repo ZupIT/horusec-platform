@@ -5,6 +5,7 @@ go 1.16
 require (
 	github.com/ZupIT/horusec-devkit v0.0.0-20210507152639-edb8e286079b
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
+	github.com/briandowns/spinner v1.12.0 // indirect
 	github.com/go-chi/chi v4.1.2+incompatible
 	github.com/go-chi/cors v1.2.0
 	github.com/go-ozzo/ozzo-validation/v4 v4.3.0
@@ -13,7 +14,6 @@ require (
 	github.com/streadway/amqp v1.0.0
 	github.com/stretchr/testify v1.7.0
 	github.com/swaggo/swag v1.7.0
-	github.com/tj/go-spin v1.1.0 // indirect
 	golang.org/x/crypto v0.0.0-20210503195802-e9a32991a82e // indirect
 	golang.org/x/net v0.0.0-20210504132125-bbd867fde50d // indirect
 	golang.org/x/sys v0.0.0-20210503173754-0981d6026fa6 // indirect
