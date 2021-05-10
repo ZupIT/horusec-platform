@@ -66,7 +66,7 @@ export default {
       active: '#FFFFFF',
       error: '#EA8F8F',
       focus: '#FFFFFF',
-      disabled: '#2C2C2E',
+      disabled: '#7d7d7ddb',
     },
 
     datePicker: {

@@ -59,6 +59,9 @@ const themeMatUi = createMuiTheme({
           '-webkit-text-fill-color': 'white',
           '-webkit-box-shadow': '0 0 0 30px rgb(28 28 30) inset !important',
         },
+        '&:disabled': {
+          color: `${theme.colors.input.disabled} !important`,
+        },
       },
     },
     MuiInput: {
@@ -79,6 +82,9 @@ const themeMatUi = createMuiTheme({
         color: theme.colors.input.label,
         '&$focused': {
           color: theme.colors.input.label,
+        },
+        '&$disabled': {
+          color: `${theme.colors.input.disabled} !important`,
         },
       },
       focused: {},

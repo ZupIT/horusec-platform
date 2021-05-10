@@ -21,6 +21,7 @@ import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import { useHistory } from 'react-router-dom';
 import { roles } from 'helpers/enums/roles';
 import { isLogged } from 'helpers/localStorage/tokens';
+import { getCurrentUser } from 'helpers/localStorage/currentUser';
 
 interface WorkspaceCtx {
   currentWorkspace: Workspace;
@@ -47,6 +48,11 @@ const WorkspaceProvider = ({ children }: { children: JSX.Element }) => {
   const history = useHistory();
 
   const handleSetCurrentWorkspace = (workspace: Workspace) => {
+    const currentUser = getCurrentUser();
+    workspace = {
+      ...workspace,
+      role: currentUser.isApplicationAdmin ? roles.ADMIN : workspace.role,
+    };
     setCurrentWorkspace(workspace);
 
     const isAdmin = workspace?.role === roles.ADMIN;
@@ -57,7 +63,7 @@ const WorkspaceProvider = ({ children }: { children: JSX.Element }) => {
     coreService
       .getAllWorkspaces()
       .then((result) => {
-        const workspaces = result?.data?.content as Workspace[];
+        const workspaces = (result?.data?.content as Workspace[]) || [];
 
         setAllWorkspaces(workspaces);
 
@@ -74,12 +80,12 @@ const WorkspaceProvider = ({ children }: { children: JSX.Element }) => {
       })
       .catch((err) => {
         dispatchMessage(err?.response?.data);
+        if (redirect) history.replace('/home/add-workspace');
       });
   };
 
   useEffect(() => {
     if (isLogged()) fetchAll(true);
-
     // eslint-disable-next-line
   }, []);
 

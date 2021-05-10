@@ -16,7 +16,7 @@
 
 export default function isValidURL(value: string): boolean {
   const re = new RegExp(
-    '^(http[s]?:\\/\\/(www\\.)?|ftp:\\/\\/(www\\.)?|www\\.){1}([0-9A-Za-z-\\.@:%_+~#=]+)+((\\.[a-zA-Z]{2,3})+)(/(.)*)?(\\?(.)*)?'
+    'https?://(?:w{1,3}.)?[^s.]+(?:.[a-z]+)*(?::d+)?(?![^<]*(?:</w+>|/?>))'
   );
   return re.test(value);
 }
