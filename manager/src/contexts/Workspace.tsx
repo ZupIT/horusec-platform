@@ -49,10 +49,12 @@ const WorkspaceProvider = ({ children }: { children: JSX.Element }) => {
 
   const handleSetCurrentWorkspace = (workspace: Workspace) => {
     const currentUser = getCurrentUser();
-    setCurrentWorkspace(workspace);
+    setCurrentWorkspace({
+      ...workspace,
+      role: currentUser.isApplicationAdmin ? roles.ADMIN : workspace.role,
+    });
 
-    const isAdmin =
-      workspace?.role === roles.ADMIN || currentUser.isApplicationAdmin;
+    const isAdmin = workspace?.role === roles.ADMIN;
     setIsAdminOfWorkspace(isAdmin);
   };
 
