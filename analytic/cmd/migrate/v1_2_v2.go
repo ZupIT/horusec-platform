@@ -34,7 +34,7 @@ func main() {
 	dashboardController := dashboardcontroller.NewControllerDashboardWrite(dashboardRepository)
 
 	analysis := []analysis.Analysis{}
-	coreConn.Table("analysis").Order("CreatedAt").Preload("AnalysisVulnerabilities").Preload("AnalysisVulnerabilities.Vulnerability").Find(&analysis)
+	coreConn.Table("analysis").Order("created_at").Preload("AnalysisVulnerabilities").Preload("AnalysisVulnerabilities.Vulnerability").Find(&analysis)
 
 	for _, analyse := range analysis {
 		conn.Write.StartTransaction()
