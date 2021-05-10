@@ -12,4 +12,4 @@ jobs:
       - name: build
         run: make build
       - name: security
-        run: make security
+        run: IMAGE_NAME="horuszup/horusec-migrations:local" make security
