@@ -86,4 +86,11 @@ func main() {
 		s.Stop()
 		fmt.Println()
 	}
+
+	fmt.Println()
+	fmt.Print("the analytic data migration is finished:")
+	fmt.Println()
+	fmt.Printf(NoticeColor, fmt.Sprintf(`successfuly: %d`, len(migrationCounter["successfuly"])))
+	fmt.Println()
+	fmt.Printf(ErrorColor, fmt.Sprintf(`failed: %d`, len(migrationCounter["failed"])))
 }
