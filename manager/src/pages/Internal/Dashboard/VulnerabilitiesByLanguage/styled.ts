@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 interface LoadingWrapperProps {
   isLoading: boolean;
@@ -29,7 +29,7 @@ const Wrapper = styled.div`
   position: relative;
 `;
 
-const LoadingWrapper = styled.div`
+const LoadingWrapper = styled.div<LoadingWrapperProps>`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -39,7 +39,13 @@ const LoadingWrapper = styled.div`
   left: 0;
   background-color: ${({ theme }) => theme.colors.background.secundary};
   z-index: 2;
-  visibility: visible;
+  visibility: hidden;
+
+  ${({ isLoading }) =>
+    isLoading &&
+    css`
+      visibility: visible;
+    `};
 `;
 
 const Title = styled.h2`

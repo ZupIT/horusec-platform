@@ -18,7 +18,6 @@ import React from 'react';
 import Styled from './styled';
 import { generateRandomColor } from 'helpers/colors';
 import { BarCharRow } from 'helpers/interfaces/BarChartRow';
-import { range } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Icon } from 'components';
 
@@ -27,9 +26,11 @@ interface BarChartProps {
   title: string;
   isLoading: boolean;
   ariaLabel?: string;
+  showBackOption?: boolean;
+  isVertical?: boolean;
+  hasSmallLegend?: boolean;
   onClickRow?: (row: BarCharRow) => any;
   onClickBack?: () => any;
-  showBackOption?: boolean;
 }
 
 const BarChart: React.FC<BarChartProps> = ({
@@ -40,6 +41,8 @@ const BarChart: React.FC<BarChartProps> = ({
   onClickRow,
   onClickBack,
   showBackOption,
+  isVertical,
+  hasSmallLegend,
 }) => {
   const { t } = useTranslation();
 
@@ -51,23 +54,31 @@ const BarChart: React.FC<BarChartProps> = ({
   };
 
   const renderRow = ({ value, legend, color }: BarCharRow) => (
-    <Styled.Row key={legend} onClick={() => onClickRow({ value, legend })}>
-      <Styled.Value>{value}</Styled.Value>
+    <Styled.Row
+      isVertical={isVertical}
+      key={legend}
+      onClick={() => onClickRow({ value, legend })}
+    >
+      <Styled.Value isVertical={isVertical}>{value}</Styled.Value>
+
       <Styled.Bar
         color={color || generateRandomColor()}
         size={calculatePercentageOfBar(value)}
+        isVertical={isVertical}
       />
-      <Styled.Legend>{legend}</Styled.Legend>
+      <Styled.Legend hasSmallLegend={hasSmallLegend} isVertical={isVertical}>
+        {legend}
+      </Styled.Legend>
     </Styled.Row>
   );
 
-  const renderLoading = (index: number) => (
-    <Styled.Row isLoading key={index}>
-      <Styled.Value isLoading />
-      <Styled.Bar isLoading size="100%" />
-      <Styled.Legend isLoading />
-    </Styled.Row>
-  );
+  const renderLoading = () => {
+    return (
+      <Styled.LoadingWrapper>
+        <Icon name="loading" size="130px" />;
+      </Styled.LoadingWrapper>
+    );
+  };
 
   return (
     <Styled.Wrapper tabIndex={0} aria-label={ariaLabel}>
@@ -83,14 +94,12 @@ const BarChart: React.FC<BarChartProps> = ({
         ) : null}
       </Styled.Header>
 
-      <Styled.WrapperChart>
-        {data.length <= 0 ? (
+      <Styled.WrapperChart isVertical={isVertical}>
+        {data.length <= 0 && !isLoading ? (
           <Styled.Empty>{t('DASHBOARD_SCREEN.CHART_NO_DATA')}</Styled.Empty>
         ) : null}
 
-        {!isLoading
-          ? data.map((item) => renderRow(item))
-          : range(4).map((_, i) => renderLoading(i))}
+        {!isLoading ? data.map((item) => renderRow(item)) : renderLoading()}
       </Styled.WrapperChart>
     </Styled.Wrapper>
   );
