@@ -14,38 +14,38 @@
 
 version: '3'
 services:
-  #  ldap-service:
-  #    container_name: ldap-service
-  #    image: dwimberger/ldap-ad-it
-  #    ports:
-  #      - "10389:10389"
-  #  postgresql_keycloak:
-  #    container_name: postgresql_keycloak
-  #    image: postgres:12
-  #    ports:
-  #      - "5433:5433"
-  #    expose:
-  #      - "5433"
-  #    command: -p 5433
-  #    environment:
-  #      POSTGRES_PASSWORD: root
-  #      POSTGRES_USER: root
-  #      POSTGRES_DB: keycloak
-  #  keycloak:
-  #    depends_on:
-  #      - "postgresql_keycloak"
-  #    container_name: keycloak
-  #    image: jboss/keycloak
-  #    ports:
-  #      - "8080:8080"
-  #    environment:
-  #      DB_VENDOR: "postgres"
-  #      DB_ADDR: postgresql_keycloak
-  #      DB_PORT: "5433"
-  #      DB_USER: "root"
-  #      DB_PASSWORD: "root"
-  #      KEYCLOAK_USER: "keycloak"
-  #      KEYCLOAK_PASSWORD: "keycloak"
+#  ldap-service:
+#    container_name: ldap-service
+#    image: dwimberger/ldap-ad-it
+#    ports:
+#      - "10389:10389"
+#  postgresql_keycloak:
+#    container_name: postgresql_keycloak
+#    image: postgres:12
+#    ports:
+#      - "5433:5433"
+#    expose:
+#      - "5433"
+#    command: -p 5433
+#    environment:
+#      POSTGRES_PASSWORD: root
+#      POSTGRES_USER: root
+#      POSTGRES_DB: keycloak
+#  keycloak:
+#    depends_on:
+#      - "postgresql_keycloak"
+#    container_name: keycloak
+#    image: jboss/keycloak
+#    ports:
+#      - "8080:8080"
+#    environment:
+#      DB_VENDOR: "postgres"
+#      DB_ADDR: postgresql_keycloak
+#      DB_PORT: "5433"
+#      DB_USER: "root"
+#      DB_PASSWORD: "root"
+#      KEYCLOAK_USER: "keycloak"
+#      KEYCLOAK_PASSWORD: "keycloak"
   rabbit:
     container_name: rabbit
     image: rabbitmq:3-management

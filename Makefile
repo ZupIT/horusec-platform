@@ -24,11 +24,11 @@ compose-dev:
 	echo wait until the horusec services finishes to build
 	sleep 110
 	docker restart horusec-vulnerability
-	docker restart horusec-analytic
 	docker restart horusec-webhook
 	docker restart horusec-core
 	docker restart horusec-api
 	docker restart horusec-messages
+	docker restart horusec-analytic
 
 install: compose migrate
 
