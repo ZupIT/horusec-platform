@@ -41,7 +41,7 @@ service:
 ingress:
   enabled: true
   hosts:
-    - host: "account-horus-dev.zup.com.br"
+    - host: "core-horus-dev.zup.com.br"
       paths:
         - /
 
