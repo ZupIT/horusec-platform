@@ -16,11 +16,10 @@
 POSTGRES_USER="root"
 POSTGRES_PASSWORD="root"
 POSTGRES_HOST="localhost"
-POSTGRES_CORE_PORT="5432"
-POSTGRES_ANALYTIC_PORT="5433"
+POSTGRES_PORT="5432"
 POSTGRES_SSL_MODE="disable"
-HORUSEC_DEFAULT_DATABASE_SQL_URI="postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@$POSTGRES_HOST:$POSTGRES_CORE_PORT/horusec_db?sslmode=$POSTGRES_SSL_MODE"
-HORUSEC_ANALYTIC_DATABASE_SQL_URI="postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@$POSTGRES_HOST:$POSTGRES_ANALYTIC_PORT/horusec_analytic_db?sslmode=$POSTGRES_SSL_MODE"
+HORUSEC_DEFAULT_DATABASE_SQL_URI="postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@$POSTGRES_HOST:$POSTGRES_PORT/horusec_db?sslmode=$POSTGRES_SSL_MODE"
+HORUSEC_ANALYTIC_DATABASE_SQL_URI="postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@$POSTGRES_HOST:$POSTGRES_PORT/horusec_analytic_db?sslmode=$POSTGRES_SSL_MODE"
 
 cd ./migrations
 
@@ -30,11 +29,14 @@ fi
 
 cd ..
 
+docker exec horusec_postgresql createdb horusec_db
+docker exec horusec_postgresql createdb horusec_analytic_db
+
 docker run --name migrate --rm \
     -v "$(pwd)/migrations/source:/horusec-migrations" \
     -e HORUSEC_DATABASE_SQL_URI=$HORUSEC_DEFAULT_DATABASE_SQL_URI \
     -e MIGRATION_NAME=platform \
-    --network=container:postgresql_horusec_core \
+    --network=container:horusec_postgresql \
     horuszup/horusec-migrations:local \
     "$@"
 
@@ -42,6 +44,6 @@ docker run --name migrate --rm \
     -v "$(pwd)/migrations/source:/horusec-migrations" \
     -e HORUSEC_DATABASE_SQL_URI=$HORUSEC_ANALYTIC_DATABASE_SQL_URI \
     -e MIGRATION_NAME=analytic \
-    --network=container:postgresql_horusec_analytic \
+    --network=container:horusec_postgresql \
     horuszup/horusec-migrations:local \
     "$@"
