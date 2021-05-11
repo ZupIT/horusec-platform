@@ -115,15 +115,20 @@ const SideMenu: React.FC = () => {
             </Styled.RouteItem>
 
             <Styled.SubRoutes>
-              {route?.subRoutes?.map((subRoute, index) => (
-                <Styled.SubRouteItem
-                  isActive={window.location.pathname === subRoute.path}
-                  key={index}
-                  onClick={() => handleSelectedRoute(subRoute)}
-                >
-                  {subRoute?.name}
-                </Styled.SubRouteItem>
-              ))}
+              {route?.subRoutes?.map((subRoute, index) => {
+                if (subRoute?.roles?.includes(currentWorkspace?.role)) {
+                  return (
+                    <Styled.SubRouteItem
+                      isActive={window.location.pathname === subRoute.path}
+                      key={index}
+                      onClick={() => handleSelectedRoute(subRoute)}
+                    >
+                      {subRoute?.name}
+                    </Styled.SubRouteItem>
+                  );
+                }
+                return null;
+              })}
             </Styled.SubRoutes>
           </div>
         );
