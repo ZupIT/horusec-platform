@@ -114,7 +114,7 @@ func (r *Repository) queryListRepositoriesByRoles() string {
 			  	   repo.created_at, repo.updated_at
 		    FROM repositories AS repo
 			INNER JOIN account_repository AS ar ON ar.repository_id = repo.repository_id AND ar.account_id = @accountID
-			WHERE ar.workspace_id = @workspaceID AND accountRepo.account_id = @accountID
+			WHERE ar.workspace_id = @workspaceID AND ar.account_id = @accountID
 	`
 }
 

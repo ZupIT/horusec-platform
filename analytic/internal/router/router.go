@@ -67,6 +67,6 @@ func (r *Router) routerDashboardWorkspace() {
 	r.Route(enums.DashboardWorkspaceRouter, func(router chi.Router) {
 		router.Options("/", r.dashboardHandler.Options)
 		router.With(r.IsWorkspaceAdmin).Get("/", r.dashboardHandler.GetAllChartsByWorkspace)
-		router.With(r.IsRepositoryAdmin).Get("/{repositoryID}", r.dashboardHandler.GetAllChartsByRepository)
+		router.With(r.IsRepositoryMember).Get("/{repositoryID}", r.dashboardHandler.GetAllChartsByRepository)
 	})
 }
