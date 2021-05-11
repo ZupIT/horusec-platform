@@ -22,7 +22,7 @@ compose-dev:
 	$(DOCKER_COMPOSE) -f deployments/compose/$(COMPOSE_DEV_FILE_NAME) down
 	$(DOCKER_COMPOSE) -f deployments/compose/$(COMPOSE_DEV_FILE_NAME) up -d --build
 	echo wait until the horusec services finishes to build
-	sleep 100
+	sleep 110
 	docker restart horusec-vulnerability
 	docker restart horusec-analytic
 	docker restart horusec-webhook
