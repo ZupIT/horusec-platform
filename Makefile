@@ -1,5 +1,6 @@
 DOCKER_COMPOSE ?= docker-compose
 COMPOSE_FILE_NAME ?= compose.yaml
+COMPOSE_DEV_FILE_NAME ?= compose-dev.yaml
 
 compose: compose-down compose-up
 
@@ -8,6 +9,16 @@ compose-down:
 
 compose-up:
 	$(DOCKER_COMPOSE) -f deployments/compose/$(COMPOSE_FILE_NAME) up -d --build
+
+compose: compose-down compose-up
+
+compose-dev-down:
+	$(DOCKER_COMPOSE) -f deployments/compose/$(COMPOSE_DEV_FILE_NAME) down
+
+compose-dev-up:
+	$(DOCKER_COMPOSE) -f deployments/compose/$(COMPOSE_DEV_FILE_NAME) up -d --build
+
+compose-dev: compose-dev-down compose-dev-up
 
 install: compose migrate
 
@@ -25,7 +36,7 @@ migrate-up:
 
 make run-web:
 	docker run --privileged --name horusec-all-in-one -p 8000:8000 -p 8001:8001 -p 8003:8003 -p 8005:8005 \
- 	-p 8006:8006 -p 8043:8080 horusec-all-in-one:latest
+ 	-p 8006:8006 -p 8043:8080 horuszup/horusec-all-in-one:latest
 
 make stop-web:
 	docker rm -f horusec-all-in-one
