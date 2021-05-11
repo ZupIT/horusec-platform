@@ -8,7 +8,7 @@ const getAllVulnerabilities = (
   pagination: PaginationInfo
 ) => {
   const path = filters.repositoryID
-    ? `repository/${filters.workspaceID}/${filters.repositoryID}`
+    ? `workspace/${filters.workspaceID}/repository/${filters.repositoryID}`
     : `workspace/${filters.workspaceID}`;
 
   return http.get(`${SERVICE_VULNERABILITY}/vulnerability/management/${path}`, {
@@ -29,7 +29,7 @@ const updateVulnerability = (
   severity: string
 ) => {
   return http.patch(
-    `${SERVICE_VULNERABILITY}/vulnerability/management/${workspaceID}/${vulnerabilityID}`,
+    `${SERVICE_VULNERABILITY}/vulnerability/management/workspace/${workspaceID}/vulnerabilities/${vulnerabilityID}`,
     {
       type,
       severity,
