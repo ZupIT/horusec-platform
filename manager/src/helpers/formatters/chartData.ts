@@ -15,7 +15,7 @@
  */
 
 import { ChartBarStacked } from 'helpers/interfaces/ChartData';
-import { formatToHumanDate } from 'helpers/formatters/date';
+import { orderBy } from 'lodash';
 
 const formatChartStacked = (
   listOfData: any[],
@@ -35,6 +35,10 @@ const formatChartStacked = (
 
   if (!listOfData || typeof listOfData === 'undefined') {
     return formattedData;
+  }
+
+  if (labeIsDate) {
+    listOfData = orderBy(listOfData, (item) => item[labelKey]);
   }
 
   listOfData.forEach((item) => {

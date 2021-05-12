@@ -142,7 +142,13 @@ const Vulnerabilities: React.FC = () => {
     severity: string
   ) => {
     vulnerabilitiesService
-      .updateVulnerability(filters.workspaceID, vulnerabilityID, type, severity)
+      .updateVulnerability(
+        filters.workspaceID,
+        vulnerabilityID,
+        filters.repositoryID,
+        type,
+        severity
+      )
       .then(() => {
         setVulnerabilities((state) =>
           state.map((el) =>
