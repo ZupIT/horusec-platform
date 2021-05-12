@@ -127,7 +127,7 @@ services:
       HORUSEC_BROKER_PORT: "5672"
       HORUSEC_BROKER_USERNAME: "guest"
       HORUSEC_BROKER_PASSWORD: "guest"
-      HORUSEC_DISABLED_BROKER: "true"
+      HORUSEC_DISABLE_EMAILS: "true"
   horusec-core:
     image: horuszup/horusec-core:v2.11.0-rc.1
     ports:
