@@ -47,7 +47,7 @@ There are several ways to install horusec platform in your environment, choose t
 
 Just remember to change the default environment variables values to the new and secure values.
 
-In some types of installation we use a make command to simplify the process.
+In some types of installation we use a `make` command to simplify the process.
 If you want to know everything that will be executed, take a look at the `Makefile` located at the root of the project.
 
 ### Quick Run:
