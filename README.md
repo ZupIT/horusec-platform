@@ -29,4 +29,65 @@
         <img src="https://img.shields.io/badge/license-Apache%202-blue"/></a>
 </p>
 
-# Horusec Web
+# Horusec Platform
+
+Horusec Platform is a set of web services that integrate with the horusec cli to facilitate the visualization 
+and management of found vulnerabilities.
+
+{EXAMPLE IMAGE DASHBOARD}
+
+## Installation
+
+- Install with docker compose:
+
+```cmd
+make install
+```
+
+Here we will execute the file `compose.yml` which can be found in` deployments/compose/compose.yaml` 
+as well as the necessary migrations in the database which can be found in `migrations/source`.
+
+- Install with helm:
+
+The helm files for each service can be found at `deployments/helm`.
+
+- Install with horusec admin:
+
+```cmd
+make install
+```
+
+- Quick Run:
+
+If you just want to try the web interface, we made an image that will automatically configure a ready-to-use environment.
+This image is not recommended for production environments, and will not persist any data after being interrupted.
+
+```cmd
+make install
+```
+
+## Features
+
+### Authentication Types
+
+- HORUSEC
+- LDAP
+- KEYCLOAK
+
+### Dashboard
+
+### Vulnerability Management
+
+## Migrating From V1
+
+## Contributing
+
+Feel free to use, recommend improvements, or contribute to new implementations.
+
+If this is our first repository that you visit, or would like to know more about Horusec,
+check out some of our other projects.
+
+- [Horusec CLI](https://github.com/ZupIT/horusec)
+- [Horusec DevKit](https://github.com/ZupIT/horusec-devkit)
+
+This project exists thanks to all the contributors. You rock! ❤️🚀
