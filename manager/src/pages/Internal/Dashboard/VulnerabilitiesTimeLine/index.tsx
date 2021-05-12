@@ -66,10 +66,10 @@ const VulnerabilitiesTimeLine: React.FC<Props> = ({ data, isLoading }) => {
       fontFamily: 'SFRegular',
       stacked: false,
       animations: {
-        enabled: false,
+        enabled: true,
       },
       toolbar: {
-        show: false,
+        show: true,
       },
     },
     plotOptions: {

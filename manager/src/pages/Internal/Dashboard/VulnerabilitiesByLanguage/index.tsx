@@ -18,7 +18,7 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BarCharRow } from 'helpers/interfaces/BarChartRow';
 import { BarChart } from 'components';
-import { get } from 'lodash';
+import { get, orderBy } from 'lodash';
 import { useTheme } from 'styled-components';
 import { VulnerabilitiesByLanguageData } from 'helpers/interfaces/DashboardData';
 
@@ -62,7 +62,7 @@ const VulnerabilitiesByDeveloper: React.FC<Props> = ({ isLoading, data }) => {
 
     setLayeredLanguage(null);
     setLastLayer(false);
-    setChartData(formatted);
+    setChartData(orderBy(formatted, (item) => item.value, 'desc'));
   };
 
   const formatSecondLayer = (rowKey: string) => {
