@@ -80,7 +80,7 @@ env:
   - name: "HORUSEC_SWAGGER_HOST"
     value: "0.0.0.0"
   - name: "HORUSEC_BROKER_HOST"
-    value: "horus-mq-rabbitmq"
+    value: "rabbitmq"
   - name: "HORUSEC_BROKER_PORT"
     value: "5672"
   - name: "HORUSEC_PORT"
