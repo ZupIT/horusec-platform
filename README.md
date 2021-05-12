@@ -131,39 +131,26 @@ features access our [documentation](https://horusec.io/docs/web/overview).
 
 Distribute only the necessary [permissions](https://horusec.io/docs/web/overview/#1-multitenant) according to each user.
 
-<p align="center" margin="20 0">
-    <img src="/assets/horusec-invite-users-1.png" 
-            alt="dashboard" width="65%" style="max-width:100%;"/>
-</p>
-
+<p align="center" margin="20 0"><img src="assets/horusec-invite-users-1.png" alt="multiTenancy" width="100%" style="max-width:100%;"/></p>
 
 ### Dashboard
 
 Dashboard with various metrics about your vulnerabilities for both workspace and repository.
 
-<p align="center" margin="20 0">
-    <img src="/assets/horusec-dashboard-1.png" 
-            alt="dashboard" width="65%" style="max-width:100%;"/>
-</p>
+<p align="center" margin="20 0"><img src="assets/horusec-dashboard-1.png" alt="dashboard" width="100%" style="max-width:100%;"/></p>
 
 ### Vulnerability Management
 
 Vulnerability management screen, allowing to identify false positives, accepted risk and even modify a severity 
 to a value appropriate to the reality of the vulnerability.
 
-<p align="center" margin="20 0">
-    <img src="/assets/horusec-vuln-management-1.png" 
-            alt="dashboard" width="65%" style="max-width:100%;"/>
-</p>
+<p align="center" margin="20 0"><img src="assets/horusec-vuln-management-1.png" alt="vuln-management" width="100%" style="max-width:100%;"/></p>
 
 ### Tokens
 Creation of workspace or repository authentication 
 [tokens](https://horusec.io/docs/tutorials/how-to-create-an-authorization-token) for your pipeline.
 
-<p align="center" margin="20 0">
-    <img src="/assets/horusec-create-token-1.png" 
-            alt="dashboard" width="65%" style="max-width:100%;"/>
-</p>
+<p align="center" margin="20 0"><img src="assets/horusec-create-token-1.png" alt="tokens" width="100%" style="max-width:100%;"/></p>
 
 ### Authentication Types
 
