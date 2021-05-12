@@ -34,7 +34,7 @@
 Horusec Platform is a set of web services that integrate with the [Horusec CLI](https://github.com/ZupIT/horusec) 
 to facilitate the visualization and management of vulnerabilities.
 
-@TODO USAGE GIF
+@todo usage gif
 
 ## Dependencies
 
@@ -77,7 +77,7 @@ To stop the running container just execute:
 make stop-web
 ```
 
-Click [here](@TODO QUICK RUN DOCS) to check full quick run docs.
+Click [here](@todo) to check full quick run docs.
 
 ### Install with docker compose:
 
@@ -104,7 +104,7 @@ to check full docker compose installation docs.
 
 ### Install with helm:
 
-@TODO
+@todo
 
 The helm files for each service can be found at `deployments/helm`.
 
@@ -112,15 +112,15 @@ Click [here](https://horusec.io/docs/web/installation/install-with-helm) to chec
 
 ### Install with horusec admin:
 
-@TODO
+@todo
 
 ### Install with horusec operator:
 
-@TODO
+@todo
 
 ### Install with terraform:
 
-@TODO
+@todo
 
 ## Features
 
