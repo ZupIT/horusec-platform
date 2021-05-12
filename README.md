@@ -1,5 +1,6 @@
 <p align="center" margin="20 0"><a href="https://horusec.io/">
-    <img src="assets/horusec_logo.png" alt="logo_header" width="65%" style="max-width:100%;"/></a></p>
+    <img src="https://github.com/ZupIT/horusec-devkit/blob/main/assets/horusec_logo.png?raw=true" 
+            alt="logo_header" width="65%" style="max-width:100%;"/></a></p>
 
 <p align="center">
     <a href="https://github.com/ZupIT/horusec-platform/pulse" alt="activity">
