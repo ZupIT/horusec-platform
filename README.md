@@ -31,54 +31,104 @@
 
 # Horusec Platform
 
-Horusec Platform is a set of web services that integrate with the horusec cli to facilitate the visualization 
-and management of found vulnerabilities.
+Horusec Platform is a set of web services that integrate with the [Horusec CLI](https://github.com/ZupIT/horusec) 
+to facilitate the visualization and management of vulnerabilities.
 
-{EXAMPLE IMAGE DASHBOARD}
+{@TODO EXAMPLE IMAGE DASHBOARD}
+
+## Dependencies
+
+- [RabbitMQ](https://www.rabbitmq.com/)
+- [Postgresql](https://www.postgresql.org/)
 
 ## Installation
 
-- Install with docker compose:
-
-```cmd
-make install
-```
-
-Here we will execute the file `compose.yml` which can be found in` deployments/compose/compose.yaml` 
-as well as the necessary migrations in the database which can be found in `migrations/source`.
-
-- Install with helm:
-
-The helm files for each service can be found at `deployments/helm`.
-
-- Install with horusec admin:
-
-```cmd
-make install
-```
-
-- Quick Run:
+### Quick Run:
 
 If you just want to try the web interface, we made an image that will automatically configure a ready-to-use environment.
 This image is not recommended for production environments, and will not persist any data after being interrupted.
 
 ```cmd
+make run-web
+```
+
+After executing, the Horusec [image](https://hub.docker.com/r/horuszup/horusec-all-in-one) will start to install 
+all dependencies and services, after finished it will present the following message
+`HORUSEC WEB IS UP AND CAN BE ACCESSED IN -> http://localhost:8043/auth`.
+
+The installation will be done with all default values and latest versions
+and also create the following test user:
+
+```
+Username: dev@example.com
+Password: Devpass0*
+```
+
+To stop the running container just execute:
+
+```cmd
+make stop-web
+```
+
+Click [here](@TODO QUICK RUN DOCS) to check full quick run docs.
+
+### Install with docker compose:
+
+```cmd
 make install
 ```
 
+We will execute the file `compose.yml` which contains all services, migrations and the needed dependencies. 
+The compose file and can be found in `deployments/compose/compose.yaml` and migrations in `migrations/source`.
+
+The installation will be done with all default values and latest versions
+and also create the following test user:
+
+```
+Username: dev@example.com
+Password: Devpass0*
+```
+
+Click [here](https://horusec.io/docs/web/installation/install-with-docker-compose) 
+to check full docker compose installation docs.
+
+### Install with helm:
+
+@TODO
+
+The helm files for each service can be found at `deployments/helm`.
+
+Click [here](https://horusec.io/docs/web/installation/install-with-helm) to check the helm installation docs.
+
+### Install with horusec admin:
+
+@TODO
+
+### Install with horusec operator:
+
+@TODO
+
 ## Features
 
-### Authentication Types
+@TODO
 
+### Authentication Types
+@TODO
 - HORUSEC
 - LDAP
 - KEYCLOAK
 
+### Tokens
+@TODO
+
 ### Dashboard
+@TODO
 
 ### Vulnerability Management
+@TODO
 
 ## Migrating From V1
+@TODO
 
 ## Contributing
 
@@ -89,5 +139,9 @@ check out some of our other projects.
 
 - [Horusec CLI](https://github.com/ZupIT/horusec)
 - [Horusec DevKit](https://github.com/ZupIT/horusec-devkit)
+- [Horusec Engine](https://github.com/ZupIT/horusec-engine)
+- [Horusec Operator](https://github.com/ZupIT/horusec-operator)
+- [Horusec Admin](https://github.com/ZupIT/horusec-admin)
+- [Horusec VsCode](https://github.com/ZupIT/horusec-vscode-plugin)
 
 This project exists thanks to all the contributors. You rock! ❤️🚀
