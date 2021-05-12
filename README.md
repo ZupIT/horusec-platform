@@ -39,25 +39,32 @@ to facilitate the visualization and management of vulnerabilities.
 ## Dependencies
 
 - [RabbitMQ](https://www.rabbitmq.com/)
-- [Postgresql](https://www.postgresql.org/)
+- [PostgreSQL](https://www.postgresql.org/)
 
 ## Installation
 
+There are several ways to install horusec platform in your environment, choose the one that is most comfortable for you.
+
+Just remember to change the default environment variables values to the new and secure values.
+
+In some types of installation we use a make command to simplify the process.
+If you want to know everything that will be executed, take a look at the `Makefile` located at the root of the project.
+
 ### Quick Run:
 
-If you just want to try the web interface, we made an image that will automatically configure a ready-to-use environment.
+If you just want to try the web interface, we made an image that will automatically configure a ready to use environment.
 This image is not recommended for production environments, and will not persist any data after being interrupted.
 
 ```cmd
 make run-web
 ```
 
-After executing, the Horusec [image](https://hub.docker.com/r/horuszup/horusec-all-in-one) will start to install 
-all dependencies and services, after finished it will present the following message
+After executing the command, the Horusec [image](https://hub.docker.com/r/horuszup/horusec-all-in-one) 
+will start to install all dependencies and services, after finished it will present the following message
 `HORUSEC WEB IS UP AND CAN BE ACCESSED IN -> http://localhost:8043/auth`.
 
-The installation will be done with all default values and latest versions
-and also create the following test user:
+After that, the application will be running, with all default values, the latest versions, and
+the following user for tests:
 
 ```
 Username: dev@example.com
@@ -78,16 +85,19 @@ Click [here](@TODO QUICK RUN DOCS) to check full quick run docs.
 make install
 ```
 
-We will execute the file `compose.yml` which contains all services, migrations and the needed dependencies. 
-The compose file and can be found in `deployments/compose/compose.yaml` and migrations in `migrations/source`.
+After executing the command, we will start the docker compose file `compose.yml`, which contains all services, migrations and the needed dependencies. 
+The compose file can be found in `deployments/compose/compose.yaml` and migrations in `migrations/source`.
 
-The installation will be done with all default values and latest versions
-and also create the following test user:
+After that, the installation will be ready, with all default values, the latest versions, and
+the following user for tests:
 
 ```
 Username: dev@example.com
 Password: Devpass0*
 ```
+
+By default, the docker compose file is configured to perform a standard installation. 
+In the case of production environments, be sure to change the values of the environment variables to new and secure values.
 
 Click [here](https://horusec.io/docs/web/installation/install-with-docker-compose) 
 to check full docker compose installation docs.
@@ -105,6 +115,10 @@ Click [here](https://horusec.io/docs/web/installation/install-with-helm) to chec
 @TODO
 
 ### Install with horusec operator:
+
+@TODO
+
+### Install with terraform:
 
 @TODO
 
