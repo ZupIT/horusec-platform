@@ -34,7 +34,7 @@
 Horusec Platform is a set of web services that integrate with the [Horusec CLI](https://github.com/ZupIT/horusec) 
 to facilitate the visualization and management of vulnerabilities.
 
-{@TODO EXAMPLE IMAGE DASHBOARD}
+@TODO USAGE GIF
 
 ## Dependencies
 
@@ -124,25 +124,62 @@ Click [here](https://horusec.io/docs/web/installation/install-with-helm) to chec
 
 ## Features
 
-@TODO
+The following are some main features that Horusec Platform provides, to learn more about these and several other 
+features access our [documentation](https://horusec.io/docs/web/overview).
+
+### MultiTenancy
+
+Distribute only the necessary [permissions](https://horusec.io/docs/web/overview/#1-multitenant) according to each user.
+
+<p align="center" margin="20 0">
+    <img src="/assets/horusec-invite-users-1.png" 
+            alt="dashboard" width="65%" style="max-width:100%;"/>
+</p>
+
+
+### Dashboard
+
+Dashboard with various metrics about your vulnerabilities for both workspace and repository.
+
+<p align="center" margin="20 0">
+    <img src="/assets/horusec-dashboard-1.png" 
+            alt="dashboard" width="65%" style="max-width:100%;"/>
+</p>
+
+### Vulnerability Management
+
+Vulnerability management screen, allowing to identify false positives, accepted risk and even modify a severity 
+to a value appropriate to the reality of the vulnerability.
+
+<p align="center" margin="20 0">
+    <img src="/assets/horusec-vuln-management-1.png" 
+            alt="dashboard" width="65%" style="max-width:100%;"/>
+</p>
+
+### Tokens
+Creation of workspace or repository authentication 
+[tokens](https://horusec.io/docs/tutorials/how-to-create-an-authorization-token) for your pipeline.
+
+<p align="center" margin="20 0">
+    <img src="/assets/horusec-create-token-1.png" 
+            alt="dashboard" width="65%" style="max-width:100%;"/>
+</p>
 
 ### Authentication Types
-@TODO
-- HORUSEC
+
+With the Horusec Platform you can choose which form of authentication you will use.
+
+Currently, having three possibilities:
+
+- HORUSEC (native) 
 - LDAP
 - KEYCLOAK
 
-### Tokens
-@TODO
-
-### Dashboard
-@TODO
-
-### Vulnerability Management
-@TODO
+Checkout for our authentication types [docs](https://horusec.io/docs/tutorials/how-to-change-authentication-types).
 
 ## Migrating From V1
-@TODO
+For more information on migrating from the previous version to the current one see our 
+[documentation](@todo).
 
 ## Contributing
 
