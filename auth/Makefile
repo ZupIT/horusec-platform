@@ -18,7 +18,7 @@ lint:
     endif
 
 coverage:
-	curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec-devkit/develop/scripts/coverage.sh | bash -s 98.5 .
+	curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec-devkit/main/scripts/coverage.sh | bash -s 99.3 .
 
 test:
 	$(GO) clean -testcache && $(GO) test -v ./... -timeout=2m -parallel=1 -failfast -short
@@ -43,6 +43,6 @@ build:
 	$(GO) build -o "./tmp/bin/auth" ./cmd/app/main.go
 
 update-swagger:
-	curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec-devkit/develop/scripts/update-swagger.sh | bash
+	curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec-devkit/main/scripts/update-swagger.sh | bash
 
 pipeline: fmt fix-imports lint test coverage build security
