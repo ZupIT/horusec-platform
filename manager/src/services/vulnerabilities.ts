@@ -5,11 +5,13 @@ import { SERVICE_VULNERABILITY } from '../config/endpoints';
 
 const getAllVulnerabilities = (
   filters: FilterVuln,
+  type: 'workspace' | 'repository',
   pagination: PaginationInfo
 ) => {
-  const path = filters.repositoryID
-    ? `workspace/${filters.workspaceID}/repository/${filters.repositoryID}`
-    : `workspace/${filters.workspaceID}`;
+  const path =
+    type === 'repository'
+      ? `workspace/${filters.workspaceID}/repository/${filters.repositoryID}`
+      : `workspace/${filters.workspaceID}`;
 
   return http.get(`${SERVICE_VULNERABILITY}/vulnerability/management/${path}`, {
     params: {
