@@ -59,6 +59,6 @@ export interface DashboardData {
   vulnerabilitiesByAuthor: VulnerabilitiesByAuthor[];
   vulnerabilitiesByLanguage: VulnerabilitiesByLanguageData[];
   vulnerabilitiesByRepository: VulnerabilitiesByRepository[];
-  vulnerabilityBySeverity: VulnerabilityBySeverity[];
+  vulnerabilityBySeverity: VulnerabilityBySeverity;
   vulnerabilityByTime: VulnerabilityByTime[];
 }

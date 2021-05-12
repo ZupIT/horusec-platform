@@ -31,7 +31,7 @@ const VulnerabilitiesByRepository: React.FC<Props> = ({ isLoading, data }) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
 
-  const [layeredDeveloper, setLayeredDeveloper] = useState<string>('');
+  const [layeredRepository, setLayeredRepository] = useState<string>('');
   const [isLastLayer, setLastLayer] = useState(false);
 
   const [allData, setAllData] = useState<VulnerabilitiesByRepositoryData[]>([]);
@@ -53,13 +53,13 @@ const VulnerabilitiesByRepository: React.FC<Props> = ({ isLoading, data }) => {
       };
     });
 
-    setLayeredDeveloper(null);
+    setLayeredRepository(null);
     setLastLayer(false);
     setChartData(formatted);
   };
 
   const formatSecondLayer = (rowKey: string) => {
-    setLayeredDeveloper(rowKey);
+    setLayeredRepository(rowKey);
 
     const data = allData.find((item) => item.repositoryName === rowKey);
 
@@ -88,7 +88,7 @@ const VulnerabilitiesByRepository: React.FC<Props> = ({ isLoading, data }) => {
       setLastLayer(true);
 
       const authorData = allData.find(
-        (item) => item.repositoryName === layeredDeveloper
+        (item) => item.repositoryName === layeredRepository
       );
 
       const data = get(authorData, rowKey.toLocaleLowerCase(), { types: [] })
@@ -125,19 +125,19 @@ const VulnerabilitiesByRepository: React.FC<Props> = ({ isLoading, data }) => {
         isLoading={isLoading}
         data={chatData}
         title={
-          layeredDeveloper
+          layeredRepository
             ? `${t(
                 'DASHBOARD_SCREEN.VULNERABILITIES_BY_REPO'
-              )}: ${layeredDeveloper}`
+              )}: ${layeredRepository}`
             : t('DASHBOARD_SCREEN.VULNERABILITIES_BY_REPO')
         }
         onClickRow={(row) =>
-          !layeredDeveloper
+          !layeredRepository
             ? formatSecondLayer(row.legend)
             : formatThirdLayer(row.legend)
         }
         onClickBack={() => formatFirstLayer(allData)}
-        showBackOption={!!layeredDeveloper}
+        showBackOption={!!layeredRepository}
       />
     </div>
   );

@@ -15,125 +15,106 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import ReactApexChart from 'react-apexcharts';
-import { ApexOptions } from 'apexcharts';
-import Styled from './styled';
 import { useTranslation } from 'react-i18next';
-import { useTheme } from 'styled-components';
-import { Icon } from 'components';
+import { BarCharRow } from 'helpers/interfaces/BarChartRow';
+import { BarChart } from 'components';
 import { get } from 'lodash';
+import { useTheme } from 'styled-components';
 import { VulnerabilityBySeverity } from 'helpers/interfaces/DashboardData';
 
 interface Props {
+  data: VulnerabilityBySeverity;
   isLoading: boolean;
-  data: VulnerabilityBySeverity[];
 }
 
-const AllVulnerabilities: React.FC<Props> = ({ isLoading, data }) => {
+const VulnerabilitiesByRepository: React.FC<Props> = ({ isLoading, data }) => {
   const { t } = useTranslation();
-  const { colors, metrics } = useTheme();
+  const { colors } = useTheme();
 
-  const [chartValues, setChartValues] = useState<number[]>([]);
-  const [chartLabels, setChartLabels] = useState<string[]>([]);
-  const [chartColors, setChartColors] = useState<string[]>([]);
+  const [layeredVuln, setLayeredVuln] = useState<string>('');
+  const [isLastLayer, setLastLayer] = useState(false);
 
-  const options: ApexOptions = {
-    noData: {
-      text: t('DASHBOARD_SCREEN.CHART_NO_DATA'),
-      style: {
-        color: colors.chart.legend,
-        fontSize: metrics.fontSize.large,
-      },
-    },
-    chart: {
-      type: 'donut',
-      fontFamily: 'SFRegular',
-      animations: {
-        enabled: true,
-      },
-    },
-    legend: {
-      position: 'top',
-      horizontalAlign: 'left',
-      formatter: (name, opts) =>
-        `${name}: ${opts?.w?.config?.series[opts?.seriesIndex]}`,
-      labels: {
-        colors: colors.chart.legend,
-      },
-    },
-    dataLabels: {
-      enabled: true,
-      style: {
-        fontSize: metrics.fontSize.xsmall,
-        fontWeight: 100,
-      },
-    },
-    stroke: {
-      show: false,
-    },
-    plotOptions: {
-      pie: {
-        donut: {
-          size: '25px',
-        },
-      },
-    },
+  const [allData, setAllData] = useState<VulnerabilityBySeverity>();
+  const [chatData, setChartData] = useState<BarCharRow[]>([]);
+
+  const formatFirstLayer = (data: VulnerabilityBySeverity) => {
+    let isEmpty = true;
+
+    const formatted = Object.entries(data).map((item) => {
+      const value = item[1].count;
+      const legend = item[0].toUpperCase();
+      const color = get(
+        colors.vulnerabilities,
+        legend,
+        colors.vulnerabilities.DEFAULT
+      );
+
+      if (value > 0) isEmpty = false;
+
+      return {
+        value,
+        legend,
+        color,
+      };
+    });
+
+    setChartData(isEmpty ? [] : formatted);
+    setLastLayer(false);
+    setLayeredVuln(null);
+  };
+
+  const formatSecondLayer = (rowKey: string) => {
+    if (!isLastLayer) {
+      setLayeredVuln(rowKey);
+
+      setLastLayer(true);
+
+      const data = get(allData, rowKey.toLocaleLowerCase(), { types: [] })
+        ?.types;
+
+      const formatted = Object.entries(data).map((item) => {
+        const legend = item[0].toUpperCase();
+        const value = (item[1] as number) || 0;
+        const color = get(
+          colors.vulnerabilitiesStatus,
+          legend,
+          colors.vulnerabilitiesStatus.DEFAULT
+        );
+
+        return {
+          value,
+          legend,
+          color,
+        };
+      });
+
+      setChartData(formatted);
+    }
   };
 
   useEffect(() => {
-    const formatData = (data: VulnerabilityBySeverity[]) => {
-      const itemColors: string[] = [];
-      const labels: string[] = [];
-      const values: number[] = [];
-
-      Object.keys(data).forEach((key) => {
-        const label = key.toUpperCase();
-        const value = get(data, key, { count: 0 }).count;
-
-        labels.push(key.toUpperCase());
-        values.push(value);
-        itemColors.push(
-          get(colors.vulnerabilities, label, colors.vulnerabilities.DEFAULT)
-        );
-      });
-
-      const total = values.reduce((item, current) => item + current);
-
-      if (total > 0) {
-        setChartColors(itemColors);
-        setChartLabels(labels);
-        setChartValues(values);
-      } else {
-        setChartColors([]);
-        setChartLabels([]);
-        setChartValues([]);
-      }
-    };
-
-    if (data) formatData(data);
-  }, [colors.vulnerabilities, data]);
+    setAllData(data);
+    if (data) formatFirstLayer(data);
+    //eslint-disable-next-line
+  }, [data]);
 
   return (
     <div className="block max-space">
-      <Styled.Wrapper tabIndex={0}>
-        <Styled.Title>{t('DASHBOARD_SCREEN.ALL_VULNERABILITIES')}</Styled.Title>
-
-        {isLoading ? (
-          <Styled.LoadingWrapper>
-            <Icon name="loading" size="200px" className="loading" />
-          </Styled.LoadingWrapper>
-        ) : (
-          <ReactApexChart
-            height={250}
-            width="100%"
-            series={chartValues}
-            options={{ ...options, colors: chartColors, labels: chartLabels }}
-            type="donut"
-          />
-        )}
-      </Styled.Wrapper>
+      <BarChart
+        isVertical
+        isLoading={isLoading}
+        data={chatData}
+        title={
+          layeredVuln
+            ? `${t('DASHBOARD_SCREEN.ALL_VULNERABILITIES')}: ${layeredVuln}`
+            : t('DASHBOARD_SCREEN.ALL_VULNERABILITIES')
+        }
+        onClickRow={(row) => formatSecondLayer(row.legend)}
+        onClickBack={() => formatFirstLayer(allData)}
+        showBackOption={!!layeredVuln}
+      />
     </div>
   );
 };
 
-export default AllVulnerabilities;
+export default VulnerabilitiesByRepository;

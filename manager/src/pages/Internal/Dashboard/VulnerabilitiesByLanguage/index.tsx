@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
-import ReactApexChart from 'react-apexcharts';
-import { ApexOptions } from 'apexcharts';
-import Styled from './styled';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useTheme } from 'styled-components';
-import { Icon } from 'components';
+import { BarCharRow } from 'helpers/interfaces/BarChartRow';
+import { BarChart } from 'components';
 import { get } from 'lodash';
+import { useTheme } from 'styled-components';
 import { VulnerabilitiesByLanguageData } from 'helpers/interfaces/DashboardData';
 
 interface Props {
@@ -29,120 +27,129 @@ interface Props {
   isLoading: boolean;
 }
 
-const VulnerabilitiesByLanguage: React.FC<Props> = ({ data, isLoading }) => {
+const VulnerabilitiesByDeveloper: React.FC<Props> = ({ isLoading, data }) => {
   const { t } = useTranslation();
-  const { colors, metrics } = useTheme();
+  const { colors } = useTheme();
 
-  const [chartValues, setChartValues] = useState<number[]>([]);
-  const [chartLabels, setChartLabels] = useState<string[]>([]);
-  const [chartColors, setChartColors] = useState<string[]>([]);
+  const [layeredLanguage, setLayeredLanguage] = useState<string>('');
+  const [isLastLayer, setLastLayer] = useState(false);
 
-  const options: ApexOptions = {
-    markers: {
-      size: 0,
-    },
-    noData: {
-      text: t('DASHBOARD_SCREEN.CHART_NO_DATA'),
-      style: {
-        color: colors.chart.legend,
-        fontSize: metrics.fontSize.large,
-      },
-    },
-    chart: {
-      type: 'donut',
-      fontFamily: 'SFRegular',
-      animations: {
-        enabled: true,
-      },
-      toolbar: {
-        show: false,
-      },
-    },
-    legend: {
-      position: 'top',
-      horizontalAlign: 'left',
-      formatter: (name, opts) =>
-        `${name}: ${opts?.w?.config?.series[opts?.seriesIndex]}`,
-      labels: {
-        colors: colors.chart.legend,
-      },
-    },
-    dataLabels: {
-      enabled: true,
-      style: {
-        fontSize: metrics.fontSize.xsmall,
-        fontWeight: 100,
-      },
-    },
-    stroke: {
-      show: false,
-    },
-    plotOptions: {
-      pie: {
-        donut: {
-          size: '25px',
-        },
-      },
-    },
+  const [allData, setAllData] = useState<VulnerabilitiesByLanguageData[]>([]);
+  const [chatData, setChartData] = useState<BarCharRow[]>([]);
+
+  const formatFirstLayer = (data: VulnerabilitiesByLanguageData[]) => {
+    const formatted = (data || []).map((item) => {
+      let value = 0;
+
+      Object.values(item).forEach((i) => {
+        if (i?.count) {
+          value = value + i.count;
+        }
+      });
+
+      const color = get(
+        colors.languages,
+        item.language.toUpperCase(),
+        colors.languages.UNKNOWN
+      );
+
+      return {
+        value,
+        color,
+        legend: item.language,
+      };
+    });
+
+    setLayeredLanguage(null);
+    setLastLayer(false);
+    setChartData(formatted);
+  };
+
+  const formatSecondLayer = (rowKey: string) => {
+    setLayeredLanguage(rowKey);
+
+    const data = allData.find((item) => item.language === rowKey);
+
+    const formatted = Object.entries(data).map((item) => {
+      const value = item[1]?.count;
+      const legend = item[0].toUpperCase();
+      const color = get(
+        colors.vulnerabilities,
+        legend,
+        colors.vulnerabilities.DEFAULT
+      );
+
+      return {
+        value,
+        legend,
+        color,
+      };
+    });
+
+    delete formatted[0];
+    setChartData(formatted);
+  };
+
+  const formatThirdLayer = (rowKey: string) => {
+    if (!isLastLayer) {
+      setLastLayer(true);
+
+      const authorData = allData.find(
+        (item) => item.language === layeredLanguage
+      );
+
+      const data = get(authorData, rowKey.toLocaleLowerCase(), { types: [] })
+        ?.types;
+
+      const formatted = Object.entries(data).map((item) => {
+        const legend = item[0].toUpperCase();
+        const value = (item[1] as number) || 0;
+        const color = get(
+          colors.vulnerabilitiesStatus,
+          legend,
+          colors.vulnerabilitiesStatus.DEFAULT
+        );
+
+        return {
+          value,
+          legend,
+          color,
+        };
+      });
+
+      setChartData(formatted);
+    }
   };
 
   useEffect(() => {
-    const formatData = (data: VulnerabilitiesByLanguageData[]) => {
-      const itemColors: string[] = [];
-      const labels: string[] = [];
-      const values: number[] = [];
-
-      (data || []).forEach((item) => {
-        const total =
-          item.critical.count +
-          item.high.count +
-          item.info.count +
-          item.medium.count +
-          item.low.count +
-          item.unknown.count;
-
-        labels.push(item.language);
-        values.push(total);
-        itemColors.push(
-          get(
-            colors.languages,
-            item.language.toUpperCase(),
-            colors.languages.UNKNOWN
-          )
-        );
-      });
-
-      setChartColors(itemColors);
-      setChartLabels(labels);
-      setChartValues(values);
-    };
-
-    formatData(data);
-  }, [colors.languages, data]);
+    formatFirstLayer(data);
+    setAllData(data);
+    //eslint-disable-next-line
+  }, [data]);
 
   return (
     <div className="block max-space">
-      <Styled.Wrapper tabIndex={0}>
-        <Styled.Title>
-          {t('DASHBOARD_SCREEN.VULNERABILITIES_BY_LANG')}
-        </Styled.Title>
-
-        {isLoading ? (
-          <Styled.LoadingWrapper>
-            <Icon name="loading" size="200px" className="loading" />
-          </Styled.LoadingWrapper>
-        ) : (
-          <ReactApexChart
-            height={250}
-            width="100%"
-            series={chartValues}
-            options={{ ...options, colors: chartColors, labels: chartLabels }}
-            type="donut"
-          />
-        )}
-      </Styled.Wrapper>
+      <BarChart
+        hasSmallLegend
+        isLoading={isLoading}
+        data={chatData}
+        title={
+          layeredLanguage
+            ? `${t(
+                'DASHBOARD_SCREEN.VULNERABILITIES_BY_LANG'
+              )}: ${layeredLanguage}`
+            : t('DASHBOARD_SCREEN.VULNERABILITIES_BY_LANG')
+        }
+        onClickRow={(row) =>
+          !layeredLanguage
+            ? formatSecondLayer(row.legend)
+            : formatThirdLayer(row.legend)
+        }
+        onClickBack={() => formatFirstLayer(allData)}
+        showBackOption={!!layeredLanguage}
+      />
     </div>
   );
 };
 
-export default VulnerabilitiesByLanguage;
+export default VulnerabilitiesByDeveloper;
