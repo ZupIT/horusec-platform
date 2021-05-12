@@ -82,6 +82,7 @@
     "CANCEL": "Cancelar",
     "SAVE": "Salvar",
     "TITLE": "Gerenciamento de Workspaces",
+    "NO_FAVORITE": "Nenhum workspace definido como favorito",
     "TABLE": {
       "NAME": "Nome",
       "DESCRIPTION": "Descrição",
@@ -90,7 +91,8 @@
       "REMOVE": "Deletar",
       "EDIT": "Editar",
       "USERS": "Usuários do Workspace",
-      "TOKENS": "Tokens"
+      "TOKENS": "Tokens",
+      "FAVORITE": "Favoritar"
     },
     "DESCRIPTION": "Descrição",
     "ACTION": "Ação",

@@ -22,13 +22,19 @@ import { useHistory } from 'react-router-dom';
 import { roles } from 'helpers/enums/roles';
 import { isLogged } from 'helpers/localStorage/tokens';
 import { getCurrentUser } from 'helpers/localStorage/currentUser';
+import {
+  getFavoriteWorkspace,
+  setFavoriteWorkspace,
+} from 'helpers/localStorage/favorite';
 
 interface WorkspaceCtx {
   currentWorkspace: Workspace;
+  favoriteWorkspace: Workspace;
   allWorkspaces: Workspace[];
-  handleSetCurrentWorkspace: (workspace: Workspace) => void;
   isAdminOfWorkspace: boolean;
+  handleSetCurrentWorkspace: (workspace: Workspace) => void;
   fetchAllWorkspaces: () => void;
+  setAsFavoriteWorkspace: (workspace: Workspace) => void;
 }
 
 const WorkspaceContext = React.createContext<WorkspaceCtx>({
@@ -37,15 +43,23 @@ const WorkspaceContext = React.createContext<WorkspaceCtx>({
   allWorkspaces: [],
   handleSetCurrentWorkspace: null,
   fetchAllWorkspaces: null,
+  setAsFavoriteWorkspace: null,
+  favoriteWorkspace: null,
 });
 
 const WorkspaceProvider = ({ children }: { children: JSX.Element }) => {
   const [currentWorkspace, setCurrentWorkspace] = useState<Workspace>(null);
+  const [favoriteWorkspace, setFavorite] = useState<Workspace>(null);
   const [allWorkspaces, setAllWorkspaces] = useState<Workspace[]>([]);
   const [isAdminOfWorkspace, setIsAdminOfWorkspace] = useState<boolean>(false);
 
   const { dispatchMessage } = useResponseMessage();
   const history = useHistory();
+
+  const setAsFavoriteWorkspace = (workspace: Workspace) => {
+    setFavoriteWorkspace(workspace.workspaceID);
+    setFavorite(workspace);
+  };
 
   const handleSetCurrentWorkspace = (workspace: Workspace) => {
     const currentUser = getCurrentUser();
@@ -68,7 +82,16 @@ const WorkspaceProvider = ({ children }: { children: JSX.Element }) => {
         setAllWorkspaces(workspaces);
 
         if (workspaces && workspaces.length > 0) {
-          handleSetCurrentWorkspace(workspaces[0]);
+          let favorite = getFavoriteWorkspace();
+          favorite = workspaces.find((item) => item.workspaceID === favorite);
+
+          if (favorite) {
+            handleSetCurrentWorkspace(favorite);
+            setFavorite(favorite);
+          } else {
+            handleSetCurrentWorkspace(workspaces[0]);
+          }
+
           if (redirect) history.replace('/home/dashboard');
         } else {
           handleSetCurrentWorkspace(null);
@@ -97,6 +120,8 @@ const WorkspaceProvider = ({ children }: { children: JSX.Element }) => {
         isAdminOfWorkspace,
         handleSetCurrentWorkspace,
         fetchAllWorkspaces: fetchAll,
+        favoriteWorkspace,
+        setAsFavoriteWorkspace,
       }}
     >
       {children}
