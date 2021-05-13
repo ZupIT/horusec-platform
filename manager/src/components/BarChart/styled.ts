@@ -16,14 +16,16 @@
 
 import styled, { keyframes, css } from 'styled-components';
 
-interface BarProps {
-  color?: string;
-  size: string;
-  isLoading?: boolean;
+interface VerticalProps {
+  isVertical?: boolean;
 }
 
-interface LoadingProps {
-  isLoading?: boolean;
+interface BarProps extends VerticalProps {
+  color?: string;
+  size: string;
+}
+interface LegendProps extends VerticalProps {
+  hasSmallLegend?: boolean;
 }
 
 const Wrapper = styled.div`
@@ -78,69 +80,51 @@ const Empty = styled.h2`
   line-height: 170px;
 `;
 
-const WrapperChart = styled.ul`
+const WrapperChart = styled.ul<VerticalProps>`
   list-style: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  height: 200px;
+
+  ${({ isVertical, theme }) =>
+    isVertical &&
+    css`
+      display: flex;
+      flex-direction: row;
+    `}
 `;
 
-const Row = styled.li<LoadingProps>`
+const Row = styled.li<VerticalProps>`
   width: 100%;
   display: flex;
   align-items: center;
-  margin-top: 10px;
   position: relative;
 
-  ${({ isLoading, theme }) =>
-    isLoading &&
-    `
-    ::before {
-      content: '';
-      width: 100%;
-      height: 25px;
-      background: transparent;
-      background-image: linear-gradient(
-        to right,
-        #2c2c2e 0%,
-        #2c2c2e 10%,
-        #2c2c2e 40%,
-        #2c2c2e 100%
-      );
-      background-repeat: no-repeat;
-      background-size: 100% 50px;
-      display: inline-block;
-      position: absolute;
-      z-index: 1;
-
-      animation-duration: 1.5s;
-      animation-fill-mode: forwards;
-      animation-iteration-count: infinite;
-      animation-name: placeholderShimmer;
-      animation-timing-function: linear;
-
-      @keyframes placeholderShimmer {
-        0% {
-          background-position: -900px 0;
-        }
-        100% {
-          background-position: 900px 0;
-        }
-      }
-    }
-  `}
+  ${({ isVertical, theme }) =>
+    isVertical &&
+    css`
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-itens: center;
+    `}
 `;
 
-const Value = styled.span<LoadingProps>`
+const Value = styled.span<VerticalProps>`
   color: ${({ theme }) => theme.colors.chart.legend};
   margin-right: 15px;
   display: block;
   min-width: 20px;
   text-align: start;
 
-  ${({ isLoading, theme }) =>
-    isLoading &&
-    `
-    background-color: ${theme.colors.chart.background};
-    height: ${theme.metrics.fontSize.medium}
-  `}
+  ${({ isVertical, theme }) =>
+    isVertical &&
+    css`
+      text-align: center;
+      margin-right: 0px;
+      margin-bottom: 0px;
+    `}
 `;
 
 const resizeBar = (perc: string) => keyframes`
@@ -149,6 +133,15 @@ const resizeBar = (perc: string) => keyframes`
   }
   to {
     width: ${perc};
+  }
+`;
+
+const resizeBarVertical = (perc: string) => keyframes`
+  from {
+    height: 0px;
+  }
+  to {
+    height: ${perc};
   }
 `;
 
@@ -164,17 +157,6 @@ const Bar = styled.div<BarProps>`
     box-shadow: 0 0 6px rgba(33, 33, 33, 0.8);
   }
 
-  ${({ isLoading, theme }) =>
-    isLoading &&
-    `
-    cursor: default;
-    background-color: ${theme.colors.chart.background};
-
-    :hover {
-      box-shadow: none;
-    }
-  `}
-
   ::before {
     content: '';
     display: block;
@@ -188,9 +170,30 @@ const Bar = styled.div<BarProps>`
       ${resizeBar(size)} 1s ease-in-out
     `};
   }
+
+  ${({ isVertical, color, size }) =>
+    isVertical &&
+    css`
+      width: 100%;
+      max-width: 60%;
+      height: 100%;
+
+      ::before {
+        content: '';
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: ${size};
+        background-color: ${color};
+        width: 100%;
+        animation: ${resizeBarVertical(size)} 1s ease-in-out};
+        transform: rotate(180deg);
+      }
+    `}
 `;
 
-const Legend = styled.span<LoadingProps>`
+const Legend = styled.span<LegendProps>`
   color: ${({ theme }) => theme.colors.chart.legend};
   margin-left: 20px;
   min-width: 150px;
@@ -199,12 +202,29 @@ const Legend = styled.span<LoadingProps>`
   overflow: auto;
   text-overflow: ellipsis;
 
-  ${({ isLoading, theme }) =>
-    isLoading &&
-    `
-    background-color: ${theme.colors.chart.background};
-    height: ${theme.metrics.fontSize.medium}
-  `}
+  ${({ hasSmallLegend }) =>
+    hasSmallLegend &&
+    css`
+      min-width: 90px;
+    `}
+
+  ${({ isVertical, theme }) =>
+    isVertical &&
+    css`
+      min-width: 80px;
+      text-align: center;
+      margin-left: 0px;
+      margin-top: 8px;
+      font-size: ${theme.metrics.fontSize.xsmall};
+    `}
+`;
+
+const LoadingWrapper = styled.div`
+  width: 100%;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 export default {
@@ -219,4 +239,5 @@ export default {
   Header,
   Back,
   BackWrapper,
+  LoadingWrapper,
 };

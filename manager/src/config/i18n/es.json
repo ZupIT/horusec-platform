@@ -82,6 +82,7 @@
     "CANCEL": "Cancelar",
     "SAVE": "Guardar",
     "TITLE": "Gestión de los espacios de trabajo",
+    "NO_FAVORITE": "Ningún espacio de trabajo configurado como favorito",
     "TABLE": {
       "NAME": "Nombre",
       "DESCRIPTION": "Descripción",
@@ -90,7 +91,8 @@
       "REMOVE": "Borrar",
       "EDIT": "Editar",
       "USERS": "Usuarios del espacio de trabajo",
-      "TOKENS": "Fichas"
+      "TOKENS": "Fichas",
+      "FAVORITE": "Favorito"
     },
     "DESCRIPTION": "Descripción",
     "ACTION": "Acción",

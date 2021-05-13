@@ -22,12 +22,11 @@ import { Webhook } from 'helpers/interfaces/Webhook';
 import { useTheme } from 'styled-components';
 import { get } from 'lodash';
 import webhookService from 'services/webhook';
-
-import HandleWebhook from './Handle';
-
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
 import useWorkspace from 'helpers/hooks/useWorkspace';
+
+import HandleWebhook from './Handle';
 
 const Webhooks: React.FC = () => {
   const { t } = useTranslation();

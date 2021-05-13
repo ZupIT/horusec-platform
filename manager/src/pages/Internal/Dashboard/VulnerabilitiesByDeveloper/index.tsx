@@ -21,6 +21,7 @@ import { BarChart } from 'components';
 import { get } from 'lodash';
 import { useTheme } from 'styled-components';
 import { VulnerabilitiesByAuthor } from 'helpers/interfaces/DashboardData';
+import { orderBy } from 'lodash';
 
 interface Props {
   data: VulnerabilitiesByAuthor[];
@@ -55,7 +56,7 @@ const VulnerabilitiesByDeveloper: React.FC<Props> = ({ isLoading, data }) => {
 
     setLayeredDeveloper(null);
     setLastLayer(false);
-    setChartData(formatted);
+    setChartData(orderBy(formatted, (item) => item.value, 'desc'));
   };
 
   const formatSecondLayer = (rowKey: string) => {
