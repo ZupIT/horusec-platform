@@ -55,11 +55,11 @@ spec:
           {{- end }}
           readinessProbe:
             httpGet:
-              path: /api/health
+              path: /auth/health
               port: http
           livenessProbe:
             httpGet:
-              path: /api/health
+              path: /auth/health
               port: http
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
