@@ -104,21 +104,13 @@ to check full docker compose installation docs.
 
 ### Install with helm:
 
-@todo
+Each release contains its own helm files for that version, which can be found 
+[here](https://github.com/ZupIT/horusec-platform/releases), they can also be found at `deployments/helm`.
+In both cases they will be separated by each service of the architecture.
 
-The helm files for each service can be found at `deployments/helm`.
-
-Click [here](https://horusec.io/docs/web/installation/install-with-helm) to check the helm installation docs.
+Click [here](https://horusec.io/docs/web/installation/install-with-helm) to check the complete helm installation docs.
 
 ### Install with horusec admin:
-
-@todo
-
-### Install with horusec operator:
-
-@todo
-
-### Install with terraform:
 
 @todo
 
