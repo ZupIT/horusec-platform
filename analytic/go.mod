@@ -3,7 +3,7 @@ module github.com/ZupIT/horusec-platform/analytic
 go 1.16
 
 require (
-	github.com/ZupIT/horusec-devkit v1.0.0
+	github.com/ZupIT/horusec-devkit v1.0.1
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
 	github.com/briandowns/spinner v1.12.0
 	github.com/go-chi/chi v4.1.2+incompatible
