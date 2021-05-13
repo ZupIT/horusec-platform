@@ -21,7 +21,7 @@ import { Calendar } from 'components';
 import { FilterValues } from 'helpers/interfaces/FilterValues';
 import useWorkspace from 'helpers/hooks/useWorkspace';
 import { ObjectLiteral } from 'helpers/interfaces/ObjectLiteral';
-import { Formik } from 'formik';
+import { Formik, FormikProps } from 'formik';
 import * as Yup from 'yup';
 import SearchSelect from 'components/SearchSelect';
 import useRepository from 'helpers/hooks/useRepository';
@@ -38,6 +38,8 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
     setCurrentRepository,
     allRepositories,
   } = useRepository();
+
+  const formikRef = React.createRef<FormikProps<FilterValues>>();
 
   const fixedRanges = [
     {
@@ -87,14 +89,19 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
     type: Yup.string().oneOf(['workspace', 'repository']).required(),
   });
 
-  const initialValues: FilterValues = {
-    period: fixedRanges[0].value,
-    initialDate: firstYear,
-    finalDate: today,
-    repositoryID: currentRepository?.repositoryID,
-    workspaceID: currentWorkspace?.workspaceID,
-    type,
-  };
+  useEffect(() => {
+    function setValues() {
+      formikRef.current.setFieldValue(
+        'repositoryID',
+        currentRepository?.repositoryID
+      );
+      formikRef.current.setFieldValue(
+        'workspaceID',
+        currentWorkspace?.workspaceID
+      );
+    }
+    setValues();
+  }, [currentRepository?.repositoryID, currentWorkspace?.workspaceID]);
 
   useEffect(() => {
     if (type === 'repository' && !currentRepository?.repositoryID) {
@@ -113,16 +120,30 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
     lastMonth: [lastMonth, today],
   };
 
+  const initialValues: FilterValues = {
+    period: fixedRanges[0].value,
+    initialDate: getRangeOfPeriod[fixedRanges[0].value][0],
+    finalDate: getRangeOfPeriod[fixedRanges[0].value][1],
+    repositoryID: currentRepository?.repositoryID,
+    workspaceID: currentWorkspace?.workspaceID,
+    type,
+  };
+
   return (
     <Formik
       initialValues={initialValues}
       validationSchema={ValidationScheme}
-      enableReinitialize
+      innerRef={formikRef}
       onSubmit={(values) => {
-        values.initialDate = getRangeOfPeriod[values.period][0];
-        values.finalDate = getRangeOfPeriod[values.period][1];
-        onApply(values);
+        if (values.period !== 'customRange') {
+          values.initialDate = getRangeOfPeriod[values.period][0];
+          values.finalDate = getRangeOfPeriod[values.period][1];
+        } else {
+          values.initialDate = new Date(values.initialDate);
+          values.finalDate = new Date(values.finalDate);
+        }
         if (values?.repositoryID) setCurrentRepository(values.repositoryID);
+        onApply(values);
       }}
     >
       {(props) => (
@@ -180,4 +201,4 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
   );
 };
 
-export default Filters;
+export default React.memo(Filters);

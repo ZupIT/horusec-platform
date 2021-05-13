@@ -21,6 +21,7 @@ compose-dev-up:
 compose-dev:
 	$(DOCKER_COMPOSE) -f deployments/compose/$(COMPOSE_DEV_FILE_NAME) down
 	$(DOCKER_COMPOSE) -f deployments/compose/$(COMPOSE_DEV_FILE_NAME) up -d --build
+	make migrate-up
 	echo wait until the horusec services finishes to build
 	sleep 110
 	docker restart horusec-vulnerability
