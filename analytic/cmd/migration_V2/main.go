@@ -1,9 +1,7 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
-	"os"
 	"time"
 
 	"github.com/google/uuid"
@@ -19,7 +17,7 @@ import (
 
 const (
 	EnvAnalyticDatabaseURI                   = "HORUSEC_DATABASE_ANALYTIC_SQL_URI"
-	DefaultAnalyticDatabaseURIValue          = "postgresql://root:root@localhost:5432/horusec_db?sslmode=disable"
+	DefaultAnalyticDatabaseURIValue          = "postgresql://root:root@localhost:5432/horusec_analytic_db?sslmode=disable"
 	MessageFailedToConnectToAnalyticDatabase = "failed to connect to analytic database, please check your uri informed in HORUSEC_DATABASE_ANALYTIC_SQL_URI env variable"
 	EnvHorusecDatabaseURI                    = "HORUSEC_DATABASE_HORUSEC_SQL_URI"
 	DefaultHorusecDatabaseURIValue           = "postgresql://root:root@localhost:5432/horusec_db?sslmode=disable"
@@ -38,25 +36,12 @@ func main() {
 		analyticMigration.loggingRegisterBeingMigrated(analysis.WorkspaceName, analysis.RepositoryName,
 			analysis.WorkspaceID, analysis.RepositoryID, analysis.CreatedAt, len(analysis.AnalysisVulnerabilities))
 
-		analysisPointer := &analysis
-		if err := analyticMigration.migrateAnalysis(analysisPointer); err == nil {
-
+		if err := analyticMigration.migrateAnalysis(&analysis); err == nil {
+			analyticMigration.setSuccessMigrationInSummary(analysis.ID)
 		}
 	}
 
-	if len(summary["failed"]) > 0 {
-		f, _ := os.Create("/tmp/v1-2-v2-horusec-analytic-log-error")
-		w := bufio.NewWriter(f)
-		w.WriteString(logError)
-		w.Flush()
-	}
-
-	fmt.Println()
-	fmt.Print("the analytic data migration is finished:")
-	fmt.Println()
-	fmt.Printf(NoticeColor, fmt.Sprintf(`successfuly: %d`, len(summary["successfuly"])))
-	fmt.Println()
-	fmt.Printf(ErrorColor, fmt.Sprintf(`failed: %d`, len(summary["failed"])))
+	logger.LogInfo("test")
 }
 
 type AnalyticMigrationV2 struct {
@@ -138,28 +123,32 @@ func (a *AnalyticMigrationV2) loggingRegisterBeingMigrated(workspaceName, reposi
 	logger.LogInfo(message)
 }
 
-func (a *AnalyticMigrationV2) setFailedMigrationInSummary(analysisID uuid.UUID, err error) {
+func (a *AnalyticMigrationV2) setFailedMigrationInSummary(analysisID uuid.UUID, err error) error {
 	a.summary[SummaryFailed] = append(a.summary[analysisID.String()], err.Error())
+
+	return err
 }
 
 func (a *AnalyticMigrationV2) setSuccessMigrationInSummary(analysisID uuid.UUID) {
 	a.summary[SummarySuccess] = append(a.summary[analysisID.String()])
 }
 
-func (a *AnalyticMigrationV2) migrateAnalysis(analysis *analysisEntities.Analysis) {
+func (a *AnalyticMigrationV2) migrateAnalysis(analysis *analysisEntities.Analysis) error {
 	if err := a.dashboardController.AddVulnerabilitiesByAuthor(analysis); err != nil {
-		a.setFailedMigrationInSummary(analysis.ID, err)
+		return a.setFailedMigrationInSummary(analysis.ID, err)
 	}
 
 	if err := a.dashboardController.AddVulnerabilitiesByLanguage(analysis); err != nil {
-		a.setFailedMigrationInSummary(analysis.ID, err)
+		return a.setFailedMigrationInSummary(analysis.ID, err)
 	}
 
 	if err := a.dashboardController.AddVulnerabilitiesByRepository(analysis); err != nil {
-		a.setFailedMigrationInSummary(analysis.ID, err)
+		return a.setFailedMigrationInSummary(analysis.ID, err)
 	}
 
 	if err := a.dashboardController.AddVulnerabilitiesByTime(analysis); err != nil {
-		a.setFailedMigrationInSummary(analysis.ID, err)
+		return a.setFailedMigrationInSummary(analysis.ID, err)
 	}
+
+	return nil
 }
