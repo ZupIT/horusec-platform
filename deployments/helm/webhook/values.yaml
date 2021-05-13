@@ -85,6 +85,12 @@ env:
     value: "5672"
   - name: "HORUSEC_HTTP_TIMEOUT"
     value: "60"
+  - name: "HORUSEC_GRPC_AUTH_URL"
+    value: "auth-horusec-auth-helm:8007"
+  - name: "HORUSEC_GRPC_USE_CERTS"
+    value: "false"
+  - name: "HORUSEC_GRPC_CERT_PATH"
+    value: ""
 
 envFromSecret:
   - name: "HORUSEC_BROKER_USERNAME"
