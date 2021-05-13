@@ -23,7 +23,7 @@ import {
 } from 'helpers/localStorage/currentUser';
 import { AxiosResponse, AxiosError } from 'axios';
 import { User } from 'helpers/interfaces/User';
-import { getAccessToken, getRefreshToken } from 'helpers/localStorage/tokens';
+import { getRefreshToken } from 'helpers/localStorage/tokens';
 import { LoginParams } from 'helpers/interfaces/LoginParams';
 
 const login = (params: LoginParams) => {
@@ -95,7 +95,6 @@ const verifyUniqueUsernameEmail = (email: string, username: string) => {
 };
 
 const callRenewToken = async (): Promise<User | AxiosError> => {
-  const accessToken = getAccessToken();
   const refreshToken = getRefreshToken();
 
   const handleLogout = () => {

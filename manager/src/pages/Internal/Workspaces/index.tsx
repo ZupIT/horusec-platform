@@ -16,7 +16,14 @@
 
 import React, { useEffect, useState } from 'react';
 import Styled from './styled';
-import { SearchBar, Button, Dialog, Datatable, Datasource } from 'components';
+import {
+  SearchBar,
+  Button,
+  Dialog,
+  Datatable,
+  Datasource,
+  Icon,
+} from 'components';
 import { useTranslation } from 'react-i18next';
 import useWorkspace from 'helpers/hooks/useWorkspace';
 import { Workspace } from 'helpers/interfaces/Workspace';
@@ -40,7 +47,12 @@ const Workspaces: React.FC = () => {
   const { t } = useTranslation();
   const { dispatchMessage } = useResponseMessage();
   const { showSuccessFlash } = useFlashMessage();
-  const { allWorkspaces, fetchAllWorkspaces } = useWorkspace();
+  const {
+    allWorkspaces,
+    fetchAllWorkspaces,
+    setAsFavoriteWorkspace,
+    favoriteWorkspace,
+  } = useWorkspace();
   const { authType } = getCurrentConfig();
 
   const [deleteIsLoading, setDeleteIsLoading] = useState(false);
@@ -116,6 +128,15 @@ const Workspaces: React.FC = () => {
       </Styled.Options>
 
       <Styled.Content>
+        <Styled.Favorite>
+          <Icon name="favorite" />
+          {favoriteWorkspace
+            ? favoriteWorkspace.name
+            : t('WORKSPACES_SCREEN.NO_FAVORITE')}
+        </Styled.Favorite>
+      </Styled.Content>
+
+      <Styled.Content>
         <Styled.Title>{t('WORKSPACES_SCREEN.TITLE')}</Styled.Title>
 
         <Datatable
@@ -177,6 +198,12 @@ const Workspaces: React.FC = () => {
                 title: t('WORKSPACES_SCREEN.TABLE.TOKENS'),
                 icon: 'lock',
                 function: () => setWorkspaceToManagerTokens(row),
+              });
+
+              data.actions.push({
+                title: t('WORKSPACES_SCREEN.TABLE.FAVORITE'),
+                icon: 'favorite',
+                function: () => setAsFavoriteWorkspace(row),
               });
             }
             return data;

@@ -80,6 +80,7 @@
     "CANCEL": "Cancel",
     "SAVE": "Save",
     "TITLE": "Workspace management",
+    "NO_FAVORITE": "No workspace set as favorite",
     "TABLE": {
       "NAME": "Name",
       "DESCRIPTION": "Description",
@@ -88,7 +89,8 @@
       "REMOVE": "Delete",
       "EDIT": "Edit",
       "USERS": "Workspace users",
-      "TOKENS": "Tokens"
+      "TOKENS": "Tokens",
+      "FAVORITE": "Set Favorite"
     },
     "DESCRIPTION": "Description",
     "ACTION": "Action",
