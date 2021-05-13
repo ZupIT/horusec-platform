@@ -60,7 +60,7 @@ make run-web
 ```
 
 After executing the command, the Horusec [image](https://hub.docker.com/r/horuszup/horusec-all-in-one) 
-will start to install all dependencies and services. After finished it will present the following message
+will start to install all dependencies and services. After finished, the container logs will present the following message
 `HORUSEC WEB IS UP AND CAN BE ACCESSED IN -> http://localhost:8043/auth`.
 
 After that, the application will be running, with all default values, the latest versions, and
