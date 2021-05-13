@@ -40,6 +40,9 @@ func (e *Event) consumeQueues() IEvent {
 	go e.broker.Consume(
 		queues.HorusecAnalyticTimes.ToString(), exchange.NewAnalysis.ToString(), exchange.Fanout.ToString(),
 		func(pack packet.IPacket) { e.handleNewAnalysis(pack, queues.HorusecAnalyticTimes) })
+	go e.broker.Consume(
+		queues.HorusecAnalyticTimes.ToString(), exchange.UpdateAnalysis.ToString(), exchange.Fanout.ToString(),
+		func(pack packet.IPacket) { e.handleNewAnalysis(pack, queues.HorusecAnalyticTimes) })
 	return e
 }
 

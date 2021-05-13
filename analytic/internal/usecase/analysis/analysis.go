@@ -184,11 +184,16 @@ func (u *UseCase) newVulnerabilitiesByLanguage(language languages.Language,
 }
 
 func (u *UseCase) ParseAnalysisToVulnerabilitiesByTime(
-	analysisEntity *analysis.Analysis) (entititesByTime []dashboard.VulnerabilitiesByTime) {
+	analysisEntity *analysis.Analysis, isNew bool) (entititesByTime []dashboard.VulnerabilitiesByTime) {
+	createdAt := analysisEntity.CreatedAt
+	if !isNew {
+		createdAt = time.Now()
+	}
+
 	entityToAppend := &dashboard.VulnerabilitiesByTime{
 		Vulnerability: dashboard.Vulnerability{
 			VulnerabilityID: uuid.New(),
-			CreatedAt:       time.Now(),
+			CreatedAt:       createdAt,
 			Active:          true,
 			WorkspaceID:     analysisEntity.WorkspaceID,
 			RepositoryID:    analysisEntity.RepositoryID,
