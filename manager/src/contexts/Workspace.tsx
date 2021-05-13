@@ -62,15 +62,20 @@ const WorkspaceProvider = ({ children }: { children: JSX.Element }) => {
   };
 
   const handleSetCurrentWorkspace = (workspace: Workspace) => {
-    const currentUser = getCurrentUser();
-    workspace = {
-      ...workspace,
-      role: currentUser.isApplicationAdmin ? roles.ADMIN : workspace.role,
-    };
-    setCurrentWorkspace(workspace);
+    if (workspace) {
+      const currentUser = getCurrentUser();
+      workspace = {
+        ...workspace,
+        role: currentUser.isApplicationAdmin ? roles.ADMIN : workspace.role,
+      };
+      setCurrentWorkspace(workspace);
 
-    const isAdmin = workspace?.role === roles.ADMIN;
-    setIsAdminOfWorkspace(isAdmin);
+      const isAdmin = workspace?.role === roles.ADMIN;
+      setIsAdminOfWorkspace(isAdmin);
+    } else {
+      setCurrentWorkspace(null);
+      setIsAdminOfWorkspace(false);
+    }
   };
 
   const fetchAll = (redirect?: boolean) => {
@@ -102,6 +107,7 @@ const WorkspaceProvider = ({ children }: { children: JSX.Element }) => {
         }
       })
       .catch((err) => {
+        console.log(err);
         dispatchMessage(err?.response?.data);
         if (redirect) history.replace('/home/add-workspace');
       });
