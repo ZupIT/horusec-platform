@@ -188,7 +188,7 @@ func (u *UseCase) ParseAnalysisToVulnerabilitiesByTime(
 	entityToAppend := &dashboard.VulnerabilitiesByTime{
 		Vulnerability: dashboard.Vulnerability{
 			VulnerabilityID: uuid.New(),
-			CreatedAt:       analysisEntity.CreatedAt,
+			CreatedAt:       time.Now(),
 			Active:          true,
 			WorkspaceID:     analysisEntity.WorkspaceID,
 			RepositoryID:    analysisEntity.RepositoryID,
