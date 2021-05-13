@@ -45,7 +45,7 @@ to facilitate the visualization and management of vulnerabilities.
 
 There are several ways to install horusec platform in your environment, choose the one that is most comfortable for you.
 
-Just remember to change the default environment variables values to the new and secure values.
+Just remember to change the default environment variables values to the new and secure ones.
 
 In some types of installation we use a `make` command to simplify the process.
 If you want to know everything that will be executed, take a look at the `Makefile` located at the root of the project.
@@ -60,7 +60,7 @@ make run-web
 ```
 
 After executing the command, the Horusec [image](https://hub.docker.com/r/horuszup/horusec-all-in-one) 
-will start to install all dependencies and services, after finished it will present the following message
+will start to install all dependencies and services. After finished it will present the following message
 `HORUSEC WEB IS UP AND CAN BE ACCESSED IN -> http://localhost:8043/auth`.
 
 After that, the application will be running, with all default values, the latest versions, and
@@ -97,7 +97,7 @@ Password: Devpass0*
 ```
 
 By default, the docker compose file is configured to perform a standard installation. 
-In the case of production environments, be sure to change the values of the environment variables to new and secure values.
+In the case of production environments, be sure to change the values of the environment variables to new and secure ones.
 
 Click [here](https://horusec.io/docs/web/installation/install-with-docker-compose) 
 to check full docker compose installation docs.
