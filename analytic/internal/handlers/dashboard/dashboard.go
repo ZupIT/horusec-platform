@@ -7,7 +7,7 @@ import (
 
 	controller "github.com/ZupIT/horusec-platform/analytic/internal/controllers/dashboard"
 	_ "github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard/response" // [swagger-usage]
-	useCase "github.com/ZupIT/horusec-platform/analytic/internal/usecase/dashboard"
+	useCase "github.com/ZupIT/horusec-platform/analytic/internal/usecases/dashboard"
 )
 
 type Handler struct {
@@ -64,15 +64,17 @@ func (h *Handler) GetAllChartsByRepository(w netHTTP.ResponseWriter, r *netHTTP.
 }
 
 func (h *Handler) getAllCharts(w netHTTP.ResponseWriter, r *netHTTP.Request) {
-	filter, err := h.useCase.ExtractFilterDashboard(r)
+	filter, err := h.useCase.FilterFromRequest(r)
 	if err != nil {
 		httpUtil.StatusBadRequest(w, err)
 		return
 	}
+
 	result, err := h.controller.GetAllDashboardCharts(filter)
 	if err != nil {
 		httpUtil.StatusInternalServerError(w, err)
 		return
 	}
+
 	httpUtil.StatusOK(w, result)
 }

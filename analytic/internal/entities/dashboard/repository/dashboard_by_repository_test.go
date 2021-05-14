@@ -1,4 +1,4 @@
-package repositories
+package repository
 
 import (
 	"testing"
@@ -8,24 +8,24 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestParseListVulnByAuthorToListResponse(t *testing.T) {
+func TestParseListVulnByRepositoryToListResponse(t *testing.T) {
 	t.Run("Parse to response correctly", func(t *testing.T) {
-		vulns := []*VulnerabilitiesByAuthor{
-			&VulnerabilitiesByAuthor{
-				Author: "zup.com.br",
+		vulns := []*VulnerabilitiesByRepository{
+			&VulnerabilitiesByRepository{
+				RepositoryName: "my-repository",
 				Vulnerability: response2.Vulnerability{
 					CriticalVulnerability: 1,
 				},
 			},
 		}
-		response := ParseListVulnByAuthorToListResponse(vulns)
+		response := ParseListVulnByRepositoryToListResponse(vulns)
 		assert.Equal(t, 1, len(response))
 		assert.Equal(t, 1, response[0].Critical.Count)
 	})
 }
 
-func TestVulnerabilitiesByAuthor_GetTable(t *testing.T) {
+func TestVulnerabilitiesByRepository_GetTable(t *testing.T) {
 	t.Run("Should get table correctly", func(t *testing.T) {
-		assert.Equal(t, "vulnerabilities_by_author", (&VulnerabilitiesByAuthor{}).GetTable())
+		assert.Equal(t, "vulnerabilities_by_repository", (&VulnerabilitiesByRepository{}).GetTable())
 	})
 }

@@ -22,7 +22,7 @@ import (
 	"github.com/ZupIT/horusec-platform/analytic/internal/handlers/health"
 	"github.com/ZupIT/horusec-platform/analytic/internal/repositories/dashboard"
 	"github.com/ZupIT/horusec-platform/analytic/internal/router"
-	"github.com/ZupIT/horusec-platform/analytic/internal/usecase/dashboard"
+	"github.com/ZupIT/horusec-platform/analytic/internal/usecases/dashboard"
 	"github.com/google/wire"
 )
 

@@ -3,7 +3,6 @@
 package providers
 
 import (
-	dashboardfilter "github.com/ZupIT/horusec-platform/analytic/internal/usecase/dashboard"
 	"github.com/google/wire"
 
 	"github.com/ZupIT/horusec-devkit/pkg/services/app"
@@ -17,12 +16,13 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/services/middlewares"
 
 	"github.com/ZupIT/horusec-platform/analytic/config/cors"
-	controllerDashboard "github.com/ZupIT/horusec-platform/analytic/internal/controllers/dashboard"
-	dashboardEvent "github.com/ZupIT/horusec-platform/analytic/internal/events/dashboard"
+	dashboardController "github.com/ZupIT/horusec-platform/analytic/internal/controllers/dashboard"
+	dashboardEvents "github.com/ZupIT/horusec-platform/analytic/internal/events/dashboard"
 	"github.com/ZupIT/horusec-platform/analytic/internal/handlers/dashboard"
 	"github.com/ZupIT/horusec-platform/analytic/internal/handlers/health"
 	dashboardRepository "github.com/ZupIT/horusec-platform/analytic/internal/repositories/dashboard"
 	"github.com/ZupIT/horusec-platform/analytic/internal/router"
+	dashboardUseCases "github.com/ZupIT/horusec-platform/analytic/internal/usecases/dashboard"
 )
 
 var devKitProviders = wire.NewSet(
@@ -47,7 +47,7 @@ var repositoriesProviders = wire.NewSet(
 )
 
 var controllersProviders = wire.NewSet(
-	controllerDashboard.NewControllerDashboardRead,
+	dashboardController.NewControllerDashboardRead,
 )
 
 var handlersProviders = wire.NewSet(
@@ -56,11 +56,11 @@ var handlersProviders = wire.NewSet(
 )
 
 var eventsProviders = wire.NewSet(
-	dashboardEvent.NewDashboardEvents,
+	dashboardEvents.NewDashboardEvents,
 )
 
 var useCasesProviders = wire.NewSet(
-	dashboardfilter.NewUseCaseDashboard,
+	dashboardUseCases.NewUseCaseDashboard,
 )
 
 func Initialize(_ string) (router.IRouter, error) {

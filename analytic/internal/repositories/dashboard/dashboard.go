@@ -5,7 +5,7 @@ import (
 
 	"github.com/ZupIT/horusec-devkit/pkg/services/database"
 
-	repositoriesEntities "github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard/repositories"
+	repositoriesEntities "github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard/repository"
 	"github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard/response"
 	dashboardEnums "github.com/ZupIT/horusec-platform/analytic/internal/enums/dashboard"
 )
