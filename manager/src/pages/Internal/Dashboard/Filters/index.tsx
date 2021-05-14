@@ -101,6 +101,7 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
       );
     }
     setValues();
+    // eslint-disabled-next-line
   }, [currentRepository?.repositoryID, currentWorkspace?.workspaceID]);
 
   useEffect(() => {
