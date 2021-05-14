@@ -53,6 +53,14 @@ spec:
                   name: {{ .key }}
                   key: {{ .key }}
           {{- end }}
+          readinessProbe:
+            httpGet:
+              path: /auth/health
+              port: http
+          livenessProbe:
+            httpGet:
+              path: /auth/health
+              port: http
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}
