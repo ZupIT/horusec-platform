@@ -11,8 +11,6 @@ import (
 	databaseConfig "github.com/ZupIT/horusec-devkit/pkg/services/database/config"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/env"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
-	dashboardController "github.com/ZupIT/horusec-platform/analytic/internal/controllers/dashboard"
-	dashboardRepository "github.com/ZupIT/horusec-platform/analytic/internal/repositories/dashboard"
 )
 
 const (
@@ -26,6 +24,10 @@ const (
 	MessageRegisterBeingMigrated             = "Stating to migrate analysis with: WorkspaceID -> %s | Workspace Name -> %s | Repository ID %s | Repository Name %s | Created At -> %v | Total Of Vulnerabilities -> %d"
 	SummarySuccess                           = "success"
 	SummaryFailed                            = "failed"
+	TableAddVulnerabilitiesByAuthor          = "vulnerabilities_by_author"
+	TableAddVulnerabilitiesByLanguage        = "vulnerabilities_by_language"
+	TableAddVulnerabilitiesByRepository      = "vulnerabilities_by_repository"
+	TableAddVulnerabilitiesByTime            = "vulnerabilities_by_time"
 )
 
 func main() {
@@ -41,24 +43,29 @@ func main() {
 		}
 	}
 
-	logger.LogInfo("test")
+	analyticMigration.printResults(len(allPastAnalysis))
 }
 
 type AnalyticMigrationV2 struct {
 	dbConnectionAnalytic *database.Connection
 	dbConnectionHorusec  *database.Connection
-	dashboardController  dashboardController.IWriteController
-	summary              map[string][]string
+	//dashboardUseCases    dashboardUseCases.IUseCase
+	//dashboardController  dashboard.IWriteController
+	summary map[string][]string
 }
 
 func NewAnalyticMigrationV2() *AnalyticMigrationV2 {
-	analyticMigrationV2 := &AnalyticMigrationV2{
+	test := &AnalyticMigrationV2{
 		dbConnectionAnalytic: getAnalyticDatabaseConnection(),
 		dbConnectionHorusec:  getHorusecDatabaseConnection(),
 		summary:              setSummary(),
 	}
 
-	return analyticMigrationV2.setDashboardAnalyticController()
+	//repo := dashboard2.NewRepoDashboard(test.dbConnectionAnalytic)
+
+	//test.dashboardController = dashboard.NewControllerDashboardWrite(repo, test.dbConnectionAnalytic.Write)
+
+	return test
 }
 
 func setSummary() map[string][]string {
@@ -92,13 +99,6 @@ func getHorusecDatabaseConnection() *database.Connection {
 	return dbConnectionHorusec
 }
 
-func (a *AnalyticMigrationV2) setDashboardAnalyticController() *AnalyticMigrationV2 {
-	a.dashboardController = dashboardController.NewControllerDashboardWrite(
-		dashboardRepository.NewRepoDashboard(a.dbConnectionAnalytic))
-
-	return a
-}
-
 func (a *AnalyticMigrationV2) getAllAnalysisWithVulnerabilities() []analysisEntities.Analysis {
 	analysis := &[]analysisEntities.Analysis{}
 
@@ -123,32 +123,46 @@ func (a *AnalyticMigrationV2) loggingRegisterBeingMigrated(workspaceName, reposi
 	logger.LogInfo(message)
 }
 
-func (a *AnalyticMigrationV2) setFailedMigrationInSummary(analysisID uuid.UUID, err error) error {
-	a.summary[SummaryFailed] = append(a.summary[analysisID.String()], err.Error())
+func (a *AnalyticMigrationV2) setFailedMigrationInSummary(analysisID uuid.UUID, err error, table string) error {
+	message := fmt.Sprintf("failed to insert analsysis with id %d in table %s with error -> %v",
+		analysisID, table, err)
 
+	a.summary[SummaryFailed] = append(a.summary[analysisID.String()], message)
 	return err
 }
 
 func (a *AnalyticMigrationV2) setSuccessMigrationInSummary(analysisID uuid.UUID) {
-	a.summary[SummarySuccess] = append(a.summary[analysisID.String()])
+	a.summary[SummarySuccess] = append(a.summary[SummarySuccess], analysisID.String())
 }
 
-func (a *AnalyticMigrationV2) migrateAnalysis(analysis *analysisEntities.Analysis) error {
-	if err := a.dashboardController.AddVulnerabilitiesByAuthor(analysis); err != nil {
-		return a.setFailedMigrationInSummary(analysis.ID, err)
-	}
+func (a *AnalyticMigrationV2) migrateAnalysis(analysis *analysisEntities.Analysis) (err error) {
+	//if err := a.dashboardController.AddVulnerabilitiesByAuthor(analysis); err != nil {
+	//	return a.setFailedMigrationInSummary(analysis.ID, err, TableAddVulnerabilitiesByAuthor)
+	//}
+	//
+	//if err := a.dashboardController.AddVulnerabilitiesByLanguage(analysis); err != nil {
+	//	return a.setFailedMigrationInSummary(analysis.ID, err, TableAddVulnerabilitiesByLanguage)
+	//}
 
-	if err := a.dashboardController.AddVulnerabilitiesByLanguage(analysis); err != nil {
-		return a.setFailedMigrationInSummary(analysis.ID, err)
-	}
+	//if err := a.dashboardController.AddVulnerabilitiesByRepository(analysis); err != nil {
+	//	return a.setFailedMigrationInSummary(analysis.ID, err, TableAddVulnerabilitiesByRepository)
+	//}
 
-	if err := a.dashboardController.AddVulnerabilitiesByRepository(analysis); err != nil {
-		return a.setFailedMigrationInSummary(analysis.ID, err)
-	}
-
-	if err := a.dashboardController.AddVulnerabilitiesByTime(analysis); err != nil {
-		return a.setFailedMigrationInSummary(analysis.ID, err)
-	}
+	//if err := a.dashboardController.AddVulnerabilitiesByTime(analysis); err != nil {
+	//	return a.setFailedMigrationInSummary(analysis.ID, err, TableAddVulnerabilitiesByTime)
+	//}
 
 	return nil
+}
+
+func (a *AnalyticMigrationV2) printResults(total int) {
+	fmt.Println()
+	logger.LogWarn("MIGRATION FINISHED! CHECK THE RESULTS -->")
+	logger.LogWarn(fmt.Sprintf("TOTAL DE REGISTROS PARA MIGRAR: %d", total))
+	logger.LogWarn(fmt.Sprintf("TOTAL RECORDS THAT SUCCESSFULLY MIGRATED: %d", len(a.summary[SummarySuccess])))
+	logger.LogWarn(fmt.Sprintf("TOTAL RECORDS THAT FAILED TO MIGRATE: %d", len(a.summary[SummaryFailed])))
+}
+
+func (a *AnalyticMigrationV2) save(entity interface{}, table string) error {
+	return a.dbConnectionAnalytic.Write.Create(entity, table).GetError()
 }

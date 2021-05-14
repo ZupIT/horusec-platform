@@ -104,7 +104,7 @@ func TestRepoDashboard_GetDashboardTotalDevelopers(t *testing.T) {
 			Write: &database.Mock{},
 		}
 		repo := NewRepoDashboard(conn)
-		filter := &dashboard.FilterDashboard{
+		filter := &dashboard.Filters{
 			RepositoryID: uuid.New(),
 			WorkspaceID:  uuid.New(),
 			StartTime:    time.Now(),
@@ -122,7 +122,7 @@ func TestRepoDashboard_GetDashboardTotalDevelopers(t *testing.T) {
 			Write: &database.Mock{},
 		}
 		repo := NewRepoDashboard(conn)
-		filter := &dashboard.FilterDashboard{
+		filter := &dashboard.Filters{
 			RepositoryID: uuid.New(),
 			WorkspaceID:  uuid.New(),
 			StartTime:    time.Now(),
@@ -140,7 +140,7 @@ func TestRepoDashboard_GetDashboardTotalDevelopers(t *testing.T) {
 			Write: &database.Mock{},
 		}
 		repo := NewRepoDashboard(conn)
-		filter := &dashboard.FilterDashboard{
+		filter := &dashboard.Filters{
 			RepositoryID: uuid.New(),
 			WorkspaceID:  uuid.New(),
 			StartTime:    time.Now(),
@@ -162,7 +162,7 @@ func TestRepoDashboard_GetDashboardTotalRepositories(t *testing.T) {
 			Write: &database.Mock{},
 		}
 		repo := NewRepoDashboard(conn)
-		filter := &dashboard.FilterDashboard{
+		filter := &dashboard.Filters{
 			RepositoryID: uuid.New(),
 			WorkspaceID:  uuid.New(),
 			StartTime:    time.Now(),
@@ -180,7 +180,7 @@ func TestRepoDashboard_GetDashboardTotalRepositories(t *testing.T) {
 			Write: &database.Mock{},
 		}
 		repo := NewRepoDashboard(conn)
-		filter := &dashboard.FilterDashboard{
+		filter := &dashboard.Filters{
 			RepositoryID: uuid.New(),
 			WorkspaceID:  uuid.New(),
 			StartTime:    time.Now(),
@@ -198,7 +198,7 @@ func TestRepoDashboard_GetDashboardTotalRepositories(t *testing.T) {
 			Write: &database.Mock{},
 		}
 		repo := NewRepoDashboard(conn)
-		filter := &dashboard.FilterDashboard{
+		filter := &dashboard.Filters{
 			RepositoryID: uuid.New(),
 			WorkspaceID:  uuid.New(),
 			StartTime:    time.Now(),
@@ -219,7 +219,7 @@ func TestRepoDashboard_GetDashboardVulnBySeverity(t *testing.T) {
 			Write: &database.Mock{},
 		}
 		repo := NewRepoDashboard(conn)
-		filter := &dashboard.FilterDashboard{
+		filter := &dashboard.Filters{
 			RepositoryID: uuid.New(),
 			WorkspaceID:  uuid.New(),
 			StartTime:    time.Now(),
@@ -237,7 +237,7 @@ func TestRepoDashboard_GetDashboardVulnBySeverity(t *testing.T) {
 			Write: &database.Mock{},
 		}
 		repo := NewRepoDashboard(conn)
-		filter := &dashboard.FilterDashboard{
+		filter := &dashboard.Filters{
 			RepositoryID: uuid.New(),
 			WorkspaceID:  uuid.New(),
 			StartTime:    time.Now(),
@@ -256,7 +256,7 @@ func TestRepoDashboard_GetDashboardVulnBySeverity(t *testing.T) {
 			Write: &database.Mock{},
 		}
 		repo := NewRepoDashboard(conn)
-		filter := &dashboard.FilterDashboard{
+		filter := &dashboard.Filters{
 			RepositoryID: uuid.New(),
 			WorkspaceID:  uuid.New(),
 			StartTime:    time.Now(),
@@ -276,7 +276,7 @@ func TestRepoDashboard_GetDashboardVulnByAuthor(t *testing.T) {
 			Write: &database.Mock{},
 		}
 		repo := NewRepoDashboard(conn)
-		filter := &dashboard.FilterDashboard{
+		filter := &dashboard.Filters{
 			RepositoryID: uuid.New(),
 			WorkspaceID:  uuid.New(),
 			StartTime:    time.Now(),
@@ -294,7 +294,7 @@ func TestRepoDashboard_GetDashboardVulnByAuthor(t *testing.T) {
 			Write: &database.Mock{},
 		}
 		repo := NewRepoDashboard(conn)
-		filter := &dashboard.FilterDashboard{
+		filter := &dashboard.Filters{
 			RepositoryID: uuid.New(),
 			WorkspaceID:  uuid.New(),
 			StartTime:    time.Now(),
@@ -315,7 +315,7 @@ func TestRepoDashboard_GetDashboardVulnByAuthor(t *testing.T) {
 			Write: &database.Mock{},
 		}
 		repo := NewRepoDashboard(conn)
-		filter := &dashboard.FilterDashboard{
+		filter := &dashboard.Filters{
 			RepositoryID: uuid.New(),
 			WorkspaceID:  uuid.New(),
 			StartTime:    time.Now(),
@@ -336,7 +336,7 @@ func TestRepoDashboard_GetDashboardVulnByRepository(t *testing.T) {
 			Write: &database.Mock{},
 		}
 		repo := NewRepoDashboard(conn)
-		filter := &dashboard.FilterDashboard{
+		filter := &dashboard.Filters{
 			RepositoryID: uuid.New(),
 			WorkspaceID:  uuid.New(),
 			StartTime:    time.Now(),
@@ -354,7 +354,7 @@ func TestRepoDashboard_GetDashboardVulnByRepository(t *testing.T) {
 			Write: &database.Mock{},
 		}
 		repo := NewRepoDashboard(conn)
-		filter := &dashboard.FilterDashboard{
+		filter := &dashboard.Filters{
 			RepositoryID: uuid.New(),
 			WorkspaceID:  uuid.New(),
 			StartTime:    time.Now(),
@@ -375,7 +375,7 @@ func TestRepoDashboard_GetDashboardVulnByRepository(t *testing.T) {
 			Write: &database.Mock{},
 		}
 		repo := NewRepoDashboard(conn)
-		filter := &dashboard.FilterDashboard{
+		filter := &dashboard.Filters{
 			RepositoryID: uuid.New(),
 			WorkspaceID:  uuid.New(),
 			StartTime:    time.Now(),
@@ -396,7 +396,7 @@ func TestRepoDashboard_GetDashboardVulnByLanguage(t *testing.T) {
 			Write: &database.Mock{},
 		}
 		repo := NewRepoDashboard(conn)
-		filter := &dashboard.FilterDashboard{
+		filter := &dashboard.Filters{
 			RepositoryID: uuid.New(),
 			WorkspaceID:  uuid.New(),
 			StartTime:    time.Now(),
@@ -414,7 +414,7 @@ func TestRepoDashboard_GetDashboardVulnByLanguage(t *testing.T) {
 			Write: &database.Mock{},
 		}
 		repo := NewRepoDashboard(conn)
-		filter := &dashboard.FilterDashboard{
+		filter := &dashboard.Filters{
 			RepositoryID: uuid.New(),
 			WorkspaceID:  uuid.New(),
 			StartTime:    time.Now(),
@@ -435,7 +435,7 @@ func TestRepoDashboard_GetDashboardVulnByLanguage(t *testing.T) {
 			Write: &database.Mock{},
 		}
 		repo := NewRepoDashboard(conn)
-		filter := &dashboard.FilterDashboard{
+		filter := &dashboard.Filters{
 			RepositoryID: uuid.New(),
 			WorkspaceID:  uuid.New(),
 			StartTime:    time.Now(),
@@ -456,7 +456,7 @@ func TestRepoDashboard_GetDashboardVulnByTime(t *testing.T) {
 			Write: &database.Mock{},
 		}
 		repo := NewRepoDashboard(conn)
-		filter := &dashboard.FilterDashboard{
+		filter := &dashboard.Filters{
 			RepositoryID: uuid.New(),
 			WorkspaceID:  uuid.New(),
 			StartTime:    time.Now(),
@@ -474,7 +474,7 @@ func TestRepoDashboard_GetDashboardVulnByTime(t *testing.T) {
 			Write: &database.Mock{},
 		}
 		repo := NewRepoDashboard(conn)
-		filter := &dashboard.FilterDashboard{
+		filter := &dashboard.Filters{
 			RepositoryID: uuid.New(),
 			WorkspaceID:  uuid.New(),
 			StartTime:    time.Now(),
@@ -495,7 +495,7 @@ func TestRepoDashboard_GetDashboardVulnByTime(t *testing.T) {
 			Write: &database.Mock{},
 		}
 		repo := NewRepoDashboard(conn)
-		filter := &dashboard.FilterDashboard{
+		filter := &dashboard.Filters{
 			RepositoryID: uuid.New(),
 			WorkspaceID:  uuid.New(),
 			StartTime:    time.Now(),

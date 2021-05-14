@@ -6,17 +6,17 @@ import (
 	_ "github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard" // [swagger-usage]
 
 	controller "github.com/ZupIT/horusec-platform/analytic/internal/controllers/dashboard"
-	useCase "github.com/ZupIT/horusec-platform/analytic/internal/usecase/dashboard_filter"
+	useCase "github.com/ZupIT/horusec-platform/analytic/internal/usecase/dashboard"
 
 	httpUtil "github.com/ZupIT/horusec-devkit/pkg/utils/http"
 )
 
 type Handler struct {
-	controller controller.IReadController
-	useCase    useCase.IUseCaseDashboard
+	controller controller.IController
+	useCase    useCase.IUseCases
 }
 
-func NewDashboardHandler(dashboardController controller.IReadController) *Handler {
+func NewDashboardHandler(dashboardController controller.IController) *Handler {
 	return &Handler{
 		controller: dashboardController,
 		useCase:    useCase.NewUseCaseDashboard(),
@@ -70,7 +70,7 @@ func (h *Handler) getAllCharts(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 		httpUtil.StatusBadRequest(w, err)
 		return
 	}
-	result, err := h.controller.GetAllCharts(filter)
+	result, err := h.controller.GetAllDashboardCharts(filter)
 	if err != nil {
 		httpUtil.StatusInternalServerError(w, err)
 		return

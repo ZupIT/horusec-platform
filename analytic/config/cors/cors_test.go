@@ -7,7 +7,7 @@ import (
 )
 
 func TestNewCorsConfig(t *testing.T) {
-	t.Run("Should create instance of cors check if is not empty", func(t *testing.T) {
+	t.Run("should create instance of cors check if is not empty", func(t *testing.T) {
 		assert.NotEmpty(t, NewCorsConfig())
 	})
 }

@@ -19,31 +19,31 @@ func (m *Mock) Inactive(_ map[string]interface{}, _ string) error {
 	args := m.MethodCalled("Inactive")
 	return utilsMock.ReturnNilOrError(args, 0)
 }
-func (m *Mock) GetDashboardTotalDevelopers(_ *dashboard.FilterDashboard) (int, error) {
+func (m *Mock) GetDashboardTotalDevelopers(_ *dashboard.Filters) (int, error) {
 	args := m.MethodCalled("GetDashboardTotalDevelopers")
 	return args.Get(0).(int), utilsMock.ReturnNilOrError(args, 1)
 }
-func (m *Mock) GetDashboardTotalRepositories(_ *dashboard.FilterDashboard) (int, error) {
+func (m *Mock) GetDashboardTotalRepositories(_ *dashboard.Filters) (int, error) {
 	args := m.MethodCalled("GetDashboardTotalRepositories")
 	return args.Get(0).(int), utilsMock.ReturnNilOrError(args, 1)
 }
-func (m *Mock) GetDashboardVulnBySeverity(_ *dashboard.FilterDashboard) (*dashboard.Vulnerability, error) {
+func (m *Mock) GetDashboardVulnBySeverity(_ *dashboard.Filters) (*dashboard.Vulnerability, error) {
 	args := m.MethodCalled("GetDashboardVulnBySeverity")
 	return args.Get(0).(*dashboard.Vulnerability), utilsMock.ReturnNilOrError(args, 1)
 }
-func (m *Mock) GetDashboardVulnByAuthor(_ *dashboard.FilterDashboard) ([]*dashboard.VulnerabilitiesByAuthor, error) {
+func (m *Mock) GetDashboardVulnByAuthor(_ *dashboard.Filters) ([]*dashboard.VulnerabilitiesByAuthor, error) {
 	args := m.MethodCalled("GetDashboardVulnByAuthor")
 	return args.Get(0).([]*dashboard.VulnerabilitiesByAuthor), utilsMock.ReturnNilOrError(args, 1)
 }
-func (m *Mock) GetDashboardVulnByRepository(_ *dashboard.FilterDashboard) ([]*dashboard.VulnerabilitiesByRepository, error) {
+func (m *Mock) GetDashboardVulnByRepository(_ *dashboard.Filters) ([]*dashboard.VulnerabilitiesByRepository, error) {
 	args := m.MethodCalled("GetDashboardVulnByRepository")
 	return args.Get(0).([]*dashboard.VulnerabilitiesByRepository), utilsMock.ReturnNilOrError(args, 1)
 }
-func (m *Mock) GetDashboardVulnByLanguage(_ *dashboard.FilterDashboard) ([]*dashboard.VulnerabilitiesByLanguage, error) {
+func (m *Mock) GetDashboardVulnByLanguage(_ *dashboard.Filters) ([]*dashboard.VulnerabilitiesByLanguage, error) {
 	args := m.MethodCalled("GetDashboardVulnByLanguage")
 	return args.Get(0).([]*dashboard.VulnerabilitiesByLanguage), utilsMock.ReturnNilOrError(args, 1)
 }
-func (m *Mock) GetDashboardVulnByTime(_ *dashboard.FilterDashboard) ([]*dashboard.VulnerabilitiesByTime, error) {
+func (m *Mock) GetDashboardVulnByTime(_ *dashboard.Filters) ([]*dashboard.VulnerabilitiesByTime, error) {
 	args := m.MethodCalled("GetDashboardVulnByTime")
 	return args.Get(0).([]*dashboard.VulnerabilitiesByTime), utilsMock.ReturnNilOrError(args, 1)
 }

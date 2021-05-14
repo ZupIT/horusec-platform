@@ -6,7 +6,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type FilterDashboard struct {
+type Filters struct {
 	RepositoryID uuid.UUID
 	WorkspaceID  uuid.UUID
 	StartTime    time.Time

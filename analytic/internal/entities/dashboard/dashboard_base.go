@@ -3,16 +3,17 @@ package dashboard
 import (
 	"time"
 
-	"github.com/ZupIT/horusec-devkit/pkg/enums/severities"
-	"github.com/ZupIT/horusec-devkit/pkg/enums/vulnerability"
+	"github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard/response"
 
 	"github.com/google/uuid"
+
+	"github.com/ZupIT/horusec-devkit/pkg/enums/severities"
+	"github.com/ZupIT/horusec-devkit/pkg/enums/vulnerability"
 )
 
 type Vulnerability struct {
 	VulnerabilityID       uuid.UUID `json:"vulnerabilityID" gorm:"Column:vulnerability_id"`
 	CreatedAt             time.Time `json:"createdAt" gorm:"Column:created_at"`
-	Active                bool      `json:"active" gorm:"Column:active"`
 	WorkspaceID           uuid.UUID `json:"workspaceID" gorm:"Column:workspace_id"`
 	RepositoryID          uuid.UUID `json:"repositoryID" gorm:"Column:repository_id"`
 	CriticalVulnerability int       `json:"criticalVulnerability" gorm:"Column:critical_vulnerability"`
@@ -41,14 +42,14 @@ type Vulnerability struct {
 	UnknownCorrected      int       `json:"unknownCorrected" gorm:"Column:unknown_corrected"`
 }
 
-func (v *Vulnerability) ToResponseSeverity() ResponseSeverity {
-	responseSeverity := &ResponseSeverity{
-		Critical: &ResponseSeverityContAndTypes{Count: 0, Types: &ResponseVulnTypes{}},
-		High:     &ResponseSeverityContAndTypes{Count: 0, Types: &ResponseVulnTypes{}},
-		Medium:   &ResponseSeverityContAndTypes{Count: 0, Types: &ResponseVulnTypes{}},
-		Low:      &ResponseSeverityContAndTypes{Count: 0, Types: &ResponseVulnTypes{}},
-		Info:     &ResponseSeverityContAndTypes{Count: 0, Types: &ResponseVulnTypes{}},
-		Unknown:  &ResponseSeverityContAndTypes{Count: 0, Types: &ResponseVulnTypes{}},
+func (v *Vulnerability) ToResponseSeverity() response.BySeverities {
+	responseSeverity := &response.BySeverities{
+		Critical: &response.BySeverity{Count: 0, Types: &response.ByVulnerabilityTypes{}},
+		High:     &response.BySeverity{Count: 0, Types: &response.ByVulnerabilityTypes{}},
+		Medium:   &response.BySeverity{Count: 0, Types: &response.ByVulnerabilityTypes{}},
+		Low:      &response.BySeverity{Count: 0, Types: &response.ByVulnerabilityTypes{}},
+		Info:     &response.BySeverity{Count: 0, Types: &response.ByVulnerabilityTypes{}},
+		Unknown:  &response.BySeverity{Count: 0, Types: &response.ByVulnerabilityTypes{}},
 	}
 	responseSeverity = responseSeverity.SumVulnerabilityCritical(v)
 	responseSeverity = responseSeverity.SumVulnerabilityHigh(v)
@@ -59,99 +60,97 @@ func (v *Vulnerability) ToResponseSeverity() ResponseSeverity {
 	return *responseSeverity
 }
 
-// nolint:funlen,gocyclo // is not necessary unknown type and factory of severity
-func (v *Vulnerability) AddCountVulnerabilityBySeverity(
-	count int, severity severities.Severity, vulnType vulnerability.Type) {
+func (v *Vulnerability) AddCountVulnerabilityBySeverity(severity severities.Severity, vulnType vulnerability.Type) {
 	switch severity {
 	case severities.Critical:
-		v.AddCountVulnerabilityCritical(count, vulnType)
+		v.AddCountVulnerabilityCritical(vulnType)
 	case severities.High:
-		v.AddCountVulnerabilityHigh(count, vulnType)
+		v.AddCountVulnerabilityHigh(vulnType)
 	case severities.Medium:
-		v.AddCountVulnerabilityMedium(count, vulnType)
+		v.AddCountVulnerabilityMedium(vulnType)
 	case severities.Low:
-		v.AddCountVulnerabilityLow(count, vulnType)
+		v.AddCountVulnerabilityLow(vulnType)
 	case severities.Info:
-		v.AddCountVulnerabilityInfo(count, vulnType)
+		v.AddCountVulnerabilityInfo(vulnType)
 	case severities.Unknown:
-		v.AddCountVulnerabilityUnknown(count, vulnType)
+		v.AddCountVulnerabilityUnknown(vulnType)
 	}
 }
 
-func (v *Vulnerability) AddCountVulnerabilityCritical(count int, vulnType vulnerability.Type) {
+func (v *Vulnerability) AddCountVulnerabilityCritical(vulnType vulnerability.Type) {
 	switch vulnType {
 	case vulnerability.Vulnerability:
-		v.CriticalVulnerability += count
+		v.CriticalVulnerability++
 	case vulnerability.RiskAccepted:
-		v.CriticalRiskAccepted += count
+		v.CriticalRiskAccepted++
 	case vulnerability.FalsePositive:
-		v.CriticalFalsePositive += count
+		v.CriticalFalsePositive++
 	case vulnerability.Corrected:
-		v.CriticalCorrected += count
+		v.CriticalCorrected++
 	}
 }
 
-func (v *Vulnerability) AddCountVulnerabilityHigh(count int, vulnType vulnerability.Type) {
+func (v *Vulnerability) AddCountVulnerabilityHigh(vulnType vulnerability.Type) {
 	switch vulnType {
 	case vulnerability.Vulnerability:
-		v.HighVulnerability += count
+		v.HighVulnerability++
 	case vulnerability.RiskAccepted:
-		v.HighRiskAccepted += count
+		v.HighRiskAccepted++
 	case vulnerability.FalsePositive:
-		v.HighFalsePositive += count
+		v.HighFalsePositive++
 	case vulnerability.Corrected:
-		v.HighCorrected += count
+		v.HighCorrected++
 	}
 }
 
-func (v *Vulnerability) AddCountVulnerabilityMedium(count int, vulnType vulnerability.Type) {
+func (v *Vulnerability) AddCountVulnerabilityMedium(vulnType vulnerability.Type) {
 	switch vulnType {
 	case vulnerability.Vulnerability:
-		v.MediumVulnerability += count
+		v.MediumVulnerability++
 	case vulnerability.RiskAccepted:
-		v.MediumRiskAccepted += count
+		v.MediumRiskAccepted++
 	case vulnerability.FalsePositive:
-		v.MediumFalsePositive += count
+		v.MediumFalsePositive++
 	case vulnerability.Corrected:
-		v.MediumCorrected += count
+		v.MediumCorrected++
 	}
 }
 
-func (v *Vulnerability) AddCountVulnerabilityLow(count int, vulnType vulnerability.Type) {
+func (v *Vulnerability) AddCountVulnerabilityLow(vulnType vulnerability.Type) {
 	switch vulnType {
 	case vulnerability.Vulnerability:
-		v.LowVulnerability += count
+		v.LowVulnerability++
 	case vulnerability.RiskAccepted:
-		v.LowRiskAccepted += count
+		v.LowRiskAccepted++
 	case vulnerability.FalsePositive:
-		v.LowFalsePositive += count
+		v.LowFalsePositive++
 	case vulnerability.Corrected:
-		v.LowCorrected += count
+		v.LowCorrected++
 	}
 }
 
-func (v *Vulnerability) AddCountVulnerabilityInfo(count int, vulnType vulnerability.Type) {
+func (v *Vulnerability) AddCountVulnerabilityInfo(vulnType vulnerability.Type) {
 	switch vulnType {
 	case vulnerability.Vulnerability:
-		v.InfoVulnerability += count
+		v.InfoVulnerability++
 	case vulnerability.RiskAccepted:
-		v.InfoRiskAccepted += count
+		v.InfoRiskAccepted++
 	case vulnerability.FalsePositive:
-		v.InfoFalsePositive += count
+		v.InfoFalsePositive++
 	case vulnerability.Corrected:
-		v.InfoCorrected += count
+		v.InfoCorrected++
 	}
 }
 
-func (v *Vulnerability) AddCountVulnerabilityUnknown(count int, vulnType vulnerability.Type) {
+func (v *Vulnerability) AddCountVulnerabilityUnknown(vulnType vulnerability.Type) {
 	switch vulnType {
 	case vulnerability.Vulnerability:
-		v.UnknownVulnerability += count
+		v.UnknownVulnerability++
 	case vulnerability.RiskAccepted:
-		v.UnknownRiskAccepted += count
+		v.UnknownRiskAccepted++
 	case vulnerability.FalsePositive:
-		v.UnknownFalsePositive += count
+		v.UnknownFalsePositive++
 	case vulnerability.Corrected:
-		v.UnknownCorrected += count
+		v.UnknownCorrected++
 	}
 }
