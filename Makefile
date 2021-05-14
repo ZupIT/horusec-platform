@@ -32,6 +32,14 @@ compose-dev:
 	docker restart horusec-analytic
 
 install: compose migrate
+	docker restart horusec-auth
+	echo "Waiting grcp connection..." && sleep 5
+	docker restart horusec-vulnerability
+	docker restart horusec-webhook
+	docker restart horusec-core
+	docker restart horusec-api
+	docker restart horusec-messages
+	docker restart horusec-analytic
 
 migrate: migrate-up
 

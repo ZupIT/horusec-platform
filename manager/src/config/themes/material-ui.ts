@@ -7,7 +7,7 @@ const themeMatUi = createMuiTheme({
   palette: {
     primary: {
       // primary color
-      main: theme.colors.primary, // black
+      main: theme.colors.active, // black
     },
     secondary: {
       main: theme.colors.secondary,
