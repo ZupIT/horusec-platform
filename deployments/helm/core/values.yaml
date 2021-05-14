@@ -1,10 +1,10 @@
 replicaCount: 1
 
 image:
-  repository: horuszup/horusec-account
+  repository: horuszup/horusec-core
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: v1.0.1
+  tag: v2.11.0-rc.1
 
 imagePullSecrets: []
 nameOverride: ""
@@ -41,7 +41,7 @@ service:
 ingress:
   enabled: true
   hosts:
-    - host: "account-horus-dev.zup.com.br"
+    - host: "core-horus-dev.zup.com.br"
       paths:
         - /
 

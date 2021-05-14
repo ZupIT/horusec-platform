@@ -23,7 +23,7 @@ docker run -d --hostname horusec-rabbit \
        -e RABBITMQ_DEFAULT_PASS=guest \
        -p 5672:5672 rabbitmq:3
 
-docker run --name horusec-postgres \
+docker run --name horusec-postgresql \
        -e POSTGRES_PASSWORD=root \
        -e POSTGRES_USER=root \
        -e POSTGRES_DB=horusec_db \
@@ -31,7 +31,7 @@ docker run --name horusec-postgres \
 
 sleep 5
 
-docker exec horusec-postgres createdb horusec_analytic_db
+docker exec horusec-postgresql createdb horusec_analytic_db
 
 sleep 3
 
@@ -55,7 +55,6 @@ sleep 5
 /bin/horusec-api-main &
 /bin/horusec-vulnerability-main &
 /bin/horusec-analytic-main &
-/bin/horusec-messages-main &
 /bin/horusec-webhook-main &
 
 sleep 3

@@ -14,46 +14,46 @@
 
 version: '3'
 services:
-  #  ldap-service:
-  #    container_name: ldap-service
-  #    image: dwimberger/ldap-ad-it
-  #    ports:
-  #      - "10389:10389"
-  #  postgresql_keycloak:
-  #    container_name: postgresql_keycloak
-  #    image: postgres:12
-  #    ports:
-  #      - "5433:5433"
-  #    expose:
-  #      - "5433"
-  #    command: -p 5433
-  #    environment:
-  #      POSTGRES_PASSWORD: root
-  #      POSTGRES_USER: root
-  #      POSTGRES_DB: keycloak
-  #  keycloak:
-  #    depends_on:
-  #      - "postgresql_keycloak"
-  #    container_name: keycloak
-  #    image: jboss/keycloak
-  #    ports:
-  #      - "8080:8080"
-  #    environment:
-  #      DB_VENDOR: "postgres"
-  #      DB_ADDR: postgresql_keycloak
-  #      DB_PORT: "5433"
-  #      DB_USER: "root"
-  #      DB_PASSWORD: "root"
-  #      KEYCLOAK_USER: "keycloak"
-  #      KEYCLOAK_PASSWORD: "keycloak"
+#  ldap-service:
+#    container_name: ldap-service
+#    image: dwimberger/ldap-ad-it
+#    ports:
+#      - "10389:10389"
+#  postgresql_keycloak:
+#    container_name: postgresql_keycloak
+#    image: postgres:12
+#    ports:
+#      - "5433:5433"
+#    expose:
+#      - "5433"
+#    command: -p 5433
+#    environment:
+#      POSTGRES_PASSWORD: root
+#      POSTGRES_USER: root
+#      POSTGRES_DB: keycloak
+#  keycloak:
+#    depends_on:
+#      - "postgresql_keycloak"
+#    container_name: keycloak
+#    image: jboss/keycloak
+#    ports:
+#      - "8080:8080"
+#    environment:
+#      DB_VENDOR: "postgres"
+#      DB_ADDR: postgresql_keycloak
+#      DB_PORT: "5433"
+#      DB_USER: "root"
+#      DB_PASSWORD: "root"
+#      KEYCLOAK_USER: "keycloak"
+#      KEYCLOAK_PASSWORD: "keycloak"
   rabbit:
     container_name: rabbit
     image: rabbitmq:3-management
     ports:
       - "5672:5672"
       - "15672:15672"
-  postgresql_horusec_core:
-    container_name: postgresql_horusec_core
+  horusec_postgresql:
+    container_name: horusec_postgresql
     image: postgres:12
     ports:
       - "5432:5432"
@@ -62,24 +62,7 @@ services:
       POSTGRES_USER: root
       POSTGRES_DB: horusec_db
     volumes:
-      - /var/lib/postgres/db/data.core:/var/lib/postgresql/data
-    tty: true
-    logging:
-      driver: json-file
-      options:
-        max-size: 10m
-  postgresql_horusec_analytic:
-    container_name: postgresql_horusec_analytic
-    image: postgres:12
-    command: -p 5433
-    ports:
-      - "5433:5433"
-    environment:
-      POSTGRES_PASSWORD: root
-      POSTGRES_USER: root
-      POSTGRES_DB: horusec_analytic_db
-    volumes:
-      - /var/lib/postgres/db/data.analytic:/var/lib/postgresql/data
+      - /var/lib/postgres/db/data:/var/lib/postgresql/data
     tty: true
     logging:
       driver: json-file
@@ -112,13 +95,13 @@ services:
       - "8007:8007"
     depends_on:
       - "rabbit"
-      - "postgresql_horusec_core"
+      - "horusec_postgresql"
     restart: always
     container_name: horusec-auth
     environment:
       HORUSEC_PORT: "8006"
       HORUSEC_GRPC_PORT: "8007"
-      HORUSEC_DATABASE_SQL_URI: "postgresql://root:root@postgresql_horusec_core:5432/horusec_db?sslmode=disable"
+      HORUSEC_DATABASE_SQL_URI: "postgresql://root:root@horusec_postgresql:5432/horusec_db?sslmode=disable"
       HORUSEC_DATABASE_SQL_DIALECT: "postgres"
       HORUSEC_JWT_SECRET_KEY: "horusec-secret"
       HORUSEC_KEYCLOAK_BASE_PATH: ${HORUSEC_KEYCLOAK_BASE_PATH}
@@ -144,14 +127,14 @@ services:
       HORUSEC_BROKER_PORT: "5672"
       HORUSEC_BROKER_USERNAME: "guest"
       HORUSEC_BROKER_PASSWORD: "guest"
-      HORUSEC_DISABLED_BROKER: "true"
+      HORUSEC_DISABLE_EMAILS: "true"
   horusec-core:
     image: horuszup/horusec-core:v2.11.0-rc.1
     ports:
       - "8003:8003"
     depends_on:
       - "rabbit"
-      - "postgresql_horusec_core"
+      - "horusec_postgresql"
       - "horusec-auth"
     restart: always
     container_name: horusec-core
@@ -162,7 +145,7 @@ services:
       HORUSEC_BROKER_PORT: "5672"
       HORUSEC_BROKER_USERNAME: "guest"
       HORUSEC_BROKER_PASSWORD: "guest"
-      HORUSEC_DATABASE_SQL_URI: "postgresql://root:root@postgresql_horusec_core:5432/horusec_db?sslmode=disable"
+      HORUSEC_DATABASE_SQL_URI: "postgresql://root:root@horusec_postgresql:5432/horusec_db?sslmode=disable"
       HORUSEC_DATABASE_SQL_DIALECT: "postgres"
       HORUSEC_GRPC_AUTH_URL: "horusec-auth:8007"
   horusec-analytic:
@@ -171,13 +154,13 @@ services:
       - "8005:8005"
     depends_on:
       - "rabbit"
-      - "postgresql_horusec_analytic"
+      - "horusec_postgresql"
       - "horusec-auth"
     restart: always
     container_name: horusec-analytic
     environment:
       HORUSEC_PORT: "8005"
-      HORUSEC_DATABASE_SQL_URI: "postgresql://root:root@postgresql_horusec_analytic:5433/horusec_analytic_db?sslmode=disable"
+      HORUSEC_DATABASE_SQL_URI: "postgresql://root:root@horusec_postgresql:5432/horusec_analytic_db?sslmode=disable"
       HORUSEC_DATABASE_SQL_DIALECT: "postgres"
       HORUSEC_GRPC_AUTH_URL: "horusec-auth:8007"
       HORUSEC_BROKER_HOST: "rabbit"
@@ -190,13 +173,13 @@ services:
       - "8000:8000"
     depends_on:
       - "rabbit"
-      - "postgresql_horusec_core"
+      - "horusec_postgresql"
       - "horusec-auth"
     restart: always
     container_name: horusec-api
     environment:
       HORUSEC_PORT: "8000"
-      HORUSEC_DATABASE_SQL_URI: "postgresql://root:root@postgresql_horusec_core:5432/horusec_db?sslmode=disable"
+      HORUSEC_DATABASE_SQL_URI: "postgresql://root:root@horusec_postgresql:5432/horusec_db?sslmode=disable"
       HORUSEC_DATABASE_SQL_DIALECT: "postgres"
       HORUSEC_GRPC_AUTH_URL: "horusec-auth:8007"
       HORUSEC_BROKER_HOST: "rabbit"
@@ -209,12 +192,12 @@ services:
       - "8001:8001"
     depends_on:
       - "rabbit"
-      - "postgresql_horusec_core"
+      - "horusec_postgresql"
     restart: always
     container_name: horusec-vulnerability
     environment:
       HORUSEC_PORT: "8001"
-      HORUSEC_DATABASE_SQL_URI: "postgresql://root:root@postgresql_horusec_core:5432/horusec_db?sslmode=disable"
+      HORUSEC_DATABASE_SQL_URI: "postgresql://root:root@horusec_postgresql:5432/horusec_db?sslmode=disable"
       HORUSEC_DATABASE_SQL_DIALECT: "postgres"
       HORUSEC_GRPC_AUTH_URL: "horusec-auth:8007"
       HORUSEC_BROKER_HOST: "rabbit"
@@ -227,12 +210,12 @@ services:
       - "8004:8004"
     depends_on:
       - "rabbit"
-      - "postgresql_horusec_core"
+      - "horusec_postgresql"
     restart: always
     container_name: horusec-webhook
     environment:
      HORUSEC_PORT: "8004"
-     HORUSEC_DATABASE_SQL_URI: "postgresql://root:root@postgresql_horusec_core:5432/horusec_db?sslmode=disable"
+     HORUSEC_DATABASE_SQL_URI: "postgresql://root:root@horusec_postgresql:5432/horusec_db?sslmode=disable"
      HORUSEC_DATABASE_SQL_DIALECT: "postgres"
      HORUSEC_GRPC_AUTH_URL: "horusec-auth:8007"
      HORUSEC_BROKER_HOST: "rabbit"

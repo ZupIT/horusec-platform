@@ -30,8 +30,8 @@ const Options = styled.div`
 `;
 
 const Content = styled.div`
-  margin-top: 25px;
-  padding: 25px 15px 10px 25px;
+  margin-top: 15px;
+  padding: 15px 15px 15px 25px;
   background-color: ${({ theme }) => theme.colors.background.secundary};
   border-radius: 4px;
   position: relative;
@@ -41,6 +41,20 @@ const Title = styled.h1`
   color: ${({ theme }) => theme.colors.text.secundary};
   font-weight: normal;
   font-size: ${({ theme }) => theme.metrics.fontSize.xlarge};
+  display: flex;
+  align-items: center;
+`;
+
+const Favorite = styled.h1`
+  color: ${({ theme }) => theme.colors.text.secundary};
+  font-weight: normal;
+  font-size: ${({ theme }) => theme.metrics.fontSize.medium};
+  display: flex;
+  align-items: center;
+
+  i {
+    margin-right: 10px;
+  }
 `;
 
 const Table = styled.div`
@@ -148,4 +162,5 @@ export default {
   Cell,
   Body,
   Column,
+  Favorite,
 };

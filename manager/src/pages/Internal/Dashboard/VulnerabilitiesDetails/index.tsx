@@ -94,6 +94,7 @@ const VulnerabilitiesDetails: React.FC<Props> = ({ filters }) => {
             workspaceID: filters.workspaceID,
             repositoryID: filters.repositoryID,
           },
+          filters.type,
           {
             currentPage: page.currentPage,
             pageSize: page.pageSize,

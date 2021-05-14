@@ -142,7 +142,13 @@ const Vulnerabilities: React.FC = () => {
     severity: string
   ) => {
     vulnerabilitiesService
-      .updateVulnerability(filters.workspaceID, vulnerabilityID, type, severity)
+      .updateVulnerability(
+        filters.workspaceID,
+        vulnerabilityID,
+        filters.repositoryID,
+        type,
+        severity
+      )
       .then(() => {
         setVulnerabilities((state) =>
           state.map((el) =>
@@ -190,7 +196,7 @@ const Vulnerabilities: React.FC = () => {
         setFilters(filter);
 
         vulnerabilitiesService
-          .getAllVulnerabilities(filterAux, page)
+          .getAllVulnerabilities(filterAux, 'repository', page)
           .then((result: AxiosResponse) => {
             if (!isCancelled) {
               const response = result.data?.content;

@@ -4,7 +4,7 @@ image:
   repository: horuszup/horusec-messages
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: v1.7.1
+  tag: v2.11.0-rc.1
 
 imagePullSecrets: []
 nameOverride: ""
@@ -80,7 +80,7 @@ env:
   - name: "HORUSEC_SWAGGER_HOST"
     value: "0.0.0.0"
   - name: "HORUSEC_BROKER_HOST"
-    value: "horus-mq-rabbitmq"
+    value: "rabbitmq"
   - name: "HORUSEC_BROKER_PORT"
     value: "5672"
   - name: "HORUSEC_PORT"
