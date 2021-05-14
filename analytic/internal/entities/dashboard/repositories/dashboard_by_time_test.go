@@ -1,32 +1,32 @@
-package database
+package repositories
 
 import (
 	"testing"
+	"time"
 
 	response2 "github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard/response"
 
-	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestParseListVulnByLanguageToListResponse(t *testing.T) {
+func TestParseListVulnByTimeToListResponse(t *testing.T) {
 	t.Run("Parse to response correctly", func(t *testing.T) {
-		vulns := []*VulnerabilitiesByLanguage{
-			&VulnerabilitiesByLanguage{
-				Language: languages.Leaks,
+		vulns := []*VulnerabilitiesByTime{
+			&VulnerabilitiesByTime{
 				Vulnerability: response2.Vulnerability{
+					CreatedAt:             time.Now(),
 					CriticalVulnerability: 1,
 				},
 			},
 		}
-		response := ParseListVulnByLanguageToListResponse(vulns)
+		response := ParseListVulnByTimeToListResponse(vulns)
 		assert.Equal(t, 1, len(response))
 		assert.Equal(t, 1, response[0].Critical.Count)
 	})
 }
 
-func TestVulnerabilitiesByLanguage_GetTable(t *testing.T) {
+func TestVulnerabilitiesByTime_GetTable(t *testing.T) {
 	t.Run("Should get table correctly", func(t *testing.T) {
-		assert.Equal(t, "vulnerabilities_by_language", (&VulnerabilitiesByLanguage{}).GetTable())
+		assert.Equal(t, "vulnerabilities_by_time", (&VulnerabilitiesByTime{}).GetTable())
 	})
 }

@@ -1,4 +1,4 @@
-package database
+package repositories
 
 import (
 	"github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard/response"

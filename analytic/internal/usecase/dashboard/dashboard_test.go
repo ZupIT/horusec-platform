@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard/database"
+	"github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard/repositories"
 
 	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 	"github.com/ZupIT/horusec-devkit/pkg/entities/vulnerability"
@@ -31,7 +31,7 @@ func TestUseCaseDashboard_ExtractFilterDashboard(t *testing.T) {
 	t.Run("Should extract filter with repository", func(t *testing.T) {
 		startTime, _ := time.Parse(layoutDateTime, "2020-01-01T00:00:00Z")
 		endTime, _ := time.Parse(layoutDateTime, "2022-01-01T00:00:00Z")
-		expected := &database.Filter{
+		expected := &repositories.Filter{
 			RepositoryID: uuid.New(),
 			WorkspaceID:  uuid.New(),
 			StartTime:    startTime,
@@ -59,7 +59,7 @@ func TestUseCaseDashboard_ExtractFilterDashboard(t *testing.T) {
 	t.Run("Should extract filter without page size", func(t *testing.T) {
 		startTime, _ := time.Parse(layoutDateTime, "2020-01-01T00:00:00Z")
 		endTime, _ := time.Parse(layoutDateTime, "2022-01-01T00:00:00Z")
-		expected := &database.Filter{
+		expected := &repositories.Filter{
 			RepositoryID: uuid.New(),
 			WorkspaceID:  uuid.New(),
 			StartTime:    startTime,
@@ -87,7 +87,7 @@ func TestUseCaseDashboard_ExtractFilterDashboard(t *testing.T) {
 	t.Run("Should return error on extract filter because not send empty startTime", func(t *testing.T) {
 		startTime, _ := time.Parse(layoutDateTime, "2020-01-01T00:00:00Z")
 		endTime, _ := time.Parse(layoutDateTime, "2022-01-01T00:00:00Z")
-		expected := &database.Filter{
+		expected := &repositories.Filter{
 			RepositoryID: uuid.New(),
 			WorkspaceID:  uuid.New(),
 			StartTime:    startTime,
@@ -110,7 +110,7 @@ func TestUseCaseDashboard_ExtractFilterDashboard(t *testing.T) {
 	t.Run("Should return error on extract filter because wrong workspaceID", func(t *testing.T) {
 		startTime, _ := time.Parse(layoutDateTime, "2020-01-01T00:00:00Z")
 		endTime, _ := time.Parse(layoutDateTime, "2022-01-01T00:00:00Z")
-		expected := &database.Filter{
+		expected := &repositories.Filter{
 			RepositoryID: uuid.New(),
 			WorkspaceID:  uuid.New(),
 			StartTime:    startTime,
@@ -133,7 +133,7 @@ func TestUseCaseDashboard_ExtractFilterDashboard(t *testing.T) {
 	t.Run("Should return error on extract filter because wrong repositoryID", func(t *testing.T) {
 		startTime, _ := time.Parse(layoutDateTime, "2020-01-01T00:00:00Z")
 		endTime, _ := time.Parse(layoutDateTime, "2022-01-01T00:00:00Z")
-		expected := &database.Filter{
+		expected := &repositories.Filter{
 			RepositoryID: uuid.New(),
 			WorkspaceID:  uuid.New(),
 			StartTime:    startTime,
@@ -155,7 +155,7 @@ func TestUseCaseDashboard_ExtractFilterDashboard(t *testing.T) {
 	})
 	t.Run("Should return error on extract filter because wrong startTime", func(t *testing.T) {
 		endTime, _ := time.Parse(layoutDateTime, "2022-01-01T00:00:00Z")
-		expected := &database.Filter{
+		expected := &repositories.Filter{
 			RepositoryID: uuid.New(),
 			WorkspaceID:  uuid.New(),
 			EndTime:      endTime,
@@ -176,7 +176,7 @@ func TestUseCaseDashboard_ExtractFilterDashboard(t *testing.T) {
 	})
 	t.Run("Should return error on extract filter because wrong endTime", func(t *testing.T) {
 		startTime, _ := time.Parse(layoutDateTime, "2020-01-01T00:00:00Z")
-		expected := &database.Filter{
+		expected := &repositories.Filter{
 			RepositoryID: uuid.New(),
 			WorkspaceID:  uuid.New(),
 			StartTime:    startTime,

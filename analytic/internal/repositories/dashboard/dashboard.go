@@ -3,23 +3,21 @@ package dashboard
 import (
 	"fmt"
 
-	"github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard/response"
-
-	database2 "github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard/database"
-
 	"github.com/ZupIT/horusec-devkit/pkg/services/database"
 
+	repositoriesEntities "github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard/repositories"
+	"github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard/response"
 	dashboardEnums "github.com/ZupIT/horusec-platform/analytic/internal/enums/dashboard"
 )
 
 type IRepoDashboard interface {
-	GetDashboardTotalDevelopers(filter *database2.Filter) (int, error)
-	GetDashboardTotalRepositories(filter *database2.Filter) (int, error)
-	GetDashboardVulnBySeverity(filter *database2.Filter) (*response.Vulnerability, error)
-	GetDashboardVulnByAuthor(filter *database2.Filter) ([]*database2.VulnerabilitiesByAuthor, error)
-	GetDashboardVulnByRepository(filter *database2.Filter) ([]*database2.VulnerabilitiesByRepository, error)
-	GetDashboardVulnByLanguage(filter *database2.Filter) ([]*database2.VulnerabilitiesByLanguage, error)
-	GetDashboardVulnByTime(filter *database2.Filter) ([]*database2.VulnerabilitiesByTime, error)
+	GetDashboardTotalDevelopers(filter *repositoriesEntities.Filter) (int, error)
+	GetDashboardTotalRepositories(filter *repositoriesEntities.Filter) (int, error)
+	GetDashboardVulnBySeverity(filter *repositoriesEntities.Filter) (*response.Vulnerability, error)
+	GetDashboardVulnByAuthor(filter *repositoriesEntities.Filter) ([]*repositoriesEntities.VulnerabilitiesByAuthor, error)
+	GetDashboardVulnByRepository(filter *repositoriesEntities.Filter) ([]*repositoriesEntities.VulnerabilitiesByRepository, error)
+	GetDashboardVulnByLanguage(filter *repositoriesEntities.Filter) ([]*repositoriesEntities.VulnerabilitiesByLanguage, error)
+	GetDashboardVulnByTime(filter *repositoriesEntities.Filter) ([]*repositoriesEntities.VulnerabilitiesByTime, error)
 }
 
 type RepoDashboard struct {
@@ -34,69 +32,136 @@ func NewRepoDashboard(connection *database.Connection) IRepoDashboard {
 	}
 }
 
-func (r *RepoDashboard) GetDashboardTotalDevelopers(filter *database2.Filter) (count int, err error) {
+func (r *RepoDashboard) GetDashboardTotalDevelopers(filter *repositoriesEntities.Filter) (count int, err error) {
 	condition, args := filter.GetConditionFilter()
 
-	query := fmt.Sprintf(`SELECT COUNT( DISTINCT ( author ) ) FROM %s WHERE %s AND active = true `,
-		dashboardEnums.TableVulnerabilitiesByAuthor, condition)
+	query := fmt.Sprintf(r.queryGetDashboardTotalDevelopers(), dashboardEnums.TableVulnerabilitiesByAuthor, condition)
 
-	return count, r.databaseRead.Raw(query, &count, args).GetErrorExceptNotFound()
+	return count, r.databaseRead.Raw(query, &count, args...).GetErrorExceptNotFound()
 }
 
-func (r *RepoDashboard) GetDashboardTotalRepositories(filter *database2.Filter) (count int, err error) {
+func (r *RepoDashboard) queryGetDashboardTotalDevelopers() string {
+	return `
+		SELECT COUNT( DISTINCT ( author ) ) 
+		FROM %[1]s 
+		WHERE %[2]s AND created_at = (SELECT MAX(created_at) FROM %[1]s)
+	`
+}
+
+func (r *RepoDashboard) GetDashboardTotalRepositories(filter *repositoriesEntities.Filter) (count int, err error) {
 	condition, args := filter.GetConditionFilter()
 
-	query := fmt.Sprintf(`SELECT COUNT( DISTINCT ( repository_id ) ) FROM %s WHERE %s AND active = true `,
+	query := fmt.Sprintf(r.queryGetDashboardTotalRepositories(),
 		dashboardEnums.TableVulnerabilitiesByRepository, condition)
 
-	return count, r.databaseRead.Raw(query, &count, args).GetErrorExceptNotFound()
+	return count, r.databaseRead.Raw(query, &count, args...).GetErrorExceptNotFound()
 }
 
-func (r *RepoDashboard) GetDashboardVulnBySeverity(filter *database2.Filter) (vulns *response.Vulnerability, err error) {
+func (r *RepoDashboard) queryGetDashboardTotalRepositories() string {
+	return `
+		SELECT COUNT( DISTINCT ( repository_id ) ) 
+		FROM %[1]s 
+		WHERE %[2]s AND created_at = (SELECT MAX(created_at) FROM %[1]s)
+	`
+}
+
+func (r *RepoDashboard) GetDashboardVulnBySeverity(filter *repositoriesEntities.Filter) (*response.Vulnerability, error) {
+	vulns := &response.Vulnerability{}
 	condition, args := filter.GetConditionFilter()
 
-	query := fmt.Sprintf(`SELECT %s FROM %s WHERE %s AND active = true GROUP BY "workspace_id", "active" %s LIMIT 1`,
+	query := fmt.Sprintf(r.queryGetDashboardVulnBySeverity(),
 		r.queryDefaultFields(), dashboardEnums.TableVulnerabilitiesByTime, condition, r.orderBySeverity())
 
-	return vulns, r.databaseRead.Raw(query, vulns, args).GetErrorExceptNotFound()
+	return vulns, r.databaseRead.Raw(query, vulns, args...).GetErrorExceptNotFound()
 }
 
-func (r *RepoDashboard) GetDashboardVulnByAuthor(filter *database2.Filter) (vulns []*database2.VulnerabilitiesByAuthor, err error) {
+func (r *RepoDashboard) queryGetDashboardVulnBySeverity() string {
+	return `
+		SELECT %[1]s 
+		FROM %[2]s 
+		WHERE %[3]s AND created_at = (SELECT MAX(created_at) FROM %[2]s) 
+		GROUP BY workspace_id
+		%[4]s
+		LIMIT 1
+	`
+}
+
+func (r *RepoDashboard) GetDashboardVulnByAuthor(filter *repositoriesEntities.Filter) (vulns []*repositoriesEntities.VulnerabilitiesByAuthor, err error) {
 	condition, args := filter.GetConditionFilter()
 
-	query := fmt.Sprintf(`SELECT author, %s FROM %s WHERE %s AND active = true GROUP BY "author", "active" %s LIMIT 5`,
+	query := fmt.Sprintf(r.queryGetDashboardVulnByAuthor(),
 		r.queryDefaultFields(), dashboardEnums.TableVulnerabilitiesByAuthor, condition, r.orderBySeverity())
 
-	return vulns, r.databaseRead.Raw(query, &vulns, args).GetErrorExceptNotFound()
+	return vulns, r.databaseRead.Raw(query, &vulns, args...).GetErrorExceptNotFound()
 }
 
-func (r *RepoDashboard) GetDashboardVulnByRepository(filter *database2.Filter) (vulns []*database2.VulnerabilitiesByRepository, err error) {
+func (r *RepoDashboard) queryGetDashboardVulnByAuthor() string {
+	return `
+		SELECT author, %[1]s 
+		FROM %[2]s 
+		WHERE %[3]s AND created_at = (SELECT MAX(created_at) FROM %[2]s)  
+		GROUP BY author 
+		%[4]s 
+		LIMIT 5
+	`
+}
+
+func (r *RepoDashboard) GetDashboardVulnByRepository(filter *repositoriesEntities.Filter) (vulns []*repositoriesEntities.VulnerabilitiesByRepository, err error) {
 	condition, args := filter.GetConditionFilter()
 
-	query := fmt.Sprintf(`
-		SELECT repository_name, %s FROM %s WHERE %s AND active = true GROUP BY "repository_name", "active" %s LIMIT 5`,
+	query := fmt.Sprintf(r.queryGetDashboardVulnByRepository(),
 		r.queryDefaultFields(), dashboardEnums.TableVulnerabilitiesByRepository, condition, r.orderBySeverity())
 
-	return vulns, r.databaseRead.Raw(query, &vulns, args).GetErrorExceptNotFound()
+	return vulns, r.databaseRead.Raw(query, &vulns, args...).GetErrorExceptNotFound()
 }
 
-func (r *RepoDashboard) GetDashboardVulnByLanguage(filter *database2.Filter) (vulns []*database2.VulnerabilitiesByLanguage, err error) {
+func (r *RepoDashboard) queryGetDashboardVulnByRepository() string {
+	return `
+		SELECT repository_name, %[1]s 
+		FROM %[2]s 
+		WHERE %[3]s AND created_at = (SELECT MAX(created_at) FROM %[2]s)   
+		GROUP BY repository_name
+		%[4]s 
+		LIMIT 5
+	`
+}
+
+func (r *RepoDashboard) GetDashboardVulnByLanguage(filter *repositoriesEntities.Filter) (vulns []*repositoriesEntities.VulnerabilitiesByLanguage, err error) {
 	condition, args := filter.GetConditionFilter()
 
-	query := fmt.Sprintf(`
-		SELECT language, %s FROM %s WHERE %s AND active = true GROUP BY "language", "active" %s LIMIT 5`,
+	query := fmt.Sprintf(r.queryGetDashboardVulnByLanguage(),
 		r.queryDefaultFields(), dashboardEnums.TableVulnerabilitiesByLanguage, condition, r.orderBySeverity())
 
-	return vulns, r.databaseRead.Raw(query, &vulns, args).GetErrorExceptNotFound()
+	return vulns, r.databaseRead.Raw(query, &vulns, args...).GetErrorExceptNotFound()
 }
 
-func (r *RepoDashboard) GetDashboardVulnByTime(filter *database2.Filter) (vulns []*database2.VulnerabilitiesByTime, err error) {
+func (r *RepoDashboard) queryGetDashboardVulnByLanguage() string {
+	return `
+		SELECT language, %[1]s 
+		FROM %[2]s 
+		WHERE %[3]s AND created_at = (SELECT MAX(created_at) FROM %[2]s)  
+		GROUP BY language
+		%[4]s 
+		LIMIT 5
+	`
+}
+
+func (r *RepoDashboard) GetDashboardVulnByTime(filter *repositoriesEntities.Filter) (vulns []*repositoriesEntities.VulnerabilitiesByTime, err error) {
 	condition, args := filter.GetConditionFilter()
 
-	query := fmt.Sprintf(`SELECT * FROM %s WHERE %s AND active = true %s`,
+	query := fmt.Sprintf(r.queryGetDashboardVulnByTime(),
 		dashboardEnums.TableVulnerabilitiesByTime, condition, r.orderBySeverity())
 
 	return vulns, r.databaseRead.Raw(query, &vulns, args...).GetErrorExceptNotFound()
+}
+
+func (r *RepoDashboard) queryGetDashboardVulnByTime() string {
+	return `
+		SELECT * 
+		FROM %[1]s 
+		WHERE %[2]s AND created_at = (SELECT MAX(created_at) FROM %[1]s)   
+		%[3]s
+	`
 }
 
 func (r *RepoDashboard) queryDefaultFields() string {

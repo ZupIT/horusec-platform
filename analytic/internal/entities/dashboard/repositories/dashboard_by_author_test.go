@@ -1,32 +1,31 @@
-package database
+package repositories
 
 import (
 	"testing"
-	"time"
 
 	response2 "github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard/response"
 
 	"github.com/stretchr/testify/assert"
 )
 
-func TestParseListVulnByTimeToListResponse(t *testing.T) {
+func TestParseListVulnByAuthorToListResponse(t *testing.T) {
 	t.Run("Parse to response correctly", func(t *testing.T) {
-		vulns := []*VulnerabilitiesByTime{
-			&VulnerabilitiesByTime{
+		vulns := []*VulnerabilitiesByAuthor{
+			&VulnerabilitiesByAuthor{
+				Author: "zup.com.br",
 				Vulnerability: response2.Vulnerability{
-					CreatedAt:             time.Now(),
 					CriticalVulnerability: 1,
 				},
 			},
 		}
-		response := ParseListVulnByTimeToListResponse(vulns)
+		response := ParseListVulnByAuthorToListResponse(vulns)
 		assert.Equal(t, 1, len(response))
 		assert.Equal(t, 1, response[0].Critical.Count)
 	})
 }
 
-func TestVulnerabilitiesByTime_GetTable(t *testing.T) {
+func TestVulnerabilitiesByAuthor_GetTable(t *testing.T) {
 	t.Run("Should get table correctly", func(t *testing.T) {
-		assert.Equal(t, "vulnerabilities_by_time", (&VulnerabilitiesByTime{}).GetTable())
+		assert.Equal(t, "vulnerabilities_by_author", (&VulnerabilitiesByAuthor{}).GetTable())
 	})
 }

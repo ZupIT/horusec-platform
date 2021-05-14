@@ -3,7 +3,7 @@ package dashboard
 import (
 	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 	"github.com/ZupIT/horusec-devkit/pkg/services/database"
-	database2 "github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard/database"
+	database2 "github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard/repositories"
 	"github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard/response"
 	dashboardfilter "github.com/ZupIT/horusec-platform/analytic/internal/usecase/dashboard"
 

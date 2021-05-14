@@ -1,4 +1,4 @@
-package database
+package repositories
 
 import (
 	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"

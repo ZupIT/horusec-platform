@@ -7,7 +7,7 @@ import (
 
 	response2 "github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard/response"
 
-	database2 "github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard/database"
+	database2 "github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard/repositories"
 
 	"github.com/ZupIT/horusec-devkit/pkg/services/database"
 	"github.com/ZupIT/horusec-devkit/pkg/services/database/enums"

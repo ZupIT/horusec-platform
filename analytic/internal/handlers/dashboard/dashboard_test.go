@@ -7,7 +7,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard/database"
+	"github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard/repositories"
 
 	"github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard/response"
 
@@ -36,7 +36,7 @@ func TestHandler_GetAllCharts(t *testing.T) {
 		controllerMock := &controller.Mock{}
 		controllerMock.On("GetAllDashboardCharts").Return(&response.Response{}, nil)
 		useCaseMock := &dashboardfilter.Mock{}
-		useCaseMock.On("ExtractFilterDashboard").Return(&database.Filter{}, nil)
+		useCaseMock.On("ExtractFilterDashboard").Return(&repositories.Filter{}, nil)
 		handler := &Handler{
 			controller: controllerMock,
 			useCase:    useCaseMock,
@@ -55,7 +55,7 @@ func TestHandler_GetAllCharts(t *testing.T) {
 		controllerMock := &controller.Mock{}
 		controllerMock.On("GetAllDashboardCharts").Return(&response.Response{}, nil)
 		useCaseMock := &dashboardfilter.Mock{}
-		useCaseMock.On("ExtractFilterDashboard").Return(&database.Filter{}, nil)
+		useCaseMock.On("ExtractFilterDashboard").Return(&repositories.Filter{}, nil)
 		handler := &Handler{
 			controller: controllerMock,
 			useCase:    useCaseMock,
@@ -74,7 +74,7 @@ func TestHandler_GetAllCharts(t *testing.T) {
 		controllerMock := &controller.Mock{}
 		controllerMock.On("GetAllDashboardCharts").Return(&response.Response{}, nil)
 		useCaseMock := &dashboardfilter.Mock{}
-		useCaseMock.On("ExtractFilterDashboard").Return(&database.Filter{}, enums.ErrorWrongWorkspaceID)
+		useCaseMock.On("ExtractFilterDashboard").Return(&repositories.Filter{}, enums.ErrorWrongWorkspaceID)
 		handler := &Handler{
 			controller: controllerMock,
 			useCase:    useCaseMock,
@@ -92,7 +92,7 @@ func TestHandler_GetAllCharts(t *testing.T) {
 		controllerMock := &controller.Mock{}
 		controllerMock.On("GetAllDashboardCharts").Return(&response.Response{}, errors.New("unexpected error"))
 		useCaseMock := &dashboardfilter.Mock{}
-		useCaseMock.On("ExtractFilterDashboard").Return(&database.Filter{}, nil)
+		useCaseMock.On("ExtractFilterDashboard").Return(&repositories.Filter{}, nil)
 		handler := &Handler{
 			controller: controllerMock,
 			useCase:    useCaseMock,
