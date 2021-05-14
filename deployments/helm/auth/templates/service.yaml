@@ -12,8 +12,8 @@ spec:
       protocol: TCP
       name: http
     - port: 8007
-      targetPort: grcp
+      targetPort: grpc
       protocol: TCP
-      name: grcp
+      name: grpc
   selector:
     {{- include "horusec-auth-helm.selectorLabels" . | nindent 4 }}
