@@ -5,6 +5,7 @@ GOLANG_CI_LINT ?= ./bin/golangci-lint
 GO_IMPORTS ?= goimports
 GO_IMPORTS_LOCAL ?= github.com/ZupIT/horusec-platform/analytic
 HORUSEC ?= horusec
+IMAGE_NAME ?= horuszup/horusec-analytic:local
 
 fmt:
 	$(GOFMT) -w $(GO_FILES)
@@ -46,3 +47,6 @@ update-swagger:
 	curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec-devkit/main/scripts/update-swagger.sh | bash -s "./cmd/app/main.go" .
 
 pipeline: fmt fix-imports lint test coverage build security
+
+docker-build: ## Build docker image with the analytic.
+	docker build -t ${IMAGE_NAME} -f ./deployments/dockerfiles/Dockerfile .
