@@ -38,7 +38,7 @@ spec:
             - name: http
               containerPort: 8006
               protocol: TCP
-            - name: grcp
+            - name: grpc
               containerPort: 8007
               protocol: TCP
           env:
