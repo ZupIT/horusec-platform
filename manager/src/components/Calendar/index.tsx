@@ -18,7 +18,10 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import useLanguage from 'helpers/hooks/useLanguage';
 import { find } from 'lodash';
-import { DatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
+import {
+  MuiPickersUtilsProvider,
+  KeyboardDatePicker,
+} from '@material-ui/pickers';
 import enLocale from 'date-fns/locale/en-US';
 import ptBRLocale from 'date-fns/locale/pt-BR';
 import format from 'date-fns/format';
@@ -88,9 +91,9 @@ function CalendarMui({
       utils={localeUtilsMap[locale] || DateFnsUtils}
       locale={localeMap[locale]}
     >
-      <DatePicker
+      <KeyboardDatePicker
         autoOk
-        disableToolbar
+        allowKeyboardControl
         disabled={disabled}
         name={name}
         label={label}
