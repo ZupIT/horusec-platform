@@ -6,5 +6,5 @@ import (
 
 type ByTime struct {
 	Time time.Time `json:"time"`
-	BySeverities
+	*BySeverities
 }

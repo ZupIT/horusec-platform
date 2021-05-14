@@ -1,10 +1,12 @@
-package dashboard
+package database
 
-import "github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard/response"
+import (
+	"github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard/response"
+)
 
 type VulnerabilitiesByAuthor struct {
 	Author string `json:"author" gorm:"Column:author"`
-	Vulnerability
+	response.Vulnerability
 }
 
 func ParseListVulnByAuthorToListResponse(vulns []*VulnerabilitiesByAuthor) (result []response.ByAuthor) {
@@ -14,13 +16,9 @@ func ParseListVulnByAuthorToListResponse(vulns []*VulnerabilitiesByAuthor) (resu
 	return result
 }
 
-func (v *VulnerabilitiesByAuthor) GetTable() string {
-	return "vulnerabilities_by_author"
-}
-
 func (v *VulnerabilitiesByAuthor) ToResponseByAuthor() response.ByAuthor {
 	return response.ByAuthor{
 		Author:       v.Author,
-		BySeverities: v.ToResponseSeverity(),
+		BySeverities: v.ToResponseBySeverities(),
 	}
 }

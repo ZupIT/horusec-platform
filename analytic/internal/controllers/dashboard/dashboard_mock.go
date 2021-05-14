@@ -3,17 +3,16 @@ package dashboard
 import (
 	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 	utilsMock "github.com/ZupIT/horusec-devkit/pkg/utils/mock"
+	"github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard/database"
 	"github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard/response"
 	"github.com/stretchr/testify/mock"
-
-	"github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard"
 )
 
 type Mock struct {
 	mock.Mock
 }
 
-func (m *Mock) GetAllDashboardCharts(_ *dashboard.Filters) (*response.Response, error) {
+func (m *Mock) GetAllDashboardCharts(_ *database.Filter) (*response.Response, error) {
 	args := m.MethodCalled("GetAllDashboardCharts")
 	return args.Get(0).(*response.Response), utilsMock.ReturnNilOrError(args, 1)
 }

@@ -3,20 +3,23 @@ package dashboard
 import (
 	"fmt"
 
-	"github.com/ZupIT/horusec-devkit/pkg/services/database"
-	"github.com/google/uuid"
+	"github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard/response"
 
-	"github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard"
+	database2 "github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard/database"
+
+	"github.com/ZupIT/horusec-devkit/pkg/services/database"
+
+	dashboardEnums "github.com/ZupIT/horusec-platform/analytic/internal/enums/dashboard"
 )
 
 type IRepoDashboard interface {
-	GetDashboardTotalDevelopers(filter *dashboard.Filters) (int, error)
-	GetDashboardTotalRepositories(filter *dashboard.Filters) (int, error)
-	GetDashboardVulnBySeverity(filter *dashboard.Filters) (*dashboard.Vulnerability, error)
-	GetDashboardVulnByAuthor(filter *dashboard.Filters) ([]*dashboard.VulnerabilitiesByAuthor, error)
-	GetDashboardVulnByRepository(filter *dashboard.Filters) ([]*dashboard.VulnerabilitiesByRepository, error)
-	GetDashboardVulnByLanguage(filter *dashboard.Filters) ([]*dashboard.VulnerabilitiesByLanguage, error)
-	GetDashboardVulnByTime(filter *dashboard.Filters) ([]*dashboard.VulnerabilitiesByTime, error)
+	GetDashboardTotalDevelopers(filter *database2.Filter) (int, error)
+	GetDashboardTotalRepositories(filter *database2.Filter) (int, error)
+	GetDashboardVulnBySeverity(filter *database2.Filter) (*response.Vulnerability, error)
+	GetDashboardVulnByAuthor(filter *database2.Filter) ([]*database2.VulnerabilitiesByAuthor, error)
+	GetDashboardVulnByRepository(filter *database2.Filter) ([]*database2.VulnerabilitiesByRepository, error)
+	GetDashboardVulnByLanguage(filter *database2.Filter) ([]*database2.VulnerabilitiesByLanguage, error)
+	GetDashboardVulnByTime(filter *database2.Filter) ([]*database2.VulnerabilitiesByTime, error)
 }
 
 type RepoDashboard struct {
@@ -31,136 +34,72 @@ func NewRepoDashboard(connection *database.Connection) IRepoDashboard {
 	}
 }
 
-func (r *RepoDashboard) GetDashboardTotalDevelopers(filter *dashboard.Filters) (count int, err error) {
-	condition, args := r.getConditionFilter(filter)
+func (r *RepoDashboard) GetDashboardTotalDevelopers(filter *database2.Filter) (count int, err error) {
+	condition, args := filter.GetConditionFilter()
+
 	query := fmt.Sprintf(`SELECT COUNT( DISTINCT ( author ) ) FROM %s WHERE %s AND active = true `,
-		(&dashboard.VulnerabilitiesByAuthor{}).GetTable(), condition)
-	result := r.databaseRead.Raw(query, &count, args...)
-	if result.GetData() == nil || result.GetErrorExceptNotFound() != nil {
-		return 0, result.GetErrorExceptNotFound()
-	}
-	return *result.GetData().(*int), result.GetErrorExceptNotFound()
+		dashboardEnums.TableVulnerabilitiesByAuthor, condition)
+
+	return count, r.databaseRead.Raw(query, &count, args).GetErrorExceptNotFound()
 }
 
-func (r *RepoDashboard) GetDashboardTotalRepositories(
-	filter *dashboard.Filters) (count int, err error) {
-	condition, args := r.getConditionFilter(filter)
+func (r *RepoDashboard) GetDashboardTotalRepositories(filter *database2.Filter) (count int, err error) {
+	condition, args := filter.GetConditionFilter()
+
 	query := fmt.Sprintf(`SELECT COUNT( DISTINCT ( repository_id ) ) FROM %s WHERE %s AND active = true `,
-		(&dashboard.VulnerabilitiesByRepository{}).GetTable(), condition)
-	result := r.databaseRead.Raw(query, &count, args...)
-	if result.GetData() == nil || result.GetErrorExceptNotFound() != nil {
-		return 0, result.GetErrorExceptNotFound()
-	}
-	return *result.GetData().(*int), result.GetErrorExceptNotFound()
+		dashboardEnums.TableVulnerabilitiesByRepository, condition)
+
+	return count, r.databaseRead.Raw(query, &count, args).GetErrorExceptNotFound()
 }
 
-func (r *RepoDashboard) GetDashboardVulnBySeverity(
-	filter *dashboard.Filters) (vuln *dashboard.Vulnerability, err error) {
-	vuln = &dashboard.Vulnerability{}
-	condition, args := r.getConditionFilter(filter)
+func (r *RepoDashboard) GetDashboardVulnBySeverity(filter *database2.Filter) (vulns *response.Vulnerability, err error) {
+	condition, args := filter.GetConditionFilter()
+
 	query := fmt.Sprintf(`SELECT %s FROM %s WHERE %s AND active = true GROUP BY "workspace_id", "active" %s LIMIT 1`,
-		r.querySelectFieldsDefault(), (&dashboard.VulnerabilitiesByTime{}).GetTable(), condition, r.orderByDefault())
-	result := r.databaseRead.Raw(query, vuln, args...)
-	if result.GetData() == nil || result.GetErrorExceptNotFound() != nil {
-		return &dashboard.Vulnerability{}, result.GetErrorExceptNotFound()
-	}
-	return result.GetData().(*dashboard.Vulnerability), result.GetErrorExceptNotFound()
+		r.queryDefaultFields(), dashboardEnums.TableVulnerabilitiesByTime, condition, r.orderBySeverity())
+
+	return vulns, r.databaseRead.Raw(query, vulns, args).GetErrorExceptNotFound()
 }
 
-func (r *RepoDashboard) GetDashboardVulnByAuthor(filter *dashboard.Filters) (vulns []*dashboard.VulnerabilitiesByAuthor, err error) {
-	condition, args := r.getConditionFilter(filter)
+func (r *RepoDashboard) GetDashboardVulnByAuthor(filter *database2.Filter) (vulns []*database2.VulnerabilitiesByAuthor, err error) {
+	condition, args := filter.GetConditionFilter()
 
-	query := fmt.Sprintf(`
-		SELECT author, %s FROM %s WHERE %s AND active = true GROUP BY "author", "active" %s LIMIT 5`,
-		r.querySelectFieldsDefault(), (&dashboard.VulnerabilitiesByAuthor{}).GetTable(), condition, r.orderByDefault())
+	query := fmt.Sprintf(`SELECT author, %s FROM %s WHERE %s AND active = true GROUP BY "author", "active" %s LIMIT 5`,
+		r.queryDefaultFields(), dashboardEnums.TableVulnerabilitiesByAuthor, condition, r.orderBySeverity())
 
-	result := r.databaseRead.Raw(query, &vulns, args...)
-
-	if result.GetData() == nil || result.GetErrorExceptNotFound() != nil {
-		return []*dashboard.VulnerabilitiesByAuthor{}, result.GetErrorExceptNotFound()
-	}
-
-	return *result.GetData().(*[]*dashboard.VulnerabilitiesByAuthor), result.GetErrorExceptNotFound()
+	return vulns, r.databaseRead.Raw(query, &vulns, args).GetErrorExceptNotFound()
 }
 
-// nolint:dupl // method is not duplicate
-func (r *RepoDashboard) GetDashboardVulnByRepository(
-	filter *dashboard.Filters) (vulns []*dashboard.VulnerabilitiesByRepository, err error) {
-	condition, args := r.getConditionFilter(filter)
+func (r *RepoDashboard) GetDashboardVulnByRepository(filter *database2.Filter) (vulns []*database2.VulnerabilitiesByRepository, err error) {
+	condition, args := filter.GetConditionFilter()
+
 	query := fmt.Sprintf(`
 		SELECT repository_name, %s FROM %s WHERE %s AND active = true GROUP BY "repository_name", "active" %s LIMIT 5`,
-		r.querySelectFieldsDefault(), (&dashboard.VulnerabilitiesByRepository{}).GetTable(), condition, r.orderByDefault())
-	result := r.databaseRead.Raw(query, &vulns, args...)
-	if result.GetData() == nil || result.GetErrorExceptNotFound() != nil {
-		return []*dashboard.VulnerabilitiesByRepository{}, result.GetErrorExceptNotFound()
-	}
-	return *result.GetData().(*[]*dashboard.VulnerabilitiesByRepository), result.GetErrorExceptNotFound()
+		r.queryDefaultFields(), dashboardEnums.TableVulnerabilitiesByRepository, condition, r.orderBySeverity())
+
+	return vulns, r.databaseRead.Raw(query, &vulns, args).GetErrorExceptNotFound()
 }
 
-// nolint:dupl // method is not duplicate
-func (r *RepoDashboard) GetDashboardVulnByLanguage(
-	filter *dashboard.Filters) (vulns []*dashboard.VulnerabilitiesByLanguage, err error) {
-	condition, args := r.getConditionFilter(filter)
+func (r *RepoDashboard) GetDashboardVulnByLanguage(filter *database2.Filter) (vulns []*database2.VulnerabilitiesByLanguage, err error) {
+	condition, args := filter.GetConditionFilter()
+
 	query := fmt.Sprintf(`
 		SELECT language, %s FROM %s WHERE %s AND active = true GROUP BY "language", "active" %s LIMIT 5`,
-		r.querySelectFieldsDefault(), (&dashboard.VulnerabilitiesByLanguage{}).GetTable(), condition, r.orderByDefault())
-	result := r.databaseRead.Raw(query, &vulns, args...)
-	if result.GetData() == nil || result.GetErrorExceptNotFound() != nil {
-		return []*dashboard.VulnerabilitiesByLanguage{}, result.GetErrorExceptNotFound()
-	}
-	return *result.GetData().(*[]*dashboard.VulnerabilitiesByLanguage), result.GetErrorExceptNotFound()
+		r.queryDefaultFields(), dashboardEnums.TableVulnerabilitiesByLanguage, condition, r.orderBySeverity())
+
+	return vulns, r.databaseRead.Raw(query, &vulns, args).GetErrorExceptNotFound()
 }
 
-func (r *RepoDashboard) GetDashboardVulnByTime(
-	filter *dashboard.Filters) (vulns []*dashboard.VulnerabilitiesByTime, err error) {
-	condition, args := r.getConditionFilter(filter)
+func (r *RepoDashboard) GetDashboardVulnByTime(filter *database2.Filter) (vulns []*database2.VulnerabilitiesByTime, err error) {
+	condition, args := filter.GetConditionFilter()
+
 	query := fmt.Sprintf(`SELECT * FROM %s WHERE %s AND active = true %s`,
-		(&dashboard.VulnerabilitiesByTime{}).GetTable(), condition, r.orderByDefault())
-	result := r.databaseRead.Raw(query, &vulns, args...)
-	if result.GetData() == nil || result.GetErrorExceptNotFound() != nil {
-		return []*dashboard.VulnerabilitiesByTime{}, result.GetErrorExceptNotFound()
-	}
-	return *result.GetData().(*[]*dashboard.VulnerabilitiesByTime), result.GetErrorExceptNotFound()
+		dashboardEnums.TableVulnerabilitiesByTime, condition, r.orderBySeverity())
+
+	return vulns, r.databaseRead.Raw(query, &vulns, args...).GetErrorExceptNotFound()
 }
 
-func (r *RepoDashboard) getConditionFilter(
-	filter *dashboard.Filters) (string, []interface{}) {
-	query := "workspace_id = ? "
-	args := []interface{}{filter.WorkspaceID}
-	query, args = r.addRepositoryIDOnConditionFilter(filter, query, args)
-	query, args = r.addInitialDateOnConditionFilter(filter, query, args)
-	query, args = r.addFinalDateOnConditionFilter(filter, query, args)
-	return query, args
-}
-
-func (r *RepoDashboard) addRepositoryIDOnConditionFilter(
-	filter *dashboard.Filters, query string, args []interface{}) (string, []interface{}) {
-	if filter.RepositoryID != uuid.Nil {
-		query += "AND repository_id = ? "
-		args = append(args, filter.RepositoryID)
-	}
-	return query, args
-}
-
-func (r *RepoDashboard) addInitialDateOnConditionFilter(
-	filter *dashboard.Filters, query string, args []interface{}) (string, []interface{}) {
-	if !filter.StartTime.IsZero() {
-		query += "AND created_at >= ? "
-		args = append(args, filter.StartTime)
-	}
-	return query, args
-}
-
-func (r *RepoDashboard) addFinalDateOnConditionFilter(
-	filter *dashboard.Filters, query string, args []interface{}) (string, []interface{}) {
-	if !filter.EndTime.IsZero() {
-		query += "AND created_at <= ? "
-		args = append(args, filter.EndTime)
-	}
-	return query, args
-}
-
-func (r *RepoDashboard) querySelectFieldsDefault() string {
+func (r *RepoDashboard) queryDefaultFields() string {
 	return `
 		SUM(critical_vulnerability) as critical_vulnerability, SUM(critical_false_positive) as critical_false_positive, 
 	    SUM(critical_risk_accepted) as critical_risk_accepted, SUM(critical_corrected) as critical_corrected,
@@ -177,7 +116,7 @@ func (r *RepoDashboard) querySelectFieldsDefault() string {
 	`
 }
 
-func (r *RepoDashboard) orderByDefault() interface{} {
+func (r *RepoDashboard) orderBySeverity() interface{} {
 	return `ORDER BY critical_vulnerability DESC,
 		high_vulnerability DESC,
 		medium_vulnerability DESC,

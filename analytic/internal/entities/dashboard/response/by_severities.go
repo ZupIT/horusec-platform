@@ -1,7 +1,5 @@
 package response
 
-import "github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard"
-
 type BySeverities struct {
 	Critical *BySeverity `json:"critical"`
 	High     *BySeverity `json:"high"`
@@ -11,7 +9,7 @@ type BySeverities struct {
 	Unknown  *BySeverity `json:"unknown"`
 }
 
-func (s *BySeverities) SumVulnerabilityCritical(vuln *dashboard.Vulnerability) *BySeverities {
+func (s *BySeverities) SumVulnerabilityCritical(vuln *Vulnerability) *BySeverities {
 	s.Critical.Count = vuln.CriticalVulnerability + vuln.CriticalRiskAccepted +
 		vuln.CriticalFalsePositive + vuln.CriticalCorrected
 
@@ -23,7 +21,7 @@ func (s *BySeverities) SumVulnerabilityCritical(vuln *dashboard.Vulnerability) *
 	return s
 }
 
-func (s *BySeverities) SumVulnerabilityHigh(vuln *dashboard.Vulnerability) *BySeverities {
+func (s *BySeverities) SumVulnerabilityHigh(vuln *Vulnerability) *BySeverities {
 	s.High.Count = vuln.HighVulnerability + vuln.HighRiskAccepted + vuln.HighFalsePositive + vuln.HighCorrected
 
 	s.High.Types.Vulnerability = vuln.HighVulnerability
@@ -34,7 +32,7 @@ func (s *BySeverities) SumVulnerabilityHigh(vuln *dashboard.Vulnerability) *BySe
 	return s
 }
 
-func (s *BySeverities) SumVulnerabilityMedium(vuln *dashboard.Vulnerability) *BySeverities {
+func (s *BySeverities) SumVulnerabilityMedium(vuln *Vulnerability) *BySeverities {
 	s.Medium.Count = vuln.MediumVulnerability + vuln.MediumRiskAccepted +
 		vuln.MediumFalsePositive + vuln.MediumCorrected
 
@@ -46,7 +44,7 @@ func (s *BySeverities) SumVulnerabilityMedium(vuln *dashboard.Vulnerability) *By
 	return s
 }
 
-func (s *BySeverities) SumVulnerabilityLow(vuln *dashboard.Vulnerability) *BySeverities {
+func (s *BySeverities) SumVulnerabilityLow(vuln *Vulnerability) *BySeverities {
 	s.Low.Count = vuln.LowVulnerability + vuln.LowRiskAccepted + vuln.LowFalsePositive + vuln.LowCorrected
 
 	s.Low.Types.Vulnerability = vuln.LowVulnerability
@@ -57,7 +55,7 @@ func (s *BySeverities) SumVulnerabilityLow(vuln *dashboard.Vulnerability) *BySev
 	return s
 }
 
-func (s *BySeverities) SumVulnerabilityInfo(vuln *dashboard.Vulnerability) *BySeverities {
+func (s *BySeverities) SumVulnerabilityInfo(vuln *Vulnerability) *BySeverities {
 	s.Info.Count = vuln.InfoVulnerability + vuln.InfoRiskAccepted + vuln.InfoFalsePositive + vuln.InfoCorrected
 
 	s.Info.Types.Vulnerability = vuln.InfoVulnerability
@@ -68,7 +66,7 @@ func (s *BySeverities) SumVulnerabilityInfo(vuln *dashboard.Vulnerability) *BySe
 	return s
 }
 
-func (s *BySeverities) SumVulnerabilityUnknown(vuln *dashboard.Vulnerability) *BySeverities {
+func (s *BySeverities) SumVulnerabilityUnknown(vuln *Vulnerability) *BySeverities {
 	s.Unknown.Count = vuln.UnknownVulnerability + vuln.UnknownRiskAccepted +
 		vuln.UnknownFalsePositive + vuln.UnknownCorrected
 

@@ -3,12 +3,11 @@ package dashboard
 import (
 	netHTTP "net/http"
 
-	_ "github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard" // [swagger-usage]
+	httpUtil "github.com/ZupIT/horusec-devkit/pkg/utils/http"
 
 	controller "github.com/ZupIT/horusec-platform/analytic/internal/controllers/dashboard"
+	_ "github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard/response" // [swagger-usage]
 	useCase "github.com/ZupIT/horusec-platform/analytic/internal/usecase/dashboard"
-
-	httpUtil "github.com/ZupIT/horusec-devkit/pkg/utils/http"
 )
 
 type Handler struct {

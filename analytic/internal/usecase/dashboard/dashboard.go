@@ -5,6 +5,10 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard/response"
+
+	"github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard/database"
+
 	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
 
 	"github.com/go-chi/chi"
@@ -13,18 +17,17 @@ import (
 
 	analysisEntities "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 
-	"github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard"
 	"github.com/ZupIT/horusec-platform/analytic/internal/enums"
 )
 
 const DefaultSize = 10
 
 type IUseCases interface {
-	ExtractFilterDashboard(r *netHTTP.Request) (*dashboard.Filters, error)
-	ParseAnalysisToVulnerabilitiesByAuthor(analysis *analysisEntities.Analysis) []*dashboard.VulnerabilitiesByAuthor
-	ParseAnalysisToVulnerabilitiesByRepository(analysis *analysisEntities.Analysis) []*dashboard.VulnerabilitiesByRepository
-	ParseAnalysisToVulnerabilitiesByLanguage(analysis *analysisEntities.Analysis) []*dashboard.VulnerabilitiesByLanguage
-	ParseAnalysisToVulnerabilitiesByTime(analysis *analysisEntities.Analysis) *dashboard.VulnerabilitiesByTime
+	ExtractFilterDashboard(r *netHTTP.Request) (*database.Filter, error)
+	ParseAnalysisToVulnerabilitiesByAuthor(analysis *analysisEntities.Analysis) []*database.VulnerabilitiesByAuthor
+	ParseAnalysisToVulnerabilitiesByRepository(analysis *analysisEntities.Analysis) []*database.VulnerabilitiesByRepository
+	ParseAnalysisToVulnerabilitiesByLanguage(analysis *analysisEntities.Analysis) []*database.VulnerabilitiesByLanguage
+	ParseAnalysisToVulnerabilitiesByTime(analysis *analysisEntities.Analysis) *database.VulnerabilitiesByTime
 }
 type UseCases struct{}
 
@@ -33,8 +36,8 @@ func NewUseCaseDashboard() IUseCases {
 }
 
 func (u *UseCases) ParseAnalysisToVulnerabilitiesByAuthor(
-	analysis *analysisEntities.Analysis) []*dashboard.VulnerabilitiesByAuthor {
-	mapVulnByAuthor := map[string]*dashboard.VulnerabilitiesByAuthor{}
+	analysis *analysisEntities.Analysis) []*database.VulnerabilitiesByAuthor {
+	mapVulnByAuthor := map[string]*database.VulnerabilitiesByAuthor{}
 
 	for index := range analysis.AnalysisVulnerabilities {
 		if vulnByAuthor, ok := mapVulnByAuthor[analysis.AnalysisVulnerabilities[index].Vulnerability.CommitEmail]; ok {
@@ -51,10 +54,10 @@ func (u *UseCases) ParseAnalysisToVulnerabilitiesByAuthor(
 }
 
 func (u *UseCases) newVulnerabilitiesByAuthor(analysis *analysisEntities.Analysis,
-	index int) *dashboard.VulnerabilitiesByAuthor {
-	vulnsByAuthor := &dashboard.VulnerabilitiesByAuthor{
+	index int) *database.VulnerabilitiesByAuthor {
+	vulnsByAuthor := &database.VulnerabilitiesByAuthor{
 		Author: analysis.AnalysisVulnerabilities[index].Vulnerability.CommitEmail,
-		Vulnerability: dashboard.Vulnerability{
+		Vulnerability: response.Vulnerability{
 			VulnerabilityID: uuid.New(),
 			CreatedAt:       analysis.CreatedAt,
 			WorkspaceID:     analysis.WorkspaceID,
@@ -68,8 +71,8 @@ func (u *UseCases) newVulnerabilitiesByAuthor(analysis *analysisEntities.Analysi
 	return vulnsByAuthor
 }
 
-func (u *UseCases) mapVulnByAuthorToSlice(mapVulnByAuthor map[string]*dashboard.VulnerabilitiesByAuthor) (
-	sliceVulnsByAuthor []*dashboard.VulnerabilitiesByAuthor) {
+func (u *UseCases) mapVulnByAuthorToSlice(mapVulnByAuthor map[string]*database.VulnerabilitiesByAuthor) (
+	sliceVulnsByAuthor []*database.VulnerabilitiesByAuthor) {
 	for _, vulnsByAuthor := range mapVulnByAuthor {
 		sliceVulnsByAuthor = append(sliceVulnsByAuthor, vulnsByAuthor)
 	}
@@ -78,8 +81,8 @@ func (u *UseCases) mapVulnByAuthorToSlice(mapVulnByAuthor map[string]*dashboard.
 }
 
 func (u *UseCases) ParseAnalysisToVulnerabilitiesByRepository(
-	analysis *analysisEntities.Analysis) []*dashboard.VulnerabilitiesByRepository {
-	mapVulnByRepository := map[string]*dashboard.VulnerabilitiesByRepository{}
+	analysis *analysisEntities.Analysis) []*database.VulnerabilitiesByRepository {
+	mapVulnByRepository := map[string]*database.VulnerabilitiesByRepository{}
 
 	for index := range analysis.AnalysisVulnerabilities {
 		if vulnByRepository, ok := mapVulnByRepository[analysis.RepositoryName]; ok {
@@ -97,10 +100,10 @@ func (u *UseCases) ParseAnalysisToVulnerabilitiesByRepository(
 }
 
 func (u *UseCases) newVulnerabilitiesByRepository(analysis *analysisEntities.Analysis,
-	index int) *dashboard.VulnerabilitiesByRepository {
-	vulnByRepository := &dashboard.VulnerabilitiesByRepository{
+	index int) *database.VulnerabilitiesByRepository {
+	vulnByRepository := &database.VulnerabilitiesByRepository{
 		RepositoryName: analysis.RepositoryName,
-		Vulnerability: dashboard.Vulnerability{
+		Vulnerability: response.Vulnerability{
 			VulnerabilityID: uuid.New(),
 			CreatedAt:       analysis.CreatedAt,
 			WorkspaceID:     analysis.WorkspaceID,
@@ -114,8 +117,8 @@ func (u *UseCases) newVulnerabilitiesByRepository(analysis *analysisEntities.Ana
 	return vulnByRepository
 }
 
-func (u *UseCases) mapVulnByRepositoryToSlice(mapVulnByRepository map[string]*dashboard.VulnerabilitiesByRepository) (
-	sliceVulnsByRepository []*dashboard.VulnerabilitiesByRepository) {
+func (u *UseCases) mapVulnByRepositoryToSlice(mapVulnByRepository map[string]*database.VulnerabilitiesByRepository) (
+	sliceVulnsByRepository []*database.VulnerabilitiesByRepository) {
 
 	for _, vulnsByRepository := range mapVulnByRepository {
 		sliceVulnsByRepository = append(sliceVulnsByRepository, vulnsByRepository)
@@ -125,8 +128,8 @@ func (u *UseCases) mapVulnByRepositoryToSlice(mapVulnByRepository map[string]*da
 }
 
 func (u *UseCases) ParseAnalysisToVulnerabilitiesByLanguage(
-	analysis *analysisEntities.Analysis) []*dashboard.VulnerabilitiesByLanguage {
-	mapVulnByLanguage := map[languages.Language]*dashboard.VulnerabilitiesByLanguage{}
+	analysis *analysisEntities.Analysis) []*database.VulnerabilitiesByLanguage {
+	mapVulnByLanguage := map[languages.Language]*database.VulnerabilitiesByLanguage{}
 
 	for index := range analysis.AnalysisVulnerabilities {
 		if vulnByRepository, ok := mapVulnByLanguage[analysis.AnalysisVulnerabilities[index].Vulnerability.Language]; ok {
@@ -144,10 +147,10 @@ func (u *UseCases) ParseAnalysisToVulnerabilitiesByLanguage(
 }
 
 func (u *UseCases) newVulnerabilitiesByLanguage(analysis *analysisEntities.Analysis,
-	index int) *dashboard.VulnerabilitiesByLanguage {
-	vulnByLanguage := &dashboard.VulnerabilitiesByLanguage{
+	index int) *database.VulnerabilitiesByLanguage {
+	vulnByLanguage := &database.VulnerabilitiesByLanguage{
 		Language: analysis.AnalysisVulnerabilities[index].Vulnerability.Language,
-		Vulnerability: dashboard.Vulnerability{
+		Vulnerability: response.Vulnerability{
 			VulnerabilityID: uuid.New(),
 			CreatedAt:       analysis.CreatedAt,
 			WorkspaceID:     analysis.WorkspaceID,
@@ -161,8 +164,8 @@ func (u *UseCases) newVulnerabilitiesByLanguage(analysis *analysisEntities.Analy
 	return vulnByLanguage
 }
 
-func (u *UseCases) mapVulnByLanguageToSlice(mapVulnByLanguage map[languages.Language]*dashboard.VulnerabilitiesByLanguage) (
-	sliceVulnsByLanguage []*dashboard.VulnerabilitiesByLanguage) {
+func (u *UseCases) mapVulnByLanguageToSlice(mapVulnByLanguage map[languages.Language]*database.VulnerabilitiesByLanguage) (
+	sliceVulnsByLanguage []*database.VulnerabilitiesByLanguage) {
 	for _, vulnsByLanguage := range mapVulnByLanguage {
 		sliceVulnsByLanguage = append(sliceVulnsByLanguage, vulnsByLanguage)
 	}
@@ -171,9 +174,9 @@ func (u *UseCases) mapVulnByLanguageToSlice(mapVulnByLanguage map[languages.Lang
 }
 
 func (u *UseCases) ParseAnalysisToVulnerabilitiesByTime(
-	analysis *analysisEntities.Analysis) *dashboard.VulnerabilitiesByTime {
-	vulnsByTime := &dashboard.VulnerabilitiesByTime{
-		Vulnerability: dashboard.Vulnerability{
+	analysis *analysisEntities.Analysis) *database.VulnerabilitiesByTime {
+	vulnsByTime := &database.VulnerabilitiesByTime{
+		Vulnerability: response.Vulnerability{
 			VulnerabilityID: uuid.New(),
 			CreatedAt:       analysis.CreatedAt,
 			WorkspaceID:     analysis.WorkspaceID,
@@ -189,7 +192,7 @@ func (u *UseCases) ParseAnalysisToVulnerabilitiesByTime(
 	return vulnsByTime
 }
 
-func (u *UseCases) ExtractFilterDashboard(r *netHTTP.Request) (*dashboard.Filters, error) {
+func (u *UseCases) ExtractFilterDashboard(r *netHTTP.Request) (*database.Filter, error) {
 	filter, err := u.extractFilterDashboardByWorkspace(r)
 	if err != nil {
 		return nil, err
@@ -203,7 +206,7 @@ func (u *UseCases) ExtractFilterDashboard(r *netHTTP.Request) (*dashboard.Filter
 	return filter, u.validateFilterDashboard(filter, true)
 }
 
-func (u *UseCases) extractFilterDashboardByWorkspace(r *netHTTP.Request) (*dashboard.Filters, error) {
+func (u *UseCases) extractFilterDashboardByWorkspace(r *netHTTP.Request) (*database.Filter, error) {
 	workspaceID, err := uuid.Parse(chi.URLParam(r, "workspaceID"))
 	if err != nil {
 		return nil, enums.ErrorWrongWorkspaceID
@@ -249,7 +252,7 @@ func (u *UseCases) getDateFromRequestQuery(r *netHTTP.Request, queryStrKey strin
 }
 
 func (u *UseCases) validateFilterDashboard(
-	entity *dashboard.Filters, isFilterFromRepository bool) error {
+	entity *database.Filter, isFilterFromRepository bool) error {
 	return validation.ValidateStruct(entity,
 		validation.Field(&entity.WorkspaceID, validation.Required, validation.NotIn(uuid.Nil)),
 		validation.Field(&entity.RepositoryID, validation.When(isFilterFromRepository, validation.NotIn(uuid.Nil))),
@@ -261,8 +264,8 @@ func (u *UseCases) validateFilterDashboard(
 }
 
 func (u *UseCases) buildFilterDasboard(workspaceID uuid.UUID, initialDate, finalDate time.Time,
-	page int, size int) *dashboard.Filters {
-	return &dashboard.Filters{
+	page int, size int) *database.Filter {
+	return &database.Filter{
 		WorkspaceID: workspaceID,
 		StartTime:   initialDate,
 		EndTime:     finalDate,

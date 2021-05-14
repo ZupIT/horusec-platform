@@ -1,7 +1,9 @@
-package dashboard
+package database
 
 import (
 	"testing"
+
+	response2 "github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard/response"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -11,7 +13,7 @@ func TestParseListVulnByRepositoryToListResponse(t *testing.T) {
 		vulns := []*VulnerabilitiesByRepository{
 			&VulnerabilitiesByRepository{
 				RepositoryName: "my-repository",
-				Vulnerability: Vulnerability{
+				Vulnerability: response2.Vulnerability{
 					CriticalVulnerability: 1,
 				},
 			},

@@ -5,13 +5,15 @@ import (
 	"testing"
 	"time"
 
+	response2 "github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard/response"
+
+	database2 "github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard/database"
+
 	"github.com/ZupIT/horusec-devkit/pkg/services/database"
 	"github.com/ZupIT/horusec-devkit/pkg/services/database/enums"
 	"github.com/ZupIT/horusec-devkit/pkg/services/database/response"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
-
-	"github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard"
 )
 
 var zeroValue = 0
@@ -25,9 +27,9 @@ func TestRepoDashboard_Save(t *testing.T) {
 			Write: dbWrite,
 		}
 		repo := NewRepoDashboard(conn)
-		entity := &dashboard.VulnerabilitiesByAuthor{
+		entity := &database2.VulnerabilitiesByAuthor{
 			Author: "horusec@zup.com.br",
-			Vulnerability: dashboard.Vulnerability{
+			Vulnerability: response2.Vulnerability{
 				VulnerabilityID: uuid.New(),
 				CreatedAt:       time.Now(),
 				Active:          true,
@@ -46,9 +48,9 @@ func TestRepoDashboard_Save(t *testing.T) {
 			Write: dbWrite,
 		}
 		repo := NewRepoDashboard(conn)
-		entity := &dashboard.VulnerabilitiesByAuthor{
+		entity := &database2.VulnerabilitiesByAuthor{
 			Author: "horusec@zup.com.br",
-			Vulnerability: dashboard.Vulnerability{
+			Vulnerability: response2.Vulnerability{
 				VulnerabilityID: uuid.New(),
 				CreatedAt:       time.Now(),
 				Active:          true,
@@ -74,7 +76,7 @@ func TestRepoDashboard_Inactive(t *testing.T) {
 			"active":        true,
 			"repository_id": uuid.New(),
 		}
-		err := repo.Inactive(condition, (&dashboard.VulnerabilitiesByAuthor{}).GetTable())
+		err := repo.Inactive(condition, (&database2.VulnerabilitiesByAuthor{}).GetTable())
 		assert.NoError(t, err)
 	})
 	t.Run("Should not save new content because exists error", func(t *testing.T) {
@@ -89,7 +91,7 @@ func TestRepoDashboard_Inactive(t *testing.T) {
 			"active":        true,
 			"repository_id": uuid.New(),
 		}
-		err := repo.Inactive(condition, (&dashboard.VulnerabilitiesByAuthor{}).GetTable())
+		err := repo.Inactive(condition, (&database2.VulnerabilitiesByAuthor{}).GetTable())
 		assert.Error(t, err)
 	})
 }
@@ -104,7 +106,7 @@ func TestRepoDashboard_GetDashboardTotalDevelopers(t *testing.T) {
 			Write: &database.Mock{},
 		}
 		repo := NewRepoDashboard(conn)
-		filter := &dashboard.Filters{
+		filter := &database2.Filter{
 			RepositoryID: uuid.New(),
 			WorkspaceID:  uuid.New(),
 			StartTime:    time.Now(),
@@ -122,7 +124,7 @@ func TestRepoDashboard_GetDashboardTotalDevelopers(t *testing.T) {
 			Write: &database.Mock{},
 		}
 		repo := NewRepoDashboard(conn)
-		filter := &dashboard.Filters{
+		filter := &database2.Filter{
 			RepositoryID: uuid.New(),
 			WorkspaceID:  uuid.New(),
 			StartTime:    time.Now(),
@@ -140,7 +142,7 @@ func TestRepoDashboard_GetDashboardTotalDevelopers(t *testing.T) {
 			Write: &database.Mock{},
 		}
 		repo := NewRepoDashboard(conn)
-		filter := &dashboard.Filters{
+		filter := &database2.Filter{
 			RepositoryID: uuid.New(),
 			WorkspaceID:  uuid.New(),
 			StartTime:    time.Now(),
@@ -162,7 +164,7 @@ func TestRepoDashboard_GetDashboardTotalRepositories(t *testing.T) {
 			Write: &database.Mock{},
 		}
 		repo := NewRepoDashboard(conn)
-		filter := &dashboard.Filters{
+		filter := &database2.Filter{
 			RepositoryID: uuid.New(),
 			WorkspaceID:  uuid.New(),
 			StartTime:    time.Now(),
@@ -180,7 +182,7 @@ func TestRepoDashboard_GetDashboardTotalRepositories(t *testing.T) {
 			Write: &database.Mock{},
 		}
 		repo := NewRepoDashboard(conn)
-		filter := &dashboard.Filters{
+		filter := &database2.Filter{
 			RepositoryID: uuid.New(),
 			WorkspaceID:  uuid.New(),
 			StartTime:    time.Now(),
@@ -198,7 +200,7 @@ func TestRepoDashboard_GetDashboardTotalRepositories(t *testing.T) {
 			Write: &database.Mock{},
 		}
 		repo := NewRepoDashboard(conn)
-		filter := &dashboard.Filters{
+		filter := &database2.Filter{
 			RepositoryID: uuid.New(),
 			WorkspaceID:  uuid.New(),
 			StartTime:    time.Now(),
@@ -219,7 +221,7 @@ func TestRepoDashboard_GetDashboardVulnBySeverity(t *testing.T) {
 			Write: &database.Mock{},
 		}
 		repo := NewRepoDashboard(conn)
-		filter := &dashboard.Filters{
+		filter := &database2.Filter{
 			RepositoryID: uuid.New(),
 			WorkspaceID:  uuid.New(),
 			StartTime:    time.Now(),
@@ -237,7 +239,7 @@ func TestRepoDashboard_GetDashboardVulnBySeverity(t *testing.T) {
 			Write: &database.Mock{},
 		}
 		repo := NewRepoDashboard(conn)
-		filter := &dashboard.Filters{
+		filter := &database2.Filter{
 			RepositoryID: uuid.New(),
 			WorkspaceID:  uuid.New(),
 			StartTime:    time.Now(),
@@ -250,13 +252,13 @@ func TestRepoDashboard_GetDashboardVulnBySeverity(t *testing.T) {
 	t.Run("Should return GetDashboardVulnBySeverity without error", func(t *testing.T) {
 		vulnID := uuid.New()
 		dbRead := &database.Mock{}
-		dbRead.On("Raw").Return(response.NewResponse(0, nil, &dashboard.Vulnerability{VulnerabilityID: vulnID}))
+		dbRead.On("Raw").Return(response.NewResponse(0, nil, &response2.Vulnerability{VulnerabilityID: vulnID}))
 		conn := &database.Connection{
 			Read:  dbRead,
 			Write: &database.Mock{},
 		}
 		repo := NewRepoDashboard(conn)
-		filter := &dashboard.Filters{
+		filter := &database2.Filter{
 			RepositoryID: uuid.New(),
 			WorkspaceID:  uuid.New(),
 			StartTime:    time.Now(),
@@ -276,7 +278,7 @@ func TestRepoDashboard_GetDashboardVulnByAuthor(t *testing.T) {
 			Write: &database.Mock{},
 		}
 		repo := NewRepoDashboard(conn)
-		filter := &dashboard.Filters{
+		filter := &database2.Filter{
 			RepositoryID: uuid.New(),
 			WorkspaceID:  uuid.New(),
 			StartTime:    time.Now(),
@@ -288,13 +290,13 @@ func TestRepoDashboard_GetDashboardVulnByAuthor(t *testing.T) {
 	})
 	t.Run("Should return GetDashboardVulnByAuthor without error when data is empty", func(t *testing.T) {
 		dbRead := &database.Mock{}
-		dbRead.On("Raw").Return(response.NewResponse(0, nil, &[]*dashboard.VulnerabilitiesByAuthor{}))
+		dbRead.On("Raw").Return(response.NewResponse(0, nil, &[]*database2.VulnerabilitiesByAuthor{}))
 		conn := &database.Connection{
 			Read:  dbRead,
 			Write: &database.Mock{},
 		}
 		repo := NewRepoDashboard(conn)
-		filter := &dashboard.Filters{
+		filter := &database2.Filter{
 			RepositoryID: uuid.New(),
 			WorkspaceID:  uuid.New(),
 			StartTime:    time.Now(),
@@ -307,15 +309,15 @@ func TestRepoDashboard_GetDashboardVulnByAuthor(t *testing.T) {
 	t.Run("Should return GetDashboardVulnByAuthor without error", func(t *testing.T) {
 		dbRead := &database.Mock{}
 		vulnID := uuid.New()
-		dbRead.On("Raw").Return(response.NewResponse(0, nil, &[]*dashboard.VulnerabilitiesByAuthor{{
-			Vulnerability: dashboard.Vulnerability{VulnerabilityID: vulnID},
+		dbRead.On("Raw").Return(response.NewResponse(0, nil, &[]*database2.VulnerabilitiesByAuthor{{
+			Vulnerability: response2.Vulnerability{VulnerabilityID: vulnID},
 		}}))
 		conn := &database.Connection{
 			Read:  dbRead,
 			Write: &database.Mock{},
 		}
 		repo := NewRepoDashboard(conn)
-		filter := &dashboard.Filters{
+		filter := &database2.Filter{
 			RepositoryID: uuid.New(),
 			WorkspaceID:  uuid.New(),
 			StartTime:    time.Now(),
@@ -336,7 +338,7 @@ func TestRepoDashboard_GetDashboardVulnByRepository(t *testing.T) {
 			Write: &database.Mock{},
 		}
 		repo := NewRepoDashboard(conn)
-		filter := &dashboard.Filters{
+		filter := &database2.Filter{
 			RepositoryID: uuid.New(),
 			WorkspaceID:  uuid.New(),
 			StartTime:    time.Now(),
@@ -354,7 +356,7 @@ func TestRepoDashboard_GetDashboardVulnByRepository(t *testing.T) {
 			Write: &database.Mock{},
 		}
 		repo := NewRepoDashboard(conn)
-		filter := &dashboard.Filters{
+		filter := &database2.Filter{
 			RepositoryID: uuid.New(),
 			WorkspaceID:  uuid.New(),
 			StartTime:    time.Now(),
@@ -367,15 +369,15 @@ func TestRepoDashboard_GetDashboardVulnByRepository(t *testing.T) {
 	t.Run("Should return GetDashboardVulnByRepository without error", func(t *testing.T) {
 		dbRead := &database.Mock{}
 		vulnID := uuid.New()
-		dbRead.On("Raw").Return(response.NewResponse(0, nil, &[]*dashboard.VulnerabilitiesByRepository{{
-			Vulnerability: dashboard.Vulnerability{VulnerabilityID: vulnID},
+		dbRead.On("Raw").Return(response.NewResponse(0, nil, &[]*database2.VulnerabilitiesByRepository{{
+			Vulnerability: response2.Vulnerability{VulnerabilityID: vulnID},
 		}}))
 		conn := &database.Connection{
 			Read:  dbRead,
 			Write: &database.Mock{},
 		}
 		repo := NewRepoDashboard(conn)
-		filter := &dashboard.Filters{
+		filter := &database2.Filter{
 			RepositoryID: uuid.New(),
 			WorkspaceID:  uuid.New(),
 			StartTime:    time.Now(),
@@ -396,7 +398,7 @@ func TestRepoDashboard_GetDashboardVulnByLanguage(t *testing.T) {
 			Write: &database.Mock{},
 		}
 		repo := NewRepoDashboard(conn)
-		filter := &dashboard.Filters{
+		filter := &database2.Filter{
 			RepositoryID: uuid.New(),
 			WorkspaceID:  uuid.New(),
 			StartTime:    time.Now(),
@@ -414,7 +416,7 @@ func TestRepoDashboard_GetDashboardVulnByLanguage(t *testing.T) {
 			Write: &database.Mock{},
 		}
 		repo := NewRepoDashboard(conn)
-		filter := &dashboard.Filters{
+		filter := &database2.Filter{
 			RepositoryID: uuid.New(),
 			WorkspaceID:  uuid.New(),
 			StartTime:    time.Now(),
@@ -427,15 +429,15 @@ func TestRepoDashboard_GetDashboardVulnByLanguage(t *testing.T) {
 	t.Run("Should return GetDashboardVulnByLanguage without error", func(t *testing.T) {
 		dbRead := &database.Mock{}
 		vulnID := uuid.New()
-		dbRead.On("Raw").Return(response.NewResponse(0, nil, &[]*dashboard.VulnerabilitiesByLanguage{{
-			Vulnerability: dashboard.Vulnerability{VulnerabilityID: vulnID},
+		dbRead.On("Raw").Return(response.NewResponse(0, nil, &[]*database2.VulnerabilitiesByLanguage{{
+			Vulnerability: response2.Vulnerability{VulnerabilityID: vulnID},
 		}}))
 		conn := &database.Connection{
 			Read:  dbRead,
 			Write: &database.Mock{},
 		}
 		repo := NewRepoDashboard(conn)
-		filter := &dashboard.Filters{
+		filter := &database2.Filter{
 			RepositoryID: uuid.New(),
 			WorkspaceID:  uuid.New(),
 			StartTime:    time.Now(),
@@ -456,7 +458,7 @@ func TestRepoDashboard_GetDashboardVulnByTime(t *testing.T) {
 			Write: &database.Mock{},
 		}
 		repo := NewRepoDashboard(conn)
-		filter := &dashboard.Filters{
+		filter := &database2.Filter{
 			RepositoryID: uuid.New(),
 			WorkspaceID:  uuid.New(),
 			StartTime:    time.Now(),
@@ -474,7 +476,7 @@ func TestRepoDashboard_GetDashboardVulnByTime(t *testing.T) {
 			Write: &database.Mock{},
 		}
 		repo := NewRepoDashboard(conn)
-		filter := &dashboard.Filters{
+		filter := &database2.Filter{
 			RepositoryID: uuid.New(),
 			WorkspaceID:  uuid.New(),
 			StartTime:    time.Now(),
@@ -487,15 +489,15 @@ func TestRepoDashboard_GetDashboardVulnByTime(t *testing.T) {
 	t.Run("Should return GetDashboardVulnByTime without error", func(t *testing.T) {
 		dbRead := &database.Mock{}
 		vulnID := uuid.New()
-		dbRead.On("Raw").Return(response.NewResponse(0, nil, &[]*dashboard.VulnerabilitiesByTime{{
-			Vulnerability: dashboard.Vulnerability{VulnerabilityID: vulnID},
+		dbRead.On("Raw").Return(response.NewResponse(0, nil, &[]*database2.VulnerabilitiesByTime{{
+			Vulnerability: response2.Vulnerability{VulnerabilityID: vulnID},
 		}}))
 		conn := &database.Connection{
 			Read:  dbRead,
 			Write: &database.Mock{},
 		}
 		repo := NewRepoDashboard(conn)
-		filter := &dashboard.Filters{
+		filter := &database2.Filter{
 			RepositoryID: uuid.New(),
 			WorkspaceID:  uuid.New(),
 			StartTime:    time.Now(),

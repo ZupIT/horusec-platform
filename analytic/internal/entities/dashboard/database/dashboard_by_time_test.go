@@ -1,8 +1,10 @@
-package dashboard
+package database
 
 import (
 	"testing"
 	"time"
+
+	response2 "github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard/response"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -11,7 +13,7 @@ func TestParseListVulnByTimeToListResponse(t *testing.T) {
 	t.Run("Parse to response correctly", func(t *testing.T) {
 		vulns := []*VulnerabilitiesByTime{
 			&VulnerabilitiesByTime{
-				Vulnerability: Vulnerability{
+				Vulnerability: response2.Vulnerability{
 					CreatedAt:             time.Now(),
 					CriticalVulnerability: 1,
 				},

@@ -6,5 +6,5 @@ import (
 
 type ByLanguage struct {
 	Language languages.Language `json:"language"`
-	BySeverities
+	*BySeverities
 }
