@@ -20,7 +20,6 @@ type IRepoDashboard interface {
 	GetDashboardVulnByTime(filter *repositoriesEntities.Filter) ([]*repositoriesEntities.VulnerabilitiesByTime, error)
 }
 
-//@TODO IMPROVE QUERIES
 type RepoDashboard struct {
 	databaseRead  database.IDatabaseRead
 	databaseWrite database.IDatabaseWrite
@@ -38,24 +37,22 @@ func (r *RepoDashboard) GetDashboardTotalDevelopers(filter *repositoriesEntities
 
 	query := fmt.Sprintf(r.queryGetDashboardTotalDevelopers(), dashboardEnums.TableVulnerabilitiesByAuthor, condition)
 
-	err = r.databaseRead.Raw(query, &count, args...).GetErrorExceptNotFound()
-
-	return count, err
+	return count, r.databaseRead.Raw(query, &count, args...).GetErrorExceptNotFound()
 }
 
 func (r *RepoDashboard) queryGetDashboardTotalDevelopers() string {
 	return `
-		SELECT COUNT(author)
-		FROM %[1]s AS table1
-		INNER JOIN 
-		(
-			SELECT repository_id AS repoID, MAX(created_at) AS created_at2
-			FROM
-  			vulnerabilities_by_time
-			GROUP BY repoID
-		) AS table2
-		ON table1.repository_id = table2.repoID AND table1.created_at = table2.created_at2
-		WHERE %[2]s
+		SELECT COUNT(*) 
+		FROM (
+				SELECT DISTINCT ON (author) author
+				FROM %[1]s
+				WHERE %[2]s AND created_at 
+				IN 
+				(
+					SELECT max(created_at) FROM vulnerabilities_by_language GROUP BY repository_id
+				)
+				ORDER by author, created_at DESC
+		) AS result
 	`
 }
 
@@ -70,19 +67,17 @@ func (r *RepoDashboard) GetDashboardTotalRepositories(filter *repositoriesEntiti
 
 func (r *RepoDashboard) queryGetDashboardTotalRepositories() string {
 	return `
-		SELECT COUNT( DISTINCT ( repository_id ) ) 
-		FROM %[1]s AS table1
-
-		INNER JOIN 
-		(
-			SELECT repository_id AS repoID, MAX(created_at) AS created_at2
-			FROM
-  			vulnerabilities_by_time
-			GROUP BY repoID
-		) AS table2
-		ON table1.repository_id = table2.repoID AND table1.created_at = table2.created_at2
-
-		WHERE %[2]s
+		SELECT COUNT(*) 
+		FROM (
+				SELECT DISTINCT ON (repository_id) repository_id
+				FROM %[1]s
+				WHERE %[2]s AND created_at 
+				IN 
+				(
+					SELECT max(created_at) FROM vulnerabilities_by_language GROUP BY repository_id
+				)
+				ORDER by repository_id, created_at DESC
+		) AS result
 	`
 }
 
@@ -90,61 +85,51 @@ func (r *RepoDashboard) GetDashboardVulnBySeverity(filter *repositoriesEntities.
 	vulns := &response.Vulnerability{}
 	condition, args := filter.GetConditionFilter()
 
-	query := fmt.Sprintf(r.queryGetDashboardVulnBySeverity(),
-		r.queryDefaultFields(), dashboardEnums.TableVulnerabilitiesByTime, condition, r.orderBySeverity())
+	query := fmt.Sprintf(r.queryGetDashboardVulnBySeverity(), r.queryDefaultFields(),
+		dashboardEnums.TableVulnerabilitiesByTime, condition)
 
-	err := r.databaseRead.Raw(query, vulns, args...).GetErrorExceptNotFound()
-
-	return vulns, err
+	return vulns, r.databaseRead.Raw(query, vulns, args...).GetErrorExceptNotFound()
 }
 
 func (r *RepoDashboard) queryGetDashboardVulnBySeverity() string {
 	return `
-		SELECT %[1]s 
-		FROM %[2]s AS table1
-
-		INNER JOIN 
-		(
-			SELECT repository_id AS repoID, MAX(created_at) AS created_at2
-			FROM
-  			vulnerabilities_by_time
-			GROUP BY repoID
-		) AS table2
-		ON table1.repository_id = table2.repoID AND table1.created_at = table2.created_at2
-
-		WHERE %[3]s
-		GROUP BY workspace_id
-		%[4]s
-		LIMIT 1
+		SELECT %[1]s
+		FROM (
+				SELECT DISTINCT ON (repository_id) *
+				FROM %[2]s
+				WHERE %[3]s AND created_at 
+				IN 
+				(
+					SELECT max(created_at) FROM vulnerabilities_by_language GROUP BY repository_id
+				)
+				ORDER by repository_id, created_at DESC
+		) AS result
 	`
 }
 
 func (r *RepoDashboard) GetDashboardVulnByAuthor(filter *repositoriesEntities.Filter) (vulns []*repositoriesEntities.VulnerabilitiesByAuthor, err error) {
 	condition, args := filter.GetConditionFilter()
 
-	query := fmt.Sprintf(r.queryGetDashboardVulnByAuthor(),
-		r.queryDefaultFields(), dashboardEnums.TableVulnerabilitiesByAuthor, condition, r.orderBySeverity())
+	query := fmt.Sprintf(r.queryGetDashboardVulnByAuthor(), r.queryDefaultFields(),
+		dashboardEnums.TableVulnerabilitiesByAuthor, condition)
 
 	return vulns, r.databaseRead.Raw(query, &vulns, args...).GetErrorExceptNotFound()
 }
 
 func (r *RepoDashboard) queryGetDashboardVulnByAuthor() string {
 	return `
-		SELECT author, %[1]s 
-		FROM %[2]s AS table1
-
-		INNER JOIN 
-		(
-			SELECT repository_id AS repoID, MAX(created_at) AS created_at2
-			FROM
-  			vulnerabilities_by_time
-			GROUP BY repoID
-		) AS table2
-		ON table1.repository_id = table2.repoID AND table1.created_at = table2.created_at2
-
-		WHERE %[3]s
-		GROUP BY author 
-		%[4]s 
+		SELECT author, %[1]s
+		FROM (
+				SELECT *
+				FROM %[2]s
+				WHERE %[3]s AND created_at 
+				IN 
+				(
+					SELECT max(created_at) FROM vulnerabilities_by_language GROUP BY repository_id
+				)
+				ORDER by author, created_at DESC
+		) AS result
+		GROUP BY author
 		LIMIT 5
 	`
 }
@@ -153,28 +138,25 @@ func (r *RepoDashboard) GetDashboardVulnByRepository(filter *repositoriesEntitie
 	condition, args := filter.GetConditionFilter()
 
 	query := fmt.Sprintf(r.queryGetDashboardVulnByRepository(),
-		r.queryDefaultFields(), dashboardEnums.TableVulnerabilitiesByRepository, condition, r.orderBySeverity())
+		r.queryDefaultFields(), dashboardEnums.TableVulnerabilitiesByRepository, condition)
 
 	return vulns, r.databaseRead.Raw(query, &vulns, args...).GetErrorExceptNotFound()
 }
 
 func (r *RepoDashboard) queryGetDashboardVulnByRepository() string {
 	return `
-		SELECT repository_name, %[1]s 
-		FROM %[2]s AS table1
-
-		INNER JOIN 
-		(
-			SELECT repository_id AS repoID, MAX(created_at) AS created_at2
-			FROM
-  			vulnerabilities_by_time
-			GROUP BY repoID
-		) AS table2
-		ON table1.repository_id = table2.repoID AND table1.created_at = table2.created_at2
-
-		WHERE %[3]s 
+		SELECT repository_name, %[1]s
+		FROM (
+				SELECT DISTINCT ON (repository_id) *
+				FROM %[2]s
+				WHERE %[3]s AND created_at 
+				IN 
+				(
+					SELECT max(created_at) FROM vulnerabilities_by_language GROUP BY repository_id
+				)
+				ORDER by repository_id, created_at DESC
+		) AS result
 		GROUP BY repository_name
-		%[4]s 
 		LIMIT 5
 	`
 }
@@ -182,29 +164,26 @@ func (r *RepoDashboard) queryGetDashboardVulnByRepository() string {
 func (r *RepoDashboard) GetDashboardVulnByLanguage(filter *repositoriesEntities.Filter) (vulns []*repositoriesEntities.VulnerabilitiesByLanguage, err error) {
 	condition, args := filter.GetConditionFilter()
 
-	query := fmt.Sprintf(r.queryGetDashboardVulnByLanguage(),
-		r.queryDefaultFields(), dashboardEnums.TableVulnerabilitiesByLanguage, condition, r.orderBySeverity())
+	query := fmt.Sprintf(r.queryGetDashboardVulnByLanguage(), r.queryDefaultFields(),
+		dashboardEnums.TableVulnerabilitiesByLanguage, condition)
 
 	return vulns, r.databaseRead.Raw(query, &vulns, args...).GetErrorExceptNotFound()
 }
 
 func (r *RepoDashboard) queryGetDashboardVulnByLanguage() string {
 	return `
-		SELECT language, %[1]s 
-		FROM %[2]s AS table1
-
-		INNER JOIN 
-		(
-			SELECT repository_id AS repoID, MAX(created_at) AS created_at2
-			FROM
-  			vulnerabilities_by_time
-			GROUP BY repoID
-		) AS table2
-		ON table1.repository_id = table2.repoID AND table1.created_at = table2.created_at2
-
-		WHERE %[3]s
+		SELECT language, %[1]s
+		FROM (
+				SELECT DISTINCT ON (language) *
+				FROM %[2]s
+				WHERE %[3]s AND created_at 
+				IN 
+				(
+					SELECT max(created_at) FROM vulnerabilities_by_language GROUP BY repository_id
+				)
+				ORDER by language, created_at DESC
+		) AS result
 		GROUP BY language
-		%[4]s 
 		LIMIT 5
 	`
 }
@@ -234,13 +213,6 @@ func (r *RepoDashboard) queryGetDashboardVulnByTime() string {
 	`
 }
 
-//INNER JOIN
-//
-//(SELECT repository_id as idrepo, MAX(created_at) AS maxDate
-//FROM vulnerabilities_by_time GROUP BY repository_id) AS dois
-//ON um.repository_id = dois.idrepo
-//AND um.created_at = dois.maxDate
-
 func (r *RepoDashboard) queryDefaultFields() string {
 	return `
 		SUM(critical_vulnerability) as critical_vulnerability, SUM(critical_false_positive) as critical_false_positive, 
@@ -255,18 +227,5 @@ func (r *RepoDashboard) queryDefaultFields() string {
 	    SUM(info_risk_accepted) as info_risk_accepted, SUM(info_corrected) as info_corrected,
 		SUM(unknown_vulnerability) as unknown_vulnerability, SUM(unknown_false_positive) as unknown_false_positive, 
 		SUM(unknown_risk_accepted) as unknown_risk_accepted, SUM(unknown_corrected) as unknown_corrected
-	`
-}
-
-//TODO WHY?
-func (r *RepoDashboard) orderBySeverity() interface{} {
-	return `
-		ORDER BY
-		critical_vulnerability DESC,
-		high_vulnerability DESC,
-		medium_vulnerability DESC,
-		low_vulnerability DESC,
-		info_vulnerability DESC,
-		unknown_vulnerability DESC
 	`
 }
