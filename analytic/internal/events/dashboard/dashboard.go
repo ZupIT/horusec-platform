@@ -30,34 +30,19 @@ func NewDashboardEvents(broker brokerLib.IBroker, controller dashboard.IControll
 }
 
 func (e *Events) startConsumers() *Events {
-	go e.broker.Consume(queues.HorusecAnalyticAuthors.ToString(), exchange.NewAnalysis.ToString(), exchange.Fanout.
-		ToString(), func(pack packet.IPacket) { e.handleNewAnalysis(pack, queues.HorusecAnalyticAuthors) })
+	go e.broker.Consume(queues.HorusecAnalyticNewAnalysisByAuthors.ToString(), exchange.NewAnalysis, exchange.Fanout,
+		func(pack packet.IPacket) { e.handleNewAnalysis(pack, queues.HorusecAnalyticNewAnalysisByAuthors) })
 
-	go e.broker.Consume(queues.HorusecAnalyticRepositories.ToString(), exchange.NewAnalysis.ToString(), exchange.Fanout.
-		ToString(), func(pack packet.IPacket) { e.handleNewAnalysis(pack, queues.HorusecAnalyticRepositories) })
+	go e.broker.Consume(queues.HorusecAnalyticNewAnalysisByRepository.ToString(), exchange.NewAnalysis, exchange.Fanout,
+		func(pack packet.IPacket) { e.handleNewAnalysis(pack, queues.HorusecAnalyticNewAnalysisByRepository) })
 
-	go e.broker.Consume(queues.HorusecAnalyticLanguages.ToString(), exchange.NewAnalysis.ToString(), exchange.Fanout.
-		ToString(), func(pack packet.IPacket) { e.handleNewAnalysis(pack, queues.HorusecAnalyticLanguages) })
+	go e.broker.Consume(queues.HorusecAnalyticNewAnalysisByLanguage.ToString(), exchange.NewAnalysis, exchange.Fanout,
+		func(pack packet.IPacket) { e.handleNewAnalysis(pack, queues.HorusecAnalyticNewAnalysisByLanguage) })
 
-	go e.broker.Consume(queues.HorusecAnalyticTimes.ToString(), exchange.NewAnalysis.ToString(), exchange.Fanout.
-		ToString(), func(pack packet.IPacket) { e.handleNewAnalysis(pack, queues.HorusecAnalyticTimes) })
+	go e.broker.Consume(queues.HorusecAnalyticNewAnalysisByTime.ToString(), exchange.NewAnalysis, exchange.Fanout,
+		func(pack packet.IPacket) { e.handleNewAnalysis(pack, queues.HorusecAnalyticNewAnalysisByTime) })
 
 	return e
-}
-
-func (e *Events) processAnalysisPacketByQueue(queue queues.Queue) func(*analysisEntities.Analysis) error {
-	switch queue {
-	case queues.HorusecAnalyticAuthors:
-		return e.controller.AddVulnerabilitiesByAuthor
-	case queues.HorusecAnalyticRepositories:
-		return e.controller.AddVulnerabilitiesByRepository
-	case queues.HorusecAnalyticLanguages:
-		return e.controller.AddVulnerabilitiesByLanguage
-	case queues.HorusecAnalyticTimes:
-		return e.controller.AddVulnerabilitiesByTime
-	}
-
-	return nil
 }
 
 func (e *Events) handleNewAnalysis(analysisPacket packet.IPacket, queue queues.Queue) {
@@ -70,11 +55,26 @@ func (e *Events) handleNewAnalysis(analysisPacket packet.IPacket, queue queues.Q
 		return
 	}
 
-	if err := e.processAnalysisPacketByQueue(queue)(analysis); err != nil {
+	if err := e.processNewAnalysisPacketByQueue(queue)(analysis); err != nil {
 		logger.LogError(fmt.Sprintf(eventsEnums.MessageFailedToProcessPacket, analysisPacket.GetBody(), queue), err)
 		_ = analysisPacket.Ack()
 		return
 	}
 
 	_ = analysisPacket.Ack()
+}
+
+func (e *Events) processNewAnalysisPacketByQueue(queue queues.Queue) func(*analysisEntities.Analysis) error {
+	switch queue {
+	case queues.HorusecAnalyticNewAnalysisByAuthors:
+		return e.controller.AddVulnerabilitiesByAuthor
+	case queues.HorusecAnalyticNewAnalysisByRepository:
+		return e.controller.AddVulnerabilitiesByRepository
+	case queues.HorusecAnalyticNewAnalysisByLanguage:
+		return e.controller.AddVulnerabilitiesByLanguage
+	case queues.HorusecAnalyticNewAnalysisByTime:
+		return e.controller.AddVulnerabilitiesByTime
+	}
+
+	return nil
 }
