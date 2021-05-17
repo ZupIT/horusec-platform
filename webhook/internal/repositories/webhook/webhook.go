@@ -10,8 +10,7 @@ import (
 type IWebhookRepository interface {
 	Save(entity *webhook.Webhook) error
 	Update(entity *webhook.Webhook, webhookID uuid.UUID) error
-	ListAll(workspaceID uuid.UUID) (entities *[]webhook.Webhook, err error)
-	GetRepositoryByID(repositoryID uuid.UUID) (string, error)
+	ListAll(workspaceID uuid.UUID) (entities *[]webhook.WithRepository, err error)
 	ListOne(condition map[string]interface{}) (entity *webhook.Webhook, err error)
 	Remove(webhookID uuid.UUID) error
 }
@@ -37,16 +36,19 @@ func (r *Repository) Update(entity *webhook.Webhook, webhookID uuid.UUID) error 
 	return r.dbWrite.Update(entity, condition, entity.GetTable()).GetError()
 }
 
-func (r *Repository) ListAll(workspaceID uuid.UUID) (entities *[]webhook.Webhook, err error) {
+func (r *Repository) ListAll(workspaceID uuid.UUID) (entities *[]webhook.WithRepository, err error) {
 	condition := map[string]interface{}{"workspace_id": workspaceID}
-	res := r.dbRead.Find(&[]webhook.Webhook{}, condition, (&webhook.Webhook{}).GetTable())
+	preloads := map[string][]interface{}{
+		"Repository": {},
+	}
+	res := r.dbRead.FindPreload(&[]webhook.WithRepository{}, condition, preloads, (&webhook.WithRepository{}).GetTable())
 	if res.GetErrorExceptNotFound() != nil {
-		return &[]webhook.Webhook{}, res.GetErrorExceptNotFound()
+		return &[]webhook.WithRepository{}, res.GetErrorExceptNotFound()
 	}
 	if res.GetData() == nil {
-		return &[]webhook.Webhook{}, nil
+		return &[]webhook.WithRepository{}, nil
 	}
-	return res.GetData().(*[]webhook.Webhook), nil
+	return res.GetData().(*[]webhook.WithRepository), nil
 }
 
 func (r *Repository) ListOne(condition map[string]interface{}) (entity *webhook.Webhook, err error) {
@@ -58,17 +60,6 @@ func (r *Repository) ListOne(condition map[string]interface{}) (entity *webhook.
 		return &webhook.Webhook{}, nil
 	}
 	return res.GetData().(*webhook.Webhook), nil
-}
-
-func (r *Repository) GetRepositoryByID(repositoryID uuid.UUID) (entity string, err error) {
-	res := r.dbRead.Raw(`SELECT name FROM repositories where repository_id IN (?)`, &entity, repositoryID.String())
-	if res.GetErrorExceptNotFound() != nil {
-		return "", res.GetErrorExceptNotFound()
-	}
-	if res.GetData() == nil {
-		return "", nil
-	}
-	return *res.GetData().(*string), nil
 }
 
 func (r *Repository) Remove(webhookID uuid.UUID) error {

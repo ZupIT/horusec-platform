@@ -22,9 +22,9 @@ func (m *Mock) Update(_ *webhook.Webhook, _ uuid.UUID) error {
 	return utilsMock.ReturnNilOrError(args, 0)
 }
 
-func (m *Mock) ListAll(_ uuid.UUID) (entities *[]webhook.Webhook, err error) {
+func (m *Mock) ListAll(_ uuid.UUID) (entities *[]webhook.WithRepository, err error) {
 	args := m.MethodCalled("ListAll")
-	return args.Get(0).(*[]webhook.Webhook), utilsMock.ReturnNilOrError(args, 1)
+	return args.Get(0).(*[]webhook.WithRepository), utilsMock.ReturnNilOrError(args, 1)
 }
 
 func (m *Mock) ListOne(_ map[string]interface{}) (entity *webhook.Webhook, err error) {
