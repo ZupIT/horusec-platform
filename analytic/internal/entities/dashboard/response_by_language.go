@@ -1,4 +1,4 @@
-package response
+package dashboard
 
 import (
 	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"

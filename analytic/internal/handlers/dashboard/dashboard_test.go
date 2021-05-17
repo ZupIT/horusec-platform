@@ -7,9 +7,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard/repository"
-
-	"github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard/response"
+	"github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard"
 
 	"github.com/go-chi/chi"
 	"github.com/google/uuid"
@@ -34,9 +32,9 @@ func TestHandler_GetAllCharts(t *testing.T) {
 	t.Run("Should return status OK when get all charts by workspace", func(t *testing.T) {
 		workspaceID := uuid.New()
 		controllerMock := &controller.Mock{}
-		controllerMock.On("GetAllDashboardCharts").Return(&response.Response{}, nil)
+		controllerMock.On("GetAllDashboardCharts").Return(&dashboard.Response{}, nil)
 		useCaseMock := &dashboardfilter.Mock{}
-		useCaseMock.On("ExtractFilterDashboard").Return(&repository.Filter{}, nil)
+		useCaseMock.On("ExtractFilterDashboard").Return(&dashboard.Filter{}, nil)
 		handler := &Handler{
 			controller: controllerMock,
 			useCase:    useCaseMock,
@@ -53,9 +51,9 @@ func TestHandler_GetAllCharts(t *testing.T) {
 		workspaceID := uuid.New()
 		repositoryID := uuid.New()
 		controllerMock := &controller.Mock{}
-		controllerMock.On("GetAllDashboardCharts").Return(&response.Response{}, nil)
+		controllerMock.On("GetAllDashboardCharts").Return(&dashboard.Response{}, nil)
 		useCaseMock := &dashboardfilter.Mock{}
-		useCaseMock.On("ExtractFilterDashboard").Return(&repository.Filter{}, nil)
+		useCaseMock.On("ExtractFilterDashboard").Return(&dashboard.Filter{}, nil)
 		handler := &Handler{
 			controller: controllerMock,
 			useCase:    useCaseMock,
@@ -72,9 +70,9 @@ func TestHandler_GetAllCharts(t *testing.T) {
 	t.Run("Should return status bad request when get all charts and wrong workspaceID", func(t *testing.T) {
 		workspaceID := uuid.New()
 		controllerMock := &controller.Mock{}
-		controllerMock.On("GetAllDashboardCharts").Return(&response.Response{}, nil)
+		controllerMock.On("GetAllDashboardCharts").Return(&dashboard.Response{}, nil)
 		useCaseMock := &dashboardfilter.Mock{}
-		useCaseMock.On("ExtractFilterDashboard").Return(&repository.Filter{}, enums.ErrorWrongWorkspaceID)
+		useCaseMock.On("ExtractFilterDashboard").Return(&dashboard.Filter{}, enums.ErrorWrongWorkspaceID)
 		handler := &Handler{
 			controller: controllerMock,
 			useCase:    useCaseMock,
@@ -90,9 +88,9 @@ func TestHandler_GetAllCharts(t *testing.T) {
 	t.Run("Should return status internal server error when get all charts", func(t *testing.T) {
 		workspaceID := uuid.New()
 		controllerMock := &controller.Mock{}
-		controllerMock.On("GetAllDashboardCharts").Return(&response.Response{}, errors.New("unexpected error"))
+		controllerMock.On("GetAllDashboardCharts").Return(&dashboard.Response{}, errors.New("unexpected error"))
 		useCaseMock := &dashboardfilter.Mock{}
-		useCaseMock.On("ExtractFilterDashboard").Return(&repository.Filter{}, nil)
+		useCaseMock.On("ExtractFilterDashboard").Return(&dashboard.Filter{}, nil)
 		handler := &Handler{
 			controller: controllerMock,
 			useCase:    useCaseMock,

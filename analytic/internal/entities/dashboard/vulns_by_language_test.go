@@ -1,9 +1,7 @@
-package repository
+package dashboard
 
 import (
 	"testing"
-
-	response2 "github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard/response"
 
 	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
 	"github.com/stretchr/testify/assert"
@@ -14,7 +12,7 @@ func TestParseListVulnByLanguageToListResponse(t *testing.T) {
 		vulns := []*VulnerabilitiesByLanguage{
 			&VulnerabilitiesByLanguage{
 				Language: languages.Leaks,
-				Vulnerability: response2.Vulnerability{
+				Vulnerability: Vulnerability{
 					CriticalVulnerability: 1,
 				},
 			},

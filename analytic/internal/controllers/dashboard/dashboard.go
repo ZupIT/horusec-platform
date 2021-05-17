@@ -3,16 +3,15 @@ package dashboard
 import (
 	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 	"github.com/ZupIT/horusec-devkit/pkg/services/database"
+	"github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard"
 
-	repositoryEntities "github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard/repository"
-	"github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard/response"
 	dashboardEnums "github.com/ZupIT/horusec-platform/analytic/internal/enums/dashboard"
 	repoDashboard "github.com/ZupIT/horusec-platform/analytic/internal/repositories/dashboard"
 	dashboardUseCases "github.com/ZupIT/horusec-platform/analytic/internal/usecases/dashboard"
 )
 
 type IController interface {
-	GetAllDashboardCharts(filter *repositoryEntities.Filter) (*response.Response, error)
+	GetAllDashboardCharts(filter *dashboard.Filter) (*dashboard.Response, error)
 	AddVulnerabilitiesByAuthor(entity *analysis.Analysis) error
 	AddVulnerabilitiesByRepository(entity *analysis.Analysis) error
 	AddVulnerabilitiesByLanguage(entity *analysis.Analysis) error
@@ -58,70 +57,51 @@ func (c *Controller) AddVulnerabilitiesByTime(entity *analysis.Analysis) error {
 	return c.databaseWrite.Create(vulnsByTime, dashboardEnums.TableVulnerabilitiesByTime).GetError()
 }
 
-func (c *Controller) GetAllDashboardCharts(filters *repositoryEntities.Filter) (*response.Response, error) {
-	dashboardResponse := &response.Response{}
+func (c *Controller) GetAllDashboardCharts(filter *dashboard.Filter) (*dashboard.Response, error) {
+	response := &dashboard.Response{}
 
-	return c.getTotalDevelopersAndRepositories(filters, dashboardResponse)
+	if err := response.SetTotalAuthors(c.repository.GetDashboardTotalDevelopers(filter)); err != nil {
+		return nil, err
+	}
+
+	if err := response.SetTotalRepositories(c.repository.GetDashboardTotalRepositories(filter)); err != nil {
+		return nil, err
+	}
+
+	return c.getChartsBySeverityAndAuthor(filter, response)
 }
 
-func (c *Controller) getTotalDevelopersAndRepositories(filter *repositoryEntities.Filter,
-	dashboardResponse *response.Response) (*response.Response, error) {
-	totalAuthors, err := c.repository.GetDashboardTotalDevelopers(filter)
-	if err != nil {
+func (c *Controller) getChartsBySeverityAndAuthor(filter *dashboard.Filter,
+	response *dashboard.Response) (*dashboard.Response, error) {
+	if err := response.SetChartBySeverity(c.repository.GetDashboardVulnBySeverity(filter)); err != nil {
 		return nil, err
 	}
 
-	totalRepositories, err := c.repository.GetDashboardTotalRepositories(filter)
-	if err != nil {
+	if err := response.SetChartByAuthor(c.repository.GetDashboardVulnByAuthor(filter)); err != nil {
 		return nil, err
 	}
 
-	dashboardResponse.TotalAuthors = totalAuthors
-	dashboardResponse.TotalRepositories = totalRepositories
-	return c.getAllChartsSecond(filter, dashboardResponse)
+	return c.getChartsByRepositoryAndLanguage(filter, response)
 }
 
-func (c *Controller) getAllChartsSecond(filter *repositoryEntities.Filter,
-	dashboardResponse *response.Response) (*response.Response, error) {
-	vulnerabilityBySeverity, err := c.repository.GetDashboardVulnBySeverity(filter)
-	if err != nil {
+func (c *Controller) getChartsByRepositoryAndLanguage(filter *dashboard.Filter,
+	response *dashboard.Response) (*dashboard.Response, error) {
+	if err := response.SetChartByRepository(c.repository.GetDashboardVulnByRepository(filter)); err != nil {
 		return nil, err
 	}
 
-	vulnerabilitiesByAuthor, err := c.repository.GetDashboardVulnByAuthor(filter)
-	if err != nil {
+	if err := response.SetChartByLanguage(c.repository.GetDashboardVulnByLanguage(filter)); err != nil {
 		return nil, err
 	}
 
-	dashboardResponse.VulnerabilityBySeverity = vulnerabilityBySeverity.ToResponseBySeverities()
-	dashboardResponse.VulnerabilitiesByAuthor = repositoryEntities.ParseListVulnByAuthorToListResponse(vulnerabilitiesByAuthor)
-	return c.getAllChartsThird(filter, dashboardResponse)
+	return c.getChartByTime(filter, response)
 }
 
-func (c *Controller) getAllChartsThird(filter *repositoryEntities.Filter,
-	dashboardResponse *response.Response) (*response.Response, error) {
-	vulnsByRepository, err := c.repository.GetDashboardVulnByRepository(filter)
-	if err != nil {
+func (c *Controller) getChartByTime(filter *dashboard.Filter,
+	response *dashboard.Response) (*dashboard.Response, error) {
+	if err := response.SetChartByTime(c.repository.GetDashboardVulnByTime(filter)); err != nil {
 		return nil, err
 	}
 
-	vulnerabilitiesByLanguage, err := c.repository.GetDashboardVulnByLanguage(filter)
-	if err != nil {
-		return nil, err
-	}
-
-	dashboardResponse.VulnerabilitiesByRepository = repositoryEntities.ParseListVulnByRepositoryToListResponse(vulnsByRepository)
-	dashboardResponse.VulnerabilitiesByLanguage = repositoryEntities.ParseListVulnByLanguageToListResponse(vulnerabilitiesByLanguage)
-	return c.getAllChartsFinal(filter, dashboardResponse)
-}
-
-func (c *Controller) getAllChartsFinal(filter *repositoryEntities.Filter,
-	dashboardResponse *response.Response) (*response.Response, error) {
-	vulnerabilitiesByTime, err := c.repository.GetDashboardVulnByTime(filter)
-	if err != nil {
-		return nil, err
-	}
-
-	dashboardResponse.VulnerabilitiesByTime = repositoryEntities.ParseListVulnByTimeToListResponse(vulnerabilitiesByTime)
-	return dashboardResponse, nil
+	return response, nil
 }

@@ -3,21 +3,21 @@ package dashboard
 import (
 	"fmt"
 
+	"github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard"
+
 	"github.com/ZupIT/horusec-devkit/pkg/services/database"
 
-	repositoriesEntities "github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard/repository"
-	"github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard/response"
 	dashboardEnums "github.com/ZupIT/horusec-platform/analytic/internal/enums/dashboard"
 )
 
 type IRepoDashboard interface {
-	GetDashboardTotalDevelopers(filter *repositoriesEntities.Filter) (int, error)
-	GetDashboardTotalRepositories(filter *repositoriesEntities.Filter) (int, error)
-	GetDashboardVulnBySeverity(filter *repositoriesEntities.Filter) (*response.Vulnerability, error)
-	GetDashboardVulnByAuthor(filter *repositoriesEntities.Filter) ([]*repositoriesEntities.VulnerabilitiesByAuthor, error)
-	GetDashboardVulnByRepository(filter *repositoriesEntities.Filter) ([]*repositoriesEntities.VulnerabilitiesByRepository, error)
-	GetDashboardVulnByLanguage(filter *repositoriesEntities.Filter) ([]*repositoriesEntities.VulnerabilitiesByLanguage, error)
-	GetDashboardVulnByTime(filter *repositoriesEntities.Filter) ([]*repositoriesEntities.VulnerabilitiesByTime, error)
+	GetDashboardTotalDevelopers(filter *dashboard.Filter) (int, error)
+	GetDashboardTotalRepositories(filter *dashboard.Filter) (int, error)
+	GetDashboardVulnBySeverity(filter *dashboard.Filter) (*dashboard.Vulnerability, error)
+	GetDashboardVulnByAuthor(filter *dashboard.Filter) ([]*dashboard.VulnerabilitiesByAuthor, error)
+	GetDashboardVulnByRepository(filter *dashboard.Filter) ([]*dashboard.VulnerabilitiesByRepository, error)
+	GetDashboardVulnByLanguage(filter *dashboard.Filter) ([]*dashboard.VulnerabilitiesByLanguage, error)
+	GetDashboardVulnByTime(filter *dashboard.Filter) ([]*dashboard.VulnerabilitiesByTime, error)
 }
 
 type RepoDashboard struct {
@@ -32,7 +32,7 @@ func NewRepoDashboard(connection *database.Connection) IRepoDashboard {
 	}
 }
 
-func (r *RepoDashboard) GetDashboardTotalDevelopers(filter *repositoriesEntities.Filter) (count int, err error) {
+func (r *RepoDashboard) GetDashboardTotalDevelopers(filter *dashboard.Filter) (count int, err error) {
 	condition, args := filter.GetConditionFilter()
 
 	query := fmt.Sprintf(r.queryGetDashboardTotalDevelopers(), dashboardEnums.TableVulnerabilitiesByAuthor, condition)
@@ -56,7 +56,7 @@ func (r *RepoDashboard) queryGetDashboardTotalDevelopers() string {
 	`
 }
 
-func (r *RepoDashboard) GetDashboardTotalRepositories(filter *repositoriesEntities.Filter) (count int, err error) {
+func (r *RepoDashboard) GetDashboardTotalRepositories(filter *dashboard.Filter) (count int, err error) {
 	condition, args := filter.GetConditionFilter()
 
 	query := fmt.Sprintf(r.queryGetDashboardTotalRepositories(),
@@ -81,8 +81,8 @@ func (r *RepoDashboard) queryGetDashboardTotalRepositories() string {
 	`
 }
 
-func (r *RepoDashboard) GetDashboardVulnBySeverity(filter *repositoriesEntities.Filter) (*response.Vulnerability, error) {
-	vulns := &response.Vulnerability{}
+func (r *RepoDashboard) GetDashboardVulnBySeverity(filter *dashboard.Filter) (*dashboard.Vulnerability, error) {
+	vulns := &dashboard.Vulnerability{}
 	condition, args := filter.GetConditionFilter()
 
 	query := fmt.Sprintf(r.queryGetDashboardVulnBySeverity(), r.queryDefaultFields(),
@@ -107,7 +107,7 @@ func (r *RepoDashboard) queryGetDashboardVulnBySeverity() string {
 	`
 }
 
-func (r *RepoDashboard) GetDashboardVulnByAuthor(filter *repositoriesEntities.Filter) (vulns []*repositoriesEntities.VulnerabilitiesByAuthor, err error) {
+func (r *RepoDashboard) GetDashboardVulnByAuthor(filter *dashboard.Filter) (vulns []*dashboard.VulnerabilitiesByAuthor, err error) {
 	condition, args := filter.GetConditionFilter()
 
 	query := fmt.Sprintf(r.queryGetDashboardVulnByAuthor(), r.queryDefaultFields(),
@@ -134,7 +134,7 @@ func (r *RepoDashboard) queryGetDashboardVulnByAuthor() string {
 	`
 }
 
-func (r *RepoDashboard) GetDashboardVulnByRepository(filter *repositoriesEntities.Filter) (vulns []*repositoriesEntities.VulnerabilitiesByRepository, err error) {
+func (r *RepoDashboard) GetDashboardVulnByRepository(filter *dashboard.Filter) (vulns []*dashboard.VulnerabilitiesByRepository, err error) {
 	condition, args := filter.GetConditionFilter()
 
 	query := fmt.Sprintf(r.queryGetDashboardVulnByRepository(),
@@ -161,7 +161,7 @@ func (r *RepoDashboard) queryGetDashboardVulnByRepository() string {
 	`
 }
 
-func (r *RepoDashboard) GetDashboardVulnByLanguage(filter *repositoriesEntities.Filter) (vulns []*repositoriesEntities.VulnerabilitiesByLanguage, err error) {
+func (r *RepoDashboard) GetDashboardVulnByLanguage(filter *dashboard.Filter) (vulns []*dashboard.VulnerabilitiesByLanguage, err error) {
 	condition, args := filter.GetConditionFilter()
 
 	query := fmt.Sprintf(r.queryGetDashboardVulnByLanguage(), r.queryDefaultFields(),
@@ -188,7 +188,7 @@ func (r *RepoDashboard) queryGetDashboardVulnByLanguage() string {
 	`
 }
 
-func (r *RepoDashboard) GetDashboardVulnByTime(filter *repositoriesEntities.Filter) (vulns []*repositoriesEntities.VulnerabilitiesByTime, err error) {
+func (r *RepoDashboard) GetDashboardVulnByTime(filter *dashboard.Filter) (vulns []*dashboard.VulnerabilitiesByTime, err error) {
 	condition, args := filter.GetConditionFilter()
 
 	query := fmt.Sprintf(r.queryGetDashboardVulnByTime(),

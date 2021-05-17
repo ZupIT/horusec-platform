@@ -1,34 +1,35 @@
 package dashboard
 
 import (
-	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
+	"fmt"
+
+	analysisEntities "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/exchange"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/queues"
-	"github.com/ZupIT/horusec-devkit/pkg/services/broker"
+	brokerLib "github.com/ZupIT/horusec-devkit/pkg/services/broker"
 	"github.com/ZupIT/horusec-devkit/pkg/services/broker/packet"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/parser"
 
 	"github.com/ZupIT/horusec-platform/analytic/internal/controllers/dashboard"
+	eventsEnums "github.com/ZupIT/horusec-platform/analytic/internal/enums/events"
 )
 
-type IEvents interface{}
-
 type Events struct {
-	broker     broker.IBroker
+	broker     brokerLib.IBroker
 	controller dashboard.IController
 }
 
-func NewDashboardEvents(brokerLib broker.IBroker, controller dashboard.IController) IEvents {
+func NewDashboardEvents(broker brokerLib.IBroker, controller dashboard.IController) *Events {
 	events := &Events{
-		broker:     brokerLib,
+		broker:     broker,
 		controller: controller,
 	}
 
 	return events.startConsumers()
 }
 
-func (e *Events) startConsumers() IEvents {
+func (e *Events) startConsumers() *Events {
 	go e.broker.Consume(queues.HorusecAnalyticAuthors.ToString(), exchange.NewAnalysis.ToString(), exchange.Fanout.
 		ToString(), func(pack packet.IPacket) { e.handleNewAnalysis(pack, queues.HorusecAnalyticAuthors) })
 
@@ -44,7 +45,7 @@ func (e *Events) startConsumers() IEvents {
 	return e
 }
 
-func (e *Events) execControllerByQueueType(queue queues.Queue) func(*analysis.Analysis) error {
+func (e *Events) processAnalysisPacketByQueue(queue queues.Queue) func(*analysisEntities.Analysis) error {
 	switch queue {
 	case queues.HorusecAnalyticAuthors:
 		return e.controller.AddVulnerabilitiesByAuthor
@@ -55,22 +56,25 @@ func (e *Events) execControllerByQueueType(queue queues.Queue) func(*analysis.An
 	case queues.HorusecAnalyticTimes:
 		return e.controller.AddVulnerabilitiesByTime
 	}
+
 	return nil
 }
 
-func (e *Events) handleNewAnalysis(brokerPacket packet.IPacket, queue queues.Queue) {
-	logger.LogInfo("{HORUSEC} Packet received from new analysis")
+func (e *Events) handleNewAnalysis(analysisPacket packet.IPacket, queue queues.Queue) {
+	logger.LogInfo(eventsEnums.MessageNewAnalysisReceivedAnalytic)
+	analysis := &analysisEntities.Analysis{}
 
-	entity := analysis.Analysis{}
-	if err := parser.ParsePacketToEntity(brokerPacket, &entity); err != nil {
-		logger.LogError("{HORUSEC} Read packet error by "+queue.ToString(), err)
+	if err := parser.ParsePacketToEntity(analysisPacket, analysis); err != nil {
+		logger.LogError(fmt.Sprintf(eventsEnums.MessageFailedToParsePacket, analysisPacket.GetBody(), queue), err)
+		_ = analysisPacket.Ack()
 		return
 	}
 
-	if err := e.execControllerByQueueType(queue)(&entity); err != nil {
-		logger.LogError("{HORUSEC} Error on save new analysis by "+queue.ToString(), err)
+	if err := e.processAnalysisPacketByQueue(queue)(analysis); err != nil {
+		logger.LogError(fmt.Sprintf(eventsEnums.MessageFailedToProcessPacket, analysisPacket.GetBody(), queue), err)
+		_ = analysisPacket.Ack()
 		return
 	}
 
-	_ = brokerPacket.Ack()
+	_ = analysisPacket.Ack()
 }

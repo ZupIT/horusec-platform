@@ -1,4 +1,4 @@
-package response
+package dashboard
 
 type ByAuthor struct {
 	Author string `json:"author"`

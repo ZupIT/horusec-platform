@@ -48,8 +48,8 @@ func Initialize(string2 string) (router.IRouter, error) {
 	iUseCases := dashboardfilter.NewUseCaseDashboard()
 	iController := dashboard2.NewControllerDashboardRead(iRepoDashboard, connection, iUseCases)
 	dashboardHandler := dashboard3.NewDashboardHandler(iController)
-	iEvents := dashboard4.NewDashboardEvents(iBroker, iController)
-	routerIRouter := router.NewHTTPRouter(iRouter, iAuthzMiddleware, handler, dashboardHandler, iEvents)
+	events := dashboard4.NewDashboardEvents(iBroker, iController)
+	routerIRouter := router.NewHTTPRouter(iRouter, iAuthzMiddleware, handler, dashboardHandler, events)
 	return routerIRouter, nil
 }
 

@@ -3,8 +3,7 @@ package dashboard
 import (
 	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 	utilsMock "github.com/ZupIT/horusec-devkit/pkg/utils/mock"
-	"github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard/repository"
-	"github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard/response"
+	"github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard"
 	"github.com/stretchr/testify/mock"
 )
 
@@ -12,9 +11,9 @@ type Mock struct {
 	mock.Mock
 }
 
-func (m *Mock) GetAllDashboardCharts(_ *repository.Filter) (*response.Response, error) {
+func (m *Mock) GetAllDashboardCharts(_ *dashboard.Filter) (*dashboard.Response, error) {
 	args := m.MethodCalled("GetAllDashboardCharts")
-	return args.Get(0).(*response.Response), utilsMock.ReturnNilOrError(args, 1)
+	return args.Get(0).(*dashboard.Response), utilsMock.ReturnNilOrError(args, 1)
 }
 
 func (m *Mock) AddVulnerabilitiesByAuthor(_ *analysis.Analysis) error {

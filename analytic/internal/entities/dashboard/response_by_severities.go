@@ -1,4 +1,4 @@
-package response
+package dashboard
 
 type BySeverities struct {
 	Critical *BySeverity `json:"critical"`

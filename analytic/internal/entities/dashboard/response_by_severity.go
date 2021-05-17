@@ -1,4 +1,4 @@
-package response
+package dashboard
 
 type BySeverity struct {
 	Count int                   `json:"count"`
