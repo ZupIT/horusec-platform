@@ -11,6 +11,7 @@ type IWebhookRepository interface {
 	Save(entity *webhook.Webhook) error
 	Update(entity *webhook.Webhook, webhookID uuid.UUID) error
 	ListAll(workspaceID uuid.UUID) (entities *[]webhook.Webhook, err error)
+	GetRepositoryByID(repositoryID uuid.UUID) (string, error)
 	ListOne(condition map[string]interface{}) (entity *webhook.Webhook, err error)
 	Remove(webhookID uuid.UUID) error
 }
@@ -57,6 +58,17 @@ func (r *Repository) ListOne(condition map[string]interface{}) (entity *webhook.
 		return &webhook.Webhook{}, nil
 	}
 	return res.GetData().(*webhook.Webhook), nil
+}
+
+func (r *Repository) GetRepositoryByID(repositoryID uuid.UUID) (entity string, err error) {
+	res := r.dbRead.Raw(`SELECT name FROM repositories where repository_id IN (?)`, &entity, repositoryID.String())
+	if res.GetErrorExceptNotFound() != nil {
+		return "", res.GetErrorExceptNotFound()
+	}
+	if res.GetData() == nil {
+		return "", nil
+	}
+	return *res.GetData().(*string), nil
 }
 
 func (r *Repository) Remove(webhookID uuid.UUID) error {

@@ -47,7 +47,23 @@ func (c *Controller) Update(entity *webhook.Webhook, webhookID uuid.UUID) error 
 }
 
 func (c *Controller) ListAll(workspaceID uuid.UUID) (*[]webhook.Webhook, error) {
-	return c.repository.ListAll(workspaceID)
+	webhooks, err := c.repository.ListAll(workspaceID)
+	if err != nil {
+		return &[]webhook.Webhook{}, err
+	}
+	allWebhooks := *webhooks
+	for key := range allWebhooks {
+		repoName, err := c.repository.GetRepositoryByID(allWebhooks[key].RepositoryID)
+		if err != nil {
+			return &[]webhook.Webhook{}, err
+		}
+		allWebhooks[key].Repository = webhook.Repository{Name: repoName}
+	}
+	return &allWebhooks, nil
+}
+
+func (c *Controller) extractRepositoriesID(webhooks *[]webhook.Webhook) (repositoriesID []uuid.UUID) {
+	return repositoriesID
 }
 
 func (c *Controller) Remove(webhookID uuid.UUID) error {
