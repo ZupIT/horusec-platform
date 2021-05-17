@@ -119,7 +119,7 @@ func (r *RepoDashboard) queryGetDashboardVulnByAuthor() string {
 	return `
 		SELECT author, %[1]s
 		FROM (
-				SELECT DISTINCT ON (repository_id) *
+				SELECT *
 				FROM %[2]s
 				WHERE %[3]s AND created_at 
 				IN 
@@ -198,8 +198,15 @@ func (r *RepoDashboard) GetDashboardVulnByTime(filter *dashboard.Filter) (vulns 
 func (r *RepoDashboard) queryGetDashboardVulnByTime() string {
 	return `
 		SELECT DATE(created_at) AS created_at, %[1]s
-		FROM %[2]s
-		WHERE %[3]s
+		FROM %[2]s AS vuln_by_time
+		INNER JOIN
+		(
+			SELECT MAX(created_at) AS max_time 
+			FROM vulnerabilities_by_time 
+			GROUP BY DATE(created_at), repository_id
+		) AS vuln_by_time_sub_query
+		ON vuln_by_time.created_at  = vuln_by_time_sub_query.max_time
+		WHERE %[3]s  
 		GROUP BY DATE(created_at)
 	`
 }
