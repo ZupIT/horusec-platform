@@ -3,10 +3,9 @@ package dashboard
 import (
 	"fmt"
 
-	"github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard"
-
 	"github.com/ZupIT/horusec-devkit/pkg/services/database"
 
+	"github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard"
 	dashboardEnums "github.com/ZupIT/horusec-platform/analytic/internal/enums/dashboard"
 )
 
@@ -51,7 +50,7 @@ func (r *RepoDashboard) queryGetDashboardTotalDevelopers() string {
 				(
 					SELECT max(created_at) FROM vulnerabilities_by_language GROUP BY repository_id
 				)
-				ORDER by author, created_at DESC
+				ORDER BY author, created_at DESC
 		) AS result
 	`
 }
@@ -76,7 +75,7 @@ func (r *RepoDashboard) queryGetDashboardTotalRepositories() string {
 				(
 					SELECT max(created_at) FROM vulnerabilities_by_language GROUP BY repository_id
 				)
-				ORDER by repository_id, created_at DESC
+				ORDER BY repository_id, created_at DESC
 		) AS result
 	`
 }
@@ -102,7 +101,7 @@ func (r *RepoDashboard) queryGetDashboardVulnBySeverity() string {
 				(
 					SELECT max(created_at) FROM vulnerabilities_by_language GROUP BY repository_id
 				)
-				ORDER by repository_id, created_at DESC
+				ORDER BY repository_id, created_at DESC
 		) AS result
 	`
 }
@@ -127,7 +126,7 @@ func (r *RepoDashboard) queryGetDashboardVulnByAuthor() string {
 				(
 					SELECT max(created_at) FROM vulnerabilities_by_language GROUP BY repository_id
 				)
-				ORDER by author, created_at DESC
+				ORDER BY author, created_at DESC
 		) AS result
 		GROUP BY author
 		LIMIT 5
@@ -154,7 +153,7 @@ func (r *RepoDashboard) queryGetDashboardVulnByRepository() string {
 				(
 					SELECT max(created_at) FROM vulnerabilities_by_language GROUP BY repository_id
 				)
-				ORDER by repository_id, created_at DESC
+				ORDER BY repository_id, created_at DESC
 		) AS result
 		GROUP BY repository_name
 		LIMIT 5
@@ -179,9 +178,9 @@ func (r *RepoDashboard) queryGetDashboardVulnByLanguage() string {
 				WHERE %[3]s AND created_at 
 				IN 
 				(
-					SELECT max(created_at) FROM vulnerabilities_by_language GROUP BY repository_id
+					SELECT MAX(created_at) FROM vulnerabilities_by_language GROUP BY repository_id
 				)
-				ORDER by language, created_at DESC
+				ORDER BY language, created_at DESC
 		) AS result
 		GROUP BY language
 		LIMIT 5
@@ -191,25 +190,17 @@ func (r *RepoDashboard) queryGetDashboardVulnByLanguage() string {
 func (r *RepoDashboard) GetDashboardVulnByTime(filter *dashboard.Filter) (vulns []*dashboard.VulnerabilitiesByTime, err error) {
 	condition, args := filter.GetConditionFilter()
 
-	query := fmt.Sprintf(r.queryGetDashboardVulnByTime(),
-		r.queryDefaultFields(), dashboardEnums.TableVulnerabilitiesByTime, condition)
+	query := fmt.Sprintf(r.queryGetDashboardVulnByTime(), r.queryDefaultFields(), dashboardEnums.TableVulnerabilitiesByTime, condition)
 
-	err = r.databaseRead.Raw(query, &vulns, args...).GetErrorExceptNotFound()
-
-	return vulns, err
+	return vulns, r.databaseRead.Raw(query, &vulns, args...).GetErrorExceptNotFound()
 }
 
 func (r *RepoDashboard) queryGetDashboardVulnByTime() string {
 	return `
-		SELECT %[1]s
-		FROM %[2]s AS table1
-		INNER JOIN
-		(
-			SELECT repository_id as repoID, MAX (created_at) AS maxDate  
-			FROM vulnerabilities_by_time GROUP BY repository_id
-		) AS table2
-		ON table1.repository_id = table2.repoID AND table1.created_at = table2.maxDate
+		SELECT DATE(created_at) AS created_at, %[1]s 
+		FROM %[2]s
 		WHERE %[3]s
+		GROUP BY DATE(created_at) 
 	`
 }
 

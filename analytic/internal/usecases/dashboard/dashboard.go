@@ -3,12 +3,12 @@ package dashboardfilter
 import (
 	"net/http"
 
-	"github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard"
-
 	"github.com/google/uuid"
 
 	analysisEntities "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
+
+	"github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard"
 )
 
 type IUseCases interface {
