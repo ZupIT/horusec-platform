@@ -38,7 +38,7 @@ spec:
             - name: http
               containerPort: 8006
               protocol: TCP
-            - name: grcp
+            - name: grpc
               containerPort: 8007
               protocol: TCP
           env:
@@ -53,6 +53,14 @@ spec:
                   name: {{ .key }}
                   key: {{ .key }}
           {{- end }}
+          readinessProbe:
+            httpGet:
+              path: /auth/health
+              port: http
+          livenessProbe:
+            httpGet:
+              path: /auth/health
+              port: http
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}

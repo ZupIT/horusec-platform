@@ -49,7 +49,7 @@ func NewAuthAppConfig(connection *database.Connection) IConfig {
 		DisableEmails:          env.GetEnvOrDefaultBool(enums.EnvDisableEmails, false),
 		EnableApplicationAdmin: env.GetEnvOrDefaultBool(enums.EnvEnableApplicationAdmin, false),
 		ApplicationAdminData:   env.GetEnvOrDefault(enums.EnvApplicationAdminData, enums.ApplicationAdminDefaultData),
-		EnableDefaultUser:      env.GetEnvOrDefaultBool(enums.EnvEnableDefaultUser, true),
+		EnableDefaultUser:      env.GetEnvOrDefaultBool(enums.EnvEnableDefaultUser, false),
 		DefaultUserData:        env.GetEnvOrDefault(enums.EnvDefaultUserData, enums.DefaultUserData),
 		HorusecManagerURL:      env.GetEnvOrDefault(enums.EnvHorusecManager, "http://localhost:8043"),
 		databaseWrite:          connection.Write,
