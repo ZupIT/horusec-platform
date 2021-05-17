@@ -23,9 +23,11 @@ WORKDIR /api
 RUN go get -t -v -d ./...
 
 RUN GOOS=linux go build -a -o horusec-api-main ./cmd/app/main.go
+RUN GOOS=linux go build -a -o horusec-api-v1-2-v2-migrate ./cmd/migrate/v1_2_v2.go
 
 FROM alpine
 
 COPY --from=builder /api/horusec-api-main .
+COPY --from=builder /api/horusec-api-v1-2-v2-migrate .
 
 ENTRYPOINT ["./horusec-api-main"]
