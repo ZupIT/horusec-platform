@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+
 	"github.com/ZupIT/horusec-devkit/pkg/entities/vulnerability"
 	"github.com/ZupIT/horusec-devkit/pkg/services/database"
 	databaseconfig "github.com/ZupIT/horusec-devkit/pkg/services/database/config"
@@ -32,7 +33,7 @@ func main() {
 
 	for key := range vulns {
 		item := vulns[key]
-		logger.LogInfo(fmt.Sprintf("Updating vulnerability hash: [%v/%v]", key, len(vulns) - 1))
+		logger.LogInfo(fmt.Sprintf("Updating vulnerability hash: [%v/%v]", key, len(vulns)-1))
 		r := conn.Write.Update(
 			map[string]interface{}{"vuln_hash": item.VulnHash},
 			map[string]interface{}{"vulnerability_id": item.VulnerabilityID},
