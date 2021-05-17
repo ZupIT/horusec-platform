@@ -43,12 +43,12 @@ func (r *RepoDashboard) queryGetDashboardTotalDevelopers() string {
 	return `
 		SELECT COUNT(*) 
 		FROM (
-				SELECT DISTINCT ON (author) author
+				SELECT DISTINCT ON(author) author
 				FROM %[1]s
 				WHERE %[2]s AND created_at 
 				IN 
 				(
-					SELECT max(created_at) FROM vulnerabilities_by_language GROUP BY repository_id
+					SELECT MAX(created_at) FROM vulnerabilities_by_language GROUP BY repository_id
 				)
 				ORDER BY author, created_at DESC
 		) AS result
@@ -68,12 +68,12 @@ func (r *RepoDashboard) queryGetDashboardTotalRepositories() string {
 	return `
 		SELECT COUNT(*) 
 		FROM (
-				SELECT DISTINCT ON (repository_id) repository_id
+				SELECT DISTINCT ON(repository_id) repository_id
 				FROM %[1]s
 				WHERE %[2]s AND created_at 
 				IN 
 				(
-					SELECT max(created_at) FROM vulnerabilities_by_language GROUP BY repository_id
+					SELECT MAX(created_at) FROM vulnerabilities_by_language GROUP BY repository_id
 				)
 				ORDER BY repository_id, created_at DESC
 		) AS result
@@ -94,12 +94,12 @@ func (r *RepoDashboard) queryGetDashboardVulnBySeverity() string {
 	return `
 		SELECT %[1]s
 		FROM (
-				SELECT DISTINCT ON (repository_id) *
+				SELECT DISTINCT ON(repository_id) *
 				FROM %[2]s
 				WHERE %[3]s AND created_at 
 				IN 
 				(
-					SELECT max(created_at) FROM vulnerabilities_by_language GROUP BY repository_id
+					SELECT MAX(created_at) FROM vulnerabilities_by_language GROUP BY repository_id
 				)
 				ORDER BY repository_id, created_at DESC
 		) AS result
@@ -119,17 +119,17 @@ func (r *RepoDashboard) queryGetDashboardVulnByAuthor() string {
 	return `
 		SELECT author, %[1]s
 		FROM (
-				SELECT *
+				SELECT DISTINCT ON (repository_id) *
 				FROM %[2]s
 				WHERE %[3]s AND created_at 
 				IN 
 				(
-					SELECT max(created_at) FROM vulnerabilities_by_language GROUP BY repository_id
+					SELECT MAX(created_at) FROM vulnerabilities_by_language GROUP BY repository_id
 				)
-				ORDER BY author, created_at DESC
+				ORDER BY repository_id, created_at DESC
+				LIMIT 5
 		) AS result
 		GROUP BY author
-		LIMIT 5
 	`
 }
 
@@ -151,7 +151,7 @@ func (r *RepoDashboard) queryGetDashboardVulnByRepository() string {
 				WHERE %[3]s AND created_at 
 				IN 
 				(
-					SELECT max(created_at) FROM vulnerabilities_by_language GROUP BY repository_id
+					SELECT MAX(created_at) FROM vulnerabilities_by_language GROUP BY repository_id
 				)
 				ORDER BY repository_id, created_at DESC
 		) AS result
@@ -173,17 +173,17 @@ func (r *RepoDashboard) queryGetDashboardVulnByLanguage() string {
 	return `
 		SELECT language, %[1]s
 		FROM (
-				SELECT DISTINCT ON (language) *
+				SELECT DISTINCT ON (repository_id) *
 				FROM %[2]s
 				WHERE %[3]s AND created_at 
 				IN 
 				(
 					SELECT MAX(created_at) FROM vulnerabilities_by_language GROUP BY repository_id
 				)
-				ORDER BY language, created_at DESC
+				ORDER BY repository_id, created_at DESC
+				LIMIT 5
 		) AS result
 		GROUP BY language
-		LIMIT 5
 	`
 }
 
@@ -197,10 +197,10 @@ func (r *RepoDashboard) GetDashboardVulnByTime(filter *dashboard.Filter) (vulns 
 
 func (r *RepoDashboard) queryGetDashboardVulnByTime() string {
 	return `
-		SELECT DATE(created_at) AS created_at, %[1]s 
+		SELECT DATE(created_at) AS created_at, %[1]s
 		FROM %[2]s
 		WHERE %[3]s
-		GROUP BY DATE(created_at) 
+		GROUP BY DATE(created_at)
 	`
 }
 
