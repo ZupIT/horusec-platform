@@ -7,4 +7,5 @@ const (
 	DefaultHorusecDatabaseURIValue  = "postgresql://root:root@localhost:5432/horusec_db?sslmode=disable"
 	SummarySuccess                  = "success"
 	SummaryFailed                   = "failed"
+	TotalOfTables                   = 4
 )

@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/google/uuid"
 
@@ -94,41 +95,57 @@ func (a *AnalyticMigration) loggingRegisterBeingMigrated(analysis *analysisEntit
 	logger.LogInfo(message)
 }
 
-func (a *AnalyticMigration) setFailedMigrationInSummary(analysisID uuid.UUID, err error, table string) error {
-	message := fmt.Sprintf("failed to insert analsysis with id %d in table %s with error -> %v",
-		analysisID, table, err)
+func (a *AnalyticMigration) setMigrationInSummary(analysisID uuid.UUID, err error, table string) {
+	if err == nil {
+		message := fmt.Sprintf("analysis with id '%s' migrated with success on table '%s'",
+			analysisID.String(), table)
+		a.summary[enums.SummarySuccess] = append(a.summary[enums.SummarySuccess], message)
+		return
+	}
 
+	message := fmt.Sprintf("failed to migrate analsysis with id '%s' on table '%s' with error -> '%v'",
+		analysisID.String(), table, err)
 	a.summary[enums.SummaryFailed] = append(a.summary[enums.SummaryFailed], message)
-	return err
 }
 
-func (a *AnalyticMigration) setSuccessMigrationInSummary(analysisID uuid.UUID) {
-	a.summary[enums.SummarySuccess] = append(a.summary[enums.SummarySuccess], analysisID.String())
-}
+func (a *AnalyticMigration) migrateAnalysis(analysis *analysisEntities.Analysis) {
+	a.setMigrationInSummary(analysis.ID, a.dashboardController.AddVulnerabilitiesByAuthor(analysis),
+		dashboardEnums.TableVulnerabilitiesByAuthor)
 
-func (a *AnalyticMigration) migrateAnalysis(analysis *analysisEntities.Analysis) (err error) {
-	if err := a.dashboardController.AddVulnerabilitiesByAuthor(analysis); err != nil {
-		return a.setFailedMigrationInSummary(analysis.ID, err, dashboardEnums.TableVulnerabilitiesByAuthor)
-	}
+	a.setMigrationInSummary(analysis.ID, a.dashboardController.AddVulnerabilitiesByLanguage(analysis),
+		dashboardEnums.TableVulnerabilitiesByLanguage)
 
-	if err := a.dashboardController.AddVulnerabilitiesByLanguage(analysis); err != nil {
-		return a.setFailedMigrationInSummary(analysis.ID, err, dashboardEnums.TableVulnerabilitiesByLanguage)
-	}
+	a.setMigrationInSummary(analysis.ID, a.dashboardController.AddVulnerabilitiesByRepository(analysis),
+		dashboardEnums.TableVulnerabilitiesByRepository)
 
-	if err := a.dashboardController.AddVulnerabilitiesByRepository(analysis); err != nil {
-		return a.setFailedMigrationInSummary(analysis.ID, err, dashboardEnums.TableVulnerabilitiesByRepository)
-	}
-
-	return a.setFailedMigrationInSummary(analysis.ID,
-		a.dashboardController.AddVulnerabilitiesByTime(analysis), dashboardEnums.TableVulnerabilitiesByTime)
+	a.setMigrationInSummary(analysis.ID, a.dashboardController.AddVulnerabilitiesByTime(analysis),
+		dashboardEnums.TableVulnerabilitiesByTime)
 }
 
 func (a *AnalyticMigration) printResults(total int) {
+	a.createResultLog()
+
 	fmt.Println()
 	logger.LogWarn("MIGRATION FINISHED! CHECK THE RESULTS -->")
-	logger.LogWarn(fmt.Sprintf("TOTAL DE REGISTROS PARA MIGRAR: %d", total))
-	logger.LogWarn(fmt.Sprintf("TOTAL RECORDS THAT SUCCESSFULLY MIGRATED: %d", len(a.summary[enums.SummarySuccess])))
+	logger.LogWarn(fmt.Sprintf("TOTAL RECORDS TO MIGRATE: %d", total))
+	logger.LogWarn(fmt.Sprintf("TOTAL RECORDS SUCCESSFULLY MIGRATED: %d", len(a.summary[enums.SummarySuccess])))
 	logger.LogWarn(fmt.Sprintf("TOTAL RECORDS THAT FAILED TO MIGRATE: %d", len(a.summary[enums.SummaryFailed])))
+	logger.LogWarn("YOU CAN SEE THE COMPLETE RESULT IN '/tmp/v1-to-v2-horusec-analytic-result'")
+}
+
+func (a *AnalyticMigration) createResultLog() {
+	result := "RESULT HORUSEC ANALYTIC MIGRATION V1 TO V2\n\nANALYSIS ID MIGRATED WITHOUT ERRORS -->\n"
+	for _, value := range a.summary[enums.SummarySuccess] {
+		result += fmt.Sprintf("SUCCESS: %s\n", value)
+	}
+
+	result += "\nANALYSIS ID AND TABLE THAT FAILED TO MIGRATE -->\n"
+	for _, value := range a.summary[enums.SummaryFailed] {
+		result += fmt.Sprintf("FAILED: %s\n", value)
+	}
+
+	file, _ := os.Create("./tmp/v1-to-v2-horusec-analytic-result")
+	_, _ = file.WriteString(result)
 }
 
 func main() {
@@ -137,10 +154,8 @@ func main() {
 	allPastAnalysis := analyticMigration.getAllAnalysisWithVulnerabilities()
 	for _, analysis := range allPastAnalysis {
 		analyticMigration.loggingRegisterBeingMigrated(analysis)
-		if err := analyticMigration.migrateAnalysis(analysis); err == nil {
-			analyticMigration.setSuccessMigrationInSummary(analysis.ID)
-		}
+		analyticMigration.migrateAnalysis(analysis)
 	}
 
-	analyticMigration.printResults(len(allPastAnalysis))
+	analyticMigration.printResults(len(allPastAnalysis) * enums.TotalOfTables)
 }
