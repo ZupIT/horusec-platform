@@ -1,7 +1,6 @@
 package router
 
 import (
-	dashboardEvents "github.com/ZupIT/horusec-platform/analytic/internal/events/dashboard"
 	"github.com/go-chi/chi"
 
 	httpRouter "github.com/ZupIT/horusec-devkit/pkg/services/http/router"
@@ -10,6 +9,7 @@ import (
 
 	"github.com/ZupIT/horusec-platform/analytic/docs"
 	"github.com/ZupIT/horusec-platform/analytic/internal/enums/routes"
+	dashboardEvents "github.com/ZupIT/horusec-platform/analytic/internal/events/dashboard"
 	"github.com/ZupIT/horusec-platform/analytic/internal/handlers/dashboard"
 	"github.com/ZupIT/horusec-platform/analytic/internal/handlers/health"
 )

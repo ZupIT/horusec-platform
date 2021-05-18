@@ -24,7 +24,7 @@ type Controller struct {
 	databaseWrite database.IDatabaseWrite
 }
 
-func NewControllerDashboardRead(repository repoDashboard.IRepoDashboard,
+func NewDashboardController(repository repoDashboard.IRepoDashboard,
 	connection *database.Connection, useCases dashboardUseCases.IUseCases) IController {
 	return &Controller{
 		repository:    repository,

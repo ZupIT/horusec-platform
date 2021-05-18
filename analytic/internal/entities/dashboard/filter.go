@@ -5,14 +5,12 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/go-chi/chi"
+	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/google/uuid"
 	"github.com/pkg/errors"
 
-	"github.com/go-chi/chi"
-
 	dashboardEnums "github.com/ZupIT/horusec-platform/analytic/internal/enums/dashboard"
-	validation "github.com/go-ozzo/ozzo-validation/v4"
-
-	"github.com/google/uuid"
 )
 
 type Filter struct {

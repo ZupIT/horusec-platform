@@ -1,4 +1,4 @@
-package dashboardfilter
+package dashboard
 
 import (
 	"context"
@@ -7,318 +7,177 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard"
-
-	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
-	"github.com/ZupIT/horusec-devkit/pkg/entities/vulnerability"
-	analysisEnum "github.com/ZupIT/horusec-devkit/pkg/enums/analysis"
-	"github.com/ZupIT/horusec-devkit/pkg/enums/confidence"
-	"github.com/ZupIT/horusec-devkit/pkg/enums/severities"
-	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
-	vulnerabilityEnum "github.com/ZupIT/horusec-devkit/pkg/enums/vulnerability"
-
-	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
-
 	"github.com/go-chi/chi"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/ZupIT/horusec-platform/analytic/internal/enums"
+	analysisEntities "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
+	"github.com/ZupIT/horusec-devkit/pkg/entities/vulnerability"
+	analysisEnum "github.com/ZupIT/horusec-devkit/pkg/enums/analysis"
+	"github.com/ZupIT/horusec-devkit/pkg/enums/confidence"
+	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
+	"github.com/ZupIT/horusec-devkit/pkg/enums/severities"
+	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
+	vulnerabilityEnum "github.com/ZupIT/horusec-devkit/pkg/enums/vulnerability"
 )
 
-func TestUseCaseDashboard_ExtractFilterDashboard(t *testing.T) {
-	layoutDateTime := "2006-01-02T15:04:05Z"
-	t.Run("Should extract filter with repository", func(t *testing.T) {
-		startTime, _ := time.Parse(layoutDateTime, "2020-01-01T00:00:00Z")
-		endTime, _ := time.Parse(layoutDateTime, "2022-01-01T00:00:00Z")
-		expected := &dashboard.Filter{
-			RepositoryID: uuid.New(),
-			WorkspaceID:  uuid.New(),
-			StartTime:    startTime,
-			EndTime:      endTime,
-			Page:         0,
-			Size:         10,
-		}
-		url := fmt.Sprintf("/test?initialDate=%s&finalDate=%s&page=%v&size=%v",
-			expected.StartTime.Format(layoutDateTime), expected.EndTime.Format(layoutDateTime), expected.Page, expected.Size)
-		r, _ := http.NewRequest(http.MethodGet, url, nil)
+func getAnalysisMock() *analysisEntities.Analysis {
+	analysisID := uuid.New()
+	vulnerabilityID1 := uuid.New()
+	vulnerabilityID2 := uuid.New()
 
-		ctx := chi.NewRouteContext()
-		ctx.URLParams.Add("workspaceID", expected.WorkspaceID.String())
-		ctx.URLParams.Add("repositoryID", expected.RepositoryID.String())
-		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
-		filter, err := NewUseCaseDashboard().ExtractFilterDashboard(r)
-		assert.NoError(t, err)
-		assert.Equal(t, expected.RepositoryID, filter.RepositoryID)
-		assert.Equal(t, expected.WorkspaceID, filter.WorkspaceID)
-		assert.Equal(t, expected.StartTime, filter.StartTime)
-		assert.Equal(t, expected.EndTime, filter.EndTime)
-		assert.Equal(t, expected.Page, filter.Page)
-		assert.Equal(t, expected.Size, filter.Size)
-	})
-	t.Run("Should extract filter without page size", func(t *testing.T) {
-		startTime, _ := time.Parse(layoutDateTime, "2020-01-01T00:00:00Z")
-		endTime, _ := time.Parse(layoutDateTime, "2022-01-01T00:00:00Z")
-		expected := &dashboard.Filter{
-			RepositoryID: uuid.New(),
-			WorkspaceID:  uuid.New(),
-			StartTime:    startTime,
-			EndTime:      endTime,
-			Page:         0,
-			Size:         10,
-		}
-		url := fmt.Sprintf("/test?initialDate=%s&finalDate=%s",
-			expected.StartTime.Format(layoutDateTime), expected.EndTime.Format(layoutDateTime))
-		r, _ := http.NewRequest(http.MethodGet, url, nil)
-
-		ctx := chi.NewRouteContext()
-		ctx.URLParams.Add("workspaceID", expected.WorkspaceID.String())
-		ctx.URLParams.Add("repositoryID", expected.RepositoryID.String())
-		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
-		filter, err := NewUseCaseDashboard().ExtractFilterDashboard(r)
-		assert.NoError(t, err)
-		assert.Equal(t, expected.RepositoryID, filter.RepositoryID)
-		assert.Equal(t, expected.WorkspaceID, filter.WorkspaceID)
-		assert.Equal(t, expected.StartTime, filter.StartTime)
-		assert.Equal(t, expected.EndTime, filter.EndTime)
-		assert.Equal(t, 0, filter.Page)
-		assert.Equal(t, 10, filter.Size)
-	})
-	t.Run("Should return error on extract filter because not send empty startTime", func(t *testing.T) {
-		startTime, _ := time.Parse(layoutDateTime, "2020-01-01T00:00:00Z")
-		endTime, _ := time.Parse(layoutDateTime, "2022-01-01T00:00:00Z")
-		expected := &dashboard.Filter{
-			RepositoryID: uuid.New(),
-			WorkspaceID:  uuid.New(),
-			StartTime:    startTime,
-			EndTime:      endTime,
-			Page:         0,
-			Size:         10,
-		}
-		url := fmt.Sprintf("/test?page=%v&size=%v",
-			expected.Page, expected.Size)
-		r, _ := http.NewRequest(http.MethodGet, url, nil)
-
-		ctx := chi.NewRouteContext()
-		ctx.URLParams.Add("workspaceID", expected.WorkspaceID.String())
-		ctx.URLParams.Add("repositoryID", expected.RepositoryID.String())
-		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
-		_, err := NewUseCaseDashboard().ExtractFilterDashboard(r)
-		assert.Error(t, err)
-		assert.Equal(t, err.Error(), "EndTime: cannot be blank; StartTime: cannot be blank.")
-	})
-	t.Run("Should return error on extract filter because wrong workspaceID", func(t *testing.T) {
-		startTime, _ := time.Parse(layoutDateTime, "2020-01-01T00:00:00Z")
-		endTime, _ := time.Parse(layoutDateTime, "2022-01-01T00:00:00Z")
-		expected := &dashboard.Filter{
-			RepositoryID: uuid.New(),
-			WorkspaceID:  uuid.New(),
-			StartTime:    startTime,
-			EndTime:      endTime,
-			Page:         0,
-			Size:         10,
-		}
-		url := fmt.Sprintf("/test?initialDate=%s&finalDate=%s&page=%v&size=%v",
-			expected.StartTime.Format(layoutDateTime), expected.EndTime.Format(layoutDateTime), expected.Page, expected.Size)
-		r, _ := http.NewRequest(http.MethodGet, url, nil)
-
-		ctx := chi.NewRouteContext()
-		ctx.URLParams.Add("workspaceID", "wrong type")
-		ctx.URLParams.Add("repositoryID", expected.RepositoryID.String())
-		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
-		_, err := NewUseCaseDashboard().ExtractFilterDashboard(r)
-		assert.Error(t, err)
-		assert.Equal(t, err, enums.ErrorWrongWorkspaceID)
-	})
-	t.Run("Should return error on extract filter because wrong repositoryID", func(t *testing.T) {
-		startTime, _ := time.Parse(layoutDateTime, "2020-01-01T00:00:00Z")
-		endTime, _ := time.Parse(layoutDateTime, "2022-01-01T00:00:00Z")
-		expected := &dashboard.Filter{
-			RepositoryID: uuid.New(),
-			WorkspaceID:  uuid.New(),
-			StartTime:    startTime,
-			EndTime:      endTime,
-			Page:         0,
-			Size:         10,
-		}
-		url := fmt.Sprintf("/test?initialDate=%s&finalDate=%s&page=%v&size=%v",
-			expected.StartTime.Format(layoutDateTime), expected.EndTime.Format(layoutDateTime), expected.Page, expected.Size)
-		r, _ := http.NewRequest(http.MethodGet, url, nil)
-
-		ctx := chi.NewRouteContext()
-		ctx.URLParams.Add("workspaceID", expected.WorkspaceID.String())
-		ctx.URLParams.Add("repositoryID", "wrong type")
-		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
-		_, err := NewUseCaseDashboard().ExtractFilterDashboard(r)
-		assert.Error(t, err)
-		assert.Equal(t, err, enums.ErrorWrongRepositoryID)
-	})
-	t.Run("Should return error on extract filter because wrong startTime", func(t *testing.T) {
-		endTime, _ := time.Parse(layoutDateTime, "2022-01-01T00:00:00Z")
-		expected := &dashboard.Filter{
-			RepositoryID: uuid.New(),
-			WorkspaceID:  uuid.New(),
-			EndTime:      endTime,
-			Page:         0,
-			Size:         10,
-		}
-		url := fmt.Sprintf("/test?initialDate=wrongStartTime&finalDate=%s&page=%v&size=%v",
-			expected.EndTime.Format(layoutDateTime), expected.Page, expected.Size)
-		r, _ := http.NewRequest(http.MethodGet, url, nil)
-
-		ctx := chi.NewRouteContext()
-		ctx.URLParams.Add("workspaceID", expected.WorkspaceID.String())
-		ctx.URLParams.Add("repositoryID", expected.RepositoryID.String())
-		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
-		_, err := NewUseCaseDashboard().ExtractFilterDashboard(r)
-		assert.Error(t, err)
-		assert.Equal(t, err, enums.ErrorWrongInitialDate)
-	})
-	t.Run("Should return error on extract filter because wrong endTime", func(t *testing.T) {
-		startTime, _ := time.Parse(layoutDateTime, "2020-01-01T00:00:00Z")
-		expected := &dashboard.Filter{
-			RepositoryID: uuid.New(),
-			WorkspaceID:  uuid.New(),
-			StartTime:    startTime,
-			Page:         0,
-			Size:         10,
-		}
-		url := fmt.Sprintf("/test?initialDate=%s&finalDate=wrongStartTime&page=%v&size=%v",
-			expected.StartTime.Format(layoutDateTime), expected.Page, expected.Size)
-		r, _ := http.NewRequest(http.MethodGet, url, nil)
-
-		ctx := chi.NewRouteContext()
-		ctx.URLParams.Add("workspaceID", expected.WorkspaceID.String())
-		ctx.URLParams.Add("repositoryID", expected.RepositoryID.String())
-		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
-		_, err := NewUseCaseDashboard().ExtractFilterDashboard(r)
-		assert.Error(t, err)
-		assert.Equal(t, err, enums.ErrorWrongFinalDate)
-	})
-}
-
-func getAnalysisMock() *analysis.Analysis {
-	input := &analysis.Analysis{
-		ID:                      uuid.New(),
-		RepositoryID:            uuid.New(),
-		RepositoryName:          "my-repository",
-		WorkspaceID:             uuid.New(),
-		WorkspaceName:           "my-workspace",
-		Status:                  analysisEnum.Success,
-		Errors:                  "",
-		CreatedAt:               time.Now(),
-		FinishedAt:              time.Now(),
-		AnalysisVulnerabilities: []analysis.AnalysisVulnerabilities{},
+	return &analysisEntities.Analysis{
+		ID:             analysisID,
+		RepositoryID:   uuid.New(),
+		RepositoryName: "my-repository",
+		WorkspaceID:    uuid.New(),
+		WorkspaceName:  "my-workspace",
+		Status:         analysisEnum.Success,
+		Errors:         "",
+		CreatedAt:      time.Now(),
+		FinishedAt:     time.Now(),
+		AnalysisVulnerabilities: []analysisEntities.AnalysisVulnerabilities{
+			{
+				VulnerabilityID: vulnerabilityID1,
+				AnalysisID:      analysisID,
+				CreatedAt:       time.Now(),
+				Vulnerability: vulnerability.Vulnerability{
+					VulnerabilityID: vulnerabilityID1,
+					Line:            "1",
+					Column:          "1",
+					Confidence:      confidence.High,
+					File:            "/deployments/cert.pem",
+					Code:            "-----BEGIN CERTIFICATE-----",
+					Details:         "Asymmetric Private Key \n Found SSH and/or x.509 ...",
+					SecurityTool:    tools.HorusecEngine,
+					Language:        languages.Leaks,
+					Severity:        severities.Critical,
+					VulnHash:        "1234567890",
+					Type:            vulnerabilityEnum.Vulnerability,
+					CommitAuthor:    "Horusec",
+					CommitEmail:     "horusec@zup.com.br",
+					CommitHash:      "9876543210",
+					CommitMessage:   "Initial Commit",
+					CommitDate:      "2021-03-31T10:58:42Z",
+				},
+			},
+			{
+				VulnerabilityID: vulnerabilityID2,
+				AnalysisID:      analysisID,
+				CreatedAt:       time.Now(),
+				Vulnerability: vulnerability.Vulnerability{
+					VulnerabilityID: vulnerabilityID2,
+					Line:            "1",
+					Column:          "1",
+					Confidence:      confidence.High,
+					File:            "/deployments/key.pem",
+					Code:            "-----BEGIN OPENSSH PRIVATE KEY-----",
+					Details:         "Asymmetric Private Key \n Found SSH and/or x.509 ...",
+					SecurityTool:    tools.HorusecEngine,
+					Language:        languages.Leaks,
+					Severity:        severities.Critical,
+					VulnHash:        "0987654321",
+					Type:            vulnerabilityEnum.Vulnerability,
+					CommitAuthor:    "Horusec",
+					CommitEmail:     "horusec@zup.com.br",
+					CommitHash:      "1234567890",
+					CommitMessage:   "Initial Commit",
+					CommitDate:      "2021-03-31T10:58:42Z",
+				},
+			},
+		},
 	}
-	VulnerabilityID1 := uuid.New()
-	VulnerabilityID2 := uuid.New()
-	input.AnalysisVulnerabilities = append(input.AnalysisVulnerabilities, analysis.AnalysisVulnerabilities{
-		VulnerabilityID: VulnerabilityID1,
-		AnalysisID:      input.ID,
-		CreatedAt:       time.Now(),
-		Vulnerability: vulnerability.Vulnerability{
-			VulnerabilityID: VulnerabilityID1,
-			Line:            "1",
-			Column:          "1",
-			Confidence:      confidence.High,
-			File:            "/deployments/cert.pem",
-			Code:            "-----BEGIN CERTIFICATE-----",
-			Details:         "Asymmetric Private Key \n Found SSH and/or x.509 Cerficates among the files of your project, make sure you want this kind of information inside your Git repo, since it can be missused by someone with access to any kind of copy.  For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
-			SecurityTool:    tools.HorusecEngine,
-			Language:        languages.Leaks,
-			Severity:        severities.Critical,
-			VulnHash:        "1234567890",
-			Type:            vulnerabilityEnum.Vulnerability,
-			CommitAuthor:    "Horusec",
-			CommitEmail:     "horusec@zup.com.br",
-			CommitHash:      "9876543210",
-			CommitMessage:   "Initial Commit",
-			CommitDate:      "2021-03-31T10:58:42Z",
-		},
-	})
-	input.AnalysisVulnerabilities = append(input.AnalysisVulnerabilities, analysis.AnalysisVulnerabilities{
-		VulnerabilityID: VulnerabilityID2,
-		AnalysisID:      input.ID,
-		CreatedAt:       time.Now(),
-		Vulnerability: vulnerability.Vulnerability{
-			VulnerabilityID: VulnerabilityID2,
-			Line:            "1",
-			Column:          "1",
-			Confidence:      confidence.High,
-			File:            "/deployments/key.pem",
-			Code:            "-----BEGIN OPENSSH PRIVATE KEY-----",
-			Details:         "Asymmetric Private Key \n Found SSH and/or x.509 Cerficates among the files of your project, make sure you want this kind of information inside your Git repo, since it can be missused by someone with access to any kind of copy.  For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
-			SecurityTool:    tools.HorusecEngine,
-			Language:        languages.Leaks,
-			Severity:        severities.Critical,
-			VulnHash:        "0987654321",
-			Type:            vulnerabilityEnum.Vulnerability,
-			CommitAuthor:    "Horusec",
-			CommitEmail:     "horusec@zup.com.br",
-			CommitHash:      "1234567890",
-			CommitMessage:   "Initial Commit",
-			CommitDate:      "2021-03-31T10:58:42Z",
-		},
-	})
-	return input
 }
 
-func TestUseCase_ParseAnalysisToVulnerabilitiesByAuthor(t *testing.T) {
-	t.Run("Should parse analytic to vuln by author with success", func(t *testing.T) {
-		input := getAnalysisMock()
+func TestParseAnalysisToVulnerabilitiesByAuthor(t *testing.T) {
+	t.Run("should success parse without errors", func(t *testing.T) {
+		useCases := NewUseCaseDashboard()
 
-		output := NewUseCaseAnalysis().ParseAnalysisToVulnerabilitiesByAuthor(input)
-
-		assert.Len(t, output, 1)
-		assert.Equal(t, output[0].Vulnerability.CriticalVulnerability, 2)
-		assert.Equal(t, output[0].Vulnerability.WorkspaceID, input.WorkspaceID)
-		assert.Equal(t, output[0].Vulnerability.RepositoryID, input.RepositoryID)
-		assert.Equal(t, output[0].Vulnerability.Active, true)
-		assert.Equal(t, output[0].Author, "horusec@zup.com.br")
+		assert.Len(t, useCases.ParseAnalysisToVulnerabilitiesByAuthor(getAnalysisMock()), 1)
 	})
 }
 
-func TestUseCase_ParseAnalysisToVulnerabilitiesByLanguage(t *testing.T) {
-	t.Run("Should parse analytic to vuln by language with success", func(t *testing.T) {
-		input := getAnalysisMock()
+func TestParseAnalysisToVulnerabilitiesByRepository(t *testing.T) {
+	t.Run("should success parse without errors", func(t *testing.T) {
+		useCases := NewUseCaseDashboard()
 
-		output := NewUseCaseAnalysis().ParseAnalysisToVulnerabilitiesByLanguage(input)
-
-		assert.Len(t, output, 1)
-		assert.Equal(t, output[0].Vulnerability.CriticalVulnerability, 2)
-		assert.Equal(t, output[0].Vulnerability.WorkspaceID, input.WorkspaceID)
-		assert.Equal(t, output[0].Vulnerability.RepositoryID, input.RepositoryID)
-		assert.Equal(t, output[0].Vulnerability.Active, true)
-		assert.Equal(t, output[0].Language, languages.Leaks)
+		assert.Len(t, useCases.ParseAnalysisToVulnerabilitiesByRepository(getAnalysisMock()), 1)
 	})
 }
 
-func TestUseCase_ParseAnalysisToVulnerabilitiesByRepository(t *testing.T) {
-	t.Run("Should parse analytic to vuln by repository with success", func(t *testing.T) {
-		input := getAnalysisMock()
+func TestParseAnalysisToVulnerabilitiesByLanguage(t *testing.T) {
+	t.Run("should success parse without errors", func(t *testing.T) {
+		useCases := NewUseCaseDashboard()
 
-		output := NewUseCaseAnalysis().ParseAnalysisToVulnerabilitiesByRepository(input)
-
-		assert.Len(t, output, 1)
-		assert.Equal(t, output[0].Vulnerability.CriticalVulnerability, 2)
-		assert.Equal(t, output[0].Vulnerability.WorkspaceID, input.WorkspaceID)
-		assert.Equal(t, output[0].Vulnerability.RepositoryID, input.RepositoryID)
-		assert.Equal(t, output[0].Vulnerability.Active, true)
-		assert.Equal(t, output[0].RepositoryName, input.RepositoryName)
+		assert.Len(t, useCases.ParseAnalysisToVulnerabilitiesByLanguage(getAnalysisMock()), 1)
 	})
 }
 
-func TestUseCase_ParseAnalysisToVulnerabilitiesByTime(t *testing.T) {
-	t.Run("Should parse analytic to vuln by time with success", func(t *testing.T) {
-		input := getAnalysisMock()
+func TestParseAnalysisToVulnerabilitiesByTime(t *testing.T) {
+	t.Run("should success parse without errors", func(t *testing.T) {
+		useCases := NewUseCaseDashboard()
 
-		output := NewUseCaseAnalysis().ParseAnalysisToVulnerabilitiesByTime(input)
+		assert.NotNil(t, useCases.ParseAnalysisToVulnerabilitiesByTime(getAnalysisMock()))
+	})
+}
 
-		assert.Len(t, output, 1)
-		assert.Equal(t, output[0].Vulnerability.CriticalVulnerability, 2)
-		assert.Equal(t, output[0].Vulnerability.WorkspaceID, input.WorkspaceID)
-		assert.Equal(t, output[0].Vulnerability.RepositoryID, input.RepositoryID)
-		assert.Equal(t, output[0].Vulnerability.Active, true)
-		assert.Equal(t, output[0].CreatedAt, input.CreatedAt)
+func TestFilterFromRequest(t *testing.T) {
+	layoutDateTime := "2006-01-02T15:04:05Z"
+	startTime, _ := time.Parse(layoutDateTime, "2020-01-01T00:00:00Z")
+	endTime, _ := time.Parse(layoutDateTime, "2022-01-01T00:00:00Z")
+
+	t.Run("should success create a new filter from request data", func(t *testing.T) {
+		useCases := NewUseCaseDashboard()
+
+		id := uuid.New()
+
+		url := fmt.Sprintf("/test?initialDate=%s&finalDate=%s&page=%v&size=%v",
+			startTime.Format(layoutDateTime), endTime.Format(layoutDateTime), 18, 18)
+
+		ctx := chi.NewRouteContext()
+		ctx.URLParams.Add("workspaceID", id.String())
+		ctx.URLParams.Add("repositoryID", id.String())
+		r, _ := http.NewRequest(http.MethodGet, url, nil)
+		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
+
+		filter, err := useCases.FilterFromRequest(r)
+		assert.NoError(t, err)
+		assert.Equal(t, startTime, filter.StartTime)
+		assert.Equal(t, endTime, filter.EndTime)
+		assert.Equal(t, 18, filter.Page)
+		assert.Equal(t, 18, filter.Size)
+		assert.Equal(t, id, filter.WorkspaceID)
+		assert.Equal(t, id, filter.RepositoryID)
+	})
+
+	t.Run("should return error when failed to set pagination", func(t *testing.T) {
+		useCases := NewUseCaseDashboard()
+
+		id := uuid.New()
+
+		url := fmt.Sprintf("/test?initialDate=%s&finalDate=%s&page=%v&size=%v",
+			startTime.Format(layoutDateTime), "test", 18, 18)
+
+		ctx := chi.NewRouteContext()
+		ctx.URLParams.Add("workspaceID", id.String())
+		ctx.URLParams.Add("repositoryID", id.String())
+		r, _ := http.NewRequest(http.MethodGet, url, nil)
+		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
+
+		filter, err := useCases.FilterFromRequest(r)
+		assert.Error(t, err)
+		assert.Nil(t, filter)
+	})
+
+	t.Run("should return error when failed to workspace or repository id", func(t *testing.T) {
+		useCases := NewUseCaseDashboard()
+
+		ctx := chi.NewRouteContext()
+		r, _ := http.NewRequest(http.MethodGet, "/test", nil)
+		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
+
+		filter, err := useCases.FilterFromRequest(r)
+		assert.Error(t, err)
+		assert.Nil(t, filter)
 	})
 }

@@ -1,10 +1,12 @@
 package dashboard
 
 import (
-	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
-	utilsMock "github.com/ZupIT/horusec-devkit/pkg/utils/mock"
-	"github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard"
 	"github.com/stretchr/testify/mock"
+
+	analysisEntities "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
+	utilsMock "github.com/ZupIT/horusec-devkit/pkg/utils/mock"
+
+	"github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard"
 )
 
 type Mock struct {
@@ -16,22 +18,22 @@ func (m *Mock) GetAllDashboardCharts(_ *dashboard.Filter) (*dashboard.Response, 
 	return args.Get(0).(*dashboard.Response), utilsMock.ReturnNilOrError(args, 1)
 }
 
-func (m *Mock) AddVulnerabilitiesByAuthor(_ *analysis.Analysis) error {
+func (m *Mock) AddVulnerabilitiesByAuthor(_ *analysisEntities.Analysis) error {
 	args := m.MethodCalled("AddVulnerabilitiesByAuthor")
 	return utilsMock.ReturnNilOrError(args, 0)
 }
 
-func (m *Mock) AddVulnerabilitiesByRepository(_ *analysis.Analysis) error {
+func (m *Mock) AddVulnerabilitiesByRepository(_ *analysisEntities.Analysis) error {
 	args := m.MethodCalled("AddVulnerabilitiesByRepository")
 	return utilsMock.ReturnNilOrError(args, 0)
 }
 
-func (m *Mock) AddVulnerabilitiesByLanguage(_ *analysis.Analysis) error {
+func (m *Mock) AddVulnerabilitiesByLanguage(_ *analysisEntities.Analysis) error {
 	args := m.MethodCalled("AddVulnerabilitiesByLanguage")
 	return utilsMock.ReturnNilOrError(args, 0)
 }
 
-func (m *Mock) AddVulnerabilitiesByTime(_ *analysis.Analysis) error {
+func (m *Mock) AddVulnerabilitiesByTime(_ *analysisEntities.Analysis) error {
 	args := m.MethodCalled("AddVulnerabilitiesByTime")
 	return utilsMock.ReturnNilOrError(args, 0)
 }

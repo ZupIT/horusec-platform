@@ -17,30 +17,24 @@ package health
 import (
 	"net/http"
 
-	"google.golang.org/grpc"
-
-	"github.com/ZupIT/horusec-devkit/pkg/services/broker"
+	brokerLib "github.com/ZupIT/horusec-devkit/pkg/services/broker"
 	"github.com/ZupIT/horusec-devkit/pkg/services/database"
-	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/health"
 	httpUtil "github.com/ZupIT/horusec-devkit/pkg/utils/http"
 	_ "github.com/ZupIT/horusec-devkit/pkg/utils/http/entities" // [swagger-import]
 	httpUtilEnums "github.com/ZupIT/horusec-devkit/pkg/utils/http/enums"
 )
 
 type Handler struct {
-	databaseRead           database.IDatabaseRead
-	databaseWrite          database.IDatabaseWrite
-	grpcHealthCheckService health.ICheckClient
-	broker                 broker.IBroker
+	databaseRead  database.IDatabaseRead
+	databaseWrite database.IDatabaseWrite
+	broker        brokerLib.IBroker
 }
 
-func NewHealthHandler(databaseConnection *database.Connection, authConGRPC grpc.ClientConnInterface,
-	brokerConnection broker.IBroker) *Handler {
+func NewHealthHandler(databaseConnection *database.Connection, broker brokerLib.IBroker) *Handler {
 	return &Handler{
-		databaseRead:           databaseConnection.Read,
-		databaseWrite:          databaseConnection.Write,
-		broker:                 brokerConnection,
-		grpcHealthCheckService: health.NewHealthCheckGrpcClient(authConGRPC.(*grpc.ClientConn)),
+		databaseRead:  databaseConnection.Read,
+		databaseWrite: databaseConnection.Write,
+		broker:        broker,
 	}
 }
 

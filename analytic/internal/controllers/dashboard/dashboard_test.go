@@ -1,252 +1,201 @@
 package dashboard
 
-//func TestControllerRead_GetAllCharts(t *testing.T) {
-//	t.Run("Should return all charts without errors", func(t *testing.T) {
-//		repoMock := &repository.Mock{}
-//		repoMock.On("GetDashboardTotalDevelopers").Return(0, nil)
-//		repoMock.On("GetDashboardTotalRepositories").Return(0, nil)
-//		repoMock.On("GetDashboardVulnBySeverity").Return(&dashboard.Vulnerability{}, nil)
-//		repoMock.On("GetDashboardVulnByAuthor").Return([]*dashboard.VulnerabilitiesByAuthor{}, nil)
-//		repoMock.On("GetDashboardVulnByRepository").Return([]*dashboard.VulnerabilitiesByRepository{}, nil)
-//		repoMock.On("GetDashboardVulnByLanguage").Return([]*dashboard.VulnerabilitiesByLanguage{}, nil)
-//		repoMock.On("GetDashboardVulnByTime").Return([]*dashboard.VulnerabilitiesByTime{}, nil)
-//		response, err := NewControllerDashboardRead(repoMock).GetAllDashboardCharts(&dashboard.FilterDashboard{})
-//		assert.NoError(t, err)
-//		assert.NotEmpty(t, response)
-//	})
-//	t.Run("Should return error when GetDashboardTotalDevelopers", func(t *testing.T) {
-//		repoMock := &repository.Mock{}
-//		repoMock.On("GetDashboardTotalDevelopers").Return(0, errors.New("unexpected error"))
-//		repoMock.On("GetDashboardTotalRepositories").Return(0, nil)
-//		repoMock.On("GetDashboardVulnBySeverity").Return(&dashboard.Vulnerability{}, nil)
-//		repoMock.On("GetDashboardVulnByAuthor").Return([]*dashboard.VulnerabilitiesByAuthor{}, nil)
-//		repoMock.On("GetDashboardVulnByRepository").Return([]*dashboard.VulnerabilitiesByRepository{}, nil)
-//		repoMock.On("GetDashboardVulnByLanguage").Return([]*dashboard.VulnerabilitiesByLanguage{}, nil)
-//		repoMock.On("GetDashboardVulnByTime").Return([]*dashboard.VulnerabilitiesByTime{}, nil)
-//		response, err := NewControllerDashboardRead(repoMock).GetAllDashboardCharts(&dashboard.FilterDashboard{})
-//		assert.Error(t, err)
-//		assert.Empty(t, response)
-//	})
-//	t.Run("Should return error when GetDashboardTotalRepositories", func(t *testing.T) {
-//		repoMock := &repository.Mock{}
-//		repoMock.On("GetDashboardTotalDevelopers").Return(0, nil)
-//		repoMock.On("GetDashboardTotalRepositories").Return(0, errors.New("unexpected error"))
-//		repoMock.On("GetDashboardVulnBySeverity").Return(&dashboard.Vulnerability{}, nil)
-//		repoMock.On("GetDashboardVulnByAuthor").Return([]*dashboard.VulnerabilitiesByAuthor{}, nil)
-//		repoMock.On("GetDashboardVulnByRepository").Return([]*dashboard.VulnerabilitiesByRepository{}, nil)
-//		repoMock.On("GetDashboardVulnByLanguage").Return([]*dashboard.VulnerabilitiesByLanguage{}, nil)
-//		repoMock.On("GetDashboardVulnByTime").Return([]*dashboard.VulnerabilitiesByTime{}, nil)
-//		response, err := NewControllerDashboardRead(repoMock).GetAllDashboardCharts(&dashboard.FilterDashboard{})
-//		assert.Error(t, err)
-//		assert.Empty(t, response)
-//	})
-//	t.Run("Should return error when GetDashboardVulnBySeverity", func(t *testing.T) {
-//		repoMock := &repository.Mock{}
-//		repoMock.On("GetDashboardTotalDevelopers").Return(0, nil)
-//		repoMock.On("GetDashboardTotalRepositories").Return(0, nil)
-//		repoMock.On("GetDashboardVulnBySeverity").Return(&dashboard.Vulnerability{}, errors.New("unexpected error"))
-//		repoMock.On("GetDashboardVulnByAuthor").Return([]*dashboard.VulnerabilitiesByAuthor{}, nil)
-//		repoMock.On("GetDashboardVulnByRepository").Return([]*dashboard.VulnerabilitiesByRepository{}, nil)
-//		repoMock.On("GetDashboardVulnByLanguage").Return([]*dashboard.VulnerabilitiesByLanguage{}, nil)
-//		repoMock.On("GetDashboardVulnByTime").Return([]*dashboard.VulnerabilitiesByTime{}, nil)
-//		response, err := NewControllerDashboardRead(repoMock).GetAllDashboardCharts(&dashboard.FilterDashboard{})
-//		assert.Error(t, err)
-//		assert.Empty(t, response)
-//	})
-//	t.Run("Should return error when GetDashboardVulnByAuthor", func(t *testing.T) {
-//		repoMock := &repository.Mock{}
-//		repoMock.On("GetDashboardTotalDevelopers").Return(0, nil)
-//		repoMock.On("GetDashboardTotalRepositories").Return(0, nil)
-//		repoMock.On("GetDashboardVulnBySeverity").Return(&dashboard.Vulnerability{}, nil)
-//		repoMock.On("GetDashboardVulnByAuthor").Return([]*dashboard.VulnerabilitiesByAuthor{}, errors.New("unexpected error"))
-//		repoMock.On("GetDashboardVulnByRepository").Return([]*dashboard.VulnerabilitiesByRepository{}, nil)
-//		repoMock.On("GetDashboardVulnByLanguage").Return([]*dashboard.VulnerabilitiesByLanguage{}, nil)
-//		repoMock.On("GetDashboardVulnByTime").Return([]*dashboard.VulnerabilitiesByTime{}, nil)
-//		response, err := NewControllerDashboardRead(repoMock).GetAllDashboardCharts(&dashboard.FilterDashboard{})
-//		assert.Error(t, err)
-//		assert.Empty(t, response)
-//	})
-//	t.Run("Should return error when VulnerabilitiesByRepository", func(t *testing.T) {
-//		repoMock := &repository.Mock{}
-//		repoMock.On("GetDashboardTotalDevelopers").Return(0, nil)
-//		repoMock.On("GetDashboardTotalRepositories").Return(0, nil)
-//		repoMock.On("GetDashboardVulnBySeverity").Return(&dashboard.Vulnerability{}, nil)
-//		repoMock.On("GetDashboardVulnByAuthor").Return([]*dashboard.VulnerabilitiesByAuthor{}, nil)
-//		repoMock.On("GetDashboardVulnByRepository").Return([]*dashboard.VulnerabilitiesByRepository{}, errors.New("unexpected error"))
-//		repoMock.On("GetDashboardVulnByLanguage").Return([]*dashboard.VulnerabilitiesByLanguage{}, nil)
-//		repoMock.On("GetDashboardVulnByTime").Return([]*dashboard.VulnerabilitiesByTime{}, nil)
-//		response, err := NewControllerDashboardRead(repoMock).GetAllDashboardCharts(&dashboard.FilterDashboard{})
-//		assert.Error(t, err)
-//		assert.Empty(t, response)
-//	})
-//	t.Run("Should return error when GetDashboardVulnByLanguage", func(t *testing.T) {
-//		repoMock := &repository.Mock{}
-//		repoMock.On("GetDashboardTotalDevelopers").Return(0, nil)
-//		repoMock.On("GetDashboardTotalRepositories").Return(0, nil)
-//		repoMock.On("GetDashboardVulnBySeverity").Return(&dashboard.Vulnerability{}, nil)
-//		repoMock.On("GetDashboardVulnByAuthor").Return([]*dashboard.VulnerabilitiesByAuthor{}, nil)
-//		repoMock.On("GetDashboardVulnByRepository").Return([]*dashboard.VulnerabilitiesByRepository{}, nil)
-//		repoMock.On("GetDashboardVulnByLanguage").Return([]*dashboard.VulnerabilitiesByLanguage{}, errors.New("unexpected error"))
-//		repoMock.On("GetDashboardVulnByTime").Return([]*dashboard.VulnerabilitiesByTime{}, nil)
-//		response, err := NewControllerDashboardRead(repoMock).GetAllDashboardCharts(&dashboard.FilterDashboard{})
-//		assert.Error(t, err)
-//		assert.Empty(t, response)
-//	})
-//	t.Run("Should return error when GetDashboardVulnByTime", func(t *testing.T) {
-//		repoMock := &repository.Mock{}
-//		repoMock.On("GetDashboardTotalDevelopers").Return(0, nil)
-//		repoMock.On("GetDashboardTotalRepositories").Return(0, nil)
-//		repoMock.On("GetDashboardVulnBySeverity").Return(&dashboard.Vulnerability{}, nil)
-//		repoMock.On("GetDashboardVulnByAuthor").Return([]*dashboard.VulnerabilitiesByAuthor{}, nil)
-//		repoMock.On("GetDashboardVulnByRepository").Return([]*dashboard.VulnerabilitiesByRepository{}, nil)
-//		repoMock.On("GetDashboardVulnByLanguage").Return([]*dashboard.VulnerabilitiesByLanguage{}, nil)
-//		repoMock.On("GetDashboardVulnByTime").Return([]*dashboard.VulnerabilitiesByTime{}, errors.New("unexpected error"))
-//		response, err := NewControllerDashboardRead(repoMock).GetAllDashboardCharts(&dashboard.FilterDashboard{})
-//		assert.Error(t, err)
-//		assert.Empty(t, response)
-//	})
-//}
-//
-//func TestControllerWrite_AddVulnerabilitiesByAuthor(t *testing.T) {
-//	t.Run("Should AddVulnerabilitiesByAuthor with success", func(t *testing.T) {
-//		repoMock := &repository.Mock{}
-//		repoMock.On("Inactive").Return(nil)
-//		repoMock.On("Save").Return(nil)
-//		entity := &analysis.Analysis{
-//			AnalysisVulnerabilities: []analysis.AnalysisVulnerabilities{
-//				{Vulnerability: vulnerability.Vulnerability{}},
-//			},
-//		}
-//		err := NewControllerDashboardWrite(repoMock).AddVulnerabilitiesByAuthor(entity)
-//		assert.NoError(t, err)
-//	})
-//	t.Run("Should AddVulnerabilitiesByAuthor with error when inactive vulns", func(t *testing.T) {
-//		repoMock := &repository.Mock{}
-//		repoMock.On("Inactive").Return(errors.New("unexpected error"))
-//		repoMock.On("Save").Return(nil)
-//		entity := &analysis.Analysis{
-//			AnalysisVulnerabilities: []analysis.AnalysisVulnerabilities{
-//				{Vulnerability: vulnerability.Vulnerability{}},
-//			},
-//		}
-//		err := NewControllerDashboardWrite(repoMock).AddVulnerabilitiesByAuthor(entity)
-//		assert.Error(t, err)
-//	})
-//	t.Run("Should AddVulnerabilitiesByAuthor with error when save vulns", func(t *testing.T) {
-//		repoMock := &repository.Mock{}
-//		repoMock.On("Inactive").Return(nil)
-//		repoMock.On("Save").Return(errors.New("unexpected error"))
-//		entity := &analysis.Analysis{
-//			AnalysisVulnerabilities: []analysis.AnalysisVulnerabilities{
-//				{Vulnerability: vulnerability.Vulnerability{}},
-//			},
-//		}
-//		err := NewControllerDashboardWrite(repoMock).AddVulnerabilitiesByAuthor(entity)
-//		assert.Error(t, err)
-//	})
-//}
-//
-//func TestControllerWrite_AddVulnerabilitiesByLanguage(t *testing.T) {
-//	t.Run("Should AddVulnerabilitiesByLanguage with success", func(t *testing.T) {
-//		repoMock := &repository.Mock{}
-//		repoMock.On("Inactive").Return(nil)
-//		repoMock.On("Save").Return(nil)
-//		entity := &analysis.Analysis{
-//			AnalysisVulnerabilities: []analysis.AnalysisVulnerabilities{
-//				{Vulnerability: vulnerability.Vulnerability{}},
-//			},
-//		}
-//		err := NewControllerDashboardWrite(repoMock).AddVulnerabilitiesByLanguage(entity)
-//		assert.NoError(t, err)
-//	})
-//	t.Run("Should AddVulnerabilitiesByLanguage with error when inactive vulns", func(t *testing.T) {
-//		repoMock := &repository.Mock{}
-//		repoMock.On("Inactive").Return(errors.New("unexpected error"))
-//		repoMock.On("Save").Return(nil)
-//		entity := &analysis.Analysis{
-//			AnalysisVulnerabilities: []analysis.AnalysisVulnerabilities{
-//				{Vulnerability: vulnerability.Vulnerability{}},
-//			},
-//		}
-//		err := NewControllerDashboardWrite(repoMock).AddVulnerabilitiesByLanguage(entity)
-//		assert.Error(t, err)
-//	})
-//	t.Run("Should AddVulnerabilitiesByLanguage with error when save vulns", func(t *testing.T) {
-//		repoMock := &repository.Mock{}
-//		repoMock.On("Inactive").Return(nil)
-//		repoMock.On("Save").Return(errors.New("unexpected error"))
-//		entity := &analysis.Analysis{
-//			AnalysisVulnerabilities: []analysis.AnalysisVulnerabilities{
-//				{Vulnerability: vulnerability.Vulnerability{}},
-//			},
-//		}
-//		err := NewControllerDashboardWrite(repoMock).AddVulnerabilitiesByLanguage(entity)
-//		assert.Error(t, err)
-//	})
-//}
-//
-//func TestControllerWrite_AddVulnerabilitiesByRepository(t *testing.T) {
-//	t.Run("Should AddVulnerabilitiesByRepository with success", func(t *testing.T) {
-//		repoMock := &repository.Mock{}
-//		repoMock.On("Inactive").Return(nil)
-//		repoMock.On("Save").Return(nil)
-//		entity := &analysis.Analysis{
-//			AnalysisVulnerabilities: []analysis.AnalysisVulnerabilities{
-//				{Vulnerability: vulnerability.Vulnerability{}},
-//			},
-//		}
-//		err := NewControllerDashboardWrite(repoMock).AddVulnerabilitiesByRepository(entity)
-//		assert.NoError(t, err)
-//	})
-//	t.Run("Should AddVulnerabilitiesByRepository with error when inactive vulns", func(t *testing.T) {
-//		repoMock := &repository.Mock{}
-//		repoMock.On("Inactive").Return(errors.New("unexpected error"))
-//		repoMock.On("Save").Return(nil)
-//		entity := &analysis.Analysis{
-//			AnalysisVulnerabilities: []analysis.AnalysisVulnerabilities{
-//				{Vulnerability: vulnerability.Vulnerability{}},
-//			},
-//		}
-//		err := NewControllerDashboardWrite(repoMock).AddVulnerabilitiesByRepository(entity)
-//		assert.Error(t, err)
-//	})
-//	t.Run("Should AddVulnerabilitiesByRepository with error when save vulns", func(t *testing.T) {
-//		repoMock := &repository.Mock{}
-//		repoMock.On("Inactive").Return(nil)
-//		repoMock.On("Save").Return(errors.New("unexpected error"))
-//		entity := &analysis.Analysis{
-//			AnalysisVulnerabilities: []analysis.AnalysisVulnerabilities{
-//				{Vulnerability: vulnerability.Vulnerability{}},
-//			},
-//		}
-//		err := NewControllerDashboardWrite(repoMock).AddVulnerabilitiesByRepository(entity)
-//		assert.Error(t, err)
-//	})
-//}
-//
-//func TestControllerWrite_AddVulnerabilitiesByTime(t *testing.T) {
-//	t.Run("Should AddVulnerabilitiesByTime with success", func(t *testing.T) {
-//		repoMock := &repository.Mock{}
-//		repoMock.On("Inactive").Return(nil)
-//		repoMock.On("Save").Return(nil)
-//		entity := &analysis.Analysis{
-//			AnalysisVulnerabilities: []analysis.AnalysisVulnerabilities{
-//				{Vulnerability: vulnerability.Vulnerability{}},
-//			},
-//		}
-//		err := NewControllerDashboardWrite(repoMock).AddVulnerabilitiesByTime(entity)
-//		assert.NoError(t, err)
-//	})
-//	t.Run("Should AddVulnerabilitiesByTime with error when save vulns", func(t *testing.T) {
-//		repoMock := &repository.Mock{}
-//		repoMock.On("Inactive").Return(nil)
-//		repoMock.On("Save").Return(errors.New("unexpected error"))
-//		entity := &analysis.Analysis{
-//			AnalysisVulnerabilities: []analysis.AnalysisVulnerabilities{
-//				{Vulnerability: vulnerability.Vulnerability{}},
-//			},
-//		}
-//		err := NewControllerDashboardWrite(repoMock).AddVulnerabilitiesByTime(entity)
-//		assert.Error(t, err)
-//	})
-//}
+import (
+	"errors"
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+
+	analysisEntities "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
+	"github.com/ZupIT/horusec-devkit/pkg/services/database"
+	"github.com/ZupIT/horusec-devkit/pkg/services/database/response"
+
+	"github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard"
+	dashboardRepository "github.com/ZupIT/horusec-platform/analytic/internal/repositories/dashboard"
+	dashboardUseCases "github.com/ZupIT/horusec-platform/analytic/internal/usecases/dashboard"
+)
+
+func TestGetAllDashboardCharts(t *testing.T) {
+	t.Run("should return all charts without errors", func(t *testing.T) {
+		repoMock := &dashboardRepository.Mock{}
+
+		repoMock.On("GetDashboardTotalDevelopers").Return(0, nil)
+		repoMock.On("GetDashboardTotalRepositories").Return(0, nil)
+		repoMock.On("GetDashboardVulnBySeverity").Return(&dashboard.Vulnerability{}, nil)
+		repoMock.On("GetDashboardVulnByAuthor").Return([]*dashboard.VulnerabilitiesByAuthor{}, nil)
+		repoMock.On("GetDashboardVulnByRepository").Return([]*dashboard.VulnerabilitiesByRepository{}, nil)
+		repoMock.On("GetDashboardVulnByLanguage").Return([]*dashboard.VulnerabilitiesByLanguage{}, nil)
+		repoMock.On("GetDashboardVulnByTime").Return([]*dashboard.VulnerabilitiesByTime{}, nil)
+
+		controller := NewDashboardController(repoMock, &database.Connection{}, dashboardUseCases.NewUseCaseDashboard())
+
+		result, err := controller.GetAllDashboardCharts(&dashboard.Filter{})
+		assert.NoError(t, err)
+		assert.NotEmpty(t, result)
+	})
+
+	t.Run("should return error when getting vuln by time", func(t *testing.T) {
+		repoMock := &dashboardRepository.Mock{}
+
+		repoMock.On("GetDashboardTotalDevelopers").Return(0, nil)
+		repoMock.On("GetDashboardTotalRepositories").Return(0, nil)
+		repoMock.On("GetDashboardVulnBySeverity").Return(&dashboard.Vulnerability{}, nil)
+		repoMock.On("GetDashboardVulnByAuthor").Return([]*dashboard.VulnerabilitiesByAuthor{}, nil)
+		repoMock.On("GetDashboardVulnByRepository").Return([]*dashboard.VulnerabilitiesByRepository{}, nil)
+		repoMock.On("GetDashboardVulnByLanguage").Return([]*dashboard.VulnerabilitiesByLanguage{}, nil)
+		repoMock.On("GetDashboardVulnByTime").Return(
+			[]*dashboard.VulnerabilitiesByTime{}, errors.New("test"))
+
+		controller := NewDashboardController(repoMock, &database.Connection{}, dashboardUseCases.NewUseCaseDashboard())
+
+		result, err := controller.GetAllDashboardCharts(&dashboard.Filter{})
+		assert.Error(t, err)
+		assert.Nil(t, result)
+	})
+
+	t.Run("should return error when getting vuln by language", func(t *testing.T) {
+		repoMock := &dashboardRepository.Mock{}
+
+		repoMock.On("GetDashboardTotalDevelopers").Return(0, nil)
+		repoMock.On("GetDashboardTotalRepositories").Return(0, nil)
+		repoMock.On("GetDashboardVulnBySeverity").Return(&dashboard.Vulnerability{}, nil)
+		repoMock.On("GetDashboardVulnByAuthor").Return([]*dashboard.VulnerabilitiesByAuthor{}, nil)
+		repoMock.On("GetDashboardVulnByRepository").Return([]*dashboard.VulnerabilitiesByRepository{}, nil)
+		repoMock.On("GetDashboardVulnByLanguage").Return(
+			[]*dashboard.VulnerabilitiesByLanguage{}, errors.New("test"))
+
+		controller := NewDashboardController(repoMock, &database.Connection{}, dashboardUseCases.NewUseCaseDashboard())
+
+		result, err := controller.GetAllDashboardCharts(&dashboard.Filter{})
+		assert.Error(t, err)
+		assert.Nil(t, result)
+	})
+
+	t.Run("should return error when getting vuln by repository", func(t *testing.T) {
+		repoMock := &dashboardRepository.Mock{}
+
+		repoMock.On("GetDashboardTotalDevelopers").Return(0, nil)
+		repoMock.On("GetDashboardTotalRepositories").Return(0, nil)
+		repoMock.On("GetDashboardVulnBySeverity").Return(&dashboard.Vulnerability{}, nil)
+		repoMock.On("GetDashboardVulnByAuthor").Return([]*dashboard.VulnerabilitiesByAuthor{}, nil)
+		repoMock.On("GetDashboardVulnByRepository").Return(
+			[]*dashboard.VulnerabilitiesByRepository{}, errors.New("test"))
+
+		controller := NewDashboardController(repoMock, &database.Connection{}, dashboardUseCases.NewUseCaseDashboard())
+
+		result, err := controller.GetAllDashboardCharts(&dashboard.Filter{})
+		assert.Error(t, err)
+		assert.Nil(t, result)
+	})
+
+	t.Run("should return error when getting vuln by author", func(t *testing.T) {
+		repoMock := &dashboardRepository.Mock{}
+
+		repoMock.On("GetDashboardTotalDevelopers").Return(0, nil)
+		repoMock.On("GetDashboardTotalRepositories").Return(0, nil)
+		repoMock.On("GetDashboardVulnBySeverity").Return(&dashboard.Vulnerability{}, nil)
+		repoMock.On("GetDashboardVulnByAuthor").Return(
+			[]*dashboard.VulnerabilitiesByAuthor{}, errors.New("test"))
+
+		controller := NewDashboardController(repoMock, &database.Connection{}, dashboardUseCases.NewUseCaseDashboard())
+
+		result, err := controller.GetAllDashboardCharts(&dashboard.Filter{})
+		assert.Error(t, err)
+		assert.Nil(t, result)
+	})
+
+	t.Run("should return error when getting vuln by severity", func(t *testing.T) {
+		repoMock := &dashboardRepository.Mock{}
+
+		repoMock.On("GetDashboardTotalDevelopers").Return(0, nil)
+		repoMock.On("GetDashboardTotalRepositories").Return(0, nil)
+		repoMock.On("GetDashboardVulnBySeverity").Return(&dashboard.Vulnerability{}, errors.New("test"))
+
+		controller := NewDashboardController(repoMock, &database.Connection{}, dashboardUseCases.NewUseCaseDashboard())
+
+		result, err := controller.GetAllDashboardCharts(&dashboard.Filter{})
+		assert.Error(t, err)
+		assert.Nil(t, result)
+	})
+
+	t.Run("should return error when getting total repositories", func(t *testing.T) {
+		repoMock := &dashboardRepository.Mock{}
+
+		repoMock.On("GetDashboardTotalDevelopers").Return(0, nil)
+		repoMock.On("GetDashboardTotalRepositories").Return(0, errors.New("test"))
+
+		controller := NewDashboardController(repoMock, &database.Connection{}, dashboardUseCases.NewUseCaseDashboard())
+
+		result, err := controller.GetAllDashboardCharts(&dashboard.Filter{})
+		assert.Error(t, err)
+		assert.Nil(t, result)
+	})
+
+	t.Run("should return error when getting total developers", func(t *testing.T) {
+		repoMock := &dashboardRepository.Mock{}
+
+		repoMock.On("GetDashboardTotalDevelopers").Return(0, errors.New("test"))
+
+		controller := NewDashboardController(repoMock, &database.Connection{}, dashboardUseCases.NewUseCaseDashboard())
+
+		result, err := controller.GetAllDashboardCharts(&dashboard.Filter{})
+		assert.Error(t, err)
+		assert.Nil(t, result)
+	})
+}
+
+func TestAddVulnerabilitiesByAuthor(t *testing.T) {
+	t.Run("should success add vulnerabilities", func(t *testing.T) {
+		repoMock := &dashboardRepository.Mock{}
+
+		databaseMock := &database.Mock{}
+		databaseMock.On("Create").Return(&response.Response{})
+
+		controller := NewDashboardController(repoMock, &database.Connection{Write: databaseMock, Read: databaseMock},
+			dashboardUseCases.NewUseCaseDashboard())
+
+		assert.NoError(t, controller.AddVulnerabilitiesByAuthor(&analysisEntities.Analysis{}))
+	})
+}
+
+func TestAddVulnerabilitiesByLanguage(t *testing.T) {
+	t.Run("should success add vulnerabilities", func(t *testing.T) {
+		repoMock := &dashboardRepository.Mock{}
+
+		databaseMock := &database.Mock{}
+		databaseMock.On("Create").Return(&response.Response{})
+
+		controller := NewDashboardController(repoMock, &database.Connection{Write: databaseMock, Read: databaseMock},
+			dashboardUseCases.NewUseCaseDashboard())
+
+		assert.NoError(t, controller.AddVulnerabilitiesByLanguage(&analysisEntities.Analysis{}))
+	})
+}
+
+func TestAddVulnerabilitiesByRepository(t *testing.T) {
+	t.Run("should success add vulnerabilities", func(t *testing.T) {
+		repoMock := &dashboardRepository.Mock{}
+
+		databaseMock := &database.Mock{}
+		databaseMock.On("Create").Return(&response.Response{})
+
+		controller := NewDashboardController(repoMock, &database.Connection{Write: databaseMock, Read: databaseMock},
+			dashboardUseCases.NewUseCaseDashboard())
+
+		assert.NoError(t, controller.AddVulnerabilitiesByRepository(&analysisEntities.Analysis{}))
+	})
+}
+
+func TestAddVulnerabilitiesByTime(t *testing.T) {
+	t.Run("should success add vulnerabilities", func(t *testing.T) {
+		repoMock := &dashboardRepository.Mock{}
+
+		databaseMock := &database.Mock{}
+		databaseMock.On("Create").Return(&response.Response{})
+
+		controller := NewDashboardController(repoMock, &database.Connection{Write: databaseMock, Read: databaseMock},
+			dashboardUseCases.NewUseCaseDashboard())
+
+		assert.NoError(t, controller.AddVulnerabilitiesByTime(&analysisEntities.Analysis{}))
+	})
+}

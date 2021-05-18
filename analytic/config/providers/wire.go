@@ -47,7 +47,7 @@ var repositoriesProviders = wire.NewSet(
 )
 
 var controllersProviders = wire.NewSet(
-	dashboardController.NewControllerDashboardRead,
+	dashboardController.NewDashboardController,
 )
 
 var handlersProviders = wire.NewSet(

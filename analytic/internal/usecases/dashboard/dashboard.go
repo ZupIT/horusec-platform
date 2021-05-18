@@ -1,4 +1,4 @@
-package dashboardfilter
+package dashboard
 
 import (
 	"net/http"

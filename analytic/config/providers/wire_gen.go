@@ -15,15 +15,16 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth/proto"
 	router2 "github.com/ZupIT/horusec-devkit/pkg/services/http/router"
 	"github.com/ZupIT/horusec-devkit/pkg/services/middlewares"
+	"github.com/google/wire"
+
 	"github.com/ZupIT/horusec-platform/analytic/config/cors"
-	dashboard2 "github.com/ZupIT/horusec-platform/analytic/internal/controllers/dashboard"
-	dashboard4 "github.com/ZupIT/horusec-platform/analytic/internal/events/dashboard"
-	dashboard3 "github.com/ZupIT/horusec-platform/analytic/internal/handlers/dashboard"
+	dashboard3 "github.com/ZupIT/horusec-platform/analytic/internal/controllers/dashboard"
+	dashboard5 "github.com/ZupIT/horusec-platform/analytic/internal/events/dashboard"
+	dashboard4 "github.com/ZupIT/horusec-platform/analytic/internal/handlers/dashboard"
 	"github.com/ZupIT/horusec-platform/analytic/internal/handlers/health"
 	"github.com/ZupIT/horusec-platform/analytic/internal/repositories/dashboard"
 	"github.com/ZupIT/horusec-platform/analytic/internal/router"
-	"github.com/ZupIT/horusec-platform/analytic/internal/usecases/dashboard"
-	"github.com/google/wire"
+	dashboard2 "github.com/ZupIT/horusec-platform/analytic/internal/usecases/dashboard"
 )
 
 // Injectors from wire.go:
@@ -43,12 +44,12 @@ func Initialize(string2 string) (router.IRouter, error) {
 	if err != nil {
 		return nil, err
 	}
-	handler := health.NewHealthHandler(connection, clientConnInterface, iBroker)
+	handler := health.NewHealthHandler(connection, iBroker)
 	iRepoDashboard := dashboard.NewRepoDashboard(connection)
-	iUseCases := dashboardfilter.NewUseCaseDashboard()
-	iController := dashboard2.NewControllerDashboardRead(iRepoDashboard, connection, iUseCases)
-	dashboardHandler := dashboard3.NewDashboardHandler(iController)
-	events := dashboard4.NewDashboardEvents(iBroker, iController)
+	iUseCases := dashboard2.NewUseCaseDashboard()
+	iController := dashboard3.NewDashboardController(iRepoDashboard, connection, iUseCases)
+	dashboardHandler := dashboard4.NewDashboardHandler(iController)
+	events := dashboard5.NewDashboardEvents(iBroker, iController)
 	routerIRouter := router.NewHTTPRouter(iRouter, iAuthzMiddleware, handler, dashboardHandler, events)
 	return routerIRouter, nil
 }
@@ -61,10 +62,10 @@ var configProviders = wire.NewSet(cors.NewCorsConfig, router.NewHTTPRouter)
 
 var repositoriesProviders = wire.NewSet(dashboard.NewRepoDashboard)
 
-var controllersProviders = wire.NewSet(dashboard2.NewControllerDashboardRead)
+var controllersProviders = wire.NewSet(dashboard3.NewDashboardController)
 
-var handlersProviders = wire.NewSet(health.NewHealthHandler, dashboard3.NewDashboardHandler)
+var handlersProviders = wire.NewSet(health.NewHealthHandler, dashboard4.NewDashboardHandler)
 
-var eventsProviders = wire.NewSet(dashboard4.NewDashboardEvents)
+var eventsProviders = wire.NewSet(dashboard5.NewDashboardEvents)
 
-var useCasesProviders = wire.NewSet(dashboardfilter.NewUseCaseDashboard)
+var useCasesProviders = wire.NewSet(dashboard2.NewUseCaseDashboard)
