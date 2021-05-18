@@ -176,7 +176,7 @@ func (r *RepoDashboard) queryGetDashboardVulnByLanguage() string {
 	return `
 		SELECT language, %[1]s
 		FROM (
-				SELECT DISTINCT ON (repository_id) *
+				SELECT *
 				FROM %[2]s
 				WHERE %[3]s AND created_at 
 				IN 
