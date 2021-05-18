@@ -106,7 +106,8 @@ func (r *RepoDashboard) queryGetDashboardVulnBySeverity() string {
 	`
 }
 
-func (r *RepoDashboard) GetDashboardVulnByAuthor(filter *dashboard.Filter) (vulns []*dashboard.VulnerabilitiesByAuthor, err error) {
+func (r *RepoDashboard) GetDashboardVulnByAuthor(
+	filter *dashboard.Filter) (vulns []*dashboard.VulnerabilitiesByAuthor, err error) {
 	condition, args := filter.GetConditionFilter()
 
 	query := fmt.Sprintf(r.queryGetDashboardVulnByAuthor(), r.queryDefaultFields(),
@@ -133,7 +134,8 @@ func (r *RepoDashboard) queryGetDashboardVulnByAuthor() string {
 	`
 }
 
-func (r *RepoDashboard) GetDashboardVulnByRepository(filter *dashboard.Filter) (vulns []*dashboard.VulnerabilitiesByRepository, err error) {
+func (r *RepoDashboard) GetDashboardVulnByRepository(
+	filter *dashboard.Filter) (vulns []*dashboard.VulnerabilitiesByRepository, err error) {
 	condition, args := filter.GetConditionFilter()
 
 	query := fmt.Sprintf(r.queryGetDashboardVulnByRepository(),
@@ -160,7 +162,8 @@ func (r *RepoDashboard) queryGetDashboardVulnByRepository() string {
 	`
 }
 
-func (r *RepoDashboard) GetDashboardVulnByLanguage(filter *dashboard.Filter) (vulns []*dashboard.VulnerabilitiesByLanguage, err error) {
+func (r *RepoDashboard) GetDashboardVulnByLanguage(
+	filter *dashboard.Filter) (vulns []*dashboard.VulnerabilitiesByLanguage, err error) {
 	condition, args := filter.GetConditionFilter()
 
 	query := fmt.Sprintf(r.queryGetDashboardVulnByLanguage(), r.queryDefaultFields(),
@@ -187,10 +190,12 @@ func (r *RepoDashboard) queryGetDashboardVulnByLanguage() string {
 	`
 }
 
-func (r *RepoDashboard) GetDashboardVulnByTime(filter *dashboard.Filter) (vulns []*dashboard.VulnerabilitiesByTime, err error) {
+func (r *RepoDashboard) GetDashboardVulnByTime(
+	filter *dashboard.Filter) (vulns []*dashboard.VulnerabilitiesByTime, err error) {
 	condition, args := filter.GetConditionFilter()
 
-	query := fmt.Sprintf(r.queryGetDashboardVulnByTime(), r.queryDefaultFields(), dashboardEnums.TableVulnerabilitiesByTime, condition)
+	query := fmt.Sprintf(r.queryGetDashboardVulnByTime(),
+		r.queryDefaultFields(), dashboardEnums.TableVulnerabilitiesByTime, condition)
 
 	return vulns, r.databaseRead.Raw(query, &vulns, args...).GetErrorExceptNotFound()
 }

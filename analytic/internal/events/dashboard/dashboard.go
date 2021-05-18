@@ -55,15 +55,13 @@ func (e *Events) handleNewAnalysis(analysisPacket packet.IPacket, queue queues.Q
 		return
 	}
 
-	if err := e.processNewAnalysisPacketByQueue(queue)(analysis); err != nil {
-		logger.LogError(fmt.Sprintf(eventsEnums.MessageFailedToProcessPacket, analysisPacket.GetBody(), queue), err)
-		_ = analysisPacket.Ack()
-		return
-	}
+	logger.LogError(fmt.Sprintf(eventsEnums.MessageFailedToProcessPacket,
+		analysisPacket.GetBody(), queue), e.processNewAnalysisPacketByQueue(queue)(analysis))
 
 	_ = analysisPacket.Ack()
 }
 
+//nolint:exhaustive // no need of all constants
 func (e *Events) processNewAnalysisPacketByQueue(queue queues.Queue) func(*analysisEntities.Analysis) error {
 	switch queue {
 	case queues.HorusecAnalyticNewAnalysisByAuthors:
