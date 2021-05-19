@@ -12,7 +12,7 @@ import (
 type IWebhookController interface {
 	Save(entity *webhook.Webhook) (uuid.UUID, error)
 	Update(entity *webhook.Webhook, webhookID uuid.UUID) error
-	ListAll(workspaceID uuid.UUID) (*[]webhook.Webhook, error)
+	ListAll(workspaceID uuid.UUID) (*[]webhook.WithRepository, error)
 	Remove(webhookID uuid.UUID) error
 }
 
@@ -46,7 +46,7 @@ func (c *Controller) Update(entity *webhook.Webhook, webhookID uuid.UUID) error 
 	return c.repository.Update(entity, webhookID)
 }
 
-func (c *Controller) ListAll(workspaceID uuid.UUID) (*[]webhook.Webhook, error) {
+func (c *Controller) ListAll(workspaceID uuid.UUID) (*[]webhook.WithRepository, error) {
 	return c.repository.ListAll(workspaceID)
 }
 

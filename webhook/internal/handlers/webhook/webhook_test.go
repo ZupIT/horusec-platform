@@ -38,7 +38,7 @@ func TestHandler_ListAll(t *testing.T) {
 		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
 
 		controllerMock := &webhook.Mock{}
-		controllerMock.On("ListAll").Return(&[]webhookEntity.Webhook{}, nil)
+		controllerMock.On("ListAll").Return(&[]webhookEntity.WithRepository{}, nil)
 		useCaseMock := &useCaseWebhook.Mock{}
 		useCaseMock.On("ExtractWorkspaceIDFromURL").Return(uuid.New(), nil)
 		handler := &Handler{
@@ -74,7 +74,7 @@ func TestHandler_ListAll(t *testing.T) {
 		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
 
 		controllerMock := &webhook.Mock{}
-		controllerMock.On("ListAll").Return(&[]webhookEntity.Webhook{}, errors.New("unexpected error"))
+		controllerMock.On("ListAll").Return(&[]webhookEntity.WithRepository{}, errors.New("unexpected error"))
 		useCaseMock := &useCaseWebhook.Mock{}
 		useCaseMock.On("ExtractWorkspaceIDFromURL").Return(uuid.New(), nil)
 		handler := &Handler{
