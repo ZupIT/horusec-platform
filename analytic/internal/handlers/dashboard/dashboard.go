@@ -1,29 +1,28 @@
 package dashboard
 
 import (
-	netHTTP "net/http"
-
-	_ "github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard" // [swagger-usage]
-
-	controller "github.com/ZupIT/horusec-platform/analytic/internal/controllers/dashboard"
-	useCase "github.com/ZupIT/horusec-platform/analytic/internal/usecase/dashboard_filter"
+	"net/http"
 
 	httpUtil "github.com/ZupIT/horusec-devkit/pkg/utils/http"
+
+	controller "github.com/ZupIT/horusec-platform/analytic/internal/controllers/dashboard"
+	_ "github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard" // [swagger-usage]
+	useCase "github.com/ZupIT/horusec-platform/analytic/internal/usecases/dashboard"
 )
 
 type Handler struct {
-	controller controller.IReadController
-	useCase    useCase.IUseCaseDashboard
+	controller controller.IController
+	useCase    useCase.IUseCases
 }
 
-func NewDashboardHandler(dashboardController controller.IReadController) *Handler {
+func NewDashboardHandler(dashboardController controller.IController) *Handler {
 	return &Handler{
 		controller: dashboardController,
 		useCase:    useCase.NewUseCaseDashboard(),
 	}
 }
 
-func (h *Handler) Options(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
+func (h *Handler) Options(w http.ResponseWriter, _ *http.Request) {
 	httpUtil.StatusNoContent(w)
 }
 
@@ -41,7 +40,7 @@ func (h *Handler) Options(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
 // @Failure 400 {object} entities.Response{content=string} "BAD REQUEST"
 // @Failure 500 {object} entities.Response{content=string} "INTERNAL SERVER ERROR"
 // @Router /analytic/dashboard/{workspaceID} [get]
-func (h *Handler) GetAllChartsByWorkspace(w netHTTP.ResponseWriter, r *netHTTP.Request) {
+func (h *Handler) GetAllChartsByWorkspace(w http.ResponseWriter, r *http.Request) {
 	h.getAllCharts(w, r)
 }
 
@@ -60,20 +59,22 @@ func (h *Handler) GetAllChartsByWorkspace(w netHTTP.ResponseWriter, r *netHTTP.R
 // @Failure 400 {object} entities.Response{content=string} "BAD REQUEST"
 // @Failure 500 {object} entities.Response{content=string} "INTERNAL SERVER ERROR"
 // @Router /analytic/dashboard/{workspaceID}/{repositoryID} [get]
-func (h *Handler) GetAllChartsByRepository(w netHTTP.ResponseWriter, r *netHTTP.Request) {
+func (h *Handler) GetAllChartsByRepository(w http.ResponseWriter, r *http.Request) {
 	h.getAllCharts(w, r)
 }
 
-func (h *Handler) getAllCharts(w netHTTP.ResponseWriter, r *netHTTP.Request) {
-	filter, err := h.useCase.ExtractFilterDashboard(r)
+func (h *Handler) getAllCharts(w http.ResponseWriter, r *http.Request) {
+	filter, err := h.useCase.FilterFromRequest(r)
 	if err != nil {
 		httpUtil.StatusBadRequest(w, err)
 		return
 	}
-	result, err := h.controller.GetAllCharts(filter)
+
+	result, err := h.controller.GetAllDashboardCharts(filter)
 	if err != nil {
 		httpUtil.StatusInternalServerError(w, err)
 		return
 	}
+
 	httpUtil.StatusOK(w, result)
 }

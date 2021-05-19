@@ -15,40 +15,30 @@
 package health
 
 import (
-	"fmt"
-	netHTTP "net/http"
+	"net/http"
 
-	"github.com/ZupIT/horusec-devkit/pkg/services/broker"
-
-	"google.golang.org/grpc"
-
-	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/health"
-	httpUtilEnums "github.com/ZupIT/horusec-devkit/pkg/utils/http/enums"
-
+	brokerLib "github.com/ZupIT/horusec-devkit/pkg/services/broker"
 	"github.com/ZupIT/horusec-devkit/pkg/services/database"
 	httpUtil "github.com/ZupIT/horusec-devkit/pkg/utils/http"
-
 	_ "github.com/ZupIT/horusec-devkit/pkg/utils/http/entities" // [swagger-import]
+	httpUtilEnums "github.com/ZupIT/horusec-devkit/pkg/utils/http/enums"
 )
 
 type Handler struct {
-	databaseRead           database.IDatabaseRead
-	databaseWrite          database.IDatabaseWrite
-	grpcHealthCheckService health.ICheckClient
-	broker                 broker.IBroker
+	databaseRead  database.IDatabaseRead
+	databaseWrite database.IDatabaseWrite
+	broker        brokerLib.IBroker
 }
 
-func NewHealthHandler(databaseConnection *database.Connection, authConGRPC grpc.ClientConnInterface,
-	brokerConnection broker.IBroker) *Handler {
+func NewHealthHandler(databaseConnection *database.Connection, broker brokerLib.IBroker) *Handler {
 	return &Handler{
-		databaseRead:           databaseConnection.Read,
-		databaseWrite:          databaseConnection.Write,
-		broker:                 brokerConnection,
-		grpcHealthCheckService: health.NewHealthCheckGrpcClient(authConGRPC.(*grpc.ClientConn)),
+		databaseRead:  databaseConnection.Read,
+		databaseWrite: databaseConnection.Write,
+		broker:        broker,
 	}
 }
 
-func (h *Handler) Options(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
+func (h *Handler) Options(w http.ResponseWriter, _ *http.Request) {
 	httpUtil.StatusNoContent(w)
 }
 
@@ -61,25 +51,20 @@ func (h *Handler) Options(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
 // @Success 200 {object} entities.Response{content=string} "OK"
 // @Failure 500 {object} entities.Response{content=string} "INTERNAL SERVER ERROR"
 // @Router /analytic/health [get]
-func (h *Handler) Get(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
-	if h.databaseNotAvailable() {
+func (h *Handler) Get(w http.ResponseWriter, _ *http.Request) {
+	if h.IsDatabaseNotAvailable() {
 		httpUtil.StatusInternalServerError(w, httpUtilEnums.ErrorDatabaseIsNotHealth)
 		return
 	}
+
 	if isAvailable := h.broker.IsAvailable(); !isAvailable {
 		httpUtil.StatusInternalServerError(w, httpUtilEnums.ErrorBrokerIsNotHealth)
 		return
 	}
-	if isAvailable, state := h.grpcAvailable(); !isAvailable {
-		httpUtil.StatusInternalServerError(w, fmt.Errorf("%e %s", httpUtilEnums.ErrorGrpcIsNotHealth, state))
-		return
-	}
-	httpUtil.StatusOK(w, "service is healthy")
+
+	httpUtil.StatusOK(w, nil)
 }
 
-func (h *Handler) databaseNotAvailable() bool {
+func (h *Handler) IsDatabaseNotAvailable() bool {
 	return !h.databaseRead.IsAvailable() || !h.databaseWrite.IsAvailable()
-}
-func (h *Handler) grpcAvailable() (bool, string) {
-	return h.grpcHealthCheckService.IsAvailable()
 }

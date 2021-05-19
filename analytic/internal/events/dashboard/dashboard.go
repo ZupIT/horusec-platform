@@ -1,74 +1,78 @@
 package dashboard
 
 import (
-	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
+	"fmt"
+
+	analysisEntities "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/exchange"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/queues"
-	"github.com/ZupIT/horusec-devkit/pkg/services/broker"
+	brokerLib "github.com/ZupIT/horusec-devkit/pkg/services/broker"
 	"github.com/ZupIT/horusec-devkit/pkg/services/broker/packet"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/parser"
 
 	"github.com/ZupIT/horusec-platform/analytic/internal/controllers/dashboard"
+	eventsEnums "github.com/ZupIT/horusec-platform/analytic/internal/enums/events"
 )
 
-type IEvent interface{}
-
-type Event struct {
-	broker     broker.IBroker
-	controller dashboard.IWriteController
+type Events struct {
+	broker     brokerLib.IBroker
+	controller dashboard.IController
 }
 
-func NewDashboardEvent(iBroker broker.IBroker, controller dashboard.IWriteController) IEvent {
-	e := &Event{
-		broker:     iBroker,
+func NewDashboardEvents(broker brokerLib.IBroker, controller dashboard.IController) *Events {
+	events := &Events{
+		broker:     broker,
 		controller: controller,
 	}
-	return e.consumeQueues()
+
+	return events.startConsumers()
 }
 
-func (e *Event) consumeQueues() IEvent {
-	go e.broker.Consume(
-		queues.HorusecAnalyticAuthors.ToString(), exchange.NewAnalysis.ToString(), exchange.Fanout.ToString(),
-		func(pack packet.IPacket) { e.handleNewAnalysis(pack, queues.HorusecAnalyticAuthors) })
-	go e.broker.Consume(
-		queues.HorusecAnalyticRepositories.ToString(), exchange.NewAnalysis.ToString(), exchange.Fanout.ToString(),
-		func(pack packet.IPacket) { e.handleNewAnalysis(pack, queues.HorusecAnalyticRepositories) })
-	go e.broker.Consume(
-		queues.HorusecAnalyticLanguages.ToString(), exchange.NewAnalysis.ToString(), exchange.Fanout.ToString(),
-		func(pack packet.IPacket) { e.handleNewAnalysis(pack, queues.HorusecAnalyticLanguages) })
-	go e.broker.Consume(
-		queues.HorusecAnalyticTimes.ToString(), exchange.NewAnalysis.ToString(), exchange.Fanout.ToString(),
-		func(pack packet.IPacket) { e.handleNewAnalysis(pack, queues.HorusecAnalyticTimes) })
+func (e *Events) startConsumers() *Events {
+	go e.broker.Consume(queues.HorusecAnalyticNewAnalysisByAuthors.ToString(), exchange.NewAnalysis, exchange.Fanout,
+		func(pack packet.IPacket) { e.handleNewAnalysis(pack, queues.HorusecAnalyticNewAnalysisByAuthors) })
+
+	go e.broker.Consume(queues.HorusecAnalyticNewAnalysisByRepository.ToString(), exchange.NewAnalysis, exchange.Fanout,
+		func(pack packet.IPacket) { e.handleNewAnalysis(pack, queues.HorusecAnalyticNewAnalysisByRepository) })
+
+	go e.broker.Consume(queues.HorusecAnalyticNewAnalysisByLanguage.ToString(), exchange.NewAnalysis, exchange.Fanout,
+		func(pack packet.IPacket) { e.handleNewAnalysis(pack, queues.HorusecAnalyticNewAnalysisByLanguage) })
+
+	go e.broker.Consume(queues.HorusecAnalyticNewAnalysisByTime.ToString(), exchange.NewAnalysis, exchange.Fanout,
+		func(pack packet.IPacket) { e.handleNewAnalysis(pack, queues.HorusecAnalyticNewAnalysisByTime) })
+
 	return e
 }
 
-// nolint:exhaustive // others queues is not necessary
-func (e *Event) execControllerByQueueType(queue queues.Queue) func(*analysis.Analysis) error {
-	switch queue {
-	case queues.HorusecAnalyticAuthors:
-		return e.controller.AddVulnerabilitiesByAuthor
-	case queues.HorusecAnalyticRepositories:
-		return e.controller.AddVulnerabilitiesByRepository
-	case queues.HorusecAnalyticLanguages:
-		return e.controller.AddVulnerabilitiesByLanguage
-	case queues.HorusecAnalyticTimes:
-		return e.controller.AddVulnerabilitiesByTime
+func (e *Events) handleNewAnalysis(analysisPacket packet.IPacket, queue queues.Queue) {
+	logger.LogInfo(eventsEnums.MessageNewAnalysisReceivedAnalytic)
+	analysis := &analysisEntities.Analysis{}
+
+	if err := parser.ParsePacketToEntity(analysisPacket, analysis); err != nil {
+		logger.LogError(fmt.Sprintf(eventsEnums.MessageFailedToParsePacket, analysisPacket.GetBody(), queue), err)
+		_ = analysisPacket.Ack()
+		return
 	}
-	return nil
+
+	logger.LogError(fmt.Sprintf(eventsEnums.MessageFailedToProcessPacket,
+		analysisPacket.GetBody(), queue), e.processNewAnalysisPacketByQueue(queue)(analysis))
+
+	_ = analysisPacket.Ack()
 }
 
-func (e *Event) handleNewAnalysis(brokerPacket packet.IPacket, queue queues.Queue) {
-	logger.LogInfo("{HORUSEC} Packet received from new analysis")
-	entity := analysis.Analysis{}
-	if err := parser.ParsePacketToEntity(brokerPacket, &entity); err != nil {
-		logger.LogError("{HORUSEC} Read packet error by "+queue.ToString(), err)
-		return
+//nolint:exhaustive // no need of all constants
+func (e *Events) processNewAnalysisPacketByQueue(queue queues.Queue) func(*analysisEntities.Analysis) error {
+	switch queue {
+	case queues.HorusecAnalyticNewAnalysisByAuthors:
+		return e.controller.AddVulnerabilitiesByAuthor
+	case queues.HorusecAnalyticNewAnalysisByRepository:
+		return e.controller.AddVulnerabilitiesByRepository
+	case queues.HorusecAnalyticNewAnalysisByLanguage:
+		return e.controller.AddVulnerabilitiesByLanguage
+	case queues.HorusecAnalyticNewAnalysisByTime:
+		return e.controller.AddVulnerabilitiesByTime
 	}
 
-	if err := e.execControllerByQueueType(queue)(&entity); err != nil {
-		logger.LogError("{HORUSEC} Error on save new analysis by "+queue.ToString(), err)
-		return
-	}
-	_ = brokerPacket.Ack()
+	return nil
 }
