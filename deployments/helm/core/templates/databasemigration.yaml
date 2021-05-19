@@ -24,7 +24,7 @@ spec:
       containers:
       - name: horusec-database-migration
         image: "horuszup/horusec-migrations:latest"
-        command: ["migrate.sh"]
+        command: ["migrate.sh", "up"]
         env:          
           - name: MIGRATION_NAME
             value: "platform"

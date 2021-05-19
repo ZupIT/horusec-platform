@@ -313,7 +313,7 @@ var doc = `{
                     }
                 },
                 "vulnerabilityBySeverity": {
-                    "$ref": "#/definitions/dashboard.ResponseSeverity"
+                    "$ref": "#/definitions/dashboard.BySeverities"
                 },
                 "vulnerabilityByTime": {
                     "type": "array",
@@ -427,7 +427,7 @@ var doc = `{
                 }
             }
         },
-        "dashboard.ResponseSeverity": {
+        "dashboard.BySeverities": {
             "type": "object",
             "properties": {
                 "critical": {

@@ -28,7 +28,7 @@ func NewWebhookEvent(iBroker broker.IBroker, controller dispatcher.IDispatcherCo
 }
 
 func (e *Event) consumeQueues() IEvent {
-	go e.broker.Consume(queues.HorusecWebhook.ToString(), exchange.NewAnalysis.ToString(), exchange.Fanout.ToString(),
+	go e.broker.Consume(queues.HorusecWebhook.ToString(), exchange.NewAnalysis, exchange.Fanout,
 		e.handleNewAnalysis)
 	return e
 }

@@ -18,6 +18,11 @@ type Webhook struct {
 	UpdatedAt    time.Time  `json:"updatedAt" example:"2021-12-30T23:59:59Z"`
 }
 
+type WithRepository struct {
+	Webhook
+	Repository Repository `json:"repository" gorm:"foreignKey:RepositoryID;references:RepositoryID"`
+}
+
 func (w *Webhook) GetTable() string {
 	return "webhooks"
 }

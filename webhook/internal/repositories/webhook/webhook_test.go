@@ -15,8 +15,10 @@ import (
 func TestRepository_ListAll(t *testing.T) {
 	t.Run("Should return all webhooks without errors", func(t *testing.T) {
 		dbRead := &database.Mock{}
-		dbRead.On("Find").Return(response.NewResponse(0, nil, &[]webhook.Webhook{
-			{WebhookID: uuid.New()},
+		dbRead.On("FindPreload").Return(response.NewResponse(0, nil, &[]webhook.WithRepository{
+			{
+				Webhook: webhook.Webhook{WebhookID: uuid.New()},
+			},
 		}))
 		dbWrite := &database.Mock{}
 		connection := &database.Connection{
@@ -29,7 +31,7 @@ func TestRepository_ListAll(t *testing.T) {
 	})
 	t.Run("Should return error unknown on list all webhooks", func(t *testing.T) {
 		dbRead := &database.Mock{}
-		dbRead.On("Find").Return(response.NewResponse(0, errors.New("unexpected error"), nil))
+		dbRead.On("FindPreload").Return(response.NewResponse(0, errors.New("unexpected error"), nil))
 		dbWrite := &database.Mock{}
 		connection := &database.Connection{
 			Read:  dbRead,
@@ -41,7 +43,7 @@ func TestRepository_ListAll(t *testing.T) {
 	})
 	t.Run("Should return not error but return empty list if data is nil", func(t *testing.T) {
 		dbRead := &database.Mock{}
-		dbRead.On("Find").Return(response.NewResponse(0, nil, nil))
+		dbRead.On("FindPreload").Return(response.NewResponse(0, nil, nil))
 		dbWrite := &database.Mock{}
 		connection := &database.Connection{
 			Read:  dbRead,

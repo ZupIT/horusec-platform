@@ -64,7 +64,7 @@ const Repositories: React.FC = () => {
       .deleteRepository(repoToDelete.workspaceID, repoToDelete.repositoryID)
       .then(() => {
         showSuccessFlash(t('REPOSITORIES_SCREEN.REMOVE_SUCCESS_REPO'));
-        fetchAllRepositories(repoToDelete?.workspaceID);
+        fetchAllRepositories();
         setRepoToDelete(null);
       })
       .catch((err) => {
@@ -85,7 +85,7 @@ const Repositories: React.FC = () => {
 
   const handleConfirmRepositoryEdit = (repository: Repository) => {
     setVisibleHandleModal(false);
-    fetchAllRepositories(repository?.workspaceID);
+    fetchAllRepositories();
   };
 
   return (

@@ -42,6 +42,7 @@ import {
   getCurrentUser,
   isApplicationAdmin,
 } from 'helpers/localStorage/currentUser';
+import useRepository from 'helpers/hooks/useRepository';
 
 const Workspaces: React.FC = () => {
   const { t } = useTranslation();
@@ -52,8 +53,10 @@ const Workspaces: React.FC = () => {
     fetchAllWorkspaces,
     setAsFavoriteWorkspace,
     favoriteWorkspace,
+    currentWorkspace,
   } = useWorkspace();
   const { authType } = getCurrentConfig();
+  const { fetchAllRepositories } = useRepository();
 
   const [deleteIsLoading, setDeleteIsLoading] = useState(false);
   const [workspaceToDelete, setWorkspaceToDelete] = useState<Workspace>(null);
@@ -107,6 +110,8 @@ const Workspaces: React.FC = () => {
 
   useEffect(() => {
     setFilteredWorkspaces(allWorkspaces);
+    return () => fetchAllRepositories();
+    // eslint-disable-next-line
   }, [allWorkspaces]);
   return (
     <Styled.Wrapper>

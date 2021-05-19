@@ -34,6 +34,7 @@ RUN cd manager && npm run build
 FROM docker:dind
 
 ENV HORUSEC_DISABLE_EMAILS=true
+ENV HORUSEC_ENABLE_DEFAULT_USER=true
 
 RUN apk add nginx
 RUN mkdir -p /run/nginx

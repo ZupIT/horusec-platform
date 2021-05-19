@@ -80,7 +80,7 @@ const VulnerabilitiesDetails: React.FC<Props> = ({ filters }) => {
   useEffect(() => {
     let isCancelled = false;
 
-    if (filters) {
+    if (filters && filters?.workspaceID) {
       setLoading(true);
       const page = refresh;
 

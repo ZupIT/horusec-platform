@@ -16,21 +16,21 @@ import (
 func TestController_ListAll(t *testing.T) {
 	t.Run("Should return all webhooks without errors", func(t *testing.T) {
 		repoMock := &repositoryWebhook.Mock{}
-		repoMock.On("ListAll").Return(&[]webhook.Webhook{{}}, nil)
+		repoMock.On("ListAll").Return(&[]webhook.WithRepository{{}}, nil)
 		res, err := NewWebhookController(repoMock).ListAll(uuid.New())
 		assert.NoError(t, err)
 		assert.NotEmpty(t, res)
 	})
 	t.Run("Should return error unknown on list all webhooks", func(t *testing.T) {
 		repoMock := &repositoryWebhook.Mock{}
-		repoMock.On("ListAll").Return(&[]webhook.Webhook{}, errors.New("unexpected error"))
+		repoMock.On("ListAll").Return(&[]webhook.WithRepository{}, errors.New("unexpected error"))
 		res, err := NewWebhookController(repoMock).ListAll(uuid.New())
 		assert.Error(t, err)
 		assert.Empty(t, res)
 	})
 	t.Run("Should return not error but return empty list if data is nil", func(t *testing.T) {
 		repoMock := &repositoryWebhook.Mock{}
-		repoMock.On("ListAll").Return(&[]webhook.Webhook{}, nil)
+		repoMock.On("ListAll").Return(&[]webhook.WithRepository{}, nil)
 		res, err := NewWebhookController(repoMock).ListAll(uuid.New())
 		assert.NoError(t, err)
 		assert.Empty(t, res)

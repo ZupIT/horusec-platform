@@ -2,7 +2,6 @@ package main
 
 import (
 	"github.com/ZupIT/horusec-platform/analytic/config/providers"
-	"github.com/ZupIT/horusec-platform/analytic/internal/enums"
 )
 
 // @title Horusec-Analytic
@@ -17,7 +16,7 @@ import (
 // @in header
 // @name X-Horusec-Authorization
 func main() {
-	router, err := providers.Initialize(enums.DefaultPort)
+	router, err := providers.Initialize("8005")
 	if err != nil {
 		panic(err)
 	}

@@ -20,6 +20,7 @@
     "material-ui-popup-state": "^1.8.3",
     "query-string": "^6.13.1",
     "react": "^16.13.1",
+    "react-scripts": "^4.0.3",
     "react-apexcharts": "^1.3.7",
     "react-app-rewired": "^2.1.6",
     "react-datepicker": "^3.1.3",
@@ -72,12 +73,11 @@
     "eslint-plugin-styled-components-a11y": "^0.0.34",
     "eslint-plugin-testing-library": "^3.3.1",
     "prettier": "^2.0.5",
-    "react-scripts": "^4.0.3",
     "typescript": "^3.7.5"
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "react-scripts build ---production",
     "lint:fix": "eslint './src/**/*.{ts,tsx}' --fix",
     "lint": "eslint './src/**/*.{ts,tsx}'",
     "eject": "react-scripts eject",

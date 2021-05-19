@@ -18,19 +18,20 @@ import (
 	"github.com/google/wire"
 
 	"github.com/ZupIT/horusec-platform/analytic/config/cors"
-	dashboard2 "github.com/ZupIT/horusec-platform/analytic/internal/controllers/dashboard"
-	dashboard4 "github.com/ZupIT/horusec-platform/analytic/internal/events/dashboard"
-	dashboard3 "github.com/ZupIT/horusec-platform/analytic/internal/handlers/dashboard"
+	dashboard3 "github.com/ZupIT/horusec-platform/analytic/internal/controllers/dashboard"
+	dashboard5 "github.com/ZupIT/horusec-platform/analytic/internal/events/dashboard"
+	dashboard4 "github.com/ZupIT/horusec-platform/analytic/internal/handlers/dashboard"
 	"github.com/ZupIT/horusec-platform/analytic/internal/handlers/health"
 	"github.com/ZupIT/horusec-platform/analytic/internal/repositories/dashboard"
 	"github.com/ZupIT/horusec-platform/analytic/internal/router"
+	dashboard2 "github.com/ZupIT/horusec-platform/analytic/internal/usecases/dashboard"
 )
 
 // Injectors from wire.go:
 
-func Initialize(defaultPort string) (router.IRouter, error) {
+func Initialize(string2 string) (router.IRouter, error) {
 	options := cors.NewCorsConfig()
-	iRouter := router2.NewHTTPRouter(options, defaultPort)
+	iRouter := router2.NewHTTPRouter(options, string2)
 	clientConnInterface := auth.NewAuthGRPCConnection()
 	iAuthzMiddleware := middlewares.NewAuthzMiddleware(clientConnInterface)
 	iConfig := config.NewDatabaseConfig()
@@ -43,16 +44,28 @@ func Initialize(defaultPort string) (router.IRouter, error) {
 	if err != nil {
 		return nil, err
 	}
-	handler := health.NewHealthHandler(connection, clientConnInterface, iBroker)
+	handler := health.NewHealthHandler(connection, iBroker)
 	iRepoDashboard := dashboard.NewRepoDashboard(connection)
-	iReadController := dashboard2.NewControllerDashboardRead(iRepoDashboard)
-	dashboardHandler := dashboard3.NewDashboardHandler(iReadController)
-	iWriteController := dashboard2.NewControllerDashboardWrite(iRepoDashboard)
-	iEvent := dashboard4.NewDashboardEvent(iBroker, iWriteController)
-	routerIRouter := router.NewHTTPRouter(iRouter, iAuthzMiddleware, handler, dashboardHandler, iEvent)
+	iUseCases := dashboard2.NewUseCaseDashboard()
+	iController := dashboard3.NewDashboardController(iRepoDashboard, connection, iUseCases)
+	dashboardHandler := dashboard4.NewDashboardHandler(iController)
+	events := dashboard5.NewDashboardEvents(iBroker, iController)
+	routerIRouter := router.NewHTTPRouter(iRouter, iAuthzMiddleware, handler, dashboardHandler, events)
 	return routerIRouter, nil
 }
 
 // wire.go:
 
-var providers = wire.NewSet(auth.NewAuthGRPCConnection, proto.NewAuthServiceClient, app.NewAppConfig, config2.NewBrokerConfig, broker.NewBroker, config.NewDatabaseConfig, database.NewDatabaseReadAndWrite, cors.NewCorsConfig, router2.NewHTTPRouter, middlewares.NewAuthzMiddleware, dashboard.NewRepoDashboard, dashboard2.NewControllerDashboardWrite, dashboard2.NewControllerDashboardRead, health.NewHealthHandler, dashboard3.NewDashboardHandler, dashboard4.NewDashboardEvent, router.NewHTTPRouter)
+var devKitProviders = wire.NewSet(auth.NewAuthGRPCConnection, proto.NewAuthServiceClient, app.NewAppConfig, config2.NewBrokerConfig, broker.NewBroker, config.NewDatabaseConfig, database.NewDatabaseReadAndWrite, router2.NewHTTPRouter, middlewares.NewAuthzMiddleware)
+
+var configProviders = wire.NewSet(cors.NewCorsConfig, router.NewHTTPRouter)
+
+var repositoriesProviders = wire.NewSet(dashboard.NewRepoDashboard)
+
+var controllersProviders = wire.NewSet(dashboard3.NewDashboardController)
+
+var handlersProviders = wire.NewSet(health.NewHealthHandler, dashboard4.NewDashboardHandler)
+
+var eventsProviders = wire.NewSet(dashboard5.NewDashboardEvents)
+
+var useCasesProviders = wire.NewSet(dashboard2.NewUseCaseDashboard)
