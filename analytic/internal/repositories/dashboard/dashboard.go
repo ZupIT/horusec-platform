@@ -206,11 +206,12 @@ func (r *RepoDashboard) queryGetDashboardVulnByTime() string {
 		FROM %[2]s AS vuln_by_time
 		INNER JOIN
 		(
-			SELECT MAX(created_at) AS max_time 
+			SELECT DISTINCT ON(repository_id, created_at::date) MAX(created_at) AS max_time, vulnerability_id 
 			FROM %[2]s 
-			GROUP BY DATE(created_at), repository_id
+			GROUP BY DATE(created_at), repository_id, vulnerability_id
 		) AS vuln_by_time_sub_query
-		ON vuln_by_time.created_at  = vuln_by_time_sub_query.max_time
+		ON vuln_by_time.created_at  = vuln_by_time_sub_query.max_time 
+		AND vuln_by_time.vulnerability_id  = vuln_by_time_sub_query.vulnerability_id
 		WHERE %[3]s  
 		GROUP BY DATE(created_at)
 	`
