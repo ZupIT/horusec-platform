@@ -23,7 +23,7 @@ spec:
       restartPolicy: Never
       containers:
       - name: horusec-api-v1-2-v2
-        image: "horuszup/horusec-api:2.11.0-rc"
+        image: "horuszup/horusec-api:2.12"
         command: "./horusec-api-v1-to-v2-migrate"
         env:          
           - name: MIGRATION_NAME
