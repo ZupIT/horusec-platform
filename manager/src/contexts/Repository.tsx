@@ -27,7 +27,7 @@ interface RepositoryCtxInterface {
   isMemberOfRepository: boolean;
   setAllRepositories: (repositories: Repository[]) => void;
   setCurrentRepository: (repository: string | Repository) => void;
-  fetchAllRepositories: (workspaceID: string) => void;
+  fetchAllRepositories: () => void;
 }
 
 const RepositoryContext = React.createContext<RepositoryCtxInterface>({
@@ -64,32 +64,34 @@ const RepositoryProvider = ({ children }: { children: JSX.Element }) => {
   };
 
   const fetchAllRepositories = () => {
-    coreService
-      .getAllRepositories(currentWorkspace?.workspaceID)
-      .then((result) => {
-        const repositories = (result?.data?.content as Repository[]) || [];
-        setAllRepositories(repositories);
+    if (currentWorkspace?.workspaceID) {
+      coreService
+        .getAllRepositories(currentWorkspace?.workspaceID)
+        .then((result) => {
+          const repositories = (result?.data?.content as Repository[]) || [];
+          setAllRepositories(repositories);
 
-        const hasCurrent = repositories.some(
-          (repo) => repo.repositoryID === currentRepository?.repositoryID
-        );
+          const hasCurrent = repositories.some(
+            (repo) => repo.repositoryID === currentRepository?.repositoryID
+          );
 
-        if (hasCurrent) {
-          setCurrentRepository(currentRepository);
-        } else {
-          repositories.length > 0
-            ? setCurrentRepository(repositories[0])
-            : setCurrentRepository(null);
-        }
-      })
-      .catch((err) => {
-        dispatchMessage(err?.response?.data);
-        setCurrentRepository(null);
-      });
+          if (hasCurrent) {
+            setCurrentRepository(currentRepository);
+          } else {
+            repositories.length > 0
+              ? setCurrentRepository(repositories[0])
+              : setCurrentRepository(null);
+          }
+        })
+        .catch((err) => {
+          dispatchMessage(err?.response?.data);
+          setCurrentRepository(null);
+        });
+    }
   };
 
   useEffect(() => {
-    if (currentWorkspace?.workspaceID) fetchAllRepositories();
+    fetchAllRepositories();
     // eslint-disable-next-line
   }, [currentWorkspace]);
 
