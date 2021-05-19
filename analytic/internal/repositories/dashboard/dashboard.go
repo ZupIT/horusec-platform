@@ -116,18 +116,27 @@ func (r *RepoDashboard) GetDashboardVulnByAuthor(
 	return vulns, r.databaseRead.Raw(query, &vulns, args...).GetErrorExceptNotFound()
 }
 
+//nolint:funlen // need to be bigger than 15
 func (r *RepoDashboard) queryGetDashboardVulnByAuthor() string {
 	return `
 		SELECT author, %[1]s
 		FROM (
 				SELECT *
-				FROM %[2]s
-				WHERE %[3]s AND created_at 
-				IN 
+				FROM %[2]s AS vuln_by_author
+				INNER JOIN
 				(
-					SELECT MAX(created_at) FROM %[2]s GROUP BY repository_id
-				)
-				ORDER BY repository_id, created_at DESC
+					SELECT DISTINCT ON(repository_id, author) MAX(created_at) AS max_time, vulnerability_id 
+					FROM %[2]s
+					WHERE created_at 
+					IN 
+					(
+						SELECT MAX(created_at) FROM %[2]s GROUP BY (repository_id, author)
+					)
+					GROUP BY DATE(created_at), repository_id, vulnerability_id
+				) AS vuln_by_author_sub_query
+				ON vuln_by_author.created_at  = vuln_by_author_sub_query.max_time 
+				AND vuln_by_author.vulnerability_id  = vuln_by_author_sub_query.vulnerability_id
+				WHERE %[3]s
 				LIMIT 5
 		) AS result
 		GROUP BY author
@@ -157,7 +166,7 @@ func (r *RepoDashboard) queryGetDashboardVulnByRepository() string {
 				)
 				ORDER BY repository_id, created_at DESC
 		) AS result
-		GROUP BY repository_name
+		GROUP BY (repository_name, repository_id)
 		LIMIT 5
 	`
 }
@@ -172,17 +181,27 @@ func (r *RepoDashboard) GetDashboardVulnByLanguage(
 	return vulns, r.databaseRead.Raw(query, &vulns, args...).GetErrorExceptNotFound()
 }
 
+//nolint:funlen // need to be bigger than 15
 func (r *RepoDashboard) queryGetDashboardVulnByLanguage() string {
 	return `
 		SELECT language, %[1]s
 		FROM (
 				SELECT *
-				FROM %[2]s
-				WHERE %[3]s AND created_at 
-				IN 
+				FROM %[2]s AS vuln_by_language
+				INNER JOIN
 				(
-					SELECT MAX(created_at) FROM %[2]s GROUP BY repository_id
-				)
+					SELECT DISTINCT ON(repository_id, created_at::date, language) MAX(created_at) AS max_time, vulnerability_id 
+					FROM %[2]s
+					WHERE created_at 
+					IN 
+					(
+						SELECT MAX(created_at) FROM %[2]s GROUP BY (repository_id, language)
+					)
+					GROUP BY DATE(created_at), repository_id, vulnerability_id
+				) AS vuln_by_language_sub_query
+				ON vuln_by_language.created_at  = vuln_by_language_sub_query.max_time 
+				AND vuln_by_language.vulnerability_id  = vuln_by_language_sub_query.vulnerability_id
+				WHERE %[3]s
 				ORDER BY repository_id, created_at DESC
 				LIMIT 5
 		) AS result
