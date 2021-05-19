@@ -130,7 +130,7 @@ func (r *RepoDashboard) queryGetDashboardVulnByAuthor() string {
 					WHERE created_at 
 					IN 
 					(
-						SELECT MAX(created_at) FROM %[2]s GROUP BY (repository_id, author)
+						SELECT MAX(created_at) FROM %[2]s GROUP BY (repository_id, created_at)
 					)
 					GROUP BY DATE(created_at), repository_id, vulnerability_id
 				) AS vuln_by_author_sub_query
@@ -195,7 +195,7 @@ func (r *RepoDashboard) queryGetDashboardVulnByLanguage() string {
 					WHERE created_at 
 					IN 
 					(
-						SELECT MAX(created_at) FROM %[2]s GROUP BY (repository_id, language)
+						SELECT MAX(created_at) FROM %[2]s GROUP BY (repository_id, created_at)
 					)
 					GROUP BY DATE(created_at), repository_id, vulnerability_id
 				) AS vuln_by_language_sub_query
