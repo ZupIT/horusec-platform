@@ -147,6 +147,6 @@ func (c *Controller) hasDuplicatedHash(
 }
 
 func (c *Controller) publishInBroker(analysisEntity *analysis.Analysis) error {
-	return c.broker.Publish("", exchange.NewAnalysis.ToString(),
-		exchange.Fanout.ToString(), analysisEntity.ToBytes())
+	return c.broker.Publish("", exchange.NewAnalysis,
+		exchange.Fanout, analysisEntity.ToBytes())
 }
