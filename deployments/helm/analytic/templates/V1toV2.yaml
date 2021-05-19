@@ -24,7 +24,7 @@ spec:
       containers:
       - name: horusec-analytic-v1-2-v2
         image: "horuszup/horusec-analytic:2.11.0-rc"
-        command: "./horusec-analytic-v1-2-v2-migrate $HORUSEC_CORE_DATABASE_URI"
+        command: "./horusec-analytic-v1-2-v2-migrate $HORUSEC_DATABASE_HORUSEC_SQL_URI"
         env:          
           - name: MIGRATION_NAME
             value: "platform"
