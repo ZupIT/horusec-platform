@@ -40,16 +40,15 @@ instance.interceptors.request.use(async (config: AxiosRequestConfig) => {
   const expiresRemaining = differenceInMinutes(new Date(expiresAt), new Date());
   const isRenewTokenRoute = config.url.includes('refresh-token');
   const MINUTES_RENEW = 5;
+  let accessToken = getAccessToken();
 
   if (
     expiresAt &&
     Math.abs(expiresRemaining) <= MINUTES_RENEW &&
     !isRenewTokenRoute
   ) {
-    await accountService.callRenewToken();
+    accessToken = await accountService.callRenewToken();
   }
-
-  const accessToken = getAccessToken();
 
   if (accessToken) {
     config.headers.common['X-Horusec-Authorization'] = `Bearer ${accessToken}`;
