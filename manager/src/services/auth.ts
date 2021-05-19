@@ -22,8 +22,11 @@ import {
   clearCurrentUser,
 } from 'helpers/localStorage/currentUser';
 import { AxiosResponse, AxiosError } from 'axios';
-import { User } from 'helpers/interfaces/User';
-import { getRefreshToken } from 'helpers/localStorage/tokens';
+import {
+  clearTokens,
+  getRefreshToken,
+  setTokens,
+} from 'helpers/localStorage/tokens';
 import { LoginParams } from 'helpers/interfaces/LoginParams';
 
 const login = (params: LoginParams) => {
@@ -94,11 +97,12 @@ const verifyUniqueUsernameEmail = (email: string, username: string) => {
   });
 };
 
-const callRenewToken = async (): Promise<User | AxiosError> => {
+const callRenewToken = async (): Promise<string> => {
   const refreshToken = getRefreshToken();
 
   const handleLogout = () => {
     clearCurrentUser();
+    clearTokens();
     window.location.replace('/auth');
   };
 
@@ -107,13 +111,19 @@ const callRenewToken = async (): Promise<User | AxiosError> => {
       axios
         .post(`${SERVICE_AUTH}/auth/account/refresh-token`, { refreshToken })
         .then((result: AxiosResponse) => {
-          const user = result.data?.content as User;
+          const {
+            username,
+            isApplicationAdmin,
+            email,
+            expiresAt,
+            refreshToken,
+            accessToken,
+          } = result.data?.content;
 
-          if (user) {
-            setCurrentUser(user);
-          }
+          setTokens(accessToken, refreshToken, expiresAt);
+          setCurrentUser({ username, isApplicationAdmin, email });
 
-          resolve(user);
+          resolve(accessToken);
         })
         .catch((err: AxiosError) => {
           reject(err);
