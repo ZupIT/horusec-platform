@@ -110,7 +110,7 @@ const Workspaces: React.FC = () => {
 
   useEffect(() => {
     setFilteredWorkspaces(allWorkspaces);
-    return () => fetchAllRepositories(currentWorkspace?.workspaceID);
+    return () => fetchAllRepositories();
     // eslint-disable-next-line
   }, [allWorkspaces]);
   return (
