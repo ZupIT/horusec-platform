@@ -8,7 +8,7 @@
     "**/cmd/migrate/**"
   ],
   "horusecCliFalsePositiveHashes": [
-    "35b3184443e4c2188d61607a3adad294279d2e1f520ba73ad69056c42126b5e6",
-    "8c1633c5e350f9f687f21a792f629fa094a47b67de4eb3909d4e52d03e029290"
+    "d374e827b9e3b5d1d7333abfe59181d9813059bdea03656d52dae3c59faa9ff4",
+    "dd29a70844a9e3b61ac522aa253fc1ddec0843aa74621548564cbc3da845c0f0"
   ]
 }
