@@ -1,0 +1,11 @@
+{
+  "horusecCliFilesOrPathsToIgnore": [
+    "**/*_test.go",
+    "**/*_mock.go",
+    "*tmp*",
+    "**/.vscode/**",
+    "**/.idea/**",
+    "**/deployments/**",
+    "**/docs/**"
+  ]
+}

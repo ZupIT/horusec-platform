@@ -1,0 +1,15 @@
+name: Migrations
+on: ["push"]
+
+jobs:
+  build-and-security:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: migrations
+    steps:
+      - uses: actions/checkout@v2
+      - name: build
+        run: make build
+      - name: security
+        run: IMAGE_NAME="horuszup/horusec-migrations:local" make security

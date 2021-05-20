@@ -1,0 +1,512 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Service responsible for analysis operations from Horusec-CLI.",
+        "title": "Horusec-API",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "Horusec",
+            "url": "https://github.com/ZupIT/horusec-platform",
+            "email": "horusec@zup.com.br"
+        }
+    },
+    "paths": {
+        "/api/analysis": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Start new analysis",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Analysis"
+                ],
+                "operationId": "start-new-analysis",
+                "parameters": [
+                    {
+                        "description": "send new analysis info",
+                        "name": "SendNewAnalysis",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/cli.AnalysisData"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "CREATED",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/entities.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "BAD REQUEST",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/entities.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "404": {
+                        "description": "NOT FOUND",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/entities.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "INTERNAL SERVER ERROR",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/entities.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/analysis/{analysisID}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get analysis on database",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Analysis"
+                ],
+                "operationId": "get-one-analysis",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "analysisID of the analysis",
+                        "name": "analysisID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/entities.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "$ref": "#/definitions/analysis.Analysis"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "BAD REQUEST",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/entities.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "404": {
+                        "description": "NOT FOUND",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/entities.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "INTERNAL SERVER ERROR",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/entities.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/health": {
+            "get": {
+                "description": "Check if Health of service it's OK!",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Health"
+                ],
+                "operationId": "health",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/entities.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "INTERNAL SERVER ERROR",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/entities.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "content": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "analysis.Analysis": {
+            "type": "object",
+            "properties": {
+                "analysisVulnerabilities": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/analysis.AnalysisVulnerabilities"
+                    }
+                },
+                "createdAt": {
+                    "type": "string",
+                    "example": "2021-12-30T23:59:59Z"
+                },
+                "errors": {
+                    "type": "string"
+                },
+                "finishedAt": {
+                    "type": "string",
+                    "example": "2021-12-30T23:59:59Z"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "00000000-0000-0000-0000-000000000000"
+                },
+                "repositoryID": {
+                    "type": "string",
+                    "example": "00000000-0000-0000-0000-000000000000"
+                },
+                "repositoryName": {
+                    "type": "string",
+                    "example": "my-project"
+                },
+                "status": {
+                    "type": "string",
+                    "enum": [
+                        "running",
+                        "success",
+                        "error"
+                    ],
+                    "example": "success"
+                },
+                "workspaceID": {
+                    "type": "string",
+                    "example": "00000000-0000-0000-0000-000000000000"
+                },
+                "workspaceName": {
+                    "type": "string",
+                    "example": "my-workspace"
+                }
+            }
+        },
+        "analysis.AnalysisVulnerabilities": {
+            "type": "object",
+            "properties": {
+                "analysisID": {
+                    "type": "string",
+                    "example": "00000000-0000-0000-0000-000000000000"
+                },
+                "createdAt": {
+                    "type": "string",
+                    "example": "2021-12-30T23:59:59Z"
+                },
+                "vulnerabilities": {
+                    "$ref": "#/definitions/vulnerability.Vulnerability"
+                },
+                "vulnerabilityID": {
+                    "type": "string",
+                    "example": "00000000-0000-0000-0000-000000000000"
+                }
+            }
+        },
+        "cli.AnalysisData": {
+            "type": "object",
+            "properties": {
+                "analysis": {
+                    "$ref": "#/definitions/analysis.Analysis"
+                },
+                "repositoryName": {
+                    "type": "string"
+                }
+            }
+        },
+        "entities.Response": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "content": {
+                    "type": "object"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "vulnerability.Vulnerability": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string",
+                    "example": "-----BEGIN RSA PRIVATE KEY-----"
+                },
+                "column": {
+                    "type": "string",
+                    "example": "1"
+                },
+                "commitAuthor": {
+                    "type": "string",
+                    "example": "horusec"
+                },
+                "commitDate": {
+                    "type": "string",
+                    "example": "2021-12-30"
+                },
+                "commitEmail": {
+                    "type": "string",
+                    "example": "horusec@zup.com.br"
+                },
+                "commitHash": {
+                    "type": "string",
+                    "example": "a21fa164c00a15f3e91f5ee6659cb6a793b39a8d"
+                },
+                "commitMessage": {
+                    "type": "string",
+                    "example": "Initial commit"
+                },
+                "confidence": {
+                    "type": "string",
+                    "enum": [
+                        "HIGH",
+                        "MEDIUM",
+                        "LOW"
+                    ],
+                    "example": "HIGH"
+                },
+                "details": {
+                    "type": "string",
+                    "example": "Asymmetric Private Key Found SSH and/or x.509 Cerficates among the files of your project, make sure you want this kind of information inside your Git repo, since it can be missused by someone with access to any kind of copy.  For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory."
+                },
+                "file": {
+                    "type": "string",
+                    "example": "/deployments/cert.pem"
+                },
+                "language": {
+                    "type": "string",
+                    "enum": [
+                        "Go",
+                        "C#",
+                        "Dart",
+                        "Ruby",
+                        "Python",
+                        "Java",
+                        "Kotlin",
+                        "Javascript",
+                        "Typescript",
+                        "Leaks",
+                        "HCL",
+                        "C",
+                        "PHP",
+                        "HTML",
+                        "Generic",
+                        "YAML",
+                        "Elixir",
+                        "Shell",
+                        "Nginx"
+                    ],
+                    "example": "Leaks"
+                },
+                "line": {
+                    "type": "string",
+                    "example": "1"
+                },
+                "securityTool": {
+                    "type": "string",
+                    "enum": [
+                        "HorusecEngine",
+                        "GoSec",
+                        "SecurityCodeScan",
+                        "Brakeman",
+                        "Safety",
+                        "Bandit",
+                        "NpmAudit",
+                        "YarnAudit",
+                        "GitLeaks",
+                        "TfSec",
+                        "Semgrep",
+                        "Flawfinder",
+                        "PhpCS",
+                        "MixAudit",
+                        "Sobelow",
+                        "ShellCheck",
+                        "BundlerAudit"
+                    ],
+                    "example": "HorusecEngine"
+                },
+                "severity": {
+                    "type": "string",
+                    "enum": [
+                        "CRITICAL",
+                        " HIGH",
+                        " MEDIUM",
+                        " LOW",
+                        " INFO"
+                    ],
+                    "example": "CRITICAL"
+                },
+                "type": {
+                    "type": "string",
+                    "enum": [
+                        "Vulnerability",
+                        " Risk Accepted",
+                        " False Positive",
+                        " Corrected"
+                    ],
+                    "example": "Vulnerability"
+                },
+                "vulnHash": {
+                    "type": "string",
+                    "example": "8bcac7908eb950419537b91e19adc83ce2c9cbfdacf4f81157fdadfec11f7017"
+                },
+                "vulnerabilityID": {
+                    "type": "string",
+                    "example": "00000000-0000-0000-0000-000000000000"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "ApiKeyAuth": {
+            "type": "apiKey",
+            "name": "X-Horusec-Authorization",
+            "in": "header"
+        }
+    }
+}
