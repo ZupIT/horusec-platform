@@ -18,7 +18,6 @@ import React, { useEffect, useState } from 'react';
 import Styled from './styled';
 import Filters from './Filters';
 import { FilterValues } from 'helpers/interfaces/FilterValues';
-import { useTranslation } from 'react-i18next';
 import { DashboardData } from 'helpers/interfaces/DashboardData';
 import analyticService from 'services/analytic';
 import { AxiosResponse } from 'axios';
@@ -40,8 +39,6 @@ const Dashboard: React.FC<Props> = ({ type }) => {
   const [filters, setFilters] = useState<FilterValues>(null);
   const [dashboardData, setDashboardData] = useState<DashboardData>();
   const [isLoading, setLoading] = useState(false);
-
-  const { t } = useTranslation();
 
   useEffect(() => {
     let isCancelled = false;
@@ -71,12 +68,6 @@ const Dashboard: React.FC<Props> = ({ type }) => {
 
   return (
     <Styled.Wrapper>
-      <Styled.AriaTitle>
-        {type === 'workspace'
-          ? t('DASHBOARD_SCREEN.ARIA_TITLE_WORKSPACE')
-          : t('DASHBOARD_SCREEN.ARIA_TITLE_REPOSITORY')}
-      </Styled.AriaTitle>
-
       <Filters type={type} onApply={(values) => setFilters(values)} />
 
       <Styled.Row>

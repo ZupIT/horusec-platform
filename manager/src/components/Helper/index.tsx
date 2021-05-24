@@ -26,7 +26,12 @@ const Helper: React.FC<HelperInterface> = ({ url }) => {
   const { t } = useTranslation();
 
   return (
-    <Styled.Link href={url} target="_blank">
+    <Styled.Link
+      tabIndex={0}
+      aria-label={t('HEADER.ARIA.HELP')}
+      href={url}
+      target="_blank"
+    >
       <Styled.HelpIcon name="help" size="20px" />
 
       <Styled.Text>{t('SIDE_MENU.HELPER')}</Styled.Text>
