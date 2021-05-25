@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"path/filepath"
 	"testing"
 	"time"
 
@@ -172,7 +173,10 @@ func TestUseCases_DecodeAnalysisDataFromIoRead(t *testing.T) {
 		assert.Equal(t, err, enums.ErrorBodyInvalid)
 	})
 	t.Run("Should run useCase with v1 and not return error", func(t *testing.T) {
-		content, err := os.ReadFile("../../entities/analysis_v1/analysis_v1_mock.json")
+		path, err := os.Getwd()
+		assert.NoError(t, err)
+		jsonFilePath := filepath.Join(path, "..", "..", "entities", "analysis_v1", "analysis_v1_mock.json")
+		content, err := os.ReadFile(jsonFilePath)
 		assert.NoError(t, err)
 		entity := &analysisv1.AnalysisCLIDataV1{}
 		err = json.Unmarshal(content, entity)
