@@ -70,11 +70,5 @@ spec:
               servicePort: {{ .Values.components.vulnerability.port.http }}
             path: /vulnerability
     {{- end }}
-  tls:
-    - hosts:
-        - account.horus.dev.zup.corp
-        - analytic.horus.dev.zup.corp
-        - auth.horus.dev.zup.corp
-        - manager.horus.dev.zup.corp
-      secretName: horusec-tls
+{{- include "ingress.tls" . | nindent 2 }}
 {{- end }}

@@ -287,3 +287,46 @@ True if Ingress is enabled for any of the components.
     {{- true -}}
 {{- end -}}
 {{- end -}}
+
+
+{{/*
+If enabled, return SSL/TLS Ingress YAML configuration.
+*/}}
+{{- define "ingress.tls" -}}
+{{- $ingresses := list -}}
+{{- range $_, $component := .Values.components -}}
+    {{- if and $component.ingress -}}
+        {{- $ingresses = append $ingresses $component.ingress -}}
+    {{- end -}}
+{{- end -}}
+
+{{- $secrets := dict -}}
+{{- range $_, $ingress := $ingresses -}}
+    {{- if $ingress.tls -}}
+        {{ if not (hasKey $secrets $ingress.tls.secretName) }}
+            {{- $hosts := list -}}
+            {{- range $_, $otherIngress := $ingresses -}}
+                {{- if $otherIngress.tls -}}
+                {{- if eq $ingress.tls.secretName $otherIngress.tls.secretName -}}
+                    {{- $hosts = append $hosts $otherIngress.host -}}
+                {{- end -}}
+                {{- end -}}
+            {{- end -}}
+            {{- $_ := set $secrets $ingress.tls.secretName (compact $hosts) -}}
+        {{- end -}}
+    {{- end -}}
+{{- end -}}
+
+{{- if $secrets -}}
+tls:
+  {{- range $secret, $hosts := $secrets }}
+  {{- if $secret }}
+  - hosts:
+      {{- range $host := $hosts }}
+      - {{ $host }}
+      {{- end }}
+    secretName: {{ $secret }}
+  {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- end -}}
