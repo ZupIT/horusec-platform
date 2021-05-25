@@ -16,8 +16,9 @@
 
 UPDATE_TYPE=$1
 IS_TO_UPDATE_LATEST=$2
-DIRECTORY=""
+DIRECTORY=$(pwd)
 IMAGE_NAME=""
+LATEST_MANAGER_VERSION=""
 
 installSemver () {
     mkdir -p bin
@@ -71,15 +72,15 @@ updateVersion () {
         LATEST_VERSION=$(semver get release)
     fi
 
-    if [[ "$SERVICE_NAME" == "manager" ]]
-    then
-        sed -i -e "s/\"version\": \"0.1.0\"/\"version\": \"$LATEST_VERSION\"/g" "./manager/package.json"
-    fi
-
-    declare -a StringArray=("core" "auth" "analytic" "api" "manager" "messages" "webhook" "vulnerability" "migrations" )
+    declare -a StringArray=("manager" "migrations" "auth" "analytic" "api" "core" "vulnerability" "webhook" "messages" )
 
     for SERVICE in ${StringArray[@]}; do
         echo "Building service $SERVICE"
+        if [ "$SERVICE" == "manager" ]
+        then
+            LATEST_MANAGER_VERSION="$LATEST_VERSION"
+            set_version_packagejson
+        fi
         cd $SERVICE
         if [ "$IS_TO_UPDATE_LATEST" == "true" ]
         then
@@ -120,11 +121,12 @@ resetAlphaRcToMaster () {
     fi
 }
 
+set_version_packagejson () {
+    sed -i -e "s/\"version\": \"0.1.0\"/\"version\": \"$LATEST_MANAGER_VERSION\"/g" "$DIRECTORY/manager/package.json"
+}
+
 rollback_version_packagejson () {
-    if [[ "$SERVICE_NAME" == "manager" ]]
-    then
-        sed -i -e "s/\"version\": \"$LATEST_VERSION\"/\"version\": \"0.1.0\"/g" "./manager/package.json"
-    fi
+    sed -i -e "s/\"version\": \"$LATEST_MANAGER_VERSION\"/\"version\": \"0.1.0\"/g" "$DIRECTORY/manager/package.json"
 }
 
 trap rollback_version_command SIGINT

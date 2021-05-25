@@ -1,7 +1,10 @@
 package analysis
 
 import (
-	"io"
+	netHTTP "net/http"
+	"strings"
+
+	analysisv1 "github.com/ZupIT/horusec-platform/api/internal/entities/analysis_v1"
 
 	"github.com/ZupIT/horusec-devkit/pkg/enums/confidence"
 
@@ -22,25 +25,47 @@ import (
 )
 
 type Interface interface {
-	DecodeAnalysisDataFromIoRead(body io.ReadCloser) (analysisData *cli.AnalysisData, err error)
+	DecodeAnalysisDataFromIoRead(r *netHTTP.Request) (analysisData *cli.AnalysisData, err error)
 }
 
 type UseCases struct {
+	versionsOfV1 []string
 }
 
 func NewAnalysisUseCases() Interface {
-	return &UseCases{}
+	return &UseCases{
+		versionsOfV1: []string{"v1.7.0", "v1.8.0", "v1.8.1", "v1.8.2", "v1.8.3", "v1.8.4",
+			"v1.9.0", "v1.10.0", "v1.10.1", "v1.10.2", "v1.10.3"},
+	}
 }
 
-func (au *UseCases) DecodeAnalysisDataFromIoRead(body io.ReadCloser) (
+func (au *UseCases) DecodeAnalysisDataFromIoRead(r *netHTTP.Request) (
 	analysisData *cli.AnalysisData, err error) {
-	if body == nil {
+	if r.Body == nil {
 		return nil, enums.ErrorBodyEmpty
 	}
-	if err := parser.ParseBodyToEntity(body, &analysisData); err != nil {
+	analysisData, err = au.parseBodyToAnalysis(r)
+	if err != nil {
 		return nil, err
 	}
 	return analysisData, au.validateAnalysisData(analysisData)
+}
+
+func (au *UseCases) parseBodyToAnalysis(r *netHTTP.Request) (analysisData *cli.AnalysisData, err error) {
+	if au.isVersion1(r.Header.Get("X-Horusec-CLI-Version")) {
+		analysisDataV1 := &analysisv1.AnalysisCLIDataV1{}
+		err = parser.ParseBodyToEntity(r.Body, analysisDataV1)
+		if err != nil {
+			return nil, err
+		}
+		analysisData = analysisDataV1.ParseDataV1ToV2()
+	} else {
+		err = parser.ParseBodyToEntity(r.Body, &analysisData)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return analysisData, nil
 }
 
 func (au *UseCases) validateAnalysisData(analysisData *cli.AnalysisData) error {
@@ -50,10 +75,10 @@ func (au *UseCases) validateAnalysisData(analysisData *cli.AnalysisData) error {
 	if err != nil {
 		return err
 	}
-	return au.validateAnalysis(analysisData.Analysis)
+	return au.validateAnalysisToCLIv2(analysisData.Analysis)
 }
 
-func (au *UseCases) validateAnalysis(analysis *analysisEntity.Analysis) error {
+func (au *UseCases) validateAnalysisToCLIv2(analysis *analysisEntity.Analysis) error {
 	return validation.ValidateStruct(analysis,
 		validation.Field(&analysis.ID, validation.Required, is.UUID),
 		validation.Field(&analysis.Status, validation.Required,
@@ -170,4 +195,13 @@ func (au *UseCases) sliceConfidence() []interface{} {
 		confidence.Medium,
 		confidence.Low,
 	}
+}
+
+func (au *UseCases) isVersion1(versionSent string) bool {
+	for _, versionV1 := range au.versionsOfV1 {
+		if strings.EqualFold(versionV1, versionSent) {
+			return true
+		}
+	}
+	return false
 }
