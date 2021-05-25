@@ -178,8 +178,8 @@ components:
     extraEnv: [ ]
     ingress:
       enabled: true
-      host: messages.local
-      path: /messages
+      host: manager.local
+      path: /manager
       tls: null
     name: manager
     pod:
