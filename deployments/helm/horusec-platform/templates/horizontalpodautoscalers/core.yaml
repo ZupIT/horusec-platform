@@ -1,0 +1,29 @@
+{{- if .Values.components.core.pod.autoscaling.enabled }}
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  labels:
+    app: horusec-core
+  name: {{ .Values.components.core.name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  scaleTargetRef:
+    apiVersion: {{ include "deployment.apiVersion" . }}
+    kind: Deployment
+    name: {{ .Values.components.core.name }}
+  minReplicas: {{ .Values.components.core.pod.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.components.core.pod.autoscaling.maxReplicas }}
+  metrics:
+    {{- if .Values.components.core.pod.autoscaling.targetCPU }}
+    - type: Resource
+      resource:
+        name: cpu
+        targetAverageUtilization: {{ .Values.components.core.pod.autoscaling.targetCPU }}
+    {{- end }}
+    {{- if .Values.components.core.pod.autoscaling.targetMemory }}
+    - type: Resource
+      resource:
+        name: memory
+        targetAverageUtilization: {{ .Values.components.core.pod.autoscaling.targetMemory }}
+    {{- end }}
+{{- end }}
