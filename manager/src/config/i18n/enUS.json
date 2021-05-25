@@ -162,6 +162,12 @@
   "DASHBOARD_SCREEN": {
     "ARIA_TITLE_WORKSPACE": "Graphics presentation screen for the workspace",
     "ARIA_TITLE_REPOSITORY": "Graphics presentation screen for the repository",
+    "ARIA_CHART_COUNT": "Frame with {{title}} informing the amount of: {{value}}.",
+    "ARIA_CHART_BAR": "{{title}} chart in the form of bars in direction {{direction}}, with the following information:",
+    "ARIA_CHART_BAR_ITEM": "{{legend}} with the amount of {{value}}",
+    "ARIA_CHART_TIMELINE": "Vulnerability Time Line Chart, the latest data are:",
+    "ARIA_CHART_TIMELINE_ITEM": "{{legend}} were found {{value}} vulnerabilities",
+    "ARIA_FILTER": "Filter for dashboard data.",
     "START_DATE": "Start date",
     "FINAL_DATE": "Final date",
     "PERIOD": "Period",
@@ -453,6 +459,17 @@
       "HELPER": "Helper",
       "WORKSPACES": "Workspaces",
       "DEFAULT": "Horusec"
+    },
+    "ARIA": {
+      "LOGOUT": "Logout",
+      "HELP": "Link to current page help",
+      "CONFIG": "Go to Settings Screen",
+      "VULNERABILITIES": "Screen for vulnerability management.",
+      "REPOSITORIES": "Screen to manage repositories.",
+      "WEBHOOKS": "Webhooks manipulation screen.",
+      "CONFIGURATION": "Settings screen",
+      "WORKSPACES": "Screen to manage the workspaces.",
+      "ADD_WORKSPACE": "Screen for redirection for creating a workspace."
     }
   }
 }

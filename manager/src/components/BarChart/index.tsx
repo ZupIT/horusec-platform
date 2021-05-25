@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Styled from './styled';
 import { generateRandomColor } from 'helpers/colors';
 import { BarCharRow } from 'helpers/interfaces/BarChartRow';
@@ -25,7 +25,6 @@ interface BarChartProps {
   data: BarCharRow[];
   title: string;
   isLoading: boolean;
-  ariaLabel?: string;
   showBackOption?: boolean;
   isVertical?: boolean;
   hasSmallLegend?: boolean;
@@ -37,7 +36,6 @@ const BarChart: React.FC<BarChartProps> = ({
   data,
   isLoading,
   title,
-  ariaLabel,
   onClickRow,
   onClickBack,
   showBackOption,
@@ -45,6 +43,7 @@ const BarChart: React.FC<BarChartProps> = ({
   hasSmallLegend,
 }) => {
   const { t } = useTranslation();
+  const [ariaLabel, setAriaLabel] = useState<string>('');
 
   const calculatePercentageOfBar = (value: number) => {
     const total = data.reduce((a, b) => {
@@ -79,6 +78,27 @@ const BarChart: React.FC<BarChartProps> = ({
       </Styled.LoadingWrapper>
     );
   };
+
+  const mountAriaLabel = () => {
+    const direction = isVertical ? 'vertical' : 'horizontal';
+    let ariaText = t('DASHBOARD_SCREEN.ARIA_CHART_BAR', { direction, title });
+
+    data.forEach((item) => {
+      const { legend, value } = item;
+      ariaText =
+        ariaText +
+        `, ${t('DASHBOARD_SCREEN.ARIA_CHART_BAR_ITEM', { legend, value })}`;
+    });
+
+    setAriaLabel(`${ariaText}.`);
+  };
+
+  useEffect(() => {
+    if (data) {
+      mountAriaLabel();
+    }
+    // eslint-disable-next-line
+  }, [data]);
 
   return (
     <Styled.Wrapper tabIndex={0} aria-label={ariaLabel}>

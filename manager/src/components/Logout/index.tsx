@@ -27,10 +27,13 @@ const Logout: React.FC = () => {
   const refreshToken = getRefreshToken();
 
   return (
-    <Styled.Button onClick={() => logout(refreshToken)}>
+    <Styled.Button
+      aria-label={t('HEADER.ARIA.LOGOUT')}
+      tabIndex={0}
+      onClick={() => logout(refreshToken)}
+    >
       <Styled.LogoutIcon
         size="16px"
-        tabIndex={0}
         ariaLabel={t('SIDE_MENU.LOGOUT')}
         name="logout"
       />
