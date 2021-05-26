@@ -76,7 +76,7 @@ func (a *Analysis) createManyToManyAnalysisAndVulnerabilities(newAnalysis *analy
 	tsx database.IDatabaseWrite) error {
 	for index := range newAnalysis.AnalysisVulnerabilities {
 		manyToMany := newAnalysis.AnalysisVulnerabilities[index]
-		vulnerabilityID, err := a.createVulnerabilityIfNotExists(&manyToMany.Vulnerability, newAnalysis.WorkspaceID, tsx)
+		vulnerabilityID, err := a.createVulnerabilityIfNotExists(&manyToMany.Vulnerability, newAnalysis.RepositoryID, tsx)
 		if err != nil {
 			return err
 		}
@@ -88,9 +88,9 @@ func (a *Analysis) createManyToManyAnalysisAndVulnerabilities(newAnalysis *analy
 	return nil
 }
 
-func (a *Analysis) createVulnerabilityIfNotExists(vuln *vulnerability.Vulnerability, workspaceID uuid.UUID,
+func (a *Analysis) createVulnerabilityIfNotExists(vuln *vulnerability.Vulnerability, repositoryID uuid.UUID,
 	tsx database.IDatabaseWrite) (uuid.UUID, error) {
-	res := a.findVulnerabilityByHashInWorkspace(vuln.VulnHash, workspaceID)
+	res := a.findVulnerabilityByHashInRepository(vuln.VulnHash, repositoryID)
 	exists, err := a.checkIfAlreadyExistsVulnerability(res)
 	if err == nil {
 		if !exists {
@@ -138,14 +138,14 @@ func (a *Analysis) createManyToMany(manyToMany *analysis.AnalysisVulnerabilities
 	return tsx.Create(manyToManyForCreate, manyToManyForCreate.GetTable()).GetError()
 }
 
-func (a *Analysis) findVulnerabilityByHashInWorkspace(vulnHash string, workspaceID uuid.UUID) response.IResponse {
+func (a *Analysis) findVulnerabilityByHashInRepository(vulnHash string, repositoryID uuid.UUID) response.IResponse {
 	query := `
 		SELECT vulnerabilities.vulnerability_id as vulnerability_id
 		FROM vulnerabilities
 		INNER JOIN analysis_vulnerabilities ON vulnerabilities.vulnerability_id = analysis_vulnerabilities.vulnerability_id 
 		INNER JOIN analysis ON analysis_vulnerabilities.analysis_id = analysis.analysis_id 
 		WHERE vulnerabilities.vuln_hash = ?
-		AND analysis.workspace_id = ?
+		AND analysis.repository_id = ?
 	`
-	return a.databaseRead.Raw(query, map[string]interface{}{}, vulnHash, workspaceID)
+	return a.databaseRead.Raw(query, map[string]interface{}{}, vulnHash, repositoryID)
 }
