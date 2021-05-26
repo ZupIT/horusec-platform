@@ -140,6 +140,17 @@ const ButtonIcon = styled(Icon)`
   }
 `;
 
+const ButtonWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-content: center;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 20px;
+`;
+
 export default {
   Wrapper,
   Content,
@@ -153,4 +164,5 @@ export default {
   EmptyText,
   LoadingWrapper,
   ButtonIcon,
+  ButtonWrapper,
 };

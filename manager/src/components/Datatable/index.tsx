@@ -56,6 +56,13 @@ interface DatatableInterface {
   isLoading?: boolean;
   tooltip?: TooltipProps;
   fixed?: boolean;
+  buttons?: {
+    title: string;
+    icon?: string;
+    disabled?: boolean;
+    show?: boolean;
+    function: (...args: any) => void;
+  }[];
 }
 
 const Datatable: React.FC<DatatableInterface> = (props) => {
@@ -67,6 +74,7 @@ const Datatable: React.FC<DatatableInterface> = (props) => {
     paginate,
     tooltip,
     fixed = true,
+    buttons = [],
   } = props;
 
   return (
@@ -78,6 +86,21 @@ const Datatable: React.FC<DatatableInterface> = (props) => {
           </Styled.LoadingWrapper>
         ) : (
           <>
+            <Styled.ButtonWrapper>
+              {buttons.map((button, key) =>
+                button.show ? (
+                  <Button
+                    key={key}
+                    text={button.title}
+                    icon={button.icon}
+                    onClick={button.function}
+                    width="auto"
+                    hidden={button.show}
+                  />
+                ) : null
+              )}
+            </Styled.ButtonWrapper>
+
             <Styled.Table isPaginate={!!paginate} fixed={fixed}>
               <thead>
                 <Styled.Head>

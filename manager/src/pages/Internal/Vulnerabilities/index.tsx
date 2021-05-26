@@ -22,7 +22,7 @@ import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import vulnerabilitiesService from 'services/vulnerabilities';
 import { PaginationInfo } from 'helpers/interfaces/Pagination';
 import { Vulnerability } from 'helpers/interfaces/Vulnerability';
-import { debounce, get } from 'lodash';
+import { cloneDeep, debounce, get } from 'lodash';
 import Details from './Details';
 import { FilterVuln } from 'helpers/interfaces/FIlterVuln';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
@@ -32,11 +32,19 @@ import { AxiosError, AxiosResponse } from 'axios';
 import { Autocomplete } from '@material-ui/lab';
 import { TextField } from '@material-ui/core';
 import useRepository from 'helpers/hooks/useRepository';
+import { resolve } from 'cypress/types/bluebird';
+import { Search } from '@material-ui/icons';
 
 const INITIAL_PAGE = 1;
 interface RefreshInterface {
   filter: FilterVuln;
   page: PaginationInfo;
+}
+
+interface KeyValueVuln {
+  id: string;
+  type: string;
+  severity: string;
 }
 
 const Vulnerabilities: React.FC = () => {
@@ -56,6 +64,8 @@ const Vulnerabilities: React.FC = () => {
   const [isLoading, setLoading] = useState(false);
   const [vulnerabilities, setVulnerabilities] = useState<Vulnerability[]>([]);
   const [selectedVuln, setSelectedVuln] = useState<Vulnerability>(null);
+  const [updateVulnIds, setUpdateVulnIds] = useState<KeyValueVuln[]>([]);
+
   const [filters, setFilters] = useState<FilterVuln>({
     workspaceID: currentWorkspace?.workspaceID,
     repositoryID: currentRepository?.repositoryID,
@@ -63,6 +73,7 @@ const Vulnerabilities: React.FC = () => {
     vulnSeverity: 'ALL',
     vulnType: 'ALL',
   });
+
   const [pagination, setPagination] = useState<PaginationInfo>({
     currentPage: INITIAL_PAGE,
     totalItems: 0,
@@ -136,37 +147,34 @@ const Vulnerabilities: React.FC = () => {
     }));
   }, 800);
 
-  const handleUpdateVulnerability = (
-    vulnerabilityID: string,
-    type: string,
-    severity: string
-  ) => {
-    vulnerabilitiesService
-      .updateVulnerability(
-        filters.workspaceID,
-        vulnerabilityID,
-        filters.repositoryID,
-        type,
-        severity
-      )
-      .then(() => {
-        setVulnerabilities((state) =>
-          state.map((el) =>
-            el.vulnerabilityID === vulnerabilityID
-              ? {
-                  ...el,
-                  severity,
-                  type,
-                }
-              : el
-          )
-        );
-        showSuccessFlash(t('VULNERABILITIES_SCREEN.SUCCESS_UPDATE'));
-      })
-      .catch((err: AxiosError) => {
-        setRefresh((state) => state);
-        dispatchMessage(err?.response?.data);
-      });
+  const handleUpdateVulnerability = () => {
+    console.log(updateVulnIds);
+    // vulnerabilitiesService
+    //   .updateVulnerability(
+    //     filters.workspaceID,
+    //     vulnerabilityID,
+    //     filters.repositoryID,
+    //     type,
+    //     severity
+    //   )
+    //   .then(() => {
+    //     setVulnerabilities((state) =>
+    //       state.map((el) =>
+    //         el.vulnerabilityID === vulnerabilityID
+    //           ? {
+    //               ...el,
+    //               severity,
+    //               type,
+    //             }
+    //           : el
+    //       )
+    //     );
+    //     showSuccessFlash(t('VULNERABILITIES_SCREEN.SUCCESS_UPDATE'));
+    //   })
+    //   .catch((err: AxiosError) => {
+    //     setRefresh((state) => state);
+    //     dispatchMessage(err?.response?.data);
+    //   });
   };
 
   useEffect(() => {
@@ -200,7 +208,17 @@ const Vulnerabilities: React.FC = () => {
           .then((result: AxiosResponse) => {
             if (!isCancelled) {
               const response = result.data?.content;
-              setVulnerabilities(response?.data);
+
+              const data: Vulnerability[] = [response?.data[0]];
+
+              for (const row of data) {
+                const { type = row.type, severity = row.severity } =
+                  updateVulnIds.find((x) => x.id === row.vulnerabilityID) || {};
+                row.type = type;
+                row.severity = severity;
+              }
+
+              setVulnerabilities(data);
               const totalItems = response?.totalItems;
 
               let totalPages = totalItems
@@ -244,6 +262,40 @@ const Vulnerabilities: React.FC = () => {
       ? { label: currentRepository.name, value: currentRepository.repositoryID }
       : null;
   };
+
+  function updateVulnerability(
+    row: Vulnerability,
+    severity: string,
+    type: string
+  ) {
+    setUpdateVulnIds((state) => {
+      const data = cloneDeep(state);
+      const index = data.findIndex((x) => x.id === row.vulnerabilityID);
+      const record: KeyValueVuln = {
+        id: row.vulnerabilityID,
+        severity: severity,
+        type: type,
+      };
+
+      if (index >= 0) {
+        data[index] = record;
+      } else {
+        data.push(record);
+      }
+
+      setVulnerabilities((state) =>
+        state.map((row) => {
+          const { severity = row.severity, type = row.type } =
+            data.find((x) => x.id === row.vulnerabilityID) || {};
+          row.severity = severity;
+          row.type = type;
+          return row;
+        })
+      );
+
+      return data;
+    });
+  }
 
   return (
     <Styled.Wrapper>
@@ -307,10 +359,11 @@ const Vulnerabilities: React.FC = () => {
             <TextField
               {...params}
               label={t('VULNERABILITIES_SCREEN.REPOSITORY')}
-              size="small"
               FormHelperTextProps={{ tabIndex: 0 }}
             />
           )}
+          popupIcon={<Search />}
+          forcePopupIcon
           disableClearable
           noOptionsText={t('GENERAL.NO_OPTIONS')}
         />
@@ -318,6 +371,22 @@ const Vulnerabilities: React.FC = () => {
 
       <Styled.Content>
         <Datatable
+          buttons={[
+            {
+              title: 'Update Vulnerabilities',
+              function: () => handleUpdateVulnerability(),
+              icon: 'success',
+              disabled: !!updateVulnIds.length,
+              show: updateVulnIds.length > 0,
+            },
+            {
+              title: 'Cancel',
+              function: () => false,
+              icon: 'error',
+              disabled: !!updateVulnIds.length,
+              show: updateVulnIds.length > 0,
+            },
+          ]}
           columns={[
             {
               label: t('VULNERABILITIES_SCREEN.TABLE.HASH'),
@@ -351,8 +420,8 @@ const Vulnerabilities: React.FC = () => {
               ...row,
               id: row.vulnerabilityID,
               hash: row.vulnHash,
-              description: `${row.file} (${row.line || '-'}:${
-                row.column || '-'
+              description: `${row.file} ( ${row.line || ' - '} : ${
+                row.column || ' - '
               })`,
               severity: (
                 <Select
@@ -368,13 +437,9 @@ const Vulnerabilities: React.FC = () => {
                   value={row.severity}
                   options={severities.slice(1)}
                   disabled={isMemberOfRepository}
-                  onChangeValue={(value) =>
-                    handleUpdateVulnerability(
-                      row.vulnerabilityID,
-                      row.type,
-                      value
-                    )
-                  }
+                  onChangeValue={(value) => {
+                    updateVulnerability(row, value, row.type);
+                  }}
                 />
               ),
               status: (
@@ -384,13 +449,9 @@ const Vulnerabilities: React.FC = () => {
                   width="200px"
                   variant="filled"
                   disabled={isMemberOfRepository}
-                  onChangeValue={(value) =>
-                    handleUpdateVulnerability(
-                      row.vulnerabilityID,
-                      value,
-                      row.severity
-                    )
-                  }
+                  onChangeValue={(value) => {
+                    updateVulnerability(row, row.severity, value);
+                  }}
                 />
               ),
               details: (
