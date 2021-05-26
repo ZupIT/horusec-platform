@@ -42,7 +42,7 @@ interface RefreshInterface {
 }
 
 interface KeyValueVuln {
-  id: string;
+  vulnerabilityID: string;
   type: string;
   severity: string;
 }
@@ -148,33 +148,22 @@ const Vulnerabilities: React.FC = () => {
   }, 800);
 
   const handleUpdateVulnerability = () => {
-    console.log(updateVulnIds);
-    // vulnerabilitiesService
-    //   .updateVulnerability(
-    //     filters.workspaceID,
-    //     vulnerabilityID,
-    //     filters.repositoryID,
-    //     type,
-    //     severity
-    //   )
-    //   .then(() => {
-    //     setVulnerabilities((state) =>
-    //       state.map((el) =>
-    //         el.vulnerabilityID === vulnerabilityID
-    //           ? {
-    //               ...el,
-    //               severity,
-    //               type,
-    //             }
-    //           : el
-    //       )
-    //     );
-    //     showSuccessFlash(t('VULNERABILITIES_SCREEN.SUCCESS_UPDATE'));
-    //   })
-    //   .catch((err: AxiosError) => {
-    //     setRefresh((state) => state);
-    //     dispatchMessage(err?.response?.data);
-    //   });
+    vulnerabilitiesService
+      .updateVulnerability(
+        filters.workspaceID,
+        filters.repositoryID,
+        vulnerabilities[0].analysisID,
+        updateVulnIds
+      )
+      .then(() => {
+        resetUpdateVuln();
+
+        showSuccessFlash(t('VULNERABILITIES_SCREEN.SUCCESS_UPDATE'));
+      })
+      .catch((err: AxiosError) => {
+        setRefresh((state) => state);
+        dispatchMessage(err?.response?.data);
+      });
   };
 
   useEffect(() => {
@@ -209,11 +198,13 @@ const Vulnerabilities: React.FC = () => {
             if (!isCancelled) {
               const response = result.data?.content;
 
-              const data: Vulnerability[] = [response?.data[0]];
+              const data: Vulnerability[] = response?.data;
 
               for (const row of data) {
                 const { type = row.type, severity = row.severity } =
-                  updateVulnIds.find((x) => x.id === row.vulnerabilityID) || {};
+                  updateVulnIds.find(
+                    (x) => x.vulnerabilityID === row.vulnerabilityID
+                  ) || {};
                 row.type = type;
                 row.severity = severity;
               }
@@ -263,6 +254,25 @@ const Vulnerabilities: React.FC = () => {
       : null;
   };
 
+  function resetUpdateVuln() {
+    setUpdateVulnIds([]);
+    setLoading(true);
+    vulnerabilitiesService
+      .getAllVulnerabilities(refresh.filter, 'repository', refresh.page)
+      .then((result: AxiosResponse) => {
+        const response = result.data?.content;
+        const data: Vulnerability[] = response?.data;
+        setVulnerabilities(data);
+      })
+      .catch((err: AxiosError) => {
+        dispatchMessage(err?.response?.data);
+        setVulnerabilities([]);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }
+
   function updateVulnerability(
     row: Vulnerability,
     severity: string,
@@ -270,9 +280,11 @@ const Vulnerabilities: React.FC = () => {
   ) {
     setUpdateVulnIds((state) => {
       const data = cloneDeep(state);
-      const index = data.findIndex((x) => x.id === row.vulnerabilityID);
+      const index = data.findIndex(
+        (x) => x.vulnerabilityID === row.vulnerabilityID
+      );
       const record: KeyValueVuln = {
-        id: row.vulnerabilityID,
+        vulnerabilityID: row.vulnerabilityID,
         severity: severity,
         type: type,
       };
@@ -286,7 +298,7 @@ const Vulnerabilities: React.FC = () => {
       setVulnerabilities((state) =>
         state.map((row) => {
           const { severity = row.severity, type = row.type } =
-            data.find((x) => x.id === row.vulnerabilityID) || {};
+            data.find((x) => x.vulnerabilityID === row.vulnerabilityID) || {};
           row.severity = severity;
           row.type = type;
           return row;
@@ -373,15 +385,15 @@ const Vulnerabilities: React.FC = () => {
         <Datatable
           buttons={[
             {
-              title: 'Update Vulnerabilities',
-              function: () => handleUpdateVulnerability(),
+              title: t('VULNERABILITIES_SCREEN.UPDATE_VULNERABILITY'),
+              function: handleUpdateVulnerability,
               icon: 'success',
               disabled: !!updateVulnIds.length,
               show: updateVulnIds.length > 0,
             },
             {
-              title: 'Cancel',
-              function: () => false,
+              title: t('GENERAL.CANCEL'),
+              function: resetUpdateVuln,
               icon: 'error',
               disabled: !!updateVulnIds.length,
               show: updateVulnIds.length > 0,
