@@ -24,6 +24,10 @@ spec:
             value: {{ .Values.components.webhook.port.http | quote }}
           - name: HORUSEC_SWAGGER_HOST
             value: 0.0.0.0
+          - name: HORUSEC_GRPC_AUTH_URL
+            value: "auth.{{- .Release.Namespace -}}.svc.cluster.local:{{- .Values.components.auth.port.grpc }}"
+          - name: HORUSEC_GRPC_USE_CERTS
+            value: "false"
           - name: HORUSEC_BROKER_HOST
             value: {{ required "A valid global.broker.host is required!" .Values.global.broker.host }}
           - name: HORUSEC_BROKER_PORT
