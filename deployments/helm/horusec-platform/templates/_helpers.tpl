@@ -249,13 +249,6 @@ Return the appropriate apiVersion for deployment.
 {{- end -}}
 
 {{/*
-Return the appropriate database address.
-*/}}
-{{- define "database.address" -}}
-{{- printf "%v:%v/%v" .Values.global.database.host .Values.global.database.port .Values.global.database.name -}}
-{{- end -}}
-
-{{/*
 Print "true" if the API pathType field is supported.
 */}}
 {{- define "ingress.supportsPathType" -}}
