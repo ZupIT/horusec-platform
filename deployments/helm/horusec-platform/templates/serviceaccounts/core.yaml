@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app: horusec-core
+  name: core
+  namespace: {{ .Release.Namespace }}

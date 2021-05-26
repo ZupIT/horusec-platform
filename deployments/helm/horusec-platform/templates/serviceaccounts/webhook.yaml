@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app: horusec-webhook
+  name: webhook
+  namespace: {{ .Release.Namespace }}
