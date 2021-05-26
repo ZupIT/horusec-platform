@@ -30,6 +30,18 @@ spec:
             value: "auth.{{- .Release.Namespace -}}.svc.cluster.local:{{- .Values.components.auth.port.grpc }}"
           - name: HORUSEC_GRPC_USE_CERTS
             value: "false"
+          - name: HORUSEC_BROKER_HOST
+            value: {{ required "A valid global.broker.host is required!" .Values.global.broker.host }}
+          - name: HORUSEC_BROKER_PORT
+            value: {{ .Values.global.broker.port | quote }}
+          - name: HORUSEC_BROKER_USERNAME
+            valueFrom:
+              secretKeyRef:
+              {{- toYaml .Values.global.broker.user.secretKeyRef | nindent 16 }}
+          - name: HORUSEC_BROKER_PASSWORD
+            valueFrom:
+              secretKeyRef:
+              {{- toYaml .Values.global.broker.password.secretKeyRef | nindent 16 }}
           - name: HORUSEC_DATABASE_USERNAME
             valueFrom:
               secretKeyRef:
