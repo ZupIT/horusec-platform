@@ -64,7 +64,7 @@ func (h *Handler) Options(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
 // @Failure 500 {object} entities.Response{content=string} "INTERNAL SERVER ERROR"
 // @Router /api/analysis [post]
 func (h *Handler) Post(w netHTTP.ResponseWriter, r *netHTTP.Request) {
-	analysisData, err := h.useCases.DecodeAnalysisDataFromIoRead(r.Body)
+	analysisData, err := h.useCases.DecodeAnalysisDataFromIoRead(r)
 	if err != nil {
 		httpUtil.StatusBadRequest(w, err)
 		return

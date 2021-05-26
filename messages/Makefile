@@ -34,7 +34,7 @@ fix-imports:
 
 security:
     ifeq (, $(shell which $(HORUSEC)))
-		curl -fsSL https://horusec.io/bin/install.sh | bash
+		curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec/master/deployments/scripts/install.sh | bash -s latest
 		$(HORUSEC) start -p="./" -e="true"
     else
 		$(HORUSEC) start -p="./" -e="true"

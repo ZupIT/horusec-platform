@@ -80,7 +80,7 @@ func (c *Controller) SaveAnalysis(analysisEntity *analysis.Analysis) (uuid.UUID,
 
 func (c *Controller) createRepositoryIfNotExists(analysisEntity *analysis.Analysis) (*analysis.Analysis, error) {
 	if analysisEntity.RepositoryID == uuid.Nil {
-		analysisEntity.RepositoryID = uuid.New()
+		analysisEntity.SetRepositoryID(uuid.New())
 		repositoryID, err := c.repoRepository.FindRepository(analysisEntity.WorkspaceID, analysisEntity.RepositoryName)
 		if err != nil {
 			if err == enums.ErrorNotFoundRecords {
@@ -89,7 +89,7 @@ func (c *Controller) createRepositoryIfNotExists(analysisEntity *analysis.Analys
 			}
 			return nil, err
 		}
-		analysisEntity.RepositoryID = repositoryID
+		analysisEntity.SetRepositoryID(repositoryID)
 	}
 	return analysisEntity, nil
 }

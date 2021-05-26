@@ -4,6 +4,7 @@
     "**/.vscode/**",
     "**/*_test.go",
     "**/deployments/**",
-    "**/docs/**"
+    "**/docs/**",
+    "**/internal/entities/analysis_v1/analysis_v1_mock.json"
   ]
 }

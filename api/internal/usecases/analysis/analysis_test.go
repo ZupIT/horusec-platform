@@ -2,9 +2,15 @@ package analysis
 
 import (
 	"bytes"
+	"encoding/json"
 	"io/ioutil"
+	"net/http"
+	"os"
+	"path/filepath"
 	"testing"
 	"time"
+
+	analysisv1 "github.com/ZupIT/horusec-platform/api/internal/entities/analysis_v1"
 
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
@@ -36,32 +42,38 @@ func TestUseCases_DecodeAnalysisDataFromIoRead(t *testing.T) {
 		}
 		body, err := parser.ParseEntityToIOReadCloser(analysisData)
 		assert.NoError(t, err)
-		response, err := NewAnalysisUseCases().DecodeAnalysisDataFromIoRead(body)
+		r, _ := http.NewRequest(http.MethodPost, "/test", body)
+		response, err := NewAnalysisUseCases().DecodeAnalysisDataFromIoRead(r)
 		assert.NoError(t, err)
 		assert.NotEmpty(t, response)
 	})
 	t.Run("Should return error when body not exists", func(t *testing.T) {
-		_, err := NewAnalysisUseCases().DecodeAnalysisDataFromIoRead(nil)
+		r, _ := http.NewRequest(http.MethodPost, "/test", nil)
+		_, err := NewAnalysisUseCases().DecodeAnalysisDataFromIoRead(r)
 		assert.Equal(t, err, enums.ErrorBodyEmpty)
 	})
 	t.Run("Should return error when body is empty", func(t *testing.T) {
 		body := ioutil.NopCloser(bytes.NewBufferString(""))
-		_, err := NewAnalysisUseCases().DecodeAnalysisDataFromIoRead(body)
+		r, _ := http.NewRequest(http.MethodPost, "/test", body)
+		_, err := NewAnalysisUseCases().DecodeAnalysisDataFromIoRead(r)
 		assert.Equal(t, err, enums.ErrorBodyEmpty)
 	})
 	t.Run("Should return error when body is wrong", func(t *testing.T) {
 		body := ioutil.NopCloser(bytes.NewBufferString("some incorrect body"))
-		_, err := NewAnalysisUseCases().DecodeAnalysisDataFromIoRead(body)
+		r, _ := http.NewRequest(http.MethodPost, "/test", body)
+		_, err := NewAnalysisUseCases().DecodeAnalysisDataFromIoRead(r)
 		assert.Equal(t, err, enums.ErrorBodyInvalid)
 	})
 	t.Run("Should return unknown error when parse body", func(t *testing.T) {
 		body := ioutil.NopCloser(bytes.NewBufferString("00000"))
-		_, err := NewAnalysisUseCases().DecodeAnalysisDataFromIoRead(body)
+		r, _ := http.NewRequest(http.MethodPost, "/test", body)
+		_, err := NewAnalysisUseCases().DecodeAnalysisDataFromIoRead(r)
 		assert.Error(t, err)
 	})
 	t.Run("Should return error when not found analysis in body", func(t *testing.T) {
 		body := ioutil.NopCloser(bytes.NewBufferString("{}"))
-		_, err := NewAnalysisUseCases().DecodeAnalysisDataFromIoRead(body)
+		r, _ := http.NewRequest(http.MethodPost, "/test", body)
+		_, err := NewAnalysisUseCases().DecodeAnalysisDataFromIoRead(r)
 		assert.Error(t, err)
 		assert.Contains(t, err.Error(), "analysis: cannot be blank")
 	})
@@ -104,7 +116,8 @@ func TestUseCases_DecodeAnalysisDataFromIoRead(t *testing.T) {
 		}
 		body, err := parser.ParseEntityToIOReadCloser(analysisData)
 		assert.NoError(t, err)
-		response, err := NewAnalysisUseCases().DecodeAnalysisDataFromIoRead(body)
+		r, _ := http.NewRequest(http.MethodPost, "/test", body)
+		response, err := NewAnalysisUseCases().DecodeAnalysisDataFromIoRead(r)
 		assert.NoError(t, err)
 		assert.NotEmpty(t, response)
 	})
@@ -147,8 +160,39 @@ func TestUseCases_DecodeAnalysisDataFromIoRead(t *testing.T) {
 		}
 		body, err := parser.ParseEntityToIOReadCloser(analysisData)
 		assert.NoError(t, err)
-		_, err = NewAnalysisUseCases().DecodeAnalysisDataFromIoRead(body)
+		r, _ := http.NewRequest(http.MethodPost, "/test", body)
+		_, err = NewAnalysisUseCases().DecodeAnalysisDataFromIoRead(r)
 		assert.Error(t, err)
 		assert.Contains(t, err.Error(), "securityTool: must be a valid value")
+	})
+	t.Run("Should run useCase with v1 and return error with wrong body", func(t *testing.T) {
+		body := ioutil.NopCloser(bytes.NewBufferString("some incorrect body"))
+		r, _ := http.NewRequest(http.MethodPost, "/test", body)
+		r.Header.Set("X-Horusec-CLI-Version", "v1.10.3")
+		_, err := NewAnalysisUseCases().DecodeAnalysisDataFromIoRead(r)
+		assert.Equal(t, err, enums.ErrorBodyInvalid)
+	})
+	t.Run("Should run useCase with v1 and not return error", func(t *testing.T) {
+		path, err := os.Getwd()
+		assert.NoError(t, err)
+		jsonFilePath := filepath.Join(path, "..", "..", "entities", "analysis_v1", "analysis_v1_mock.json")
+		content, err := os.ReadFile(jsonFilePath)
+		assert.NoError(t, err)
+		entity := &analysisv1.AnalysisCLIDataV1{}
+		err = json.Unmarshal(content, entity)
+		assert.NoError(t, err)
+		ioReader, err := parser.ParseEntityToIOReadCloser(entity)
+		assert.NoError(t, err)
+		r, _ := http.NewRequest(http.MethodPost, "/test", ioReader)
+		r.Header.Set("X-Horusec-CLI-Version", "v1.10.3")
+		dataToCheck, err := NewAnalysisUseCases().DecodeAnalysisDataFromIoRead(r)
+		assert.NoError(t, err)
+		assert.NotEmpty(t, dataToCheck)
+		assert.NotEmpty(t, dataToCheck.Analysis)
+		assert.GreaterOrEqual(t, len(dataToCheck.Analysis.AnalysisVulnerabilities), 1)
+		for _, item := range dataToCheck.Analysis.AnalysisVulnerabilities {
+			assert.NotEmpty(t, item)
+			assert.NotEmpty(t, item.VulnerabilityID)
+		}
 	})
 }
