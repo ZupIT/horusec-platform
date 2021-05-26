@@ -15,7 +15,7 @@ spec:
       restartPolicy: Never
       containers:
         - name: horusec-database-migration
-          image: "horuszup/horusec-migration:latest"
+          image: "{{ template "analytic.database.migration.image" . }}"
           command: [ "migrate.sh" ]
           env:
             - name: HORUSEC_DATABASE_USERNAME

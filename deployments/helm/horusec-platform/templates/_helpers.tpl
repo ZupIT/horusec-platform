@@ -112,6 +112,34 @@ Return the proper Horusec Vulnerability image name
 {{- end -}}
 
 {{/*
+Return the proper Horusec Database Migrations image name
+*/}}
+{{- define "global.database.migration.image" -}}
+{{- $registryName := .Values.global.database.migration.image.registry -}}
+{{- $repositoryName := .Values.global.database.migration.image.repository -}}
+{{- $tag := .Values.global.database.migration.image.tag | toString -}}
+{{- if $registryName -}}
+{{- printf "%v/%v:%v" $registryName $repositoryName $tag -}}
+{{- else -}}
+{{- printf "%v:%v" $repositoryName $tag -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return the proper Horusec Database Migrations image name
+*/}}
+{{- define "analytic.database.migration.image" -}}
+{{- $registryName := .Values.components.analytic.database.migration.image.registry -}}
+{{- $repositoryName := .Values.components.analytic.database.migration.image.repository -}}
+{{- $tag := .Values.components.analytic.database.migration.image.tag | toString -}}
+{{- if $registryName -}}
+{{- printf "%v/%v:%v" $registryName $repositoryName $tag -}}
+{{- else -}}
+{{- printf "%v:%v" $repositoryName $tag -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
 Return the proper Horusec Core Image Registry Secret Names
 */}}
 {{- define "core.imagePullSecrets" -}}

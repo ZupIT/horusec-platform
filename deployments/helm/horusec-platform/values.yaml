@@ -22,6 +22,13 @@ components:
     database:
       host: ""
       logMode: false
+      migration:
+        image:
+          pullPolicy: IfNotPresent
+          pullSecrets: [ ]
+          registry: docker.io/horuszup
+          repository: horusec-migration
+          tag: v0.0.5
       name: analytic_db
       password:
         secretKeyRef:
@@ -106,8 +113,8 @@ components:
     extraEnv: [ ]
     ingress:
       enabled: true
-      host: messages.local
-      path: /messages
+      host: auth.local
+      path: /auth
       tls: null
     name: auth
     pod:
@@ -333,6 +340,13 @@ global:
   database:
     host: ""
     logMode: false
+    migration:
+      image:
+        pullPolicy: IfNotPresent
+        pullSecrets: [ ]
+        registry: docker.io/horuszup
+        repository: horusec-migration
+        tag: v0.0.5
     name: horusec_db
     password:
       secretKeyRef:
