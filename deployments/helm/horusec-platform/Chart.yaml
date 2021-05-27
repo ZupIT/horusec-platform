@@ -1,0 +1,13 @@
+apiVersion: v2
+name: horusec-platform
+description: A Helm chart for Kubernetes
+type: application
+version: 1.0.0
+appVersion: "2.12.0"
+keywords:
+  - security
+  - quality
+  - development
+home: https://horusec.io
+sources:
+  - https://hub.docker.com/u/horuszup/
