@@ -119,7 +119,10 @@ const Datatable: React.FC<DatatableInterface> = (props) => {
                   </tr>
                 ) : (
                   datasource.map((row, dataId) => (
-                    <Styled.Row key={`${row.id || 'item'}-${dataId}`}>
+                    <Styled.Row
+                      key={`${row.id || 'item'}-${dataId}`}
+                      highlight={row['highlight']}
+                    >
                       {columns.map((column, columnId) => {
                         const renderTooltipProps = (tip: string) => {
                           return tooltip

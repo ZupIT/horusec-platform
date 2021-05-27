@@ -309,6 +309,14 @@ const Vulnerabilities: React.FC = () => {
     });
   }
 
+  function isTouched(row: Vulnerability): boolean {
+    const index = updateVulnIds.findIndex(
+      (x) => x.vulnerabilityID === row.vulnerabilityID
+    );
+
+    return index > -1;
+  }
+
   return (
     <Styled.Wrapper>
       <Styled.Options>
@@ -435,6 +443,7 @@ const Vulnerabilities: React.FC = () => {
               description: `${row.file} ( ${row.line || ' - '} : ${
                 row.column || ' - '
               })`,
+              highlight: isTouched(row),
               severity: (
                 <Select
                   style={{
