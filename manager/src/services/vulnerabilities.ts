@@ -26,16 +26,19 @@ const getAllVulnerabilities = (
 
 const updateVulnerability = (
   workspaceID: string,
-  vulnerabilityID: string,
   repositoryID: string,
-  type: string,
-  severity: string
+  analysisID: string,
+  vulnerabilities: {
+    severity: string;
+    type: string;
+    vulnerabilityID: string;
+  }[]
 ) => {
   return http.patch(
-    `${SERVICE_VULNERABILITY}/vulnerability/management/workspace/${workspaceID}/repository/${repositoryID}/vulnerabilities/${vulnerabilityID}`,
+    `${SERVICE_VULNERABILITY}/vulnerability/management/workspace/${workspaceID}/repository/${repositoryID}/vulnerabilities`,
     {
-      type,
-      severity,
+      analysisID,
+      vulnerabilities,
     }
   );
 };

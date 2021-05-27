@@ -128,7 +128,6 @@
     "GROUP_NAME": "Nombre del grupo",
     "EMAIL": "Correo electrónico",
     "INVALID_EMAIL_ADMIN": "¡Email inválido!",
-
     "USERS": {
       "TITLE": "Usuarios del espacio de trabajo",
       "SEARCH": "Buscar por correo electrónico",
@@ -340,7 +339,8 @@
       "SEVERITY": "Gravedad",
       "DETAILS": "Detalles",
       "CONFIDENCE": "Confidencialidad"
-    }
+    },
+    "UPDATE_VULNERABILITY": "Actualizar vulnerabilidades"
   },
   "WEBHOOK_SCREEN": {
     "TITLE": "Webhooks",
