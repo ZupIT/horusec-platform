@@ -337,7 +337,8 @@
       "SEVERITY": "Severity",
       "DETAILS": "Details",
       "CONFIDENCE": "Confidence"
-    }
+    },
+    "UPDATE_VULNERABILITY": "Update Vulnerabilities"
   },
   "WEBHOOK_SCREEN": {
     "TITLE": "Webhooks",

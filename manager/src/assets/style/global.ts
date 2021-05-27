@@ -87,6 +87,10 @@ const GlobalStyle = createGlobalStyle`
     filter: none;
   }
 
+  .MuiAutocomplete-popupIndicator {
+      transform: none !important
+  }
+
   /* React Date Picker */
 
   div.react-datepicker-wrapper {
