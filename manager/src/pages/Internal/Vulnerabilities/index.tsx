@@ -393,7 +393,9 @@ const Vulnerabilities: React.FC = () => {
         <Datatable
           buttons={[
             {
-              title: t('VULNERABILITIES_SCREEN.UPDATE_VULNERABILITY'),
+              title: `${t('VULNERABILITIES_SCREEN.UPDATE_VULNERABILITY')} (${
+                updateVulnIds.length
+              })`,
               function: handleUpdateVulnerability,
               icon: 'success',
               disabled: !!updateVulnIds.length,
