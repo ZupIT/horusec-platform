@@ -27,8 +27,8 @@ components:
           pullPolicy: IfNotPresent
           pullSecrets: [ ]
           registry: docker.io/horuszup
-          repository: horusec-migration
-          tag: v0.0.5
+          repository: horusec-migrations
+          tag: v2.12.0
       name: analytic_db
       password:
         secretKeyRef:
@@ -345,8 +345,8 @@ global:
         pullPolicy: IfNotPresent
         pullSecrets: [ ]
         registry: docker.io/horuszup
-        repository: horusec-migration
-        tag: v0.0.5
+        repository: horusec-migrations
+        tag: v2.12.0
     name: horusec_db
     password:
       secretKeyRef:

@@ -1,4 +1,60 @@
 {{/* vim: set filetype=mustache: */}}
+
+{{/*
+Return the proper Horusec Manager URI scheme
+*/}}
+{{- define "manager.uri.scheme" -}}
+{{- if .Values.components.manager.ingress.tls -}}
+{{- "https" -}}
+{{- else -}}
+{{- "http" -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return the proper Horusec API URI scheme
+*/}}
+{{- define "api.uri.scheme" -}}
+{{- if .Values.components.api.ingress.tls -}}
+{{- "https" -}}
+{{- else -}}
+{{- "http" -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return the proper Horusec Analytic URI scheme
+*/}}
+{{- define "analytic.uri.scheme" -}}
+{{- if .Values.components.analytic.ingress.tls -}}
+{{- "https" -}}
+{{- else -}}
+{{- "http" -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return the proper Horusec Core URI scheme
+*/}}
+{{- define "core.uri.scheme" -}}
+{{- if .Values.components.core.ingress.tls -}}
+{{- "https" -}}
+{{- else -}}
+{{- "http" -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return the proper Horusec Auth URI scheme
+*/}}
+{{- define "auth.uri.scheme" -}}
+{{- if .Values.components.auth.ingress.tls -}}
+{{- "https" -}}
+{{- else -}}
+{{- "http" -}}
+{{- end -}}
+{{- end -}}
+
 {{/*
 Return the proper Horusec Auth image name
 */}}
