@@ -1,11 +1,11 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ .Release.Name }}-migration
+  name: {{ .Release.Name }}-analytic-migration
   namespace: {{ .Release.Namespace }}
   annotations:
-    "helm.sh/hook": "post-install,post-upgrade,post-rollback"
-    "helm.sh/hook-weight": "5"
+    "helm.sh/hook": "pre-install,pre-upgrade"
+    "helm.sh/hook-weight": "-5"
     "helm.sh/hook-delete-policy": "hook-succeeded,before-hook-creation"
 spec:
   template:
@@ -15,7 +15,7 @@ spec:
       restartPolicy: Never
       containers:
         - name: horusec-database-migration
-          image: "{{ template "global.database.migration.image" . }}"
+          image: "{{ template "analytic.database.migration.image" . }}"
           command: [ "migrate.sh" ]
           env:
             - name: HORUSEC_DATABASE_USERNAME
