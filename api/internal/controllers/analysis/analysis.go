@@ -72,7 +72,7 @@ func (c *Controller) SaveAnalysis(analysisEntity *analysis.Analysis) (uuid.UUID,
 	if err != nil {
 		return uuid.Nil, err
 	}
-	if err := c.publishInBroker(analysisDecorated); err != nil {
+	if err := c.publishInBroker(analysisDecorated.ID); err != nil {
 		return uuid.Nil, err
 	}
 	return analysisDecorated.ID, nil
@@ -146,7 +146,12 @@ func (c *Controller) hasDuplicatedHash(
 	return false
 }
 
-func (c *Controller) publishInBroker(analysisEntity *analysis.Analysis) error {
+func (c *Controller) publishInBroker(analysisID uuid.UUID) error {
+	response, err := c.GetAnalysis(analysisID)
+	if err != nil {
+		return err
+	}
+
 	return c.broker.Publish("", exchange.NewAnalysis,
-		exchange.Fanout, analysisEntity.ToBytes())
+		exchange.Fanout, response.ToBytes())
 }
