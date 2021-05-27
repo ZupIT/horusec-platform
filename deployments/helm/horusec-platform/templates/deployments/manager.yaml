@@ -21,13 +21,13 @@ spec:
       containers:
         - env:
           - name: REACT_APP_HORUSEC_ENDPOINT_API
-            value: {{ .Values.components.api.ingress.scheme -}}:\/\/{{- .Values.components.api.ingress.host }}
+            value: {{ template "api.uri.scheme" . -}}:\/\/{{- .Values.components.api.ingress.host }}
           - name: REACT_APP_HORUSEC_ENDPOINT_ANALYTIC
-            value: {{ .Values.components.analytic.ingress.scheme -}}:\/\/{{- .Values.components.analytic.ingress.host }}
+            value: {{ template "analytic.uri.scheme" . -}}:\/\/{{- .Values.components.analytic.ingress.host }}
           - name: REACT_APP_HORUSEC_ENDPOINT_ACCOUNT
-            value: {{ .Values.components.core.ingress.scheme -}}:\/\/{{- .Values.components.core.ingress.host }}
+            value: {{ template "core.uri.scheme" . -}}:\/\/{{- .Values.components.core.ingress.host }}
           - name: REACT_APP_HORUSEC_ENDPOINT_AUTH
-            value: {{ .Values.components.manager.ingress.scheme -}}:\/\/{{- .Values.components.auth.ingress.host }}
+            value: {{ template "auth.uri.scheme" . -}}:\/\/{{- .Values.components.auth.ingress.host }}
           - name: REACT_APP_HORUSEC_MANAGER_PATH
             value: \{{ .Values.components.manager.ingress.path }}
           {{- if eq .Values.components.auth.type "keycloak" }}
