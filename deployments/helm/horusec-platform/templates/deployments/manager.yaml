@@ -24,7 +24,7 @@ spec:
             value: {{ template "api.uri.scheme" . -}}:\/\/{{- .Values.components.api.ingress.host }}
           - name: REACT_APP_HORUSEC_ENDPOINT_ANALYTIC
             value: {{ template "analytic.uri.scheme" . -}}:\/\/{{- .Values.components.analytic.ingress.host }}
-          - name: REACT_APP_HORUSEC_ENDPOINT_ACCOUNT
+          - name: REACT_APP_HORUSEC_ENDPOINT_CORE
             value: {{ template "core.uri.scheme" . -}}:\/\/{{- .Values.components.core.ingress.host }}
           - name: REACT_APP_HORUSEC_ENDPOINT_AUTH
             value: {{ template "auth.uri.scheme" . -}}:\/\/{{- .Values.components.auth.ingress.host }}
