@@ -120,7 +120,7 @@ const VulnerabilitiesByRepository: React.FC<Props> = ({ isLoading, data }) => {
   }, [data]);
 
   return (
-    <div className="block max-space">
+    <div className="block max-space" id="vulnerabilities-by-repository">
       <BarChart
         isLoading={isLoading}
         data={chatData}

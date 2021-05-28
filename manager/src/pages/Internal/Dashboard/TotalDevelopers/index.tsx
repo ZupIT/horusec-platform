@@ -29,7 +29,7 @@ const TotalDevelopers: React.FC<Props> = ({ isLoading, data }) => {
   const { t } = useTranslation();
 
   return (
-    <div className="block half-space">
+    <div className="block half-space" id="total-developers">
       <Counter
         value={data}
         isLoading={isLoading}

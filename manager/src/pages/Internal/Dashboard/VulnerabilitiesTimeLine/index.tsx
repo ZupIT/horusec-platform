@@ -166,7 +166,7 @@ const VulnerabilitiesTimeLine: React.FC<Props> = ({ data, isLoading }) => {
   }, [data]);
 
   return (
-    <div className="block max-space">
+    <div className="block max-space" id="vulnerabilities-timeline">
       <Styled.Wrapper tabIndex={0} aria-label={ariaLabel}>
         <Styled.Title>
           {t('DASHBOARD_SCREEN.VULNERABILITY_TIMELINE')}

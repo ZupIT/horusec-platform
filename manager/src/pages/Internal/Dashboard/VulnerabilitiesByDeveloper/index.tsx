@@ -121,7 +121,7 @@ const VulnerabilitiesByDeveloper: React.FC<Props> = ({ isLoading, data }) => {
   }, [data]);
 
   return (
-    <div className="block max-space">
+    <div className="block max-space" id="vulnerabilities-by-developer">
       <BarChart
         isLoading={isLoading}
         data={chatData}
