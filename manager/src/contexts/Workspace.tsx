@@ -107,7 +107,6 @@ const WorkspaceProvider = ({ children }: { children: JSX.Element }) => {
         }
       })
       .catch((err) => {
-        console.log(err);
         dispatchMessage(err?.response?.data);
         if (redirect) history.replace('/home/add-workspace');
       });

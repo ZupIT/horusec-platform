@@ -263,7 +263,8 @@
       "OF": "of",
       "PAGES": "pages"
     },
-    "NO_OPTIONS": "No options"
+    "NO_OPTIONS": "No options",
+    "LOADING": "LOADING"
   },
   "FOOTER": {
     "DEVELOPED": "Developed",

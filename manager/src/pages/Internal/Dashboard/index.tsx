@@ -35,6 +35,8 @@ import { Menu, MenuItem } from '@material-ui/core';
 import exportFromJSON, { ExportType } from 'export-from-json';
 import { jsPDF } from 'jspdf';
 import * as htmlToImage from 'html-to-image';
+import useFlashMessage from 'helpers/hooks/useFlashMessage';
+import { useTranslation } from 'react-i18next';
 const download = require('downloadjs');
 interface Props {
   type: 'workspace' | 'repository';
@@ -44,7 +46,8 @@ const Dashboard: React.FC<Props> = ({ type }) => {
   const [filters, setFilters] = useState<FilterValues>(null);
   const [dashboardData, setDashboardData] = useState<DashboardData>();
   const [isLoading, setLoading] = useState(false);
-
+  const { showSuccessFlash } = useFlashMessage();
+  const { t } = useTranslation();
   const [
     anchorElExport,
     setAnchorElExport,
@@ -85,6 +88,7 @@ const Dashboard: React.FC<Props> = ({ type }) => {
   }, [filters]);
 
   function downloadExport(exportType: ExportType) {
+    showSuccessFlash(t('GENERAL.LOADING'), 1000);
     let data;
     data = dashboardData;
     if (exportType === 'csv' || exportType === 'xls') {
@@ -93,13 +97,13 @@ const Dashboard: React.FC<Props> = ({ type }) => {
       }
       data = [dashboardData];
     }
-    console.log([dashboardData]);
     const fileName = 'horusec_dashboard_' + new Date().toLocaleString();
     exportFromJSON({ data, fileName, exportType });
   }
 
   function downloadExportPdf(exportType: 'pdf' | 'image') {
-    const printHtml = window.document.getElementById('print');
+    showSuccessFlash(t('GENERAL.LOADING'), 1000);
+    const printHtml = window.document.getElementById('wrapper-graphic');
     const fileName = 'horusec_dashboard_' + new Date().toLocaleString();
     htmlToImage.toJpeg(printHtml).then(function (dataUrl) {
       if (exportType === 'image') {
@@ -114,7 +118,7 @@ const Dashboard: React.FC<Props> = ({ type }) => {
         });
 
         doc.addImage(dataUrl, 'JPEG', 25, 25, 1900, 1150);
-        doc.save(fileName);
+        doc.save(fileName, { returnPromise: true });
       }
     });
   }
@@ -131,31 +135,50 @@ const Dashboard: React.FC<Props> = ({ type }) => {
         <Menu
           id="export-menu"
           anchorEl={anchorElExport}
-          keepMounted
           open={Boolean(anchorElExport)}
           onClose={handleExportClose}
         >
-          <MenuItem onClick={() => downloadExportPdf('image')}>
+          <MenuItem
+            onClick={() => {
+              downloadExportPdf('image');
+              handleExportClose();
+            }}
+          >
             Download JPEG
           </MenuItem>
-          <MenuItem onClick={() => downloadExportPdf('pdf')}>
+          <MenuItem
+            onClick={() => {
+              downloadExportPdf('pdf');
+              handleExportClose();
+            }}
+          >
             Download PDF
           </MenuItem>
-          <MenuItem onClick={() => downloadExport('json')}>
+          <MenuItem
+            onClick={() => {
+              downloadExport('json');
+              handleExportClose();
+            }}
+          >
             Download JSON
           </MenuItem>
-          <MenuItem onClick={() => downloadExport('csv')}>
+          {/* <MenuItem onClick={() => downloadExport('csv')}>
             Download CSV
           </MenuItem>
           <MenuItem onClick={() => downloadExport('xls')}>
             Download XLS
-          </MenuItem>
-          <MenuItem onClick={() => downloadExport('xml')}>
+          </MenuItem> */}
+          <MenuItem
+            onClick={() => {
+              downloadExport('xml');
+              handleExportClose();
+            }}
+          >
             Download XML
           </MenuItem>
         </Menu>
       </Styled.FilterWrapper>
-      <div id="print">
+      <div id="wrapper-graphic">
         <Styled.Row>
           <TotalDevelopers
             isLoading={isLoading}
