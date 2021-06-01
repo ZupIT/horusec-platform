@@ -33,11 +33,8 @@ interface FilterProps {
 const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
   const { t } = useTranslation();
   const { currentWorkspace } = useWorkspace();
-  const {
-    currentRepository,
-    setCurrentRepository,
-    allRepositories,
-  } = useRepository();
+  const { currentRepository, setCurrentRepository, allRepositories } =
+    useRepository();
 
   const formikRef = React.createRef<FormikProps<FilterValues>>();
 
