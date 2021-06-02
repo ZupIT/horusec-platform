@@ -69,8 +69,9 @@ const VulnerabilitiesByRepository: React.FC<Props> = ({ isLoading, data }) => {
 
       setLastLayer(true);
 
-      const data = get(allData, rowKey.toLocaleLowerCase(), { types: [] })
-        ?.types;
+      const data = get(allData, rowKey.toLocaleLowerCase(), {
+        types: [],
+      })?.types;
 
       const formatted = Object.entries(data).map((item) => {
         const legend = item[0].toUpperCase();
