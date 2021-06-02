@@ -178,7 +178,7 @@ const VulnerabilitiesTimeLine: React.FC<Props> = ({ data, isLoading }) => {
 
         <ReactApexChart
           height={250}
-          width="100%"
+          width="95%"
           options={{
             ...options,
             xaxis: { ...options.xaxis, categories: chartData.categories },

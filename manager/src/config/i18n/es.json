@@ -422,7 +422,9 @@
     "CONFIG": "Ajustes",
     "WEBHOOK": "Webhooks",
     "LOGOUT": "Fuera",
-    "MANAGE_WORKSPACES": "Gestionar espacios de trabajo"
+    "MANAGE_WORKSPACES": "Gestionar espacios de trabajo",
+    "MAX_MENU": "Maximizar el menú",
+    "MIN_MENU": "Minimizar el menú"
   },
   "API_ERRORS": {
     "GENERIC_ERROR": "Sucedió algo inesperado, inténtalo de nuevo.",

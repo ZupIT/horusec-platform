@@ -22,7 +22,7 @@ interface ItemProps {
 }
 
 const Wrapper = styled.div`
-  padding-left: 35px;
+  padding-left: 15px;
   position: sticky;
 `;
 

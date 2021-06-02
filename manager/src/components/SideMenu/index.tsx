@@ -17,6 +17,7 @@
 import React, { useState } from 'react';
 import Styled from './styled';
 import HorusecLogo from 'assets/logos/horusec.svg';
+import HorusecLogoMin from 'assets/logos/horusec_minimized.svg';
 import { useTranslation } from 'react-i18next';
 import { Icon } from 'components';
 import { useHistory } from 'react-router-dom';
@@ -24,6 +25,7 @@ import { InternalRoute } from 'helpers/interfaces/InternalRoute';
 import useWorkspace from 'helpers/hooks/useWorkspace';
 import SelectMenu from 'components/SelectMenu';
 import { Workspace } from 'helpers/interfaces/Workspace';
+import ReactTooltip from 'react-tooltip';
 
 const SideMenu: React.FC = () => {
   const history = useHistory();
@@ -33,6 +35,7 @@ const SideMenu: React.FC = () => {
     handleSetCurrentWorkspace,
   } = useWorkspace();
   const { t } = useTranslation();
+  const [isMinimized, setIsMinimized] = useState<boolean>(false);
 
   const routes: InternalRoute[] = [
     {
@@ -81,21 +84,8 @@ const SideMenu: React.FC = () => {
     },
   ];
 
-  const [selectedRoute, setSelectedRoute] = useState<InternalRoute>(routes[0]);
-
   const handleSelectedRoute = (route: InternalRoute) => {
-    if (route.type === 'route') {
-      setSelectedRoute((state) => {
-        if (state && state?.subRoutes && route?.subRoutes) {
-          return null;
-        }
-        return route;
-      });
-
-      history.push(route.path);
-    } else {
-      history.push(route.path);
-    }
+    history.push(route.path);
   };
 
   const renderRoute = (route: InternalRoute, index: number) => {
@@ -111,7 +101,9 @@ const SideMenu: React.FC = () => {
             >
               <Icon name={route.icon} size="15" />
 
-              <Styled.RouteName>{route.name}</Styled.RouteName>
+              <Styled.RouteName isMinimized={isMinimized}>
+                {route.name}
+              </Styled.RouteName>
             </Styled.RouteItem>
 
             <Styled.SubRoutes>
@@ -122,6 +114,7 @@ const SideMenu: React.FC = () => {
                       isActive={window.location.pathname === subRoute.path}
                       key={index}
                       onClick={() => handleSelectedRoute(subRoute)}
+                      isMinimized={isMinimized}
                     >
                       {subRoute?.name}
                     </Styled.SubRouteItem>
@@ -139,16 +132,30 @@ const SideMenu: React.FC = () => {
   const handleSelectedWorkspace = (workspace: Workspace) => {
     handleSetCurrentWorkspace(workspace);
     history.replace('/home/dashboard');
-    setSelectedRoute(null);
   };
 
   return (
     <>
-      <Styled.SideMenu>
-        <Styled.WrapperLogoRoutes>
-          <Styled.Logo src={HorusecLogo} alt="Horusec Logo" />
+      <Styled.SideMenu isMinimized={isMinimized}>
+        <Styled.SizeHandler
+          data-tip={
+            isMinimized ? t('SIDE_MENU.MAX_MENU') : t('SIDE_MENU.MIN_MENU')
+          }
+          onClick={() => setIsMinimized(!isMinimized)}
+        >
+          <Icon
+            name={isMinimized ? 'page-next' : 'page-previous'}
+            size="18px"
+          />
+        </Styled.SizeHandler>
 
-          {allWorkspaces && allWorkspaces.length > 0 ? (
+        <Styled.WrapperLogoRoutes>
+          <Styled.Logo
+            src={isMinimized ? HorusecLogoMin : HorusecLogo}
+            alt="Horusec Logo"
+          />
+
+          {!isMinimized && allWorkspaces && allWorkspaces.length > 0 ? (
             <Styled.SelectWrapper>
               <SelectMenu
                 title={'WORKSPACE'}
@@ -172,6 +179,8 @@ const SideMenu: React.FC = () => {
           </Styled.Nav>
         </Styled.WrapperLogoRoutes>
       </Styled.SideMenu>
+
+      <ReactTooltip />
     </>
   );
 };

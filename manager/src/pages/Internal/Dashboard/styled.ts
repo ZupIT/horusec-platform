@@ -22,7 +22,7 @@ const AriaTitle = styled.h1`
 
 const Wrapper = styled.div`
   width: 100%;
-  padding: 20px 35px 10px 35px;
+  padding: 20px 15px 10px 15px;
   overflow-y: scroll;
 
   ::-webkit-scrollbar {
