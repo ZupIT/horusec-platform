@@ -53,15 +53,8 @@ const VulnerabilitiesDetails: React.FC<Props> = ({ filters }) => {
   const formatDataValues = (data: any[]) => {
     const formattedData: DatatableValue[] = [];
     data.forEach((item) => {
-      const {
-        language,
-        severity,
-        commitEmail,
-        details,
-        file,
-        line,
-        code,
-      } = item;
+      const { language, severity, commitEmail, details, file, line, code } =
+        item;
 
       formattedData.push({
         language,

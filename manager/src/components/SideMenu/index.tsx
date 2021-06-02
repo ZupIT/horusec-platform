@@ -27,11 +27,8 @@ import { Workspace } from 'helpers/interfaces/Workspace';
 
 const SideMenu: React.FC = () => {
   const history = useHistory();
-  const {
-    currentWorkspace,
-    allWorkspaces,
-    handleSetCurrentWorkspace,
-  } = useWorkspace();
+  const { currentWorkspace, allWorkspaces, handleSetCurrentWorkspace } =
+    useWorkspace();
   const { t } = useTranslation();
 
   const routes: InternalRoute[] = [
