@@ -1,3 +1,4 @@
+/* eslint-disable no-sparse-arrays */
 /**
  * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
@@ -30,14 +31,17 @@ import VulnerabilitiesByLanguage from './VulnerabilitiesByLanguage';
 import VulnerabilitiesByRepository from './VulnerabilitiesByRepository';
 import VulnerabilitiesTimeLine from './VulnerabilitiesTimeLine';
 import VulnerabilitiesDetails from './VulnerabilitiesDetails';
+import useFlashMessage from 'helpers/hooks/useFlashMessage';
+import { createReportWS } from 'helpers/formatters/xlsx';
+
 import { Button } from 'components';
 import { Menu, MenuItem } from '@material-ui/core';
 import exportFromJSON, { ExportType } from 'export-from-json';
 import { jsPDF } from 'jspdf';
 import * as htmlToImage from 'html-to-image';
-import useFlashMessage from 'helpers/hooks/useFlashMessage';
 import { useTranslation } from 'react-i18next';
-const download = require('downloadjs');
+import XLSX from 'xlsx';
+import download from 'downloadjs';
 interface Props {
   type: 'workspace' | 'repository';
 }
@@ -90,15 +94,19 @@ const Dashboard: React.FC<Props> = ({ type }) => {
   function downloadExport(exportType: ExportType) {
     showSuccessFlash(t('GENERAL.LOADING'), 1000);
     let data;
-    data = dashboardData;
-    if (exportType === 'csv' || exportType === 'xls') {
-      for (const x of data.vulnerabilitiesByAuthor) {
-        data.vulnerabilitiesByAuthor = [x];
-      }
-      data = [dashboardData];
-    }
     const fileName = 'horusec_dashboard_' + new Date().toLocaleString();
-    exportFromJSON({ data, fileName, exportType });
+
+    if (exportType === 'xls' || exportType === 'csv') {
+      const wb = XLSX.utils.book_new();
+      const ws_data = createReportWS(dashboardData);
+      const ws = XLSX.utils.aoa_to_sheet(ws_data);
+      wb.SheetNames.push('Report');
+      wb.Sheets['Report'] = ws;
+      XLSX.writeFile(wb, fileName + '.' + exportType);
+    } else {
+      data = dashboardData;
+      exportFromJSON({ data, fileName, exportType });
+    }
   }
 
   function downloadExportPdf(exportType: 'pdf' | 'image') {
@@ -131,7 +139,7 @@ const Dashboard: React.FC<Props> = ({ type }) => {
           text="Export"
           style={{ margin: 20 }}
           onClick={handleExportOpen}
-        ></Button>
+        />
         <Menu
           id="export-menu"
           anchorEl={anchorElExport}
@@ -162,12 +170,22 @@ const Dashboard: React.FC<Props> = ({ type }) => {
           >
             Download JSON
           </MenuItem>
-          {/* <MenuItem onClick={() => downloadExport('csv')}>
+          <MenuItem
+            onClick={() => {
+              downloadExport('xls');
+              handleExportClose();
+            }}
+          >
+            Download XLS
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
+              downloadExport('csv');
+              handleExportClose();
+            }}
+          >
             Download CSV
           </MenuItem>
-          <MenuItem onClick={() => downloadExport('xls')}>
-            Download XLS
-          </MenuItem> */}
           <MenuItem
             onClick={() => {
               downloadExport('xml');

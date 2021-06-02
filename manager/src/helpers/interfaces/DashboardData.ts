@@ -26,7 +26,7 @@ interface DashboardDataItem {
   types: DashboardDataTypes;
 }
 
-interface DashboardCriticality {
+export interface DashboardCriticality {
   critical: DashboardDataItem;
   high: DashboardDataItem;
   info: DashboardDataItem;
