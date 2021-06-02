@@ -34,8 +34,9 @@ function PasswordForm() {
   const { t } = useTranslation();
   const { disableEmails } = getCurrentConfig();
   const history = useHistory();
-  const { isLoading, createAccount, successDialogVisible } =
-    useContext(CreateAccountContext);
+  const { isLoading, createAccount, successDialogVisible } = useContext(
+    CreateAccountContext
+  );
 
   const [passValidations, setPassValidations] = useState({
     alpha: false,

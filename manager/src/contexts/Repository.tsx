@@ -42,8 +42,9 @@ const RepositoryContext = React.createContext<RepositoryCtxInterface>({
 const RepositoryProvider = ({ children }: { children: JSX.Element }) => {
   const [currentRepository, setRepository] = useState<Repository>(null);
   const [allRepositories, setAllRepositories] = useState<Repository[]>([]);
-  const [isMemberOfRepository, setIsMemberOfRepository] =
-    useState<boolean>(false);
+  const [isMemberOfRepository, setIsMemberOfRepository] = useState<boolean>(
+    false
+  );
 
   const { dispatchMessage } = useResponseMessage();
   const { currentWorkspace } = useWorkspace();
