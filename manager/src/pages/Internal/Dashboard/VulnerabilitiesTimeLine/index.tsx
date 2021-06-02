@@ -166,28 +166,26 @@ const VulnerabilitiesTimeLine: React.FC<Props> = ({ data, isLoading }) => {
   }, [data]);
 
   return (
-    <div className="block max-space">
-      <Styled.Wrapper tabIndex={0} aria-label={ariaLabel}>
-        <Styled.Title>
-          {t('DASHBOARD_SCREEN.VULNERABILITY_TIMELINE')}
-        </Styled.Title>
+    <Styled.Wrapper tabIndex={0} aria-label={ariaLabel}>
+      <Styled.Title>
+        {t('DASHBOARD_SCREEN.VULNERABILITY_TIMELINE')}
+      </Styled.Title>
 
-        <Styled.LoadingWrapper isLoading={isLoading}>
-          <Icon name="loading" size="200px" className="loading" />
-        </Styled.LoadingWrapper>
+      <Styled.LoadingWrapper isLoading={isLoading}>
+        <Icon name="loading" size="200px" className="loading" />
+      </Styled.LoadingWrapper>
 
-        <ReactApexChart
-          height={250}
-          width="95%"
-          options={{
-            ...options,
-            xaxis: { ...options.xaxis, categories: chartData.categories },
-          }}
-          series={chartData.series}
-          type="line"
-        />
-      </Styled.Wrapper>
-    </div>
+      <ReactApexChart
+        height={250}
+        width="95%"
+        options={{
+          ...options,
+          xaxis: { ...options.xaxis, categories: chartData.categories },
+        }}
+        series={chartData.series}
+        type="line"
+      />
+    </Styled.Wrapper>
   );
 };
 

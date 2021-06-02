@@ -70,54 +70,46 @@ const Dashboard: React.FC<Props> = ({ type }) => {
     <Styled.Wrapper>
       <Filters type={type} onApply={(values) => setFilters(values)} />
 
-      <Styled.Row>
-        <TotalDevelopers
-          isLoading={isLoading}
-          data={dashboardData?.totalAuthors}
-        />
+      <AllVulnerabilities
+        data={dashboardData?.vulnerabilityBySeverity}
+        isLoading={isLoading}
+      />
 
-        {type === 'workspace' ? (
+      <TotalDevelopers
+        isLoading={isLoading}
+        data={dashboardData?.totalAuthors}
+      />
+
+      <VulnerabilitiesByDeveloper
+        isLoading={isLoading}
+        data={dashboardData?.vulnerabilitiesByAuthor}
+      />
+
+      {type === 'workspace' ? (
+        <>
           <TotalRepositories
             data={dashboardData?.totalRepositories}
             isLoading={isLoading}
           />
-        ) : null}
 
-        <AllVulnerabilities
-          data={dashboardData?.vulnerabilityBySeverity}
-          isLoading={isLoading}
-        />
-      </Styled.Row>
-
-      <Styled.Row>
-        <VulnerabilitiesByDeveloper
-          isLoading={isLoading}
-          data={dashboardData?.vulnerabilitiesByAuthor}
-        />
-
-        <VulnerabilitiesByLanguage
-          isLoading={isLoading}
-          data={dashboardData?.vulnerabilitiesByLanguage}
-        />
-
-        {type === 'workspace' ? (
           <VulnerabilitiesByRepository
             isLoading={isLoading}
             data={dashboardData?.vulnerabilitiesByRepository}
           />
-        ) : null}
-      </Styled.Row>
+        </>
+      ) : null}
 
-      <Styled.Row>
-        <VulnerabilitiesTimeLine
-          isLoading={isLoading}
-          data={dashboardData?.vulnerabilityByTime}
-        />
-      </Styled.Row>
+      <VulnerabilitiesByLanguage
+        isLoading={isLoading}
+        data={dashboardData?.vulnerabilitiesByLanguage}
+      />
 
-      <Styled.Row>
-        <VulnerabilitiesDetails filters={filters} />
-      </Styled.Row>
+      <VulnerabilitiesTimeLine
+        isLoading={isLoading}
+        data={dashboardData?.vulnerabilityByTime}
+      />
+
+      <VulnerabilitiesDetails filters={filters} />
     </Styled.Wrapper>
   );
 };

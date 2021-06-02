@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Counter } from 'components';
 import { useTranslation } from 'react-i18next';
-import { FilterValues } from 'helpers/interfaces/FilterValues';
-import analyticService from 'services/analytic';
+import Styled from './styled';
 
 interface Props {
   isLoading: boolean;
@@ -29,13 +28,13 @@ const TotalDevelopers: React.FC<Props> = ({ isLoading, data }) => {
   const { t } = useTranslation();
 
   return (
-    <div className="block half-space">
+    <Styled.Wrapper>
       <Counter
         value={data}
         isLoading={isLoading}
         title={t('DASHBOARD_SCREEN.TOTAL_DEVELOPERS')}
       />
-    </div>
+    </Styled.Wrapper>
   );
 };
 

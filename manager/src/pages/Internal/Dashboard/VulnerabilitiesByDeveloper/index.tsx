@@ -22,6 +22,7 @@ import { get } from 'lodash';
 import { useTheme } from 'styled-components';
 import { VulnerabilitiesByAuthor } from 'helpers/interfaces/DashboardData';
 import { orderBy } from 'lodash';
+import Styled from './styled';
 
 interface Props {
   data: VulnerabilitiesByAuthor[];
@@ -122,7 +123,7 @@ const VulnerabilitiesByDeveloper: React.FC<Props> = ({ isLoading, data }) => {
   }, [data]);
 
   return (
-    <div className="block max-space">
+    <Styled.Wrapper>
       <BarChart
         isLoading={isLoading}
         data={chatData}
@@ -141,7 +142,7 @@ const VulnerabilitiesByDeveloper: React.FC<Props> = ({ isLoading, data }) => {
         onClickBack={() => formatFirstLayer(allData)}
         showBackOption={!!layeredDeveloper}
       />
-    </div>
+    </Styled.Wrapper>
   );
 };
 
