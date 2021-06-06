@@ -6,6 +6,13 @@ metadata:
     app: horusec-manager
   name: horusec
   namespace: {{ .Release.Namespace }}
+  annotations:
+    {{- if .Values.global.ingress.certManager }}
+    kubernetes.io/tls-acme: "true"
+    {{- end }}
+  {{- with .Values.global.ingress.annotations  }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
   rules:
     {{- if .Values.components.analytic.ingress.enabled }}
@@ -70,5 +77,23 @@ spec:
               servicePort: {{ .Values.components.vulnerability.port.http }}
             path: /vulnerability
     {{- end }}
-{{- include "ingress.tls" . | nindent 2 }}
+    {{- if .Values.components.webhook.ingress.enabled }}
+    - host: {{ .Values.components.webhook.ingress.host }}
+      http:
+        paths:
+          - backend:
+              serviceName: webhook
+              servicePort: {{ .Values.components.webhook.port.http }}
+            path: /webhook
+    {{- end }}
+  {{- if .Values.global.ingress.tls }}
+  tls:
+    {{- range .Values.global.ingress.tls}}
+    - hosts:
+        {{- range .hosts }}
+        - {{ . | quote }}
+        {{- end }}
+      secretName: {{ .secretName }}
+    {{- end }}
+  {{- end }}
 {{- end }}

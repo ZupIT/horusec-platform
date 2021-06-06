@@ -20,7 +20,7 @@ components:
         runAsNonRoot: true
         runAsUser: 1000
     database:
-      host: ""
+      host: "postgresql"
       logMode: false
       migration:
         image:
@@ -45,7 +45,6 @@ components:
       enabled: true
       host: analytic.local
       path: /analytic
-      tls: null
     name: analytic
     pod:
       autoscaling:
@@ -80,7 +79,6 @@ components:
       enabled: true
       host: api.local
       path: /api
-      tls: null
     name: api
     pod:
       autoscaling:
@@ -115,7 +113,6 @@ components:
       enabled: true
       host: auth.local
       path: /auth
-      tls: null
     name: auth
     pod:
       autoscaling:
@@ -152,7 +149,6 @@ components:
       enabled: true
       host: core.local
       path: /core
-      tls: null
     name: core
     pod:
       autoscaling:
@@ -187,7 +183,6 @@ components:
       enabled: true
       host: manager.local
       path: /manager
-      tls: null
     name: manager
     pod:
       autoscaling:
@@ -223,9 +218,9 @@ components:
       enabled: true
       host: messages.local
       path: /messages
-      tls: null
     mailServer:
       host: smtp.mailtrap.io
+      from: horusec@zup.com.br
       password:
         secretKeyRef:
           key: password
@@ -269,7 +264,6 @@ components:
       enabled: true
       host: vulnerability.local
       path: /vulnerability
-      tls: null
     name: vulnerability
     pod:
       autoscaling:
@@ -300,6 +294,10 @@ components:
         runAsNonRoot: true
         runAsUser: 1000
     extraEnv: [ ]
+    ingress:
+      enabled: true
+      host: webhook.local
+      path: /webhook
     name: webhook
     pod:
       autoscaling:
@@ -327,7 +325,7 @@ global:
         key: username
         name: horusec-administrator
   broker:
-    host: ""
+    host: "rabbitmq"
     password:
       secretKeyRef:
         key: password
@@ -338,7 +336,7 @@ global:
         key: username
         name: horusec-broker
   database:
-    host: ""
+    host: "postgresql"
     logMode: false
     migration:
       image:
@@ -375,3 +373,32 @@ global:
     otp: false
     publicURL: ""
     realm: horusec
+  ingress:
+    certManager: false
+    annotations: {}
+      # kubernetes.io/ingress.class: "nginx"
+    tls: []
+      # - hosts:
+      #     - analytic.local
+      #   secretName: analytic-tls
+      # - hosts:
+      #     - api-horus.local
+      #   secretName: api-tls
+      # - hosts:
+      #     - auth-horus.local
+      #   secretName: auth-tls
+      # - hosts:
+      #     - core-horus.local
+      #   secretName: core-tls
+      # - hosts:
+      #     - manager-horus.local
+      #   secretName: manager-tls
+      # - hosts:
+      #     - messages-horus.local
+      #   secretName: messages-tls
+      # - hosts:
+      #     - vulnerability-horus.local
+      #   secretName: vulnerability-tls
+      # - hosts:
+      #     - webhook-horus.local
+      #   secretName: webhook-tls

@@ -36,11 +36,13 @@ spec:
               secretKeyRef:
               {{- toYaml .Values.global.broker.password.secretKeyRef | nindent 16 }}
           - name: HORUSEC_SMTP_ADDRESS
-            value: {{ .Values.global.mailServer.host }}
+            value: {{ .Values.components.messages.mailServer.host }}
           - name: HORUSEC_SMTP_HOST
-            value: {{ .Values.global.mailServer.host }}
+            value: {{ .Values.components.messages.mailServer.host }}
           - name: HORUSEC_SMTP_PORT
-            value: {{ .Values.global.mailServer.port | quote }}
+            value: {{ .Values.components.messages.mailServer.port | quote }}
+          - name: HORUSEC_EMAIL_FROM
+            value: {{ .Values.components.messages.mailServer.from | quote }}
           - name: HORUSEC_SMTP_USERNAME
             valueFrom:
               secretKeyRef:
