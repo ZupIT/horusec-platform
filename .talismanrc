@@ -1,0 +1,5 @@
+fileignoreconfig:
+- filename: deployments/helm/horusec-platform/templates/ingresses/horusec.yaml
+  checksum: e531476ef66016d280f7b994ca085af2b407f279fcf214cfb29f240c4c732558
+- filename: deployments/helm/horusec-platform/values.yaml
+  checksum: f9aeb03c60c81dcb53b4694d480b8b7748b63a7a751204e70ef3987d18b32648

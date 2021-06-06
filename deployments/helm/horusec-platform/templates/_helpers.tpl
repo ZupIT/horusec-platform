@@ -56,6 +56,28 @@ Return the proper Horusec Auth URI scheme
 {{- end -}}
 
 {{/*
+Return the proper Horusec Vulnerability URI scheme
+*/}}
+{{- define "vulnerability.uri.scheme" -}}
+{{- if .Values.components.vulnerability.ingress.tls -}}
+{{- "https" -}}
+{{- else -}}
+{{- "http" -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return the proper Horusec Webhook URI scheme
+*/}}
+{{- define "webhook.uri.scheme" -}}
+{{- if .Values.components.webhook.ingress.tls -}}
+{{- "https" -}}
+{{- else -}}
+{{- "http" -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
 Return the proper Horusec Auth image name
 */}}
 {{- define "auth.image" -}}
