@@ -14,35 +14,12 @@
  * limitations under the License.
  */
 
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 
-interface LoadingWrapperProps {
-  isLoading: boolean;
-}
-
-const Wrapper = styled.section`
-  padding: 35px 15px;
+const Wrapper = styled.div`
   width: 100%;
+  height: auto;
+  grid-area: totalRepositories;
 `;
 
-const Options = styled.div`
-  background-color: ${({ theme }) => theme.colors.background.secundary};
-  border-radius: 4px;
-  padding: 22px;
-  display: flex;
-  align-items: center;
-`;
-
-const Content = styled.div`
-  margin-top: 25px;
-  padding: 25px 15px 10px 25px;
-  background-color: ${({ theme }) => theme.colors.background.secundary};
-  border-radius: 4px;
-  position: relative;
-`;
-
-export default {
-  Wrapper,
-  Options,
-  Content,
-};
+export default { Wrapper };

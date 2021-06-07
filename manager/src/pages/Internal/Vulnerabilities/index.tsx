@@ -411,16 +411,6 @@ const Vulnerabilities: React.FC = () => {
           ]}
           columns={[
             {
-              label: t('VULNERABILITIES_SCREEN.TABLE.HASH'),
-              property: 'hash',
-              type: 'text',
-            },
-            {
-              label: t('VULNERABILITIES_SCREEN.TABLE.DESCRIPTION'),
-              property: 'description',
-              type: 'text',
-            },
-            {
               label: t('VULNERABILITIES_SCREEN.TABLE.SEVERITY'),
               property: 'severity',
               type: 'custom',
@@ -430,6 +420,11 @@ const Vulnerabilities: React.FC = () => {
               label: t('VULNERABILITIES_SCREEN.TABLE.STATUS'),
               property: 'status',
               type: 'custom',
+            },
+            {
+              label: t('VULNERABILITIES_SCREEN.TABLE.HASH'),
+              property: 'hash',
+              type: 'text',
             },
             {
               label: t('VULNERABILITIES_SCREEN.TABLE.DETAILS'),

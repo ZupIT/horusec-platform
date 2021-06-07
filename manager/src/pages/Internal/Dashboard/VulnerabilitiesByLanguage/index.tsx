@@ -21,6 +21,7 @@ import { BarChart } from 'components';
 import { get, orderBy } from 'lodash';
 import { useTheme } from 'styled-components';
 import { VulnerabilitiesByLanguageData } from 'helpers/interfaces/DashboardData';
+import Styled from './styled';
 
 interface Props {
   data: VulnerabilitiesByLanguageData[];
@@ -129,7 +130,7 @@ const VulnerabilitiesByDeveloper: React.FC<Props> = ({ isLoading, data }) => {
   }, [data]);
 
   return (
-    <div className="block max-space">
+    <Styled.Wrapper>
       <BarChart
         hasSmallLegend
         isLoading={isLoading}
@@ -149,7 +150,7 @@ const VulnerabilitiesByDeveloper: React.FC<Props> = ({ isLoading, data }) => {
         onClickBack={() => formatFirstLayer(allData)}
         showBackOption={!!layeredLanguage}
       />
-    </div>
+    </Styled.Wrapper>
   );
 };
 
