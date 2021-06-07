@@ -45,6 +45,8 @@ components:
       enabled: true
       host: analytic.local
       path: /analytic
+      # tls:
+      #   secretName: analytic-tls
     name: analytic
     pod:
       autoscaling:
@@ -79,6 +81,8 @@ components:
       enabled: true
       host: api.local
       path: /api
+      # tls:
+      #   secretName: api-tls
     name: api
     pod:
       autoscaling:
@@ -113,6 +117,8 @@ components:
       enabled: true
       host: auth.local
       path: /auth
+      # tls:
+      #   secretName: auth-tls
     name: auth
     pod:
       autoscaling:
@@ -149,6 +155,8 @@ components:
       enabled: true
       host: core.local
       path: /core
+      # tls:
+      #   secretName: core-tls
     name: core
     pod:
       autoscaling:
@@ -183,6 +191,8 @@ components:
       enabled: true
       host: manager.local
       path: /manager
+      # tls:
+      #   secretName: manager-tls
     name: manager
     pod:
       autoscaling:
@@ -218,6 +228,8 @@ components:
       enabled: true
       host: messages.local
       path: /messages
+      # tls:
+      #   secretName: messages-tls
     mailServer:
       host: smtp.mailtrap.io
       from: horusec@zup.com.br
@@ -264,6 +276,8 @@ components:
       enabled: true
       host: vulnerability.local
       path: /vulnerability
+      # tls:
+      #   secretName: vulnerability-tls
     name: vulnerability
     pod:
       autoscaling:
@@ -298,6 +312,8 @@ components:
       enabled: true
       host: webhook.local
       path: /webhook
+      # tls:
+      #   secretName: webhook-tls
     name: webhook
     pod:
       autoscaling:
@@ -374,31 +390,6 @@ global:
     publicURL: ""
     realm: horusec
   ingress:
-    certManager: false
+    certManager: true
     annotations: {}
       # kubernetes.io/ingress.class: "nginx"
-    tls: []
-      # - hosts:
-      #     - analytic.local
-      #   secretName: analytic-tls
-      # - hosts:
-      #     - api-horus.local
-      #   secretName: api-tls
-      # - hosts:
-      #     - auth-horus.local
-      #   secretName: auth-tls
-      # - hosts:
-      #     - core-horus.local
-      #   secretName: core-tls
-      # - hosts:
-      #     - manager-horus.local
-      #   secretName: manager-tls
-      # - hosts:
-      #     - messages-horus.local
-      #   secretName: messages-tls
-      # - hosts:
-      #     - vulnerability-horus.local
-      #   secretName: vulnerability-tls
-      # - hosts:
-      #     - webhook-horus.local
-      #   secretName: webhook-tls
