@@ -161,6 +161,7 @@ export default {
       row: {
         text: '#F4F4FA',
         background: '#3A3A3C',
+        backgroundHighlight: '#171717',
       },
     },
 

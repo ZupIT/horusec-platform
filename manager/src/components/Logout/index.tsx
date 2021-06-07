@@ -17,7 +17,6 @@
 import React from 'react';
 import Styled from './styled';
 import useAuth from 'helpers/hooks/useAuth';
-import ReactTooltip from 'react-tooltip';
 import { useTranslation } from 'react-i18next';
 import { getRefreshToken } from 'helpers/localStorage/tokens';
 
@@ -27,10 +26,13 @@ const Logout: React.FC = () => {
   const refreshToken = getRefreshToken();
 
   return (
-    <Styled.Button onClick={() => logout(refreshToken)}>
+    <Styled.Button
+      aria-label={t('HEADER.ARIA.LOGOUT')}
+      tabIndex={0}
+      onClick={() => logout(refreshToken)}
+    >
       <Styled.LogoutIcon
         size="16px"
-        tabIndex={0}
         ariaLabel={t('SIDE_MENU.LOGOUT')}
         name="logout"
       />

@@ -1,3 +1,4 @@
+/* eslint-disable no-sparse-arrays */
 /**
  * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
@@ -18,7 +19,6 @@ import React, { useEffect, useState } from 'react';
 import Styled from './styled';
 import Filters from './Filters';
 import { FilterValues } from 'helpers/interfaces/FilterValues';
-import { useTranslation } from 'react-i18next';
 import { DashboardData } from 'helpers/interfaces/DashboardData';
 import analyticService from 'services/analytic';
 import { AxiosResponse } from 'axios';
@@ -31,6 +31,17 @@ import VulnerabilitiesByLanguage from './VulnerabilitiesByLanguage';
 import VulnerabilitiesByRepository from './VulnerabilitiesByRepository';
 import VulnerabilitiesTimeLine from './VulnerabilitiesTimeLine';
 import VulnerabilitiesDetails from './VulnerabilitiesDetails';
+import useFlashMessage from 'helpers/hooks/useFlashMessage';
+import { createReportWorkSheet } from 'helpers/formatters/xlsx';
+
+import { Button } from 'components';
+import { Menu, MenuItem } from '@material-ui/core';
+import exportFromJSON, { ExportType } from 'export-from-json';
+import { jsPDF } from 'jspdf';
+import * as htmlToImage from 'html-to-image';
+import { useTranslation } from 'react-i18next';
+import XLSX from 'xlsx';
+import download from 'downloadjs';
 
 interface Props {
   type: 'workspace' | 'repository';
@@ -40,8 +51,18 @@ const Dashboard: React.FC<Props> = ({ type }) => {
   const [filters, setFilters] = useState<FilterValues>(null);
   const [dashboardData, setDashboardData] = useState<DashboardData>();
   const [isLoading, setLoading] = useState(false);
-
+  const { showSuccessFlash } = useFlashMessage();
   const { t } = useTranslation();
+  const [anchorElExport, setAnchorElExport] =
+    React.useState<null | HTMLElement>(null);
+
+  const handleExportOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorElExport(event.currentTarget);
+  };
+
+  const handleExportClose = () => {
+    setAnchorElExport(null);
+  };
 
   useEffect(() => {
     let isCancelled = false;
@@ -69,64 +90,157 @@ const Dashboard: React.FC<Props> = ({ type }) => {
     };
   }, [filters]);
 
+  function downloadExport(exportType: ExportType) {
+    showSuccessFlash(t('GENERAL.LOADING'), 1000);
+    const fileName = 'horusec_dashboard_' + new Date().toLocaleString();
+
+    if (exportType === 'xls' || exportType === 'csv') {
+      const workbook = XLSX.utils.book_new();
+      const workSheetData = createReportWorkSheet(dashboardData);
+      const workSheet = XLSX.utils.aoa_to_sheet(workSheetData);
+      workbook.SheetNames.push('Report');
+      workbook.Sheets['Report'] = workSheet;
+      XLSX.writeFile(workbook, fileName + '.' + exportType);
+    } else {
+      exportFromJSON({ data: dashboardData, fileName, exportType });
+    }
+  }
+
+  function downloadExportPdf(exportType: 'pdf' | 'image') {
+    showSuccessFlash(t('GENERAL.LOADING'), 1000);
+    const printHtml = window.document.getElementById('wrapper-graphic');
+    const fileName = 'horusec_dashboard_' + new Date().toLocaleString();
+    const imgHeight = 1505;
+    const imgWidth = 1755;
+    htmlToImage
+      .toJpeg(printHtml, {
+        height: imgHeight,
+        width: imgWidth,
+      })
+      .then(function (dataUrl) {
+        if (exportType === 'image') {
+          download(dataUrl, fileName);
+        }
+
+        if (exportType === 'pdf') {
+          const doc = new jsPDF({
+            orientation: 'landscape',
+            format: [imgWidth, imgHeight],
+            unit: 'px',
+          });
+
+          doc.addImage(dataUrl, 'JPEG', 25, 25, imgWidth - 50, imgHeight - 50);
+          doc.save(fileName, { returnPromise: true });
+        }
+      });
+  }
+
   return (
-    <Styled.Wrapper>
-      <Styled.AriaTitle>
-        {type === 'workspace'
-          ? t('DASHBOARD_SCREEN.ARIA_TITLE_WORKSPACE')
-          : t('DASHBOARD_SCREEN.ARIA_TITLE_REPOSITORY')}
-      </Styled.AriaTitle>
-
-      <Filters type={type} onApply={(values) => setFilters(values)} />
-
-      <Styled.Row>
-        <TotalDevelopers
-          isLoading={isLoading}
-          data={dashboardData?.totalAuthors}
+    <Styled.Wrapper id="wrapper-graphic">
+      <Styled.FilterWrapper>
+        <Filters type={type} onApply={(values) => setFilters(values)} />
+        <Button
+          text="Export"
+          style={{ margin: 20 }}
+          onClick={handleExportOpen}
         />
+        <Menu
+          id="export-menu"
+          anchorEl={anchorElExport}
+          open={Boolean(anchorElExport)}
+          onClose={handleExportClose}
+        >
+          <MenuItem
+            onClick={() => {
+              downloadExportPdf('image');
+              handleExportClose();
+            }}
+          >
+            Download JPEG
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
+              downloadExportPdf('pdf');
+              handleExportClose();
+            }}
+          >
+            Download PDF
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
+              downloadExport('json');
+              handleExportClose();
+            }}
+          >
+            Download JSON
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
+              downloadExport('xls');
+              handleExportClose();
+            }}
+          >
+            Download XLS
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
+              downloadExport('csv');
+              handleExportClose();
+            }}
+          >
+            Download CSV
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
+              downloadExport('xml');
+              handleExportClose();
+            }}
+          >
+            Download XML
+          </MenuItem>
+        </Menu>
+      </Styled.FilterWrapper>
 
-        {type === 'workspace' ? (
+      <AllVulnerabilities
+        data={dashboardData?.vulnerabilityBySeverity}
+        isLoading={isLoading}
+      />
+
+      <TotalDevelopers
+        isLoading={isLoading}
+        data={dashboardData?.totalAuthors}
+      />
+
+      <VulnerabilitiesByDeveloper
+        isLoading={isLoading}
+        data={dashboardData?.vulnerabilitiesByAuthor}
+      />
+
+      {type === 'workspace' ? (
+        <>
           <TotalRepositories
             data={dashboardData?.totalRepositories}
             isLoading={isLoading}
           />
-        ) : null}
 
-        <AllVulnerabilities
-          data={dashboardData?.vulnerabilityBySeverity}
-          isLoading={isLoading}
-        />
-      </Styled.Row>
-
-      <Styled.Row>
-        <VulnerabilitiesByDeveloper
-          isLoading={isLoading}
-          data={dashboardData?.vulnerabilitiesByAuthor}
-        />
-
-        <VulnerabilitiesByLanguage
-          isLoading={isLoading}
-          data={dashboardData?.vulnerabilitiesByLanguage}
-        />
-
-        {type === 'workspace' ? (
           <VulnerabilitiesByRepository
             isLoading={isLoading}
             data={dashboardData?.vulnerabilitiesByRepository}
           />
-        ) : null}
-      </Styled.Row>
+        </>
+      ) : null}
 
-      <Styled.Row>
-        <VulnerabilitiesTimeLine
-          isLoading={isLoading}
-          data={dashboardData?.vulnerabilityByTime}
-        />
-      </Styled.Row>
+      <VulnerabilitiesByLanguage
+        isLoading={isLoading}
+        data={dashboardData?.vulnerabilitiesByLanguage}
+      />
 
-      <Styled.Row>
-        <VulnerabilitiesDetails filters={filters} />
-      </Styled.Row>
+      <VulnerabilitiesTimeLine
+        isLoading={isLoading}
+        data={dashboardData?.vulnerabilityByTime}
+      />
+
+      <VulnerabilitiesDetails filters={filters} />
     </Styled.Wrapper>
   );
 };

@@ -128,7 +128,6 @@
     "GROUP_NAME": "Nombre del grupo",
     "EMAIL": "Correo electrónico",
     "INVALID_EMAIL_ADMIN": "¡Email inválido!",
-
     "USERS": {
       "TITLE": "Usuarios del espacio de trabajo",
       "SEARCH": "Buscar por correo electrónico",
@@ -165,6 +164,12 @@
   "DASHBOARD_SCREEN": {
     "ARIA_TITLE_WORKSPACE": "Pantalla de presentación de gráficos para el espacio de trabajo",
     "ARIA_TITLE_REPOSITORY": "Pantalla de presentación de gráficos para el repositorio",
+    "ARIA_CHART_COUNT": "Marco con {{title}} Informando la cantidad de: {{value}}.",
+    "ARIA_CHART_BAR": "{{title}} gráfico en forma de barras en dirección {{direction}}, con la siguiente información:",
+    "ARIA_CHART_BAR_ITEM": "{{legend}} con la cantidad de {{value}}",
+    "ARIA_CHART_TIMELINE": "Tabla de línea de tiempo de vulnerabilidad, los últimos datos son:",
+    "ARIA_CHART_TIMELINE_ITEM": "{{legend}} fueron encontrados {{value}} vulnerabilidades",
+    "ARIA_FILTER": "Filtro para datos del panel de control.",
     "START_DATE": "Fecha de inicio",
     "FINAL_DATE": "Fecha de finalización",
     "PERIOD": "Periodo",
@@ -260,7 +265,8 @@
       "OF": "de",
       "PAGES": "páginas"
     },
-    "NO_OPTIONS": "Sin opciones"
+    "NO_OPTIONS": "Sin opciones",
+    "LOADING": "CARGANDO"
   },
   "FOOTER": {
     "DEVELOPED": "Desarrollado",
@@ -334,7 +340,8 @@
       "SEVERITY": "Gravedad",
       "DETAILS": "Detalles",
       "CONFIDENCE": "Confidencialidad"
-    }
+    },
+    "UPDATE_VULNERABILITY": "Actualizar vulnerabilidades"
   },
   "WEBHOOK_SCREEN": {
     "TITLE": "Webhooks",
@@ -416,7 +423,9 @@
     "CONFIG": "Ajustes",
     "WEBHOOK": "Webhooks",
     "LOGOUT": "Fuera",
-    "MANAGE_WORKSPACES": "Gestionar espacios de trabajo"
+    "MANAGE_WORKSPACES": "Gestionar espacios de trabajo",
+    "MAX_MENU": "Maximizar el menú",
+    "MIN_MENU": "Minimizar el menú"
   },
   "API_ERRORS": {
     "GENERIC_ERROR": "Sucedió algo inesperado, inténtalo de nuevo.",
@@ -456,6 +465,17 @@
       "HELPER": "Ayudar",
       "WORKSPACES": "Espacios de trabajo",
       "DEFAULT": "Horusec"
+    },
+    "ARIA": {
+      "LOGOUT": "Cerrar sesión",
+      "HELP": "Enlace a la página de la página actual",
+      "CONFIG": "Ir a la pantalla de configuración",
+      "VULNERABILITIES": "Pantalla para la gestión de vulnerabilidad.",
+      "REPOSITORIES": "Pantalla para gestionar los repositorios.",
+      "WEBHOOKS": "Pantalla de manipulación de webhook.",
+      "CONFIGURATION": "Pantalla de configuración",
+      "WORKSPACES": "Pantalla para gestionar los espacios de trabajo.",
+      "ADD_WORKSPACE": "Pantalla para la redirección para crear un espacio de trabajo."
     }
   }
 }

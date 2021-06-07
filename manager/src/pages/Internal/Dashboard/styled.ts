@@ -22,8 +22,24 @@ const AriaTitle = styled.h1`
 
 const Wrapper = styled.div`
   width: 100%;
-  padding: 20px 35px 10px 35px;
+  padding: 20px 15px 10px 15px;
   overflow-y: scroll;
+
+  display: grid;
+
+  column-gap: 10px;
+  row-gap: 15px;
+
+  grid-template-columns: 1fr 3fr;
+
+  grid-template-areas:
+    'filters filters'
+    'allVul allVul'
+    'totalDevelopers vulByDeveloper'
+    'totalRepositories vulByRepository'
+    'vulByLanguage vulByLanguage'
+    'vulTimeline vulTimeline'
+    'vulDetails vulDetails';
 
   ::-webkit-scrollbar {
     width: 10px;
@@ -39,23 +55,14 @@ const Wrapper = styled.div`
   }
 `;
 
-const Row = styled.div`
+const FilterWrapper = styled.div`
   display: flex;
-  margin: 30px 0;
-
-  div.block {
-    &:not(:last-of-type) {
-      margin-right: 20px;
-    }
-  }
-
-  div.max-space {
-    width: 100%;
-  }
-
-  div.half-space {
-    width: 40%;
-  }
+  flex-wrap: nowrap;
+  align-items: center;
+  align-content: center;
+  background-color: ${({ theme }) => theme.colors.background.secundary};
+  border-radius: 4px;
+  grid-area: filters;
 `;
 
-export default { Wrapper, Row, AriaTitle };
+export default { Wrapper, AriaTitle, FilterWrapper };

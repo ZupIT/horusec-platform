@@ -162,6 +162,12 @@
   "DASHBOARD_SCREEN": {
     "ARIA_TITLE_WORKSPACE": "Graphics presentation screen for the workspace",
     "ARIA_TITLE_REPOSITORY": "Graphics presentation screen for the repository",
+    "ARIA_CHART_COUNT": "Frame with {{title}} informing the amount of: {{value}}.",
+    "ARIA_CHART_BAR": "{{title}} chart in the form of bars in direction {{direction}}, with the following information:",
+    "ARIA_CHART_BAR_ITEM": "{{legend}} with the amount of {{value}}",
+    "ARIA_CHART_TIMELINE": "Vulnerability Time Line Chart, the latest data are:",
+    "ARIA_CHART_TIMELINE_ITEM": "{{legend}} were found {{value}} vulnerabilities",
+    "ARIA_FILTER": "Filter for dashboard data.",
     "START_DATE": "Start date",
     "FINAL_DATE": "Final date",
     "PERIOD": "Period",
@@ -257,7 +263,8 @@
       "OF": "of",
       "PAGES": "pages"
     },
-    "NO_OPTIONS": "No options"
+    "NO_OPTIONS": "No options",
+    "LOADING": "LOADING"
   },
   "FOOTER": {
     "DEVELOPED": "Developed",
@@ -331,7 +338,8 @@
       "SEVERITY": "Severity",
       "DETAILS": "Details",
       "CONFIDENCE": "Confidence"
-    }
+    },
+    "UPDATE_VULNERABILITY": "Update Vulnerabilities"
   },
   "WEBHOOK_SCREEN": {
     "TITLE": "Webhooks",
@@ -413,7 +421,9 @@
     "CONFIG": "Settings",
     "WEBHOOK": "Webhooks",
     "LOGOUT": "Logout",
-    "MANAGE_WORKSPACES": "Manage Workspaces"
+    "MANAGE_WORKSPACES": "Manage Workspaces",
+    "MAX_MENU": "Maximize the menu",
+    "MIN_MENU": "Minimize the menu"
   },
   "API_ERRORS": {
     "GENERIC_ERROR": "Something unexpected happened, try again.",
@@ -453,6 +463,17 @@
       "HELPER": "Helper",
       "WORKSPACES": "Workspaces",
       "DEFAULT": "Horusec"
+    },
+    "ARIA": {
+      "LOGOUT": "Logout",
+      "HELP": "Link to current page help",
+      "CONFIG": "Go to Settings Screen",
+      "VULNERABILITIES": "Screen for vulnerability management.",
+      "REPOSITORIES": "Screen to manage repositories.",
+      "WEBHOOKS": "Webhooks manipulation screen.",
+      "CONFIGURATION": "Settings screen",
+      "WORKSPACES": "Screen to manage the workspaces.",
+      "ADD_WORKSPACE": "Screen for redirection for creating a workspace."
     }
   }
 }

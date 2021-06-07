@@ -24,6 +24,10 @@ import { Icon } from 'components';
 import { ChartBarStacked } from 'helpers/interfaces/ChartData';
 import { VulnerabilityByTime } from 'helpers/interfaces/DashboardData';
 import { formatChartStacked } from 'helpers/formatters/chartData';
+import { format } from 'date-fns';
+import { get, orderBy } from 'lodash';
+import { ptBR, enUS, es } from 'date-fns/locale';
+import useLanguage from 'helpers/hooks/useLanguage';
 
 interface Props {
   data: VulnerabilityByTime[];
@@ -33,7 +37,9 @@ interface Props {
 const VulnerabilitiesTimeLine: React.FC<Props> = ({ data, isLoading }) => {
   const { t } = useTranslation();
   const { colors, metrics } = useTheme();
+  const { currentLanguage } = useLanguage();
 
+  const [ariaLabel, setAriaLabel] = useState<string>('');
   const [chartData, setChartData] = useState<ChartBarStacked>(
     formatChartStacked(data, 'time', true)
   );
@@ -114,33 +120,76 @@ const VulnerabilitiesTimeLine: React.FC<Props> = ({ data, isLoading }) => {
     },
   };
 
+  const makeAriaLabel = () => {
+    if (data) {
+      let ariaText = t('DASHBOARD_SCREEN.ARIA_CHART_TIMELINE');
+      const listOfData = orderBy(data, (item) => item.time, 'desc');
+
+      const locale = get(
+        {
+          es,
+          ptBR,
+          enUS,
+        },
+        currentLanguage.i18nValue,
+        enUS
+      );
+
+      listOfData.forEach((item, index) => {
+        if (index <= 2) {
+          const legend = format(new Date(item.time), 'PPP', { locale });
+          const value =
+            item.critical.count +
+            item.high.count +
+            item.medium.count +
+            item.low.count +
+            item.info.count +
+            item.unknown.count;
+
+          ariaText =
+            ariaText +
+            `, ${t('DASHBOARD_SCREEN.ARIA_CHART_TIMELINE_ITEM', {
+              legend,
+              value,
+            })}`;
+        }
+      });
+
+      setAriaLabel(`${ariaText}.`);
+    }
+  };
+
   useEffect(() => {
     setChartData(formatChartStacked(data, 'time', true));
+    makeAriaLabel();
+    // eslint-disable-next-line
   }, [data]);
 
   return (
-    <div className="block max-space">
-      <Styled.Wrapper tabIndex={0}>
-        <Styled.Title>
-          {t('DASHBOARD_SCREEN.VULNERABILITY_TIMELINE')}
-        </Styled.Title>
+    <Styled.Wrapper
+      tabIndex={0}
+      aria-label={ariaLabel}
+      id="vulnerabilities-timeline"
+    >
+      <Styled.Title>
+        {t('DASHBOARD_SCREEN.VULNERABILITY_TIMELINE')}
+      </Styled.Title>
 
-        <Styled.LoadingWrapper isLoading={isLoading}>
-          <Icon name="loading" size="200px" className="loading" />
-        </Styled.LoadingWrapper>
+      <Styled.LoadingWrapper isLoading={isLoading}>
+        <Icon name="loading" size="200px" className="loading" />
+      </Styled.LoadingWrapper>
 
-        <ReactApexChart
-          height={250}
-          width="100%"
-          options={{
-            ...options,
-            xaxis: { ...options.xaxis, categories: chartData.categories },
-          }}
-          series={chartData.series}
-          type="line"
-        />
-      </Styled.Wrapper>
-    </div>
+      <ReactApexChart
+        height={250}
+        width="95%"
+        options={{
+          ...options,
+          xaxis: { ...options.xaxis, categories: chartData.categories },
+        }}
+        series={chartData.series}
+        type="line"
+      />
+    </Styled.Wrapper>
   );
 };
 

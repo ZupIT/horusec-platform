@@ -148,7 +148,10 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
       }}
     >
       {(props) => (
-        <Styled.Container>
+        <Styled.Container
+          tabIndex={0}
+          aria-label={t('DASHBOARD_SCREEN.ARIA_FILTER')}
+        >
           <Styled.Wrapper>
             <SearchSelect
               name="period"

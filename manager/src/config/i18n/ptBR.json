@@ -142,7 +142,7 @@
       "YES": "Sim",
       "SAVE": "Salvar",
       "TABLE": {
-        "EMPTY": "Não há usuarios correspondentes para este workspace",
+        "EMPTY": "Não há usuários correspondentes para este workspace",
         "USER": "Usuário",
         "EMAIL": "Email",
         "PERMISSION": "Permissão",
@@ -164,6 +164,12 @@
   "DASHBOARD_SCREEN": {
     "ARIA_TITLE_WORKSPACE": "Tela de apresentação de gráficos referentes ao workspace",
     "ARIA_TITLE_REPOSITORY": "Tela de apresentação de gráficos referentes ao repositório",
+    "ARIA_CHART_COUNT": "Quadro com o {{title}} informando a quantidade de: {{value}}.",
+    "ARIA_CHART_BAR": "Gráfico de {{title}} em forma de barras na direção {{direction}}, com as seguintes informações: ",
+    "ARIA_CHART_BAR_ITEM": "{{legend}} com a quantidade de {{value}}",
+    "ARIA_CHART_TIMELINE": "Gráfico em forma de linha do tempo de vulnerabilidades, os mais recentes dados são: ",
+    "ARIA_CHART_TIMELINE_ITEM": "{{legend}} foram encontradas {{value}} vulnerabilidades",
+    "ARIA_FILTER": "Filtro para os dados do dashboard.",
     "START_DATE": "Data de início",
     "FINAL_DATE": "Data final",
     "PERIOD": "Período",
@@ -259,7 +265,8 @@
       "OF": "de",
       "PAGES": "páginas"
     },
-    "NO_OPTIONS": "Sem opções"
+    "NO_OPTIONS": "Sem opções",
+    "LOADING": "CARREGANDO"
   },
   "FOOTER": {
     "DEVELOPED": "Desenvolvido",
@@ -308,7 +315,7 @@
     "STATUS_TITLE": "Status",
     "SUCCESS_UPDATE": "Status da vulnerabilidade alterada com sucesso!",
     "TABLE": {
-      "EMPTY": "Não há vulnerabilidades para este repositorio",
+      "EMPTY": "Não há vulnerabilidades para este repositório",
       "HASH": "Hash",
       "DETAILS": "Detalhes",
       "SEVERITY": "Severidade",
@@ -333,7 +340,8 @@
       "SEVERITY": "Severidade",
       "DETAILS": "Detalhes",
       "CONFIDENCE": "Confidência"
-    }
+    },
+    "UPDATE_VULNERABILITY": "Atualizar Vulnerabilidades"
   },
   "WEBHOOK_SCREEN": {
     "TITLE": "Webhooks",
@@ -415,7 +423,9 @@
     "CONFIG": "Configurações",
     "WEBHOOK": "Webhooks",
     "LOGOUT": "Sair",
-    "MANAGE_WORKSPACES": "Gerenciar Workspaces"
+    "MANAGE_WORKSPACES": "Gerenciar Workspaces",
+    "MAX_MENU": "Maximizar o menu",
+    "MIN_MENU": "Minimizar o menu"
   },
   "API_ERRORS": {
     "GENERIC_ERROR": "Algo inesperado aconteceu, tente novamente.",
@@ -455,6 +465,17 @@
       "HELPER": "Ajuda",
       "WORKSPACES": "Workspaces",
       "DEFAULT": "Horusec"
+    },
+    "ARIA": {
+      "LOGOUT": "Realizar logout",
+      "HELP": "Link para ajuda da pagina atual",
+      "CONFIG": "Ir para tela de configurações",
+      "VULNERABILITIES": "Tela para gestão de vulnerabilidades.",
+      "REPOSITORIES": "Tela para gerenciar os repositórios.",
+      "WEBHOOKS": "Tela de manipulação de webhooks.",
+      "CONFIGURATION": "Tela de configurações",
+      "WORKSPACES": "Tela para gerenciar os workspaces.",
+      "ADD_WORKSPACE": "Tela para redirecionamento para criação de um workspace."
     }
   }
 }

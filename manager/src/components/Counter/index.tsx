@@ -37,7 +37,10 @@ const Counter: React.FC<CounterProps> = ({ title, value, isLoading }) => {
   };
 
   return (
-    <Styled.Wrapper tabIndex={0}>
+    <Styled.Wrapper
+      tabIndex={0}
+      aria-label={t('DASHBOARD_SCREEN.ARIA_CHART_COUNT', { title, value })}
+    >
       <Styled.Title tabIndex={-1}>{title}</Styled.Title>
 
       <Styled.Container>

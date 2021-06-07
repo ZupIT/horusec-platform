@@ -15,7 +15,7 @@
  */
 
 import { Icon } from 'components';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 const Wrapper = styled.section`
   max-height: 56vh;
@@ -97,8 +97,14 @@ const Cell = styled.td`
   }
 `;
 
-const Row = styled.tr`
+const Row = styled.tr<{ highlight?: boolean }>`
   background-color: ${({ theme }) => theme.colors.dataTable.row.background};
+  ${(props) =>
+    props.highlight && typeof props.highlight !== 'undefined'
+      ? css`
+          background-color: #585858;
+        `
+      : null}
   margin-bottom: 4px;
   border-radius: 4px;
   padding: 10px 20px;
@@ -140,6 +146,17 @@ const ButtonIcon = styled(Icon)`
   }
 `;
 
+const ButtonWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-content: center;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 20px;
+`;
+
 export default {
   Wrapper,
   Content,
@@ -153,4 +170,5 @@ export default {
   EmptyText,
   LoadingWrapper,
   ButtonIcon,
+  ButtonWrapper,
 };

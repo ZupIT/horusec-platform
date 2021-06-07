@@ -21,6 +21,7 @@ import { BarChart } from 'components';
 import { get, orderBy } from 'lodash';
 import { useTheme } from 'styled-components';
 import { VulnerabilitiesByRepository as VulnerabilitiesByRepositoryData } from 'helpers/interfaces/DashboardData';
+import Styled from './styled';
 
 interface Props {
   data: VulnerabilitiesByRepositoryData[];
@@ -121,7 +122,7 @@ const VulnerabilitiesByRepository: React.FC<Props> = ({ isLoading, data }) => {
   }, [data]);
 
   return (
-    <div className="block max-space">
+    <Styled.Wrapper id="vulnerabilities-by-repository">
       <BarChart
         isLoading={isLoading}
         data={chatData}
@@ -140,7 +141,7 @@ const VulnerabilitiesByRepository: React.FC<Props> = ({ isLoading, data }) => {
         onClickBack={() => formatFirstLayer(allData)}
         showBackOption={!!layeredRepository}
       />
-    </div>
+    </Styled.Wrapper>
   );
 };
 

@@ -122,61 +122,57 @@ const VulnerabilitiesDetails: React.FC<Props> = ({ filters }) => {
   }, [filters, refresh, pagination.pageSize]);
 
   return (
-    <div className="max-space">
-      <Styled.Wrapper tabIndex={0}>
-        <Styled.Title>
-          {t('DASHBOARD_SCREEN.VULNERABILITY_DETAILS')}
-        </Styled.Title>
+    <Styled.Wrapper tabIndex={0} id="vulnerabilities-details">
+      <Styled.Title>{t('DASHBOARD_SCREEN.VULNERABILITY_DETAILS')}</Styled.Title>
 
-        <Datatable
-          columns={[
-            {
-              label: t('DASHBOARD_SCREEN.LANGUAGE'),
-              property: 'language',
-              type: 'text',
-            },
-            {
-              label: t('DASHBOARD_SCREEN.SEVERITY'),
-              property: 'severity',
-              type: 'text',
-            },
-            {
-              label: t('DASHBOARD_SCREEN.AUTHOR'),
-              property: 'commitEmail',
-              type: 'text',
-            },
-            {
-              label: t('DASHBOARD_SCREEN.DESCRIPTION'),
-              property: 'details',
-              type: 'text',
-            },
-            {
-              label: t('DASHBOARD_SCREEN.FILE'),
-              property: 'file',
-              type: 'text',
-            },
-            {
-              label: t('DASHBOARD_SCREEN.LINE'),
-              property: 'line',
-              type: 'text',
-            },
-            {
-              label: t('DASHBOARD_SCREEN.CODE'),
-              property: 'code',
-              type: 'text',
-            },
-          ]}
-          datasource={dataValues}
-          paginate={{
-            pagination,
-            onChange: (pag) => setRefresh(pag),
-          }}
-          isLoading={isLoading}
-          emptyListText={t('DASHBOARD_SCREEN.CHART_NO_DATA')}
-          tooltip={{ id: 'main', place: 'top', type: 'dark', insecure: true }}
-        />
-      </Styled.Wrapper>
-    </div>
+      <Datatable
+        columns={[
+          {
+            label: t('DASHBOARD_SCREEN.LANGUAGE'),
+            property: 'language',
+            type: 'text',
+          },
+          {
+            label: t('DASHBOARD_SCREEN.SEVERITY'),
+            property: 'severity',
+            type: 'text',
+          },
+          {
+            label: t('DASHBOARD_SCREEN.AUTHOR'),
+            property: 'commitEmail',
+            type: 'text',
+          },
+          {
+            label: t('DASHBOARD_SCREEN.DESCRIPTION'),
+            property: 'details',
+            type: 'text',
+          },
+          {
+            label: t('DASHBOARD_SCREEN.FILE'),
+            property: 'file',
+            type: 'text',
+          },
+          {
+            label: t('DASHBOARD_SCREEN.LINE'),
+            property: 'line',
+            type: 'text',
+          },
+          {
+            label: t('DASHBOARD_SCREEN.CODE'),
+            property: 'code',
+            type: 'text',
+          },
+        ]}
+        datasource={dataValues}
+        paginate={{
+          pagination,
+          onChange: (pag) => setRefresh(pag),
+        }}
+        isLoading={isLoading}
+        emptyListText={t('DASHBOARD_SCREEN.CHART_NO_DATA')}
+        tooltip={{ id: 'main', place: 'top', type: 'dark', insecure: true }}
+      />
+    </Styled.Wrapper>
   );
 };
 
