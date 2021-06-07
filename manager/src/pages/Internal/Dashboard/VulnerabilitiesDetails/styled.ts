@@ -23,6 +23,7 @@ const Wrapper = styled.div`
   width: 100%;
   padding: 18px 15px 0px 15px;
   position: relative;
+  grid-area: vulDetails;
 `;
 
 const Title = styled.h2`
@@ -33,18 +34,6 @@ const Title = styled.h2`
   font-weight: normal;
   display: block;
   min-height: 60px;
-`;
-
-const Button = styled.button`
-  background: none;
-  border: none;
-  outline: none;
-  cursor: pointer;
-  color: ${({ theme }) => theme.colors.dataTable.column.text};
-
-  :hover {
-    transform: scale(1.2);
-  }
 `;
 
 export default {

@@ -15,35 +15,62 @@
  */
 
 import styled, { css } from 'styled-components';
-import { Icon } from 'components';
 
-interface RouterItemProps {
+interface MinimizedProps {
+  isMinimized?: boolean;
+}
+interface RouterItemProps extends MinimizedProps {
   isActive: boolean;
 }
 
-const SideMenu = styled.div`
+const SideMenu = styled.div<MinimizedProps>`
   background-color: ${({ theme }) => theme.colors.background.primary};
   min-width: 165px;
   max-width: 165px;
   display: flex;
   flex-direction: column;
   z-index: 2;
+  position: relative;
+  transition: all ease 0.6s;
+
+  ${({ isMinimized }) =>
+    isMinimized &&
+    css`
+      min-width: 50px;
+      max-width: 50px;
+    `};
+`;
+
+const SizeHandler = styled.button`
+  position: absolute;
+  background: none;
+  cursor: pointer;
+  background-color: ${({ theme }) => theme.colors.background.secundary};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+  border: none;
+  right: -10px;
+  bottom: 20px;
+  border-radius: 50%;
+  transition: ease all 0.3s;
+
+  &:hover {
+    transform: scale(1.15);
+  }
 `;
 
 const WrapperLogoRoutes = styled.div`
   flex: 1;
-`;
-
-const OptionsList = styled.ul`
   display: flex;
   flex-direction: column;
-  padding: 20px 0px 20px 7.5px;
-  list-style: none;
+  align-items: center;
 `;
 
 const Logo = styled.img`
   display: block;
-  margin: 24px 17px;
+  margin: 24px 0px;
   width: 100px;
   height: 22px;
 `;
@@ -52,7 +79,9 @@ const RoutesList = styled.ul`
   margin-top: 20px;
 `;
 
-const Nav = styled.nav``;
+const Nav = styled.nav`
+  width: 100%;
+`;
 
 const RouteItem = styled.li<RouterItemProps>`
   cursor: pointer;
@@ -83,14 +112,18 @@ const RouteItem = styled.li<RouterItemProps>`
     `};
 `;
 
-const RouteName = styled.span`
+const RouteName = styled.span<MinimizedProps>`
   display: block;
   margin-left: 13px;
+
+  ${({ isMinimized }) =>
+    isMinimized &&
+    css`
+      display: none;
+    `};
 `;
 
-const SelectWrapper = styled.div`
-  margin-left: 17px;
-`;
+const SelectWrapper = styled.div``;
 
 const SubRoutes = styled.ul`
   margin-bottom: 20px;
@@ -112,6 +145,12 @@ const SubRouteItem = styled.li<RouterItemProps>`
     color: ${({ theme }) => theme.colors.active};
   }
 
+  ${({ isMinimized }) =>
+    isMinimized &&
+    css`
+      display: none;
+    `};
+
   ${({ isActive }) =>
     isActive &&
     css`
@@ -132,8 +171,8 @@ export default {
   RouteItem,
   RouteName,
   WrapperLogoRoutes,
-  OptionsList,
   SelectWrapper,
   SubRoutes,
   SubRouteItem,
+  SizeHandler,
 };

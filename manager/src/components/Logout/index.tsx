@@ -17,7 +17,6 @@
 import React from 'react';
 import Styled from './styled';
 import useAuth from 'helpers/hooks/useAuth';
-import ReactTooltip from 'react-tooltip';
 import { useTranslation } from 'react-i18next';
 import { getRefreshToken } from 'helpers/localStorage/tokens';
 

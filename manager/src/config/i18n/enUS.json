@@ -421,7 +421,9 @@
     "CONFIG": "Settings",
     "WEBHOOK": "Webhooks",
     "LOGOUT": "Logout",
-    "MANAGE_WORKSPACES": "Manage Workspaces"
+    "MANAGE_WORKSPACES": "Manage Workspaces",
+    "MAX_MENU": "Maximize the menu",
+    "MIN_MENU": "Minimize the menu"
   },
   "API_ERRORS": {
     "GENERIC_ERROR": "Something unexpected happened, try again.",

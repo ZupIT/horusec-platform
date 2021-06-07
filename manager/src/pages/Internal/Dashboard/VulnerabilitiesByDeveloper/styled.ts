@@ -14,48 +14,12 @@
  * limitations under the License.
  */
 
-import styled, { css } from 'styled-components';
-
-interface LoadingWrapperProps {
-  isLoading: boolean;
-}
+import styled from 'styled-components';
 
 const Wrapper = styled.div`
-  background-color: ${({ theme }) => theme.colors.background.secundary};
-  border-radius: 4px;
-  height: 330px;
   width: 100%;
-  padding: 0 15px 10px 15px;
-  position: relative;
+  height: auto;
+  grid-area: vulByDeveloper;
 `;
 
-const LoadingWrapper = styled.div<LoadingWrapperProps>`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: calc(100% - 60px);
-  position: absolute;
-  width: 100%;
-  left: 0;
-  background-color: ${({ theme }) => theme.colors.background.secundary};
-  z-index: 2;
-  visibility: hidden;
-
-  ${({ isLoading }) =>
-    isLoading &&
-    css`
-      visibility: visible;
-    `};
-`;
-
-const Title = styled.h2`
-  color: ${({ theme }) => theme.colors.chart.title};
-  font-size: ${({ theme }) => theme.metrics.fontSize.xlarge};
-  border-radius: 4px;
-  padding: 18px 10px 0px 10px;
-  font-weight: normal;
-  display: block;
-  min-height: 60px;
-`;
-
-export default { Wrapper, Title, LoadingWrapper };
+export default { Wrapper };

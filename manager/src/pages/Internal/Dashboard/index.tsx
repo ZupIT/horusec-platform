@@ -32,7 +32,7 @@ import VulnerabilitiesByRepository from './VulnerabilitiesByRepository';
 import VulnerabilitiesTimeLine from './VulnerabilitiesTimeLine';
 import VulnerabilitiesDetails from './VulnerabilitiesDetails';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
-import { createReportWS } from 'helpers/formatters/xlsx';
+import { createReportWorkSheet } from 'helpers/formatters/xlsx';
 
 import { Button } from 'components';
 import { Menu, MenuItem } from '@material-ui/core';
@@ -98,8 +98,8 @@ const Dashboard: React.FC<Props> = ({ type }) => {
 
     if (exportType === 'xls' || exportType === 'csv') {
       const wb = XLSX.utils.book_new();
-      const ws_data = createReportWS(dashboardData);
-      const ws = XLSX.utils.aoa_to_sheet(ws_data);
+      const workSheetData = createReportWorkSheet(dashboardData);
+      const ws = XLSX.utils.aoa_to_sheet(workSheetData);
       wb.SheetNames.push('Report');
       wb.Sheets['Report'] = ws;
       XLSX.writeFile(wb, fileName + '.' + exportType);
@@ -132,7 +132,7 @@ const Dashboard: React.FC<Props> = ({ type }) => {
   }
 
   return (
-    <Styled.Wrapper>
+    <Styled.Wrapper id="wrapper-graphic">
       <Styled.FilterWrapper>
         <Filters type={type} onApply={(values) => setFilters(values)} />
         <Button
@@ -196,55 +196,47 @@ const Dashboard: React.FC<Props> = ({ type }) => {
           </MenuItem>
         </Menu>
       </Styled.FilterWrapper>
-      <div id="wrapper-graphic">
-        <Styled.Row>
-          <TotalDevelopers
+
+      <AllVulnerabilities
+        data={dashboardData?.vulnerabilityBySeverity}
+        isLoading={isLoading}
+      />
+
+      <TotalDevelopers
+        isLoading={isLoading}
+        data={dashboardData?.totalAuthors}
+      />
+
+      <VulnerabilitiesByDeveloper
+        isLoading={isLoading}
+        data={dashboardData?.vulnerabilitiesByAuthor}
+      />
+
+      {type === 'workspace' ? (
+        <>
+          <TotalRepositories
+            data={dashboardData?.totalRepositories}
             isLoading={isLoading}
-            data={dashboardData?.totalAuthors}
           />
 
-          {type === 'workspace' ? (
-            <TotalRepositories
-              data={dashboardData?.totalRepositories}
-              isLoading={isLoading}
-            />
-          ) : null}
-
-          <AllVulnerabilities
-            data={dashboardData?.vulnerabilityBySeverity}
+          <VulnerabilitiesByRepository
             isLoading={isLoading}
+            data={dashboardData?.vulnerabilitiesByRepository}
           />
-        </Styled.Row>
+        </>
+      ) : null}
 
-        <Styled.Row>
-          <VulnerabilitiesByDeveloper
-            isLoading={isLoading}
-            data={dashboardData?.vulnerabilitiesByAuthor}
-          />
+      <VulnerabilitiesByLanguage
+        isLoading={isLoading}
+        data={dashboardData?.vulnerabilitiesByLanguage}
+      />
 
-          <VulnerabilitiesByLanguage
-            isLoading={isLoading}
-            data={dashboardData?.vulnerabilitiesByLanguage}
-          />
+      <VulnerabilitiesTimeLine
+        isLoading={isLoading}
+        data={dashboardData?.vulnerabilityByTime}
+      />
 
-          {type === 'workspace' ? (
-            <VulnerabilitiesByRepository
-              isLoading={isLoading}
-              data={dashboardData?.vulnerabilitiesByRepository}
-            />
-          ) : null}
-        </Styled.Row>
-
-        <Styled.Row>
-          <VulnerabilitiesTimeLine
-            isLoading={isLoading}
-            data={dashboardData?.vulnerabilityByTime}
-          />
-        </Styled.Row>
-      </div>
-      <Styled.Row>
-        <VulnerabilitiesDetails filters={filters} />
-      </Styled.Row>
+      <VulnerabilitiesDetails filters={filters} />
     </Styled.Wrapper>
   );
 };

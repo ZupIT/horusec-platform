@@ -21,7 +21,7 @@ interface TagProps {
 }
 
 const Wrapper = styled.section`
-  padding: 35px;
+  padding: 35px 15px;
   width: 100%;
 `;
 
