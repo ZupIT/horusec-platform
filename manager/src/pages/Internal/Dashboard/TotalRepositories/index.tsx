@@ -28,7 +28,7 @@ const TotalRepositories: React.FC<Props> = ({ isLoading, data }) => {
   const { t } = useTranslation();
 
   return (
-    <Styled.Wrapper>
+    <Styled.Wrapper id="total-repositories">
       <Counter
         value={data}
         isLoading={isLoading}

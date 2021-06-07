@@ -55,4 +55,14 @@ const Wrapper = styled.div`
   }
 `;
 
-export default { Wrapper, AriaTitle };
+const FilterWrapper = styled.div`
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  align-content: center;
+  background-color: ${({ theme }) => theme.colors.background.secundary};
+  border-radius: 4px;
+  grid-area: filters;
+`;
+
+export default { Wrapper, AriaTitle, FilterWrapper };

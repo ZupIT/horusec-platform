@@ -25,7 +25,6 @@ const Container = styled(Form)`
   display: flex;
   width: 100%;
   align-items: center;
-  grid-area: filters;
 `;
 
 const Wrapper = styled.div`

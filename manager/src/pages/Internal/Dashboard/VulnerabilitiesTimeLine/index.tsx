@@ -166,7 +166,11 @@ const VulnerabilitiesTimeLine: React.FC<Props> = ({ data, isLoading }) => {
   }, [data]);
 
   return (
-    <Styled.Wrapper tabIndex={0} aria-label={ariaLabel}>
+    <Styled.Wrapper
+      tabIndex={0}
+      aria-label={ariaLabel}
+      id="vulnerabilities-timeline"
+    >
       <Styled.Title>
         {t('DASHBOARD_SCREEN.VULNERABILITY_TIMELINE')}
       </Styled.Title>

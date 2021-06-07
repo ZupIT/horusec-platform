@@ -265,7 +265,8 @@
       "OF": "de",
       "PAGES": "páginas"
     },
-    "NO_OPTIONS": "Sin opciones"
+    "NO_OPTIONS": "Sin opciones",
+    "LOADING": "CARGANDO"
   },
   "FOOTER": {
     "DEVELOPED": "Desarrollado",

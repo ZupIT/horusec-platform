@@ -122,7 +122,7 @@ const VulnerabilitiesDetails: React.FC<Props> = ({ filters }) => {
   }, [filters, refresh, pagination.pageSize]);
 
   return (
-    <Styled.Wrapper tabIndex={0}>
+    <Styled.Wrapper tabIndex={0} id="vulnerabilities-details">
       <Styled.Title>{t('DASHBOARD_SCREEN.VULNERABILITY_DETAILS')}</Styled.Title>
 
       <Datatable

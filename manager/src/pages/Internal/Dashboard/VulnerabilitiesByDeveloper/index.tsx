@@ -123,7 +123,7 @@ const VulnerabilitiesByDeveloper: React.FC<Props> = ({ isLoading, data }) => {
   }, [data]);
 
   return (
-    <Styled.Wrapper>
+    <Styled.Wrapper id="vulnerabilities-by-developer">
       <BarChart
         isLoading={isLoading}
         data={chatData}
