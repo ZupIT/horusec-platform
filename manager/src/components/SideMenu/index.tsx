@@ -29,11 +29,8 @@ import ReactTooltip from 'react-tooltip';
 
 const SideMenu: React.FC = () => {
   const history = useHistory();
-  const {
-    currentWorkspace,
-    allWorkspaces,
-    handleSetCurrentWorkspace,
-  } = useWorkspace();
+  const { currentWorkspace, allWorkspaces, handleSetCurrentWorkspace } =
+    useWorkspace();
   const { t } = useTranslation();
   const [isMinimized, setIsMinimized] = useState<boolean>(false);
 

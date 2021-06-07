@@ -28,9 +28,8 @@ interface UserInfoProps {
 function UserInfoForm({ onNextStep }: UserInfoProps) {
   const { t } = useTranslation();
   const history = useHistory();
-  const { isLoading, verifyUsernameAndEmail } = useContext(
-    CreateAccountContext
-  );
+  const { isLoading, verifyUsernameAndEmail } =
+    useContext(CreateAccountContext);
 
   const ValidationScheme = Yup.object({
     username: Yup.string().required(t('CREATE_ACCOUNT_SCREEN.INVALID_NAME')),
