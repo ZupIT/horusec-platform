@@ -111,7 +111,9 @@ const SideMenu: React.FC = () => {
                 if (subRoute?.roles?.includes(currentWorkspace?.role)) {
                   return (
                     <Styled.SubRouteItem
-                      isActive={window.location.pathname === subRoute.path}
+                      isActive={window.location.pathname.includes(
+                        subRoute.path
+                      )}
                       key={index}
                       onClick={() => handleSelectedRoute(subRoute)}
                       isMinimized={isMinimized}
