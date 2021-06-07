@@ -22,12 +22,12 @@ import { useTranslation } from 'react-i18next';
 import { Logout, Icon, Helper } from 'components';
 import { useHistory } from 'react-router';
 
-const Footer: React.FC = () => {
+const Header: React.FC = () => {
   const { t } = useTranslation();
   const history = useHistory();
   const headerRef = useRef(null);
 
-  const getTitleByURL = () => {
+  const getTitleByURL = (): any => {
     const path = window.location.pathname;
 
     const titles: ObjectLiteral = {
@@ -86,9 +86,22 @@ const Footer: React.FC = () => {
         icon: 'zup',
         helper: 'https://docs.horusec.io/docs/web/overview/',
       },
+      default: {
+        text: '',
+        aria: '',
+        icon: 'zup',
+        helper: 'https://docs.horusec.io/docs/web/overview/',
+      },
     };
 
-    return get(titles, path, t('HEADER.TITLE.DEFAULT'));
+    let title = titles.default;
+
+    Object.entries(titles).forEach((item) => {
+      const [key, value] = item;
+      if (path.includes(key)) title = value;
+    });
+
+    return title;
   };
 
   useEffect(() => {
@@ -115,7 +128,7 @@ const Footer: React.FC = () => {
           <Styled.Item
             tabIndex={0}
             aria-label={t('HEADER.ARIA.CONFIG')}
-            active={history.location.pathname === '/home/settings'}
+            active={history.location.pathname.includes('/home/settings')}
             onClick={() => history.replace('/home/settings')}
           >
             <Styled.ConfigIcon name="config" size="15" />
@@ -132,4 +145,4 @@ const Footer: React.FC = () => {
   );
 };
 
-export default Footer;
+export default Header;
