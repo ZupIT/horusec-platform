@@ -44,9 +44,8 @@ const Repositories: React.FC = () => {
   const [handleRepositoryVisible, setHandleRepositoryVisible] = useState(false);
   const [deleteIsLoading, setDeleteLoading] = useState(false);
 
-  const [repoToManagerTokens, setRepoToManagerTokens] = useState<Repository>(
-    null
-  );
+  const [repoToManagerTokens, setRepoToManagerTokens] =
+    useState<Repository>(null);
   const [repoToDelete, setRepoToDelete] = useState<Repository>(null);
   const [repoToEdit, setRepoToEdit] = useState<Repository>(null);
   const [repoToInvite, setRepoToInvite] = useState<Repository>(null);

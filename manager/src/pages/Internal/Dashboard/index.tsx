@@ -53,10 +53,8 @@ const Dashboard: React.FC<Props> = ({ type }) => {
   const [isLoading, setLoading] = useState(false);
   const { showSuccessFlash } = useFlashMessage();
   const { t } = useTranslation();
-  const [
-    anchorElExport,
-    setAnchorElExport,
-  ] = React.useState<null | HTMLElement>(null);
+  const [anchorElExport, setAnchorElExport] =
+    React.useState<null | HTMLElement>(null);
 
   const handleExportOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorElExport(event.currentTarget);
