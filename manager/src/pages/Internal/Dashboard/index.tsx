@@ -42,6 +42,7 @@ import * as htmlToImage from 'html-to-image';
 import { useTranslation } from 'react-i18next';
 import XLSX from 'xlsx';
 import download from 'downloadjs';
+
 interface Props {
   type: 'workspace' | 'repository';
 }
@@ -93,19 +94,17 @@ const Dashboard: React.FC<Props> = ({ type }) => {
 
   function downloadExport(exportType: ExportType) {
     showSuccessFlash(t('GENERAL.LOADING'), 1000);
-    let data;
     const fileName = 'horusec_dashboard_' + new Date().toLocaleString();
 
     if (exportType === 'xls' || exportType === 'csv') {
-      const wb = XLSX.utils.book_new();
+      const workbook = XLSX.utils.book_new();
       const workSheetData = createReportWorkSheet(dashboardData);
-      const ws = XLSX.utils.aoa_to_sheet(workSheetData);
-      wb.SheetNames.push('Report');
-      wb.Sheets['Report'] = ws;
-      XLSX.writeFile(wb, fileName + '.' + exportType);
+      const workSheet = XLSX.utils.aoa_to_sheet(workSheetData);
+      workbook.SheetNames.push('Report');
+      workbook.Sheets['Report'] = workSheet;
+      XLSX.writeFile(workbook, fileName + '.' + exportType);
     } else {
-      data = dashboardData;
-      exportFromJSON({ data, fileName, exportType });
+      exportFromJSON({ data: dashboardData, fileName, exportType });
     }
   }
 
@@ -113,22 +112,29 @@ const Dashboard: React.FC<Props> = ({ type }) => {
     showSuccessFlash(t('GENERAL.LOADING'), 1000);
     const printHtml = window.document.getElementById('wrapper-graphic');
     const fileName = 'horusec_dashboard_' + new Date().toLocaleString();
-    htmlToImage.toJpeg(printHtml).then(function (dataUrl) {
-      if (exportType === 'image') {
-        download(dataUrl, fileName);
-      }
+    const imgHeight = 1505;
+    const imgWidth = 1755;
+    htmlToImage
+      .toJpeg(printHtml, {
+        height: imgHeight,
+        width: imgWidth,
+      })
+      .then(function (dataUrl) {
+        if (exportType === 'image') {
+          download(dataUrl, fileName);
+        }
 
-      if (exportType === 'pdf') {
-        const doc = new jsPDF({
-          orientation: 'landscape',
-          format: [1950, 1200],
-          unit: 'px',
-        });
+        if (exportType === 'pdf') {
+          const doc = new jsPDF({
+            orientation: 'landscape',
+            format: [imgWidth, imgHeight],
+            unit: 'px',
+          });
 
-        doc.addImage(dataUrl, 'JPEG', 25, 25, 1900, 1150);
-        doc.save(fileName, { returnPromise: true });
-      }
-    });
+          doc.addImage(dataUrl, 'JPEG', 25, 25, imgWidth - 50, imgHeight - 50);
+          doc.save(fileName, { returnPromise: true });
+        }
+      });
   }
 
   return (
