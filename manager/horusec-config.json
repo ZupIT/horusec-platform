@@ -7,5 +7,12 @@
     "**/deployments/**",
     "**/docs/**"
   ],
-  "horusecCliFalsePositiveHashes": []
+  "horusecCliFalsePositiveHashes": [
+    "2937701f3d8983bf96de13a1aa495c936e4d6a4bad5205fbdb768385831d8d7f",
+    "2a190dc18862dc68c931bb6f96e48b176a28edcf9036ea17801ad39c6ad62701",
+    "892b488423dadeafb01007525e13ae78f8a09384147da86ab82c00056868f660",
+    "2e011fc54f96cc1379aa6a46df313a98fb47d41368055b077653760f0e44dbdc",
+    "619f7dcf72e9c4278be05bde81665fbd7f49f7531900ac43fe28e5d1d5ee2de2",
+    "3da159912e585f7415c91f83e8bc10575380b9af21326573a8307999d1fa41e3"
+  ]
 }
