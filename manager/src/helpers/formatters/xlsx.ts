@@ -6,30 +6,30 @@ import lodash from 'lodash';
 
 const setSeverityRow = (
   data: DashboardCriticality,
-  instance: (string | number)[][]
+  instanceWorkSheet: (string | number)[][]
 ) => {
-  instance.push(['Severity', 'Type', 'Total']);
+  instanceWorkSheet.push(['Severity', 'Type', 'Total']);
   Object.entries(data).forEach(([key, value]) =>
     Object.entries(value.types).forEach(([keyType, valueType]) => {
-      instance.push([
+      instanceWorkSheet.push([
         lodash.upperCase(key),
         lodash.upperFirst(keyType),
         valueType as string,
       ]);
     })
   );
-  instance.push(['']);
-  instance.push([
+  instanceWorkSheet.push(['']);
+  instanceWorkSheet.push([
     'Total',
     '',
-    lodash.sumBy(Object.values(data), (el) => el.count),
+    lodash.sumBy(Object.values(data), (vuln) => vuln.count),
   ]);
-  instance.push(['']);
-  instance.push(['']);
+  instanceWorkSheet.push(['']);
+  instanceWorkSheet.push(['']);
 };
 
-export function createReportWS(data: DashboardData) {
-  const ws_data = [
+export function createReportWorkSheet(data: DashboardData) {
+  const workSheetData = [
     ['Total Authors'],
     ['Total', data.totalAuthors],
     [''],
@@ -41,45 +41,45 @@ export function createReportWS(data: DashboardData) {
   ];
 
   if (data.vulnerabilityBySeverity) {
-    ws_data.push(['Vulnerabilities by Severity']);
-    setSeverityRow(data.vulnerabilityBySeverity, ws_data);
+    workSheetData.push(['Vulnerabilities by Severity']);
+    setSeverityRow(data.vulnerabilityBySeverity, workSheetData);
   }
 
   if (data.vulnerabilitiesByRepository) {
-    ws_data.push(['Vulnerabilities by Repository']);
-    data.vulnerabilitiesByRepository.forEach((el) => {
-      ws_data.push(['Repository', el.repositoryName]);
-      delete el.repositoryName;
-      setSeverityRow(el, ws_data);
+    workSheetData.push(['Vulnerabilities by Repository']);
+    data.vulnerabilitiesByRepository.forEach((vuln) => {
+      workSheetData.push(['Repository', vuln.repositoryName]);
+      delete vuln.repositoryName;
+      setSeverityRow(vuln, workSheetData);
     });
   }
 
   if (data.vulnerabilitiesByAuthor) {
-    ws_data.push(['Vulnerabilities by Author']);
-    data.vulnerabilitiesByAuthor.forEach((el) => {
-      ws_data.push(['Author', el.author]);
-      delete el.author;
-      setSeverityRow(el, ws_data);
+    workSheetData.push(['Vulnerabilities by Author']);
+    data.vulnerabilitiesByAuthor.forEach((vuln) => {
+      workSheetData.push(['Author', vuln.author]);
+      delete vuln.author;
+      setSeverityRow(vuln, workSheetData);
     });
   }
 
   if (data.vulnerabilitiesByLanguage) {
-    ws_data.push(['Vulnerabilities by Language']);
-    data.vulnerabilitiesByLanguage.forEach((el) => {
-      ws_data.push(['Language', el.language]);
-      delete el.language;
-      setSeverityRow(el, ws_data);
+    workSheetData.push(['Vulnerabilities by Language']);
+    data.vulnerabilitiesByLanguage.forEach((vuln) => {
+      workSheetData.push(['Language', vuln.language]);
+      delete vuln.language;
+      setSeverityRow(vuln, workSheetData);
     });
   }
 
   if (data.vulnerabilityByTime) {
-    ws_data.push(['Vulnerabilities by Time']);
-    data.vulnerabilityByTime.forEach((el) => {
-      ws_data.push(['Time', el.time]);
-      delete el.time;
-      setSeverityRow(el, ws_data);
+    workSheetData.push(['Vulnerabilities by Time']);
+    data.vulnerabilityByTime.forEach((vuln) => {
+      workSheetData.push(['Time', vuln.time]);
+      delete vuln.time;
+      setSeverityRow(vuln, workSheetData);
     });
   }
 
-  return ws_data;
+  return workSheetData;
 }
