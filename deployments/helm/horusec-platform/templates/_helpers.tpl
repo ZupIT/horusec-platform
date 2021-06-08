@@ -56,6 +56,28 @@ Return the proper Horusec Auth URI scheme
 {{- end -}}
 
 {{/*
+Return the proper Horusec Vulnerability URI scheme
+*/}}
+{{- define "vulnerability.uri.scheme" -}}
+{{- if .Values.components.vulnerability.ingress.tls -}}
+{{- "https" -}}
+{{- else -}}
+{{- "http" -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Return the proper Horusec Webhook URI scheme
+*/}}
+{{- define "webhook.uri.scheme" -}}
+{{- if .Values.components.webhook.ingress.tls -}}
+{{- "https" -}}
+{{- else -}}
+{{- "http" -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
 Return the proper Horusec Auth image name
 */}}
 {{- define "auth.image" -}}
@@ -362,6 +384,51 @@ True if Ingress is enabled for any of the components.
 {{- define "ingress.enabled" -}}
 {{- if or .Values.components.auth.ingress.enabled .Values.components.manager.ingress.enabled .Values.components.api.ingress.enabled .Values.components.analytic.ingress.enabled .Values.components.core.ingress.enabled (and .Values.components.messages.enabled .Values.components.messages.ingress.enabled) .Values.components.vulnerability.ingress.enabled }}
     {{- true -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+If enabled, return Ingress Rules.
+*/}}
+{{- define "ingress.rules" -}}
+{{- $components := list -}}
+{{- range $_, $component := .Values.components -}}
+    {{- if $component.ingress -}}
+        {{- $components = append $components $component -}}
+    {{- end -}}
+{{- end -}}
+
+{{- $hosts := dict -}}
+{{- range $_, $component := $components -}}
+    {{- if $component.ingress -}}
+    {{ if not (hasKey $hosts $component.ingress.host) }}
+        {{- $ingresses := list -}}
+        {{- range $_, $otherComponent := $components -}}
+            {{- if eq $component.ingress.host $otherComponent.ingress.host -}}
+                {{- $ingresses = append $ingresses $otherComponent -}}
+            {{- end -}}
+        {{- end -}}
+        {{- $_ := set $hosts $component.ingress.host (compact $ingresses) -}}
+    {{- end -}}
+    {{- end -}}
+{{- end -}}
+
+rules:
+{{- range $host, $components := $hosts }}
+  - host: {{ $host }}
+    http:
+      paths:
+        {{- range $component := $components }}
+        - backend:
+            serviceName: {{ $component.name }}
+            servicePort: {{ $component.port.http }}
+          {{- if not (eq "manager" $component.name) }}
+          path: {{ $component.ingress.path }}
+          {{- if eq "true" (include "ingress.supportsPathType" .) }}
+          pathType: Prefix
+          {{- end }}
+          {{- end }}
+        {{- end }}
 {{- end -}}
 {{- end -}}
 

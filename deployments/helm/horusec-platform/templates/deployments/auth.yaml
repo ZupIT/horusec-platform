@@ -34,6 +34,10 @@ spec:
             value: {{ required "A valid global.broker.host is required!" .Values.global.broker.host }}
           - name: HORUSEC_BROKER_PORT
             value: {{ .Values.global.broker.port | quote }}
+          - name: HORUSEC_MANAGER_URL
+            value: {{ .Values.components.manager.ingress.host | quote }}
+          - name: HORUSEC_AUTH_URL
+            value: {{ .Values.components.auth.ingress.host| quote }}
           - name: HORUSEC_AUTH_TYPE
             value: {{ .Values.components.auth.type }}
           - name: HORUSEC_ENABLE_APPLICATION_ADMIN

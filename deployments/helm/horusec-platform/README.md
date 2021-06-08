@@ -227,6 +227,10 @@ A Helm chart for Kubernetes
 | components.webhook.container.securityContext.runAsNonRoot | bool | `true` |  |
 | components.webhook.container.securityContext.runAsUser | int | `1000` |  |
 | components.webhook.extraEnv | list | `[]` |  |
+| components.webhook.ingress.enabled | bool | `true` |  |
+| components.webhook.ingress.host | string | `"webhook.local"` |  |
+| components.webhook.ingress.path | string | `"/webhook"` |  |
+| components.webhook.ingress.tls | string | `nil` |  |
 | components.webhook.name | string | `"webhook"` |  |
 | components.webhook.pod.autoscaling.enabled | bool | `false` |  |
 | components.webhook.pod.autoscaling.maxReplicas | int | `3` |  |
@@ -269,5 +273,6 @@ A Helm chart for Kubernetes
 | global.keycloak.otp | bool | `false` |  |
 | global.keycloak.publicURL | string | `""` |  |
 | global.keycloak.realm | string | `"horusec"` |  |
-
+| global.ingress.certManager | bool | `"false"` |  |
+| global.ingress.annotations | string | `kubernetes.io/ingress.class: "nginx"` |  |
 ----------------------------------------------
