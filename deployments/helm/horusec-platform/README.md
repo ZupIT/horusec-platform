@@ -65,6 +65,7 @@ A Helm chart for Kubernetes
 | components.api.ingress.enabled | bool | `true` |  |
 | components.api.ingress.host | string | `"api.local"` |  |
 | components.api.ingress.path | string | `"/api"` |  |
+| components.api.ingress.tls | string | `nil` |  |
 | components.api.name | string | `"api"` |  |
 | components.api.pod.autoscaling.enabled | bool | `false` |  |
 | components.api.pod.autoscaling.maxReplicas | int | `3` |  |
@@ -90,6 +91,7 @@ A Helm chart for Kubernetes
 | components.auth.ingress.enabled | bool | `true` |  |
 | components.auth.ingress.host | string | `"messages.local"` |  |
 | components.auth.ingress.path | string | `"/messages"` |  |
+| components.auth.ingress.tls | string | `nil` |  |
 | components.auth.name | string | `"auth"` |  |
 | components.auth.pod.autoscaling.enabled | bool | `false` |  |
 | components.auth.pod.autoscaling.maxReplicas | int | `3` |  |
@@ -117,6 +119,7 @@ A Helm chart for Kubernetes
 | components.core.ingress.enabled | bool | `true` |  |
 | components.core.ingress.host | string | `"core.local"` |  |
 | components.core.ingress.path | string | `"/core"` |  |
+| components.core.ingress.tls | string | `nil` |  |
 | components.core.name | string | `"core"` |  |
 | components.core.pod.autoscaling.enabled | bool | `false` |  |
 | components.core.pod.autoscaling.maxReplicas | int | `3` |  |
@@ -142,6 +145,7 @@ A Helm chart for Kubernetes
 | components.manager.ingress.enabled | bool | `true` |  |
 | components.manager.ingress.host | string | `"messages.local"` |  |
 | components.manager.ingress.path | string | `"/messages"` |  |
+| components.manager.ingress.tls | string | `nil` |  |
 | components.manager.name | string | `"manager"` |  |
 | components.manager.pod.autoscaling.enabled | bool | `false` |  |
 | components.manager.pod.autoscaling.maxReplicas | int | `3` |  |
@@ -168,6 +172,7 @@ A Helm chart for Kubernetes
 | components.messages.ingress.enabled | bool | `true` |  |
 | components.messages.ingress.host | string | `"messages.local"` |  |
 | components.messages.ingress.path | string | `"/messages"` |  |
+| components.messages.ingress.tls | string | `nil` |  |
 | components.messages.mailServer.host | string | `"smtp.mailtrap.io"` |  |
 | components.messages.mailServer.password.secretKeyRef.key | string | `"password"` |  |
 | components.messages.mailServer.password.secretKeyRef.name | string | `"horusec-smtp"` |  |
@@ -199,6 +204,7 @@ A Helm chart for Kubernetes
 | components.vulnerability.ingress.enabled | bool | `true` |  |
 | components.vulnerability.ingress.host | string | `"vulnerability.local"` |  |
 | components.vulnerability.ingress.path | string | `"/vulnerability"` |  |
+| components.vulnerability.ingress.tls | string | `nil` |  |
 | components.vulnerability.name | string | `"vulnerability"` |  |
 | components.vulnerability.pod.autoscaling.enabled | bool | `false` |  |
 | components.vulnerability.pod.autoscaling.maxReplicas | int | `3` |  |
@@ -221,9 +227,10 @@ A Helm chart for Kubernetes
 | components.webhook.container.securityContext.runAsNonRoot | bool | `true` |  |
 | components.webhook.container.securityContext.runAsUser | int | `1000` |  |
 | components.webhook.extraEnv | list | `[]` |  |
-| components.vulnerability.ingress.enabled | bool | `true` |  |
-| components.vulnerability.ingress.host | string | `"webhook.local"` |  |
-| components.vulnerability.ingress.path | string | `"/webhook"` |  |
+| components.webhook.ingress.enabled | bool | `true` |  |
+| components.webhook.ingress.host | string | `"webhook.local"` |  |
+| components.webhook.ingress.path | string | `"/webhook"` |  |
+| components.webhook.ingress.tls | string | `nil` |  |
 | components.webhook.name | string | `"webhook"` |  |
 | components.webhook.pod.autoscaling.enabled | bool | `false` |  |
 | components.webhook.pod.autoscaling.maxReplicas | int | `3` |  |
@@ -268,5 +275,4 @@ A Helm chart for Kubernetes
 | global.keycloak.realm | string | `"horusec"` |  |
 | global.ingress.certManager | bool | `"false"` |  |
 | global.ingress.annotations | string | `kubernetes.io/ingress.class: "nginx"` |  |
-| global.ingress.tls | list | `[]` |  |
 ----------------------------------------------
