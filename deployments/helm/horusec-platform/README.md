@@ -39,6 +39,7 @@ A Helm chart for Kubernetes
 | components.analytic.ingress.enabled | bool | `true` |  |
 | components.analytic.ingress.host | string | `"analytic.local"` |  |
 | components.analytic.ingress.path | string | `"/analytic"` |  |
+| components.analytic.ingress.tls | string | `nil` |  |
 | components.analytic.name | string | `"analytic"` |  |
 | components.analytic.pod.autoscaling.enabled | bool | `false` |  |
 | components.analytic.pod.autoscaling.maxReplicas | int | `3` |  |

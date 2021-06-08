@@ -45,7 +45,7 @@ components:
       enabled: true
       host: analytic.local
       path: /analytic
-      # tls:
+      tls: null
       #   secretName: analytic-tls
     name: analytic
     pod:
@@ -81,7 +81,7 @@ components:
       enabled: true
       host: api.local
       path: /api
-      # tls:
+      tls: null
       #   secretName: api-tls
     name: api
     pod:
@@ -117,7 +117,7 @@ components:
       enabled: true
       host: auth.local
       path: /auth
-      # tls:
+      tls: null
       #   secretName: auth-tls
     name: auth
     pod:
@@ -155,7 +155,7 @@ components:
       enabled: true
       host: core.local
       path: /core
-      # tls:
+      tls: null
       #   secretName: core-tls
     name: core
     pod:
@@ -191,7 +191,7 @@ components:
       enabled: true
       host: manager.local
       path: /manager
-      # tls:
+      tls: null
       #   secretName: manager-tls
     name: manager
     pod:
@@ -228,7 +228,7 @@ components:
       enabled: true
       host: messages.local
       path: /messages
-      # tls:
+      tls: null
       #   secretName: messages-tls
     mailServer:
       host: smtp.mailtrap.io
@@ -276,7 +276,7 @@ components:
       enabled: true
       host: vulnerability.local
       path: /vulnerability
-      # tls:
+      tls: null
       #   secretName: vulnerability-tls
     name: vulnerability
     pod:
@@ -312,7 +312,7 @@ components:
       enabled: true
       host: webhook.local
       path: /webhook
-      # tls:
+      tls: null
       #   secretName: webhook-tls
     name: webhook
     pod:
