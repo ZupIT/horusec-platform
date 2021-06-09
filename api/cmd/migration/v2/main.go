@@ -9,7 +9,7 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/utils/crypto"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 
-	"github.com/ZupIT/horusec-platform/api/cmd/migration/enums"
+	"github.com/ZupIT/horusec-platform/api/cmd/migration/v2/enums"
 )
 
 func main() {
