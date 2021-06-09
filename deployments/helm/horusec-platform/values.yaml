@@ -11,7 +11,7 @@ components:
         # -- the repository used to store Horusec Analytic container image
         repository: horusec-analytic
         # -- the reference to the Horusec Analytic container image version
-        tag: v2.12.1
+        tag: v2.13.1
       livenessProbe: null
       readinessProbe: null
       resources: null
@@ -20,7 +20,7 @@ components:
         runAsNonRoot: true
         runAsUser: 1000
     database:
-      host: ""
+      host: "postgresql"
       logMode: false
       migration:
         image:
@@ -28,7 +28,7 @@ components:
           pullSecrets: [ ]
           registry: docker.io/horuszup
           repository: horusec-migrations
-          tag: v2.12.1
+          tag: v2.13.1
       name: analytic_db
       password:
         secretKeyRef:
@@ -46,6 +46,7 @@ components:
       host: analytic.local
       path: /analytic
       tls: null
+      #   secretName: analytic-tls
     name: analytic
     pod:
       autoscaling:
@@ -67,7 +68,7 @@ components:
         pullSecrets: [ ]
         registry: docker.io/horuszup
         repository: horusec-api
-        tag: v2.12.1
+        tag: v2.13.1
       livenessProbe: null
       readinessProbe: null
       resources: null
@@ -81,6 +82,7 @@ components:
       host: api.local
       path: /api
       tls: null
+      #   secretName: api-tls
     name: api
     pod:
       autoscaling:
@@ -102,7 +104,7 @@ components:
         pullSecrets: [ ]
         registry: docker.io/horuszup
         repository: horusec-auth
-        tag: v2.12.1
+        tag: v2.13.1
       livenessProbe: null
       readinessProbe: null
       resources: null
@@ -116,6 +118,7 @@ components:
       host: auth.local
       path: /auth
       tls: null
+      #   secretName: auth-tls
     name: auth
     pod:
       autoscaling:
@@ -139,7 +142,7 @@ components:
         pullSecrets: [ ]
         registry: docker.io/horuszup
         repository: horusec-core
-        tag: v2.12.1
+        tag: v2.13.1
       livenessProbe: null
       readinessProbe: null
       resources: null
@@ -153,6 +156,7 @@ components:
       host: core.local
       path: /core
       tls: null
+      #   secretName: core-tls
     name: core
     pod:
       autoscaling:
@@ -174,7 +178,7 @@ components:
         pullSecrets: [ ]
         registry: docker.io/horuszup
         repository: horusec-manager
-        tag: v2.12.1
+        tag: v2.13.1
       livenessProbe: null
       readinessProbe: null
       resources: null
@@ -188,6 +192,7 @@ components:
       host: manager.local
       path: /manager
       tls: null
+      #   secretName: manager-tls
     name: manager
     pod:
       autoscaling:
@@ -209,7 +214,7 @@ components:
         pullSecrets: [ ]
         registry: docker.io/horuszup
         repository: horusec-messages
-        tag: v2.12.1
+        tag: v2.13.1
       livenessProbe: null
       readinessProbe: null
       resources: null
@@ -224,8 +229,10 @@ components:
       host: messages.local
       path: /messages
       tls: null
+      #   secretName: messages-tls
     mailServer:
       host: smtp.mailtrap.io
+      from: horusec@zup.com.br
       password:
         secretKeyRef:
           key: password
@@ -256,7 +263,7 @@ components:
         pullSecrets: [ ]
         registry: docker.io/horuszup
         repository: horusec-vulnerability
-        tag: v2.12.1
+        tag: v2.13.1
       livenessProbe: null
       readinessProbe: null
       resources: null
@@ -270,6 +277,7 @@ components:
       host: vulnerability.local
       path: /vulnerability
       tls: null
+      #   secretName: vulnerability-tls
     name: vulnerability
     pod:
       autoscaling:
@@ -291,7 +299,7 @@ components:
         pullSecrets: [ ]
         registry: docker.io/horuszup
         repository: horusec-webhook
-        tag: v2.12.1
+        tag: v2.13.1
       livenessProbe: null
       readinessProbe: null
       resources: null
@@ -300,6 +308,12 @@ components:
         runAsNonRoot: true
         runAsUser: 1000
     extraEnv: [ ]
+    ingress:
+      enabled: true
+      host: webhook.local
+      path: /webhook
+      tls: null
+      #   secretName: webhook-tls
     name: webhook
     pod:
       autoscaling:
@@ -327,7 +341,7 @@ global:
         key: username
         name: horusec-administrator
   broker:
-    host: ""
+    host: "rabbitmq"
     password:
       secretKeyRef:
         key: password
@@ -338,7 +352,7 @@ global:
         key: username
         name: horusec-broker
   database:
-    host: ""
+    host: "postgresql"
     logMode: false
     migration:
       image:
@@ -346,7 +360,7 @@ global:
         pullSecrets: [ ]
         registry: docker.io/horuszup
         repository: horusec-migrations
-        tag: v2.12.1
+        tag: v2.13.1
     name: horusec_db
     password:
       secretKeyRef:
@@ -375,3 +389,7 @@ global:
     otp: false
     publicURL: ""
     realm: horusec
+  ingress:
+    certManager: true
+    annotations: {}
+      # kubernetes.io/ingress.class: "nginx"
