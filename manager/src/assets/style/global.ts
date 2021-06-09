@@ -72,6 +72,7 @@ const GlobalStyle = createGlobalStyle`
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    will-change: transform, box-shadow, z-index;
     scrollbar-width: thin;
     scrollbar-color: dark;
 
