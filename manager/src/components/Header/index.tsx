@@ -110,14 +110,12 @@ const Header: React.FC = () => {
 
   return (
     <Styled.Wrapper>
-      <Styled.Header
-        ref={headerRef}
-        tabIndex={0}
-        aria-label={getTitleByURL().aria}
-      >
+      <Styled.Header ref={headerRef} tabIndex={0}>
         <Styled.Title>
           <Icon name={getTitleByURL().icon} size="20px" />
-          <Styled.Text>{getTitleByURL().text}</Styled.Text>
+          <Styled.Text aria-label={getTitleByURL().aria}>
+            {getTitleByURL().text}
+          </Styled.Text>
         </Styled.Title>
 
         <Styled.List tabIndex={0}>

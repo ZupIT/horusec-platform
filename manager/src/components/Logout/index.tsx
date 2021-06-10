@@ -31,11 +31,7 @@ const Logout: React.FC = () => {
       tabIndex={0}
       onClick={() => logout(refreshToken)}
     >
-      <Styled.LogoutIcon
-        size="16px"
-        ariaLabel={t('SIDE_MENU.LOGOUT')}
-        name="logout"
-      />
+      <Styled.LogoutIcon size="16px" name="logout" />
 
       <Styled.Text>{t('SIDE_MENU.LOGOUT')}</Styled.Text>
     </Styled.Button>
