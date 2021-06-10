@@ -131,6 +131,37 @@ const themeMatUi = createMuiTheme({
         },
       },
     },
+    MuiTableBody: {
+      root: {
+        backgroundColor: theme.colors.dataTable.row.background,
+        '& > .MuiTableRow-root:first-child': {
+          borderTopLeftRadius: '5px',
+          borderBottomLeftRadius: '5px',
+        },
+        '& > .MuiTableRow-root:last-child': {
+          borderTopRightRadius: '5px',
+          borderBottomRightRadius: '5px',
+        },
+        gap: '10px',
+      },
+    },
+    MuiTableCell: {
+      root: {
+        color: theme.colors.dataTable.column.text + '!important',
+        borderBottomColor: theme.colors.dataTable.background,
+      },
+    },
+    MuiTablePagination: {
+      caption: {
+        color: theme.colors.dataTable.row.text,
+      },
+      select: {
+        color: theme.colors.dataTable.row.text,
+      },
+      actions: {
+        color: theme.colors.dataTable.row.text,
+      },
+    },
     // MuiIconButton: {
     //   root: {
     //     color: theme.colors.icon.primary

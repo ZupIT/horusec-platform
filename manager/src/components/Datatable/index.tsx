@@ -19,9 +19,20 @@ import Styled from './styled';
 import { Button, Icon, Pagination } from 'components';
 import { PaginationInfo } from 'helpers/interfaces/Pagination';
 import ReactTooltip, { TooltipProps } from 'react-tooltip';
-import { IconButton, Menu, MenuItem } from '@material-ui/core';
+import {
+  IconButton,
+  Menu,
+  MenuItem,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Toolbar,
+} from '@material-ui/core';
 import { MoreHoriz } from '@material-ui/icons';
-import { kebabCase } from 'lodash';
+import { divide, kebabCase } from 'lodash';
 import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
 
 export interface TableColumn {
@@ -45,6 +56,7 @@ export interface Datasource {
 }
 
 interface DatatableInterface {
+  title?: string;
   columns: TableColumn[];
   datasource: Datasource[];
   total?: number;
@@ -75,168 +87,161 @@ const Datatable: React.FC<DatatableInterface> = (props) => {
     tooltip,
     fixed = true,
     buttons = [],
+    title,
   } = props;
 
   return (
-    <>
-      <Styled.Wrapper>
-        {isLoading ? (
-          <Styled.LoadingWrapper>
-            <Icon name="loading" size="120px" className="loading" />
-          </Styled.LoadingWrapper>
-        ) : (
-          <>
-            <Styled.ButtonWrapper>
-              {buttons.map((button, key) =>
-                button.show ? (
-                  <Button
-                    key={key}
-                    text={button.title}
-                    icon={button.icon}
-                    onClick={button.function}
-                    width="auto"
-                    hidden={button.show}
-                  />
-                ) : null
-              )}
-            </Styled.ButtonWrapper>
+    <Styled.Content>
+      <TableContainer>
+        <Toolbar
+          disableGutters
+          style={{ minHeight: 0, justifyContent: 'space-between' }}
+        >
+          {title ? <Styled.Title>{title}</Styled.Title> : <div></div>}
+          <Styled.ButtonWrapper>
+            {buttons.map((button, key) =>
+              button.show ? (
+                <Button
+                  key={key}
+                  text={button.title}
+                  icon={button.icon}
+                  onClick={button.function}
+                  width="auto"
+                  hidden={button.show}
+                />
+              ) : null
+            )}
+          </Styled.ButtonWrapper>
+        </Toolbar>
 
-            <Styled.Table isPaginate={!!paginate} fixed={fixed}>
-              <thead>
-                <Styled.Head>
-                  {columns.map((el, index) => (
-                    <Styled.Column key={index}>{el.label}</Styled.Column>
-                  ))}
-                </Styled.Head>
-              </thead>
+        <Table>
+          <TableHead>
+            <TableRow>
+              {columns.map((el, index) => (
+                <TableCell key={index}>{el.label}</TableCell>
+              ))}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {!datasource || datasource.length <= 0 ? (
+              <TableRow>
+                <TableCell colSpan={columns.length} align="center">
+                  {emptyListText}
+                </TableCell>
+              </TableRow>
+            ) : (
+              datasource.map((row, dataId) => (
+                <TableRow key={`${row.id || 'item'}-${dataId}`}>
+                  {columns.map((column, columnId) => {
+                    const renderTooltipProps = (tip: string) => {
+                      return tooltip
+                        ? {
+                            'data-for': tooltip.id,
+                            'data-tip': tip,
+                          }
+                        : null;
+                    };
 
-              <Styled.Body>
-                {!datasource || datasource.length <= 0 ? (
-                  <tr>
-                    <Styled.Cell colSpan={columns.length}>
-                      <Styled.EmptyText>{emptyListText}</Styled.EmptyText>
-                    </Styled.Cell>
-                  </tr>
-                ) : (
-                  datasource.map((row, dataId) => (
-                    <Styled.Row
-                      key={`${row.id || 'item'}-${dataId}`}
-                      highlight={row['highlight']}
-                    >
-                      {columns.map((column, columnId) => {
-                        const renderTooltipProps = (tip: string) => {
-                          return tooltip
-                            ? {
-                                'data-for': tooltip.id,
-                                'data-tip': tip,
-                              }
-                            : null;
-                        };
+                    if (column.type === 'text') {
+                      return (
+                        <TableCell
+                          tabIndex={0}
+                          key={columnId}
+                          className={column.cssClass?.join(' ')}
+                          {...renderTooltipProps(row[column.property])}
+                        >
+                          {row[column.property] || '-'}
+                        </TableCell>
+                      );
+                    }
 
-                        if (column.type === 'text') {
-                          return (
-                            <Styled.Cell
-                              tabIndex={0}
-                              key={columnId}
-                              className={column.cssClass?.join(' ')}
-                              {...renderTooltipProps(row[column.property])}
-                            >
-                              {row[column.property] || '-'}
-                            </Styled.Cell>
-                          );
-                        }
+                    if (column.type === 'custom') {
+                      return (
+                        <TableCell
+                          tabIndex={0}
+                          key={columnId}
+                          className={column.cssClass?.join(' ')}
+                          style={{ overflow: 'visible' }}
+                        >
+                          {row[column.property]}
+                        </TableCell>
+                      );
+                    }
 
-                        if (column.type === 'custom') {
-                          return (
-                            <Styled.Cell
-                              tabIndex={0}
-                              key={columnId}
-                              className={column.cssClass?.join(' ')}
-                              style={{ overflow: 'visible' }}
-                            >
-                              {row[column.property]}
-                            </Styled.Cell>
-                          );
-                        }
+                    if (column.type === 'actions') {
+                      return (
+                        <TableCell
+                          tabIndex={0}
+                          key={columnId}
+                          className={column.cssClass?.join(' ')}
+                        >
+                          {row[column.type].length >= 1 ? (
+                            <div className="row">
+                              <PopupState
+                                variant="popover"
+                                popupId={`popup-menu-${dataId}`}
+                              >
+                                {(popupState) => (
+                                  <React.Fragment>
+                                    <IconButton {...bindTrigger(popupState)}>
+                                      <MoreHoriz />
+                                    </IconButton>
+                                    <Menu {...bindMenu(popupState)}>
+                                      {row[column.type].map(
+                                        (
+                                          action: Datasource,
+                                          actionId: React.Key
+                                        ) => (
+                                          <MenuItem
+                                            key={actionId}
+                                            onClick={() => {
+                                              action.function();
+                                              popupState.close();
+                                            }}
+                                          >
+                                            <Button
+                                              id={`action-${kebabCase(
+                                                action.title
+                                              )}-${columnId}-${dataId}`}
+                                              rounded
+                                              outline
+                                              opaque
+                                              text={action.title}
+                                              width={'100%'}
+                                              height={30}
+                                              icon={action.icon}
+                                            />
+                                          </MenuItem>
+                                        )
+                                      )}
+                                    </Menu>
+                                  </React.Fragment>
+                                )}
+                              </PopupState>
+                            </div>
+                          ) : (
+                            '-'
+                          )}
+                        </TableCell>
+                      );
+                    }
 
-                        if (column.type === 'actions') {
-                          return (
-                            <Styled.Cell
-                              tabIndex={0}
-                              key={columnId}
-                              className={column.cssClass?.join(' ')}
-                            >
-                              {row[column.type].length >= 1 ? (
-                                <div className="row">
-                                  <PopupState
-                                    variant="popover"
-                                    popupId={`popup-menu-${dataId}`}
-                                  >
-                                    {(popupState) => (
-                                      <React.Fragment>
-                                        <IconButton
-                                          {...bindTrigger(popupState)}
-                                        >
-                                          <MoreHoriz />
-                                        </IconButton>
-                                        <Menu {...bindMenu(popupState)}>
-                                          {row[column.type].map(
-                                            (
-                                              action: Datasource,
-                                              actionId: React.Key
-                                            ) => (
-                                              <MenuItem
-                                                key={actionId}
-                                                onClick={() => {
-                                                  action.function();
-                                                  popupState.close();
-                                                }}
-                                              >
-                                                <Button
-                                                  id={`action-${kebabCase(
-                                                    action.title
-                                                  )}-${columnId}-${dataId}`}
-                                                  rounded
-                                                  outline
-                                                  opaque
-                                                  text={action.title}
-                                                  width={'100%'}
-                                                  height={30}
-                                                  icon={action.icon}
-                                                />
-                                              </MenuItem>
-                                            )
-                                          )}
-                                        </Menu>
-                                      </React.Fragment>
-                                    )}
-                                  </PopupState>
-                                </div>
-                              ) : (
-                                '-'
-                              )}
-                            </Styled.Cell>
-                          );
-                        }
-
-                        return null;
-                      })}
-                    </Styled.Row>
-                  ))
-                )}
-              </Styled.Body>
-            </Styled.Table>
-            {tooltip ? <ReactTooltip {...tooltip} /> : null}
-          </>
-        )}
-      </Styled.Wrapper>
+                    return null;
+                  })}
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
       {datasource && datasource.length > 0 && paginate ? (
         <Pagination
           pagination={paginate.pagination}
           onChange={paginate.onChange}
         />
       ) : null}
-    </>
+      {tooltip ? <ReactTooltip {...tooltip} /> : null}
+    </Styled.Content>
   );
 };
 

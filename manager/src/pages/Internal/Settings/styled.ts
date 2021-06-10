@@ -27,11 +27,12 @@ interface LanguageProps {
 const Wrapper = styled.section`
   padding: 35px 15px;
   width: 100%;
+  height: 100%;
 `;
 
 const Content = styled.div`
   margin-top: 25px;
-  padding: 25px 15px 10px 25px;
+  padding: 25px 15px;
   background-color: ${({ theme }) => theme.colors.background.secundary};
   border-radius: 4px;
   position: relative;
