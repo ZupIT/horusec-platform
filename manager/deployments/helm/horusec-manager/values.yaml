@@ -78,3 +78,11 @@ env:
     value: 'http:\\/\\/account-horus-dev.zup.com.br'
   - name: "HORUSEC_ENDPOINT_AUTH"
     value: 'http:\\/\\/auth-horus-dev.zup.com.br'
+  - name: "REACT_APP_HORUSEC_ENDPOINT_API"
+    value: 'http:\\/\\/api-horus-dev.zup.com.br'
+  - name: "REACT_APP_HORUSEC_ENDPOINT_ANALYTIC"
+    value: 'http:\\/\\/analytic-horus-dev.zup.com.br'
+  - name: "REACT_APP_HORUSEC_ENDPOINT_ACCOUNT"
+    value: 'http:\\/\\/account-horus-dev.zup.com.br'
+  - name: "REACT_APP_HORUSEC_ENDPOINT_AUTH"
+    value: 'http:\\/\\/auth-horus-dev.zup.com.br'

@@ -13,13 +13,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# Horusec v2
 sed -i -e "s/window.HORUSEC_ENDPOINT_API=\"\"/window.HORUSEC_ENDPOINT_API=\"$HORUSEC_ENDPOINT_API\"/g" "/var/www/index.html"
 sed -i -e "s/window.HORUSEC_ENDPOINT_ANALYTIC=\"\"/window.HORUSEC_ENDPOINT_ANALYTIC=\"$HORUSEC_ENDPOINT_ANALYTIC\"/g" "/var/www/index.html"
 sed -i -e "s/window.HORUSEC_ENDPOINT_CORE=\"\"/window.HORUSEC_ENDPOINT_CORE=\"$HORUSEC_ENDPOINT_CORE\"/g" "/var/www/index.html"
 sed -i -e "s/window.HORUSEC_ENDPOINT_AUTH=\"\"/window.HORUSEC_ENDPOINT_AUTH=\"$HORUSEC_ENDPOINT_AUTH\"/g" "/var/www/index.html"
-
 sed -i -e "s/window.HORUSEC_ENDPOINT_VULNERABILITY=\"\"/window.HORUSEC_ENDPOINT_VULNERABILITY=\"$HORUSEC_ENDPOINT_VULNERABILITY\"/g" "/var/www/index.html"
 sed -i -e "s/window.HORUSEC_ENDPOINT_WEBHOOK=\"\"/window.HORUSEC_ENDPOINT_WEBHOOK=\"$HORUSEC_ENDPOINT_WEBHOOK\"/g" "/var/www/index.html"
+
+# Horusec V1
+sed -i -e "s/window.REACT_APP_HORUSEC_ENDPOINT_API=\"\"/window.REACT_APP_HORUSEC_ENDPOINT_API=\"$REACT_APP_HORUSEC_ENDPOINT_API\"/g" "/var/www/index.html"
+sed -i -e "s/window.REACT_APP_HORUSEC_ENDPOINT_ANALYTIC=\"\"/window.REACT_APP_HORUSEC_ENDPOINT_ANALYTIC=\"$REACT_APP_HORUSEC_ENDPOINT_ANALYTIC\"/g" "/var/www/index.html"
+sed -i -e "s/window.REACT_APP_HORUSEC_ENDPOINT_CORE=\"\"/window.REACT_APP_HORUSEC_ENDPOINT_CORE=\"$REACT_APP_HORUSEC_ENDPOINT_CORE\"/g" "/var/www/index.html"
+sed -i -e "s/window.REACT_APP_HORUSEC_ENDPOINT_AUTH=\"\"/window.REACT_APP_HORUSEC_ENDPOINT_AUTH=\"$REACT_APP_HORUSEC_ENDPOINT_AUTH\"/g" "/var/www/index.html"
+sed -i -e "s/window.REACT_APP_HORUSEC_ENDPOINT_VULNERABILITY=\"\"/window.REACT_APP_HORUSEC_ENDPOINT_VULNERABILITY=\"$REACT_APP_HORUSEC_ENDPOINT_VULNERABILITY\"/g" "/var/www/index.html"
+sed -i -e "s/window.REACT_APP_HORUSEC_ENDPOINT_WEBHOOK=\"\"/window.REACT_APP_HORUSEC_ENDPOINT_WEBHOOK=\"$REACT_APP_HORUSEC_ENDPOINT_WEBHOOK\"/g" "/var/www/index.html"
+
 
 sed -i -e "s/window.REACT_APP_HORUSEC_MANAGER_PATH=\"\"/window.REACT_APP_HORUSEC_MANAGER_PATH=\"$REACT_APP_HORUSEC_MANAGER_PATH\"/g" "/var/www/index.html"
 
