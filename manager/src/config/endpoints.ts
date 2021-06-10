@@ -15,28 +15,26 @@
  */
 declare global {
   interface Window {
-    REACT_APP_HORUSEC_ENDPOINT_CORE: string;
-    REACT_APP_HORUSEC_ENDPOINT_ANALYTIC: string;
-    REACT_APP_HORUSEC_ENDPOINT_AUTH: string;
-    REACT_APP_HORUSEC_ENDPOINT_VULNERABILITY: string;
-    REACT_APP_HORUSEC_ENDPOINT_WEBHOOK: string;
+    HORUSEC_ENDPOINT_CORE: string;
+    HORUSEC_ENDPOINT_ANALYTIC: string;
+    HORUSEC_ENDPOINT_AUTH: string;
+    HORUSEC_ENDPOINT_VULNERABILITY: string;
+    HORUSEC_ENDPOINT_WEBHOOK: string;
   }
 }
 
 const SERVICE_VULNERABILITY =
-  window.REACT_APP_HORUSEC_ENDPOINT_VULNERABILITY || 'http://127.0.0.1:8001';
+  window.HORUSEC_ENDPOINT_VULNERABILITY || 'http://127.0.0.1:8001';
 
-const SERVICE_CORE =
-  window.REACT_APP_HORUSEC_ENDPOINT_CORE || 'http://127.0.0.1:8003';
+const SERVICE_CORE = window.HORUSEC_ENDPOINT_CORE || 'http://127.0.0.1:8003';
 
 const SERVICE_WEBHOOK =
-  window.REACT_APP_HORUSEC_ENDPOINT_WEBHOOK || 'http://127.0.0.1:8004';
+  window.HORUSEC_ENDPOINT_WEBHOOK || 'http://127.0.0.1:8004';
 
 const SERVICE_ANALYTIC =
-  window.REACT_APP_HORUSEC_ENDPOINT_ANALYTIC || 'http://127.0.0.1:8005';
+  window.HORUSEC_ENDPOINT_ANALYTIC || 'http://127.0.0.1:8005';
 
-const SERVICE_AUTH =
-  window.REACT_APP_HORUSEC_ENDPOINT_AUTH || 'http://127.0.0.1:8006';
+const SERVICE_AUTH = window.HORUSEC_ENDPOINT_AUTH || 'http://127.0.0.1:8006';
 
 const isLocalHost = (endpoint: string) =>
   endpoint.includes('localhost') || endpoint.includes('127.0.0.1');

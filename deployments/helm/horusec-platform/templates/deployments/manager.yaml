@@ -20,17 +20,17 @@ spec:
       {{- include "manager.imagePullSecrets" . | nindent 6 -}}
       containers:
         - env:
-          - name: REACT_APP_HORUSEC_ENDPOINT_API
+          - name: HORUSEC_ENDPOINT_API
             value: {{ template "api.uri.scheme" . -}}:\/\/{{- .Values.components.api.ingress.host }}
-          - name: REACT_APP_HORUSEC_ENDPOINT_ANALYTIC
+          - name: HORUSEC_ENDPOINT_ANALYTIC
             value: {{ template "analytic.uri.scheme" . -}}:\/\/{{- .Values.components.analytic.ingress.host }}
-          - name: REACT_APP_HORUSEC_ENDPOINT_CORE
+          - name: HORUSEC_ENDPOINT_CORE
             value: {{ template "core.uri.scheme" . -}}:\/\/{{- .Values.components.core.ingress.host }}
-          - name: REACT_APP_HORUSEC_ENDPOINT_AUTH
+          - name: HORUSEC_ENDPOINT_AUTH
             value: {{ template "auth.uri.scheme" . -}}:\/\/{{- .Values.components.auth.ingress.host }}
-          - name: REACT_APP_HORUSEC_ENDPOINT_VULNERABILITY
+          - name: HORUSEC_ENDPOINT_VULNERABILITY
             value: {{ template "vulnerability.uri.scheme" . -}}:\/\/{{- .Values.components.vulnerability.ingress.host }}
-          - name: REACT_APP_HORUSEC_ENDPOINT_WEBHOOK
+          - name: HORUSEC_ENDPOINT_WEBHOOK
             value: {{ template "webhook.uri.scheme" . -}}:\/\/{{- .Values.components.webhook.ingress.host }}
           - name: REACT_APP_HORUSEC_MANAGER_PATH
             value: \{{ .Values.components.manager.ingress.path }}
