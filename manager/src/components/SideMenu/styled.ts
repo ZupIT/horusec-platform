@@ -24,6 +24,7 @@ interface RouterItemProps extends MinimizedProps {
 }
 
 const SideMenu = styled.div<MinimizedProps>`
+  will-change: transform, box-shadow, z-index;
   background-color: ${({ theme }) => theme.colors.background.primary};
   min-width: 165px;
   max-width: 165px;
@@ -32,6 +33,7 @@ const SideMenu = styled.div<MinimizedProps>`
   z-index: 2;
   position: relative;
   transition: all ease 0.6s;
+  transition: transform 300ms linear;
 
   ${({ isMinimized }) =>
     isMinimized &&
@@ -42,6 +44,7 @@ const SideMenu = styled.div<MinimizedProps>`
 `;
 
 const SizeHandler = styled.button`
+  z-index: 2;
   position: absolute;
   background: none;
   cursor: pointer;
