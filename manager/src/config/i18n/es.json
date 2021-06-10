@@ -266,7 +266,9 @@
       "PAGES": "páginas"
     },
     "NO_OPTIONS": "Sin opciones",
-    "LOADING": "CARGANDO"
+    "LOADING": "CARGANDO",
+    "EXPORT": "Exportar",
+    "DOWNLOAD_AS": "Descargar como"
   },
   "FOOTER": {
     "DEVELOPED": "Desarrollado",
