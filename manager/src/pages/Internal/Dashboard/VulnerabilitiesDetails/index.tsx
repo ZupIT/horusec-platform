@@ -42,7 +42,7 @@ const VulnerabilitiesDetails: React.FC<Props> = ({ filters }) => {
   const [dataValues, setDataValues] = useState<DatatableValue[]>([]);
 
   const [pagination, setPagination] = useState<PaginationInfo>({
-    currentPage: 0,
+    currentPage: 1,
     totalItems: 0,
     pageSize: 10,
     totalPages: 10,
@@ -78,7 +78,7 @@ const VulnerabilitiesDetails: React.FC<Props> = ({ filters }) => {
       const page = refresh;
 
       if (page.pageSize !== pagination.pageSize) {
-        page.currentPage = 0;
+        page.currentPage = 1;
       }
 
       vulnerabilitiesService

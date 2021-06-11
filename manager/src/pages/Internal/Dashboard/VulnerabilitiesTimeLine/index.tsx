@@ -194,4 +194,4 @@ const VulnerabilitiesTimeLine: React.FC<Props> = ({ data, isLoading }) => {
   );
 };
 
-export default VulnerabilitiesTimeLine;
+export default React.memo(VulnerabilitiesTimeLine);

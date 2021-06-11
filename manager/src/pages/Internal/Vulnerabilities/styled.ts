@@ -24,7 +24,7 @@ interface TagProps {
 const Wrapper = styled.div`
   padding: 35px 15px;
   width: 100%;
-  height: 100%;
+  height: 95%;
   display: flex;
   flex-direction: column;
 `;
