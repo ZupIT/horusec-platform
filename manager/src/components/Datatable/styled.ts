@@ -35,17 +35,20 @@ const Wrapper = styled.section`
 `;
 
 const Content = styled.div`
-  margin-top: 25px;
-  padding: 25px 15px 10px 25px;
-  background-color: ${({ theme }) => theme.colors.background.secundary};
-  border-radius: 4px;
-  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 `;
 
-const Title = styled.h1`
-  color: ${({ theme }) => theme.colors.text.secundary};
-  font-weight: normal;
+const Title = styled.h2`
+  color: ${({ theme }) => theme.colors.dataTable.title};
   font-size: ${({ theme }) => theme.metrics.fontSize.xlarge};
+  border-radius: 4px;
+  padding: 0 10px 0px 10px;
+  font-weight: normal;
+  display: block;
+  min-height: 50px;
 `;
 
 const Table = styled.table<{ isPaginate: boolean; fixed: boolean }>`
@@ -150,11 +153,7 @@ const ButtonWrapper = styled.div`
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  align-content: center;
-  justify-content: flex-end;
-  align-items: center;
   gap: 20px;
-  margin-bottom: 20px;
 `;
 
 export default {

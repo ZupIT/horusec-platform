@@ -22,7 +22,7 @@ export default {
     success: 'rgba(16, 170, 128, 0.49)',
     primary: '#EF4123',
     secondary: '#F5F5FB',
-    active: '#f25f21',
+    active: '#ed6d35',
 
     background: {
       primary: '#1C1C1E',

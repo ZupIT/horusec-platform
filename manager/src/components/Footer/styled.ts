@@ -22,6 +22,7 @@ const Footer = styled.footer`
   display: flex;
   align-items: center;
   justify-content: flex-end;
+  height: 5%;
 `;
 
 const Text = styled.span`

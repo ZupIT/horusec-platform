@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg width="464px" height="300px" viewBox="0 0 464 300" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
     <defs>
-        <rect id="path-1" x="0" y="0" width="464" height="318.817204"></rect>
+        <rect id="not_found-svg" x="0" y="0" width="464" height="318.817204"></rect>
         <linearGradient x1="35.1353225%" y1="29.7404871%" x2="80.5931463%" y2="86.6268216%" id="linearGradient-3">
             <stop stop-color="#B5D9CD" stop-opacity="0" offset="22.8%"></stop>
             <stop stop-color="#A5D0C7" stop-opacity="0.142" offset="36.5%"></stop>
@@ -272,7 +272,7 @@
                     <g transform="translate(0.000000, 0.182796)">
                         <g id="Group-19">
                             <mask  fill="white">
-                                <use xlink:href="#path-1"></use>
+                                <use xlink:href="#not_found-svg"></use>
                             </mask>
                             <g id="Mask"></g>
                             <g mask="url(#mask-2)">

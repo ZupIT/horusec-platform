@@ -137,6 +137,9 @@ const SideMenu: React.FC = () => {
     <>
       <Styled.SideMenu isMinimized={isMinimized}>
         <Styled.SizeHandler
+          aria-label={
+            isMinimized ? t('SIDE_MENU.MAX_MENU') : t('SIDE_MENU.MIN_MENU')
+          }
           data-tip={
             isMinimized ? t('SIDE_MENU.MAX_MENU') : t('SIDE_MENU.MIN_MENU')
           }

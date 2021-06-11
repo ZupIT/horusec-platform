@@ -101,7 +101,7 @@ const BarChart: React.FC<BarChartProps> = ({
   }, [data]);
 
   return (
-    <Styled.Wrapper tabIndex={0} aria-label={ariaLabel}>
+    <Styled.Wrapper tabIndex={0} aria-label={ariaLabel} role="figure">
       <Styled.Header>
         <Styled.Title>{title}</Styled.Title>
 
