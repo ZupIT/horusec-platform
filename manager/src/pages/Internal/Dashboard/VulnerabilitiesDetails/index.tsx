@@ -42,8 +42,8 @@ const VulnerabilitiesDetails: React.FC<Props> = ({ filters }) => {
   const [dataValues, setDataValues] = useState<DatatableValue[]>([]);
 
   const [pagination, setPagination] = useState<PaginationInfo>({
-    currentPage: 1,
-    totalItems: 100,
+    currentPage: 0,
+    totalItems: 0,
     pageSize: 10,
     totalPages: 10,
   });
@@ -78,7 +78,7 @@ const VulnerabilitiesDetails: React.FC<Props> = ({ filters }) => {
       const page = refresh;
 
       if (page.pageSize !== pagination.pageSize) {
-        page.currentPage = 1;
+        page.currentPage = 0;
       }
 
       vulnerabilitiesService
@@ -106,7 +106,11 @@ const VulnerabilitiesDetails: React.FC<Props> = ({ filters }) => {
               totalPages = 1;
             }
 
-            setPagination({ ...page, totalPages, totalItems });
+            setPagination({
+              ...page,
+              totalPages,
+              totalItems,
+            });
           }
         })
         .finally(() => {
@@ -123,9 +127,8 @@ const VulnerabilitiesDetails: React.FC<Props> = ({ filters }) => {
 
   return (
     <Styled.Wrapper tabIndex={0} id="vulnerabilities-details">
-      <Styled.Title>{t('DASHBOARD_SCREEN.VULNERABILITY_DETAILS')}</Styled.Title>
-
       <Datatable
+        title={t('DASHBOARD_SCREEN.VULNERABILITY_DETAILS')}
         columns={[
           {
             label: t('DASHBOARD_SCREEN.LANGUAGE'),
