@@ -127,14 +127,14 @@ const Workspaces: React.FC = () => {
         )}
       </Styled.Options>
 
-      <Styled.Content>
+      <Styled.Options style={{ marginTop: 15 }}>
         <Styled.Favorite>
           <Icon name="favorite" />
           {favoriteWorkspace
             ? favoriteWorkspace.name
             : t('WORKSPACES_SCREEN.NO_FAVORITE')}
         </Styled.Favorite>
-      </Styled.Content>
+      </Styled.Options>
 
       <Styled.Content>
         <Styled.Title>{t('WORKSPACES_SCREEN.TITLE')}</Styled.Title>
