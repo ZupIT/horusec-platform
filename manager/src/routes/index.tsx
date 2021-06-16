@@ -38,7 +38,7 @@ const Routes = () => (
 
         <Route
           path="/overview"
-          component={lazy(() => import('pages/Internal'))}
+          component={lazy(() => import('pages/Overview'))}
         />
 
         <Route component={lazy(() => import('pages/NotFound'))} />

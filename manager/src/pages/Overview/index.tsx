@@ -20,13 +20,13 @@ import { PrivateRoute } from 'components';
 import InternalLayout from 'layouts/Internal';
 import useWorkspace from 'helpers/hooks/useWorkspace';
 
-import Dashboard from 'pages/Internal/Dashboard';
-import Repositories from 'pages/Internal/Repositories';
-import Vulnerabilities from 'pages/Internal/Vulnerabilities';
-import Webhooks from 'pages/Internal/Webhooks';
-import Settings from 'pages/Internal/Settings';
-import AddWorkspace from 'pages/Internal/AddWorkspace';
-import Workspaces from 'pages/Internal/Workspaces';
+import Dashboard from 'pages/Overview/Dashboard';
+import Repositories from 'pages/Overview/Repositories';
+import Vulnerabilities from 'pages/Overview/Vulnerabilities';
+import Webhooks from 'pages/Overview/Webhooks';
+import Settings from 'pages/Overview/Settings';
+import AddWorkspace from 'pages/Overview/AddWorkspace';
+import Workspaces from 'pages/Overview/Workspaces';
 
 function InternalRoutes() {
   const { path } = useRouteMatch();
