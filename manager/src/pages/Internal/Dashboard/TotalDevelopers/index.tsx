@@ -38,4 +38,4 @@ const TotalDevelopers: React.FC<Props> = ({ isLoading, data }) => {
   );
 };
 
-export default TotalDevelopers;
+export default React.memo(TotalDevelopers);

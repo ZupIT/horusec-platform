@@ -38,4 +38,4 @@ const TotalRepositories: React.FC<Props> = ({ isLoading, data }) => {
   );
 };
 
-export default TotalRepositories;
+export default React.memo(TotalRepositories);
