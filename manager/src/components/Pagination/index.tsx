@@ -28,7 +28,7 @@ const Pagination: React.FC<Props> = ({ onChange, pagination }) => {
   const { t } = useTranslation();
 
   const handleChangePage = (event: unknown, newPage: number) => {
-    onChange({ ...pagination, currentPage: newPage });
+    onChange({ ...pagination, currentPage: newPage + 1 });
   };
 
   const handleChangeRowsPerPage = (
@@ -36,7 +36,7 @@ const Pagination: React.FC<Props> = ({ onChange, pagination }) => {
   ) => {
     onChange({
       ...pagination,
-      currentPage: 0,
+      currentPage: 1,
       pageSize: Number(event.target.value),
     });
   };
@@ -47,7 +47,7 @@ const Pagination: React.FC<Props> = ({ onChange, pagination }) => {
       component="div"
       count={pagination.totalItems}
       rowsPerPage={pagination.pageSize}
-      page={pagination.currentPage}
+      page={pagination.currentPage - 1}
       onChangePage={handleChangePage}
       onChangeRowsPerPage={handleChangeRowsPerPage}
       labelRowsPerPage={t('GENERAL.PAGINATION.ITENS_PAGE')}
