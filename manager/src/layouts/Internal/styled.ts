@@ -18,7 +18,8 @@ import styled from 'styled-components';
 
 const Wrapper = styled.div`
   display: flex;
-  height: 96.3vh;
+  height: 95%;
+  padding-bottom: 10px;
 `;
 
 const Content = styled.div`

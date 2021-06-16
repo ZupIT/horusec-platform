@@ -169,6 +169,7 @@ const VulnerabilitiesTimeLine: React.FC<Props> = ({ data, isLoading }) => {
     <Styled.Wrapper
       tabIndex={0}
       aria-label={ariaLabel}
+      role="figure"
       id="vulnerabilities-timeline"
     >
       <Styled.Title>

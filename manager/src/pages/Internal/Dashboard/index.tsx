@@ -140,7 +140,7 @@ const Dashboard: React.FC<Props> = ({ type }) => {
       <Styled.FilterWrapper>
         <Filters type={type} onApply={(values) => setFilters(values)} />
         <Button
-          text="Export"
+          text={t('GENERAL.EXPORT')}
           style={{ margin: 20 }}
           onClick={handleExportOpen}
         />
@@ -156,7 +156,7 @@ const Dashboard: React.FC<Props> = ({ type }) => {
               handleExportClose();
             }}
           >
-            Download JPEG
+            {t('GENERAL.DOWNLOAD_AS') + ' JPG'}
           </MenuItem>
           <MenuItem
             onClick={() => {
@@ -164,7 +164,7 @@ const Dashboard: React.FC<Props> = ({ type }) => {
               handleExportClose();
             }}
           >
-            Download PDF
+            {t('GENERAL.DOWNLOAD_AS') + ' PDF'}
           </MenuItem>
           <MenuItem
             onClick={() => {
@@ -172,7 +172,7 @@ const Dashboard: React.FC<Props> = ({ type }) => {
               handleExportClose();
             }}
           >
-            Download JSON
+            {t('GENERAL.DOWNLOAD_AS') + ' JSON'}
           </MenuItem>
           <MenuItem
             onClick={() => {
@@ -180,7 +180,7 @@ const Dashboard: React.FC<Props> = ({ type }) => {
               handleExportClose();
             }}
           >
-            Download XLS
+            {t('GENERAL.DOWNLOAD_AS') + ' XLS'}
           </MenuItem>
           <MenuItem
             onClick={() => {
@@ -188,7 +188,7 @@ const Dashboard: React.FC<Props> = ({ type }) => {
               handleExportClose();
             }}
           >
-            Download CSV
+            {t('GENERAL.DOWNLOAD_AS') + ' CSV'}
           </MenuItem>
           <MenuItem
             onClick={() => {
@@ -196,7 +196,7 @@ const Dashboard: React.FC<Props> = ({ type }) => {
               handleExportClose();
             }}
           >
-            Download XML
+            {t('GENERAL.DOWNLOAD_AS') + ' XML'}
           </MenuItem>
         </Menu>
       </Styled.FilterWrapper>

@@ -29,14 +29,9 @@ const Signature: React.FC = () => {
       target="_blank"
     >
       {t('FOOTER.DEVELOPED')} {t('FOOTER.WITH')}
-      <Styled.Icon
-        ariaLabel={t('FOOTER.LOVE')}
-        tabIndex={null}
-        name="heart"
-        size="12px"
-      />
+      <Styled.Icon tabIndex={null} name="heart" size="12px" />
       {t('FOOTER.BY')}
-      <Styled.Icon ariaLabel="Zup" tabIndex={null} name="zup" size="35px" />
+      <Styled.Icon tabIndex={null} name="zup" size="35px" />
     </Styled.Wrapper>
   );
 };

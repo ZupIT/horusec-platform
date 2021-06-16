@@ -22,7 +22,9 @@ const AriaTitle = styled.h1`
 
 const Wrapper = styled.div`
   width: 100%;
-  padding: 20px 15px 10px 15px;
+  margin: 10px auto;
+  padding: 0 15px;
+
   overflow-y: scroll;
 
   display: grid;
