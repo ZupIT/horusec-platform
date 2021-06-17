@@ -35,9 +35,9 @@ spec:
           - name: HORUSEC_BROKER_PORT
             value: {{ .Values.global.broker.port | quote }}
           - name: HORUSEC_MANAGER_URL
-            value: {{ template "manager.uri.scheme" . -}}:\/\/{{- .Values.components.manager.ingress.host }}
+            value: {{ template "manager.uri.scheme" . -}}://{{- .Values.components.manager.ingress.host }}
           - name: HORUSEC_AUTH_URL
-            value: {{ template "auth.uri.scheme" . -}}:\/\/{{- .Values.components.auth.ingress.host }}
+            value: {{ template "auth.uri.scheme" . -}}://{{- .Values.components.auth.ingress.host }}
           - name: HORUSEC_AUTH_TYPE
             value: {{ .Values.components.auth.type }}
           - name: HORUSEC_ENABLE_APPLICATION_ADMIN
