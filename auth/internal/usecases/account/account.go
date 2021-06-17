@@ -144,8 +144,8 @@ func (u *UseCases) EmailFromIOReadCloser(body io.ReadCloser) (*accountEntities.E
 
 func (u *UseCases) GenerateResetPasswordCode() string {
 	seededRand := rand.New(rand.NewSource(time.Now().UnixNano())) //nolint:gosec // valid for this use case
-
-	code := make([]byte, 6)
+	const defaultCodeMake = 6
+	code := make([]byte, defaultCodeMake)
 	for i := range code {
 		code[i] = accountEnums.ResetPasswordCharset[seededRand.Intn(len(accountEnums.ResetPasswordCharset))]
 	}

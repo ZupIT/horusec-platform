@@ -5,6 +5,8 @@ import (
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/go-ozzo/ozzo-validation/v4/is"
+
+	"github.com/ZupIT/horusec-platform/auth/internal/enums"
 )
 
 type CheckEmailAndUsername struct {
@@ -14,8 +16,10 @@ type CheckEmailAndUsername struct {
 
 func (c *CheckEmailAndUsername) Validate() error {
 	return validation.ValidateStruct(c,
-		validation.Field(&c.Email, validation.Required, validation.Length(1, 255), is.EmailFormat),
-		validation.Field(&c.Username, validation.Required, validation.Length(1, 255)),
+		validation.Field(&c.Email, validation.Required, is.EmailFormat,
+			validation.Length(enums.MinDefaultColumnLength, enums.MaxDefaultColumnLength)),
+		validation.Field(&c.Username, validation.Required,
+			validation.Length(enums.MinDefaultColumnLength, enums.MaxDefaultColumnLength)),
 	)
 }
 
