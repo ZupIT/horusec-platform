@@ -1,5 +1,9 @@
 {
   "horusecCliFilesOrPathsToIgnore": [
     "**/source/**"
+  ],
+  "horusecCliRiskAcceptHashes": [
+    "40d785fc152df8067af1058bb964a89b46a16ffbeb5bb0d22ad1ca812b35ace3",
+    "b7534235a85cf571e1af7706fa00bea1af1128b3ec93b7949e645361d7ea7ad4"
   ]
 }

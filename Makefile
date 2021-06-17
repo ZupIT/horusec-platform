@@ -48,7 +48,7 @@ cleanup-migrate: migrate-drop migrate-up
 
 migrate-drop:
 	chmod +x ./deployments/scripts/migration-run.sh
-	./deployments/scripts/migration-run.sh drop -f
+	./deployments/scripts/migration-run.sh drop
 
 migrate-up:
 	chmod +x ./deployments/scripts/migration-run.sh

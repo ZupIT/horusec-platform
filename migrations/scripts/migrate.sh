@@ -13,4 +13,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-migrate -path "/horusec-migrations/$MIGRATION_NAME" -database "$HORUSEC_DATABASE_SQL_URI" up
+COMMAND=$@
+
+if [[ -z $COMMAND ]]; then
+  COMMAND="up"
+fi
+
+yes Y | migrate -path "/horusec-migrations/$MIGRATION_NAME" -database "$HORUSEC_DATABASE_SQL_URI" "$COMMAND"
