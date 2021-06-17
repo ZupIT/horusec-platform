@@ -43,7 +43,7 @@ function KeycloakAuth() {
 
         setCurrentUser(userData);
 
-        history.replace('/home/dashboard');
+        history.replace('/home');
       })
       .catch(() => {
         showErrorFlash(t('API_ERRORS.KEYCLOAK_LOGIN'));

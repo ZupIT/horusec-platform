@@ -78,7 +78,7 @@ const WorkspaceProvider = ({ children }: { children: JSX.Element }) => {
     }
   };
 
-  const fetchAll = (redirect?: boolean) => {
+  const fetchAll = () => {
     coreService
       .getAllWorkspaces()
       .then((result) => {
@@ -96,24 +96,17 @@ const WorkspaceProvider = ({ children }: { children: JSX.Element }) => {
           } else {
             handleSetCurrentWorkspace(workspaces[0]);
           }
-
-          if (redirect) history.replace('/home/dashboard');
         } else {
           handleSetCurrentWorkspace(null);
-
-          if (redirect) {
-            history.replace('/home/add-workspace');
-          }
         }
       })
       .catch((err) => {
         dispatchMessage(err?.response?.data);
-        if (redirect) history.replace('/home/add-workspace');
       });
   };
 
   useEffect(() => {
-    if (isLogged()) fetchAll(true);
+    if (isLogged()) fetchAll();
     // eslint-disable-next-line
   }, []);
 

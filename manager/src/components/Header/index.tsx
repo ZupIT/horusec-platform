@@ -31,56 +31,56 @@ const Header: React.FC = () => {
     const path = window.location.pathname;
 
     const titles: ObjectLiteral = {
-      '/home/dashboard/repositories': {
+      '/overview/dashboard/repositories': {
         text: t('HEADER.TITLE.DASHBOARDREPOSITORY'),
         aria: t('DASHBOARD_SCREEN.ARIA_TITLE_REPOSITORY'),
         icon: 'pie',
         helper:
           'https://docs.horusec.io/docs/web/services/manager/introduction/#analytics-dashboard',
       },
-      '/home/dashboard/workspace': {
+      '/overview/dashboard/workspace': {
         text: t('HEADER.TITLE.DASHBOARDWORKSPACE'),
         aria: t('DASHBOARD_SCREEN.ARIA_TITLE_WORKSPACE'),
         icon: 'pie',
         helper:
           'https://docs.horusec.io/docs/web/services/manager/introduction/#analytics-dashboard',
       },
-      '/home/vulnerabilities': {
+      '/overview/vulnerabilities': {
         text: t('HEADER.TITLE.VULNERABILITIES'),
         aria: t('HEADER.ARIA.VULNERABILITIES'),
         icon: 'shield',
         helper:
           'https://docs.horusec.io/docs/web/services/manager/vulnerabilities-management/',
       },
-      '/home/repositories': {
+      '/overview/repositories': {
         text: t('HEADER.TITLE.REPOSITORIES'),
         aria: t('HEADER.ARIA.REPOSITORIES'),
         icon: 'columns',
         helper:
           'https://docs.horusec.io/docs/web/services/manager/repository-management/',
       },
-      '/home/webhooks': {
+      '/overview/webhooks': {
         text: t('HEADER.TITLE.WEBHOOKS'),
         aria: t('HEADER.ARIA.WEBHOOKS'),
         icon: 'webhook',
         helper:
           'https://docs.horusec.io/docs/web/services/manager/webhooks-management/',
       },
-      '/home/workspaces': {
+      '/overview/workspaces': {
         text: t('HEADER.TITLE.WORKSPACES'),
         aria: t('HEADER.ARIA.WORKSPACES'),
         icon: 'grid',
         helper:
           'https://docs.horusec.io/docs/web/services/manager/workspace-management',
       },
-      '/home/settings': {
+      '/overview/settings': {
         text: t('HEADER.TITLE.CONFIGURATION'),
         aria: t('HEADER.ARIA.CONFIGURATION'),
         icon: 'config',
         helper:
           'https://docs.horusec.io/docs/web/services/manager/account-management/',
       },
-      '/home/add-workspace': {
+      '/overview/add-workspace': {
         text: '',
         aria: t('HEADER.ARIA.ADD_WORKSPACE'),
         icon: 'zup',
@@ -126,8 +126,8 @@ const Header: React.FC = () => {
           <Styled.Item
             tabIndex={0}
             aria-label={t('HEADER.ARIA.CONFIG')}
-            active={history.location.pathname.includes('/home/settings')}
-            onClick={() => history.replace('/home/settings')}
+            active={history.location.pathname.includes('/overview/settings')}
+            onClick={() => history.replace('/overview/settings')}
           >
             <Styled.ConfigIcon name="config" size="15" />
 

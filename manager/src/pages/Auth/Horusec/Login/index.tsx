@@ -52,7 +52,7 @@ function LoginScreen() {
       onSubmit={(values) => {
         login({ username: values.email, password: values.password }).then(
           () => {
-            history.replace('/home');
+            history.replace('/overview');
           }
         );
       }}

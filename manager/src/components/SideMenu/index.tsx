@@ -39,20 +39,20 @@ const SideMenu: React.FC = () => {
       name: t('SIDE_MENU.DASHBOARD'),
       icon: 'pie',
       type: 'route',
-      path: '/home/dashboard',
+      path: '/overview/dashboard',
       roles: ['admin', 'member'],
       subRoutes: [
         {
           name: t('SIDE_MENU.WORKSPACE'),
           icon: 'grid',
-          path: '/home/dashboard/workspace',
+          path: '/overview/dashboard/workspace',
           type: 'subRoute',
           roles: ['admin'],
         },
         {
           name: t('SIDE_MENU.REPOSITORIES'),
           icon: 'columns',
-          path: '/home/dashboard/repositories',
+          path: '/overview/dashboard/repositories',
           type: 'subRoute',
           roles: ['admin', 'member'],
         },
@@ -61,21 +61,21 @@ const SideMenu: React.FC = () => {
     {
       name: t('SIDE_MENU.VULNERABILITIES'),
       icon: 'shield',
-      path: '/home/vulnerabilities',
+      path: '/overview/vulnerabilities',
       type: 'route',
       roles: ['admin', 'member'],
     },
     {
       name: t('SIDE_MENU.REPOSITORIES'),
       icon: 'columns',
-      path: '/home/repositories',
+      path: '/overview/repositories',
       type: 'route',
       roles: ['admin', 'member'],
     },
     {
       name: t('SIDE_MENU.WEBHOOK'),
       icon: 'webhook',
-      path: '/home/webhooks',
+      path: '/overview/webhooks',
       type: 'route',
       roles: ['admin'],
     },
@@ -130,7 +130,7 @@ const SideMenu: React.FC = () => {
 
   const handleSelectedWorkspace = (workspace: Workspace) => {
     handleSetCurrentWorkspace(workspace);
-    history.replace('/home/dashboard');
+    history.replace('/overview/dashboard');
   };
 
   return (
@@ -168,7 +168,7 @@ const SideMenu: React.FC = () => {
                 }))}
                 fixItem={{
                   title: t('SIDE_MENU.MANAGE_WORKSPACES'),
-                  action: () => history.push('/home/workspaces'),
+                  action: () => history.push('/overview/workspaces'),
                 }}
               />
             </Styled.SelectWrapper>
