@@ -8,4 +8,6 @@ const (
 	SummarySuccess                  = "success"
 	SummaryFailed                   = "failed"
 	TotalOfTables                   = 4
+	MigrationV1ToV2Name             = "20210609_v1_to_v2"
+	MigrationTable                  = "horusec_migrations"
 )

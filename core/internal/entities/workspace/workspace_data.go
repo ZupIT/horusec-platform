@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"time"
 
+	"github.com/ZupIT/horusec-platform/core/internal/enums"
+
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/go-ozzo/ozzo-validation/v4/is"
 	"github.com/google/uuid"
@@ -27,10 +29,11 @@ type Data struct {
 
 func (d *Data) Validate() error {
 	return validation.ValidateStruct(d,
-		validation.Field(&d.Name, validation.Required, validation.Length(1, 255)),
-		validation.Field(&d.Description, validation.Length(0, 255)),
-		validation.Field(&d.AuthzAdmin, validation.Length(0, 5)),
-		validation.Field(&d.AuthzMember, validation.Length(0, 5)),
+		validation.Field(&d.Name, validation.Required,
+			validation.Length(enums.MinDefaultColumnLength, enums.MaxDefaultColumnLength)),
+		validation.Field(&d.Description, validation.Length(0, enums.MaxDefaultColumnLength)),
+		validation.Field(&d.AuthzAdmin, validation.Length(0, enums.MaxAuthzLength)),
+		validation.Field(&d.AuthzMember, validation.Length(0, enums.MaxAuthzLength)),
 		validation.Field(&d.AccountID, is.UUID),
 		validation.Field(&d.WorkspaceID, is.UUID),
 		validation.Field(&d.Permissions, validation.Empty),
