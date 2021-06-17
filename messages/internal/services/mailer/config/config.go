@@ -22,6 +22,10 @@ import (
 	"github.com/ZupIT/horusec-platform/messages/internal/services/mailer/config/enums"
 )
 
+const (
+	DefaultSMTPPort = 25
+)
+
 type IConfig interface {
 	Validate() error
 	SetUsername(username string)
@@ -49,7 +53,7 @@ func NewMailerConfig() IConfig {
 	config.SetUsername(env.GetEnvOrDefault(enums.EnvSMTPUsername, ""))
 	config.SetPassword(env.GetEnvOrDefault(enums.EnvSMTPPassword, ""))
 	config.SetHost(env.GetEnvOrDefault(enums.EnvSMTPHost, ""))
-	config.SetPort(env.GetEnvOrDefaultInt(enums.EnvSMTPPort, 25))
+	config.SetPort(env.GetEnvOrDefaultInt(enums.EnvSMTPPort, DefaultSMTPPort))
 	config.SetFrom(env.GetEnvOrDefault(enums.EnvSMTPEmailFrom, "horusec@zup.com.br"))
 
 	return config
