@@ -17,6 +17,8 @@ import (
 	authHandler "github.com/ZupIT/horusec-platform/auth/internal/handlers/authentication"
 )
 
+const DefaultGRPCPort = 8007
+
 type IAuthGRPCServer interface {
 	ListenAndServeGRPCServer()
 }
@@ -29,7 +31,7 @@ type AuthGRPCServer struct {
 
 func NewAuthGRPCServer(handlerAuth *authHandler.Handler) IAuthGRPCServer {
 	server := &AuthGRPCServer{
-		Port:        env.GetEnvOrDefaultInt(enums.EnvGRPCPort, 8007),
+		Port:        env.GetEnvOrDefaultInt(enums.EnvGRPCPort, DefaultGRPCPort),
 		authHandler: handlerAuth,
 	}
 
