@@ -3,7 +3,7 @@ package role
 import (
 	"encoding/json"
 
-	"github.com/ZupIT/horusec-platform/core/internal/enums"
+	"github.com/ZupIT/horusec-devkit/pkg/enums/ozzovalidation"
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/go-ozzo/ozzo-validation/v4/is"
@@ -28,8 +28,8 @@ func (u *UserData) Validate() error {
 		validation.Field(&u.Role, validation.Required, validation.In(
 			account.Admin, account.Supervisor, account.Member)),
 		validation.Field(&u.Email, validation.Required, is.EmailFormat,
-			validation.Length(enums.MinDefaultColumnLength, enums.MaxDefaultColumnLength)),
-		validation.Field(&u.Username, validation.Length(0, enums.MaxDefaultColumnLength)),
+			validation.Length(ozzovalidation.Length1, ozzovalidation.Length255)),
+		validation.Field(&u.Username, validation.Length(ozzovalidation.Length0, ozzovalidation.Length255)),
 		validation.Field(&u.AccountID, is.UUID),
 		validation.Field(&u.WorkspaceID, is.UUID),
 		validation.Field(&u.RepositoryID, is.UUID),

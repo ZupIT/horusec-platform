@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/ZupIT/horusec-platform/core/internal/enums"
+	"github.com/ZupIT/horusec-devkit/pkg/enums/ozzovalidation"
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/go-ozzo/ozzo-validation/v4/is"
@@ -31,7 +31,7 @@ func (d *Data) Validate() error {
 		validation.Field(&d.RepositoryID, is.UUID),
 		validation.Field(&d.TokenID, is.UUID),
 		validation.Field(&d.Description, validation.Required,
-			validation.Length(enums.MinDefaultColumnLength, enums.MaxDefaultColumnLength)),
+			validation.Length(ozzovalidation.Length1, ozzovalidation.Length255)),
 		validation.Field(&d.ExpiresAt, validation.By(d.validateExpiresAt)),
 	)
 }

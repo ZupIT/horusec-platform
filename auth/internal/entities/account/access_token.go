@@ -3,7 +3,7 @@ package account
 import (
 	"encoding/json"
 
-	"github.com/ZupIT/horusec-platform/auth/internal/enums"
+	"github.com/ZupIT/horusec-devkit/pkg/enums/ozzovalidation"
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 )
@@ -15,7 +15,7 @@ type AccessToken struct {
 func (a *AccessToken) Validate() error {
 	return validation.ValidateStruct(a,
 		validation.Field(&a.AccessToken, validation.Required,
-			validation.Length(enums.MinDefaultColumnLength, enums.MaxTokenLength)),
+			validation.Length(ozzovalidation.Length0, ozzovalidation.Length500)),
 	)
 }
 
