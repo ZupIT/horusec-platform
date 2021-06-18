@@ -3,11 +3,11 @@ package account
 import (
 	"encoding/json"
 
+	"github.com/ZupIT/horusec-devkit/pkg/enums/ozzovalidation"
+
 	"github.com/go-ozzo/ozzo-validation/v4/is"
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
-
-	"github.com/ZupIT/horusec-platform/auth/internal/enums"
 )
 
 type Email struct {
@@ -17,7 +17,7 @@ type Email struct {
 func (e *Email) Validate() error {
 	return validation.ValidateStruct(e,
 		validation.Field(&e.Email, validation.Required, is.EmailFormat,
-			validation.Length(enums.MinDefaultColumnLength, enums.MaxDefaultColumnLength)),
+			validation.Length(ozzovalidation.Length0, ozzovalidation.Length255)),
 	)
 }
 
