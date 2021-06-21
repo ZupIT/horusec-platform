@@ -40,9 +40,9 @@ const clearCurrentUser = () => {
 
 const isApplicationAdmin = () => {
   const { applicationAdminEnable } = getCurrentConfig();
-  const { isApplicationAdmin } = getCurrentUser();
+  const isApplicationAdmin = getCurrentUser()?.isApplicationAdmin;
 
-  return !applicationAdminEnable ? true : isApplicationAdmin;
+  return !applicationAdminEnable ? true : !!isApplicationAdmin;
 };
 
 export { getCurrentUser, setCurrentUser, clearCurrentUser, isApplicationAdmin };

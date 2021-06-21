@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"time"
 
+	"github.com/ZupIT/horusec-devkit/pkg/enums/ozzovalidation"
+
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/go-ozzo/ozzo-validation/v4/is"
 	"github.com/google/uuid"
@@ -29,11 +31,12 @@ type Data struct {
 
 func (d *Data) Validate() error {
 	return validation.ValidateStruct(d,
-		validation.Field(&d.Name, validation.Required, validation.Length(1, 255)),
-		validation.Field(&d.Description, validation.Length(0, 255)),
-		validation.Field(&d.AuthzAdmin, validation.Length(0, 5)),
-		validation.Field(&d.AuthzMember, validation.Length(0, 5)),
-		validation.Field(&d.AuthzSupervisor, validation.Length(0, 5)),
+		validation.Field(&d.Name, validation.Required,
+			validation.Length(ozzovalidation.Length1, ozzovalidation.Length255)),
+		validation.Field(&d.Description, validation.Length(ozzovalidation.Length0, ozzovalidation.Length255)),
+		validation.Field(&d.AuthzAdmin, validation.Length(ozzovalidation.Length0, ozzovalidation.Length5)),
+		validation.Field(&d.AuthzMember, validation.Length(ozzovalidation.Length0, ozzovalidation.Length5)),
+		validation.Field(&d.AuthzSupervisor, validation.Length(ozzovalidation.Length0, ozzovalidation.Length5)),
 		validation.Field(&d.AccountID, is.UUID),
 		validation.Field(&d.WorkspaceID, is.UUID),
 		validation.Field(&d.RepositoryID, is.UUID),

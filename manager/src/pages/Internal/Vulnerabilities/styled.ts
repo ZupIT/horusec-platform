@@ -24,6 +24,9 @@ interface TagProps {
 const Wrapper = styled.div`
   padding: 35px 15px;
   width: 100%;
+  height: 95%;
+  display: flex;
+  flex-direction: column;
 `;
 
 const Options = styled.div`
@@ -37,11 +40,12 @@ const Options = styled.div`
 
 const Content = styled.div`
   margin-top: 25px;
-  padding: 25px 15px 10px 25px;
+  padding: 25px 15px;
   background-color: ${({ theme }) => theme.colors.background.secundary};
   border-radius: 4px;
   overflow: hidden;
   max-width: 95vw;
+  height: 100%;
 `;
 
 const Select = styled(SelectComponent)`

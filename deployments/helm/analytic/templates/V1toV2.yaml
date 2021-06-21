@@ -23,7 +23,7 @@ spec:
       restartPolicy: Never
       containers:
       - name: horusec-analytic-v1-2-v2
-        image: "horuszup/horusec-analytic:v2.12.1"
+        image: "horuszup/horusec-analytic:v2.14.0"
         command: "./horusec-analytic-v1-2-v2-migrate $HORUSEC_DATABASE_HORUSEC_SQL_URI"
         env:          
           - name: MIGRATION_NAME

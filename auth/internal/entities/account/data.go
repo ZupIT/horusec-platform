@@ -3,10 +3,12 @@ package account
 import (
 	"encoding/json"
 
-	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/ZupIT/horusec-devkit/pkg/enums/ozzovalidation"
+
 	"github.com/go-ozzo/ozzo-validation/v4/is"
 
 	utils "github.com/ZupIT/horusec-devkit/pkg/utils/validation"
+	validation "github.com/go-ozzo/ozzo-validation/v4"
 )
 
 type Data struct {
@@ -17,9 +19,11 @@ type Data struct {
 
 func (u *Data) Validate() error {
 	return validation.ValidateStruct(u,
-		validation.Field(&u.Email, validation.Required, validation.Length(1, 255), is.EmailFormat),
+		validation.Field(&u.Email, validation.Required, is.EmailFormat,
+			validation.Length(ozzovalidation.Length0, ozzovalidation.Length255)),
 		validation.Field(&u.Password, utils.PasswordValidationRules()...),
-		validation.Field(&u.Username, validation.Length(1, 255), validation.Required),
+		validation.Field(&u.Username, validation.Required,
+			validation.Length(ozzovalidation.Length0, ozzovalidation.Length255)),
 	)
 }
 

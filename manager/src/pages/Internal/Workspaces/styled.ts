@@ -19,6 +19,9 @@ import styled from 'styled-components';
 const Wrapper = styled.section`
   padding: 35px 15px;
   width: 100%;
+  height: 95%;
+  display: flex;
+  flex-direction: column;
 `;
 
 const Options = styled.div`
@@ -35,6 +38,7 @@ const Content = styled.div`
   background-color: ${({ theme }) => theme.colors.background.secundary};
   border-radius: 4px;
   position: relative;
+  height: 100%;
 `;
 
 const Title = styled.h1`

@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"time"
 
+	"github.com/ZupIT/horusec-devkit/pkg/enums/ozzovalidation"
+
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/go-ozzo/ozzo-validation/v4/is"
 	"github.com/google/uuid"
@@ -28,7 +30,8 @@ func (d *Data) Validate() error {
 		validation.Field(&d.WorkspaceID, is.UUID),
 		validation.Field(&d.RepositoryID, is.UUID),
 		validation.Field(&d.TokenID, is.UUID),
-		validation.Field(&d.Description, validation.Required, validation.Length(1, 255)),
+		validation.Field(&d.Description, validation.Required,
+			validation.Length(ozzovalidation.Length1, ozzovalidation.Length255)),
 		validation.Field(&d.ExpiresAt, validation.By(d.validateExpiresAt)),
 	)
 }

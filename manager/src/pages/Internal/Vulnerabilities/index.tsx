@@ -32,7 +32,6 @@ import { AxiosError, AxiosResponse } from 'axios';
 import { Autocomplete } from '@material-ui/lab';
 import { TextField } from '@material-ui/core';
 import useRepository from 'helpers/hooks/useRepository';
-import { resolve } from 'cypress/types/bluebird';
 import { Search } from '@material-ui/icons';
 
 const INITIAL_PAGE = 1;

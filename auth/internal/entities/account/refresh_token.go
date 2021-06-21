@@ -3,6 +3,8 @@ package account
 import (
 	"encoding/json"
 
+	"github.com/ZupIT/horusec-devkit/pkg/enums/ozzovalidation"
+
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 )
 
@@ -12,7 +14,8 @@ type RefreshToken struct {
 
 func (r *RefreshToken) Validate() error {
 	return validation.ValidateStruct(r,
-		validation.Field(&r.RefreshToken, validation.Required, validation.Length(1, 500)),
+		validation.Field(&r.RefreshToken, validation.Required,
+			validation.Length(ozzovalidation.Length0, ozzovalidation.Length500)),
 	)
 }
 

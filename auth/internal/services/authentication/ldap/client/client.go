@@ -12,6 +12,10 @@ import (
 	ldapEnums "github.com/ZupIT/horusec-platform/auth/internal/enums/authentication/ldap"
 )
 
+const (
+	DefaultPortLDAP = 389
+)
+
 type ILdapClient interface {
 	Connect() error
 	Close()
@@ -38,7 +42,7 @@ type LdapClient struct {
 func NewLdapClient() ILdapClient {
 	return &LdapClient{
 		Host:               env.GetEnvOrDefault(ldapEnums.EnvLdapHost, ""),
-		Port:               env.GetEnvOrDefaultInt(ldapEnums.EnvLdapPort, 389),
+		Port:               env.GetEnvOrDefaultInt(ldapEnums.EnvLdapPort, DefaultPortLDAP),
 		Base:               env.GetEnvOrDefault(ldapEnums.EnvLdapBase, ""),
 		BindDN:             env.GetEnvOrDefault(ldapEnums.EnvLdapBindDn, ""),
 		BindPassword:       env.GetEnvOrDefault(ldapEnums.EnvLdapBindPassword, ""),

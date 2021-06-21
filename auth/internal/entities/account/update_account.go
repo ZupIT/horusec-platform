@@ -3,8 +3,11 @@ package account
 import (
 	"encoding/json"
 
-	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/ZupIT/horusec-devkit/pkg/enums/ozzovalidation"
+
 	"github.com/go-ozzo/ozzo-validation/v4/is"
+
+	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/google/uuid"
 )
 
@@ -17,8 +20,10 @@ type UpdateAccount struct {
 
 func (u *UpdateAccount) Validate() error {
 	return validation.ValidateStruct(u,
-		validation.Field(&u.Email, validation.Required, validation.Length(1, 255), is.EmailFormat),
-		validation.Field(&u.Username, validation.Length(1, 255), validation.Required),
+		validation.Field(&u.Email, validation.Required, is.EmailFormat,
+			validation.Length(ozzovalidation.Length0, ozzovalidation.Length255)),
+		validation.Field(&u.Username, validation.Required,
+			validation.Length(ozzovalidation.Length0, ozzovalidation.Length255)),
 	)
 }
 

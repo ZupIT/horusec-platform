@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-import React, { useState } from 'react';
-import Styled from './styled';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Icon } from 'components';
 import { PaginationInfo } from 'helpers/interfaces/Pagination';
+import { TablePagination } from '@material-ui/core';
 
 interface Props {
   onChange: (pagination: PaginationInfo) => void;
@@ -28,69 +27,36 @@ interface Props {
 const Pagination: React.FC<Props> = ({ onChange, pagination }) => {
   const { t } = useTranslation();
 
-  const [visibleListItems, setVisibleListItems] = useState(false);
+  const handleChangePage = (event: unknown, newPage: number) => {
+    onChange({ ...pagination, currentPage: newPage + 1 });
+  };
 
-  const handlePagination = (action: 'next' | 'previous') => {
-    let currentPage = pagination.currentPage;
-    action === 'next' ? currentPage++ : currentPage--;
-
-    if (currentPage > 0 && currentPage <= pagination.totalPages) {
-      onChange({ ...pagination, currentPage });
-    }
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    onChange({
+      ...pagination,
+      currentPage: 1,
+      pageSize: Number(event.target.value),
+    });
   };
 
   return (
-    <Styled.Wrapper>
-      <Styled.ItemWrapper
-        onClick={() => setVisibleListItems(!visibleListItems)}
-      >
-        <Styled.Text>{t('GENERAL.PAGINATION.ITENS_PAGE')}</Styled.Text>
-
-        <Styled.Text>{pagination.pageSize}</Styled.Text>
-
-        <Icon name="page-select" size="13px" />
-
-        <Styled.ListItems isVisible={visibleListItems}>
-          <Styled.Item
-            onClick={() => onChange({ ...pagination, pageSize: 10 })}
-          >
-            10
-          </Styled.Item>
-          <Styled.Item
-            onClick={() => onChange({ ...pagination, pageSize: 50 })}
-          >
-            50
-          </Styled.Item>
-          <Styled.Item
-            onClick={() => onChange({ ...pagination, pageSize: 100 })}
-          >
-            100
-          </Styled.Item>
-        </Styled.ListItems>
-      </Styled.ItemWrapper>
-
-      <Styled.PagesWrapper>
-        <Styled.Text>{pagination.currentPage}</Styled.Text>
-
-        <Styled.Text>{t('GENERAL.PAGINATION.OF')}</Styled.Text>
-
-        <Styled.Text>{pagination.totalPages}</Styled.Text>
-
-        <Styled.Text>{t('GENERAL.PAGINATION.PAGES')}</Styled.Text>
-      </Styled.PagesWrapper>
-
-      <Styled.Previous
-        onClick={() => handlePagination('previous')}
-        name="page-previous"
-        size="13px"
-      />
-
-      <Styled.Next
-        onClick={() => handlePagination('next')}
-        name="page-next"
-        size="13px"
-      />
-    </Styled.Wrapper>
+    <TablePagination
+      rowsPerPageOptions={[10, 50, 100]}
+      component="div"
+      count={pagination.totalItems}
+      rowsPerPage={pagination.pageSize}
+      page={pagination.currentPage - 1}
+      onChangePage={handleChangePage}
+      onChangeRowsPerPage={handleChangeRowsPerPage}
+      labelRowsPerPage={t('GENERAL.PAGINATION.ITENS_PAGE')}
+      labelDisplayedRows={({ from, to, count }) =>
+        `${from}-${to} ${t('GENERAL.PAGINATION.OF')} ${
+          count !== -1 ? count : to
+        }`
+      }
+    />
   );
 };
 

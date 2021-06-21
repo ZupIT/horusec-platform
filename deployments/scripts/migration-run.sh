@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,13 +13,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+COMMAND=$@
 POSTGRES_USER="root"
 POSTGRES_PASSWORD="root"
 POSTGRES_HOST="localhost"
 POSTGRES_PORT="5432"
 POSTGRES_SSL_MODE="disable"
-HORUSEC_DEFAULT_DATABASE_SQL_URI="postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@$POSTGRES_HOST:$POSTGRES_PORT/horusec_db?sslmode=$POSTGRES_SSL_MODE"
-HORUSEC_ANALYTIC_DATABASE_SQL_URI="postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@$POSTGRES_HOST:$POSTGRES_PORT/horusec_analytic_db?sslmode=$POSTGRES_SSL_MODE"
+HORUSEC_PLATFORM_DB_NAME="horusec_db"
+HORUSEC_ANALYTIC_DB_NAME="horusec_analytic_db"
+HORUSEC_DEFAULT_DATABASE_SQL_URI="postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@$POSTGRES_HOST:$POSTGRES_PORT/$HORUSEC_PLATFORM_DB_NAME?sslmode=$POSTGRES_SSL_MODE"
+HORUSEC_ANALYTIC_DATABASE_SQL_URI="postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@$POSTGRES_HOST:$POSTGRES_PORT/$HORUSEC_ANALYTIC_DB_NAME?sslmode=$POSTGRES_SSL_MODE"
 
 cd ./migrations
 
@@ -29,21 +32,36 @@ fi
 
 cd ..
 
-docker exec horusec_postgresql createdb horusec_db
-docker exec horusec_postgresql createdb horusec_analytic_db
+exists_horusec_db=$(docker exec -it horusec_postgresql psql -U $POSTGRES_USER -W $POSTGRES_PASSWORD --no-password -d postgres -c "select datname from pg_database WHERE datname = '$HORUSEC_PLATFORM_DB_NAME'")
+if [[ $exists_horusec_db == *"0 rows"* ]]; then
+    echo "Creating database $HORUSEC_PLATFORM_DB_NAME..."
+    docker exec -it horusec_postgresql createdb $HORUSEC_PLATFORM_DB_NAME -U $POSTGRES_USER -W $POSTGRES_PASSWORD --no-password
+fi
 
+exists_horusec_analytic_db=$(docker exec -it horusec_postgresql psql -U $POSTGRES_USER -W $POSTGRES_PASSWORD --no-password -d postgres -c "select datname from pg_database WHERE datname = '$HORUSEC_ANALYTIC_DB_NAME'")
+if [[ $exists_horusec_analytic_db == *"0 rows"* ]]; then
+    echo "Creating database $HORUSEC_ANALYTIC_DB_NAME..."
+    docker exec -it horusec_postgresql createdb $HORUSEC_ANALYTIC_DB_NAME -U $POSTGRES_USER -W $POSTGRES_PASSWORD --no-password
+fi
+
+echo ""
+
+echo "Aplicando migrações para o horusec platform..."
 docker run --name migrate --rm \
     -v "$(pwd)/migrations/source:/horusec-migrations" \
     -e HORUSEC_DATABASE_SQL_URI=$HORUSEC_DEFAULT_DATABASE_SQL_URI \
     -e MIGRATION_NAME=platform \
     --network=container:horusec_postgresql \
     horuszup/horusec-migrations:local \
-    "$@"
+    "$COMMAND"
 
+echo ""
+
+echo "Aplicando migrações para o horusec analytic..."
 docker run --name migrate --rm \
     -v "$(pwd)/migrations/source:/horusec-migrations" \
     -e HORUSEC_DATABASE_SQL_URI=$HORUSEC_ANALYTIC_DATABASE_SQL_URI \
     -e MIGRATION_NAME=analytic \
     --network=container:horusec_postgresql \
     horuszup/horusec-migrations:local \
-    "$@"
+    "$COMMAND"

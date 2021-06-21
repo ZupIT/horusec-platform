@@ -145,4 +145,4 @@ const VulnerabilitiesByRepository: React.FC<Props> = ({ isLoading, data }) => {
   );
 };
 
-export default VulnerabilitiesByRepository;
+export default React.memo(VulnerabilitiesByRepository);

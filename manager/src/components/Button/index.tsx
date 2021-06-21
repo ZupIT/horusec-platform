@@ -72,11 +72,7 @@ const Button: React.FC<ButtonProps> = ({
       onClick={handleClickEvent}
     >
       {isLoading ? (
-        <Icon
-          name="loading"
-          size="35px"
-          ariaLabel={t('GENERAL.BUTTON_LOADING')}
-        />
+        <Icon name="loading" size="35px" />
       ) : (
         <>
           {icon ? (
