@@ -11,7 +11,7 @@ components:
         # -- the repository used to store Horusec Analytic container image
         repository: horusec-analytic
         # -- the reference to the Horusec Analytic container image version
-        tag: v2.13.1
+        tag: v2.14.0
       livenessProbe: null
       readinessProbe: null
       resources: null
@@ -28,7 +28,7 @@ components:
           pullSecrets: [ ]
           registry: docker.io/horuszup
           repository: horusec-migrations
-          tag: v2.13.1
+          tag: v2.14.0
       name: analytic_db
       password:
         secretKeyRef:
@@ -68,7 +68,7 @@ components:
         pullSecrets: [ ]
         registry: docker.io/horuszup
         repository: horusec-api
-        tag: v2.13.1
+        tag: v2.14.0
       livenessProbe: null
       readinessProbe: null
       resources: null
@@ -104,7 +104,7 @@ components:
         pullSecrets: [ ]
         registry: docker.io/horuszup
         repository: horusec-auth
-        tag: v2.13.1
+        tag: v2.14.0
       livenessProbe: null
       readinessProbe: null
       resources: null
@@ -142,7 +142,7 @@ components:
         pullSecrets: [ ]
         registry: docker.io/horuszup
         repository: horusec-core
-        tag: v2.13.1
+        tag: v2.14.0
       livenessProbe: null
       readinessProbe: null
       resources: null
@@ -178,7 +178,7 @@ components:
         pullSecrets: [ ]
         registry: docker.io/horuszup
         repository: horusec-manager
-        tag: v2.13.1
+        tag: v2.14.0
       livenessProbe: null
       readinessProbe: null
       resources: null
@@ -214,7 +214,7 @@ components:
         pullSecrets: [ ]
         registry: docker.io/horuszup
         repository: horusec-messages
-        tag: v2.13.1
+        tag: v2.14.0
       livenessProbe: null
       readinessProbe: null
       resources: null
@@ -263,7 +263,7 @@ components:
         pullSecrets: [ ]
         registry: docker.io/horuszup
         repository: horusec-vulnerability
-        tag: v2.13.1
+        tag: v2.14.0
       livenessProbe: null
       readinessProbe: null
       resources: null
@@ -299,7 +299,7 @@ components:
         pullSecrets: [ ]
         registry: docker.io/horuszup
         repository: horusec-webhook
-        tag: v2.13.1
+        tag: v2.14.0
       livenessProbe: null
       readinessProbe: null
       resources: null
@@ -360,7 +360,7 @@ global:
         pullSecrets: [ ]
         registry: docker.io/horuszup
         repository: horusec-migrations
-        tag: v2.13.1
+        tag: v2.14.0
     name: horusec_db
     password:
       secretKeyRef:
