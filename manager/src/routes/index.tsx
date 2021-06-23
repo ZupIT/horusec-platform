@@ -28,12 +28,18 @@ const Routes = () => (
           {isLogged() ? <Redirect to="/home" /> : <Redirect to="/auth" />}
         </Route>
 
+        <Route path="/auth" component={lazy(() => import('pages/Auth'))} />
+
         <Route
-          path="/auth"
-          component={lazy(() => import('pages/External/Auth'))}
+          exact
+          path="/home"
+          component={lazy(() => import('pages/Home'))}
         />
 
-        <Route path="/home" component={lazy(() => import('pages/Internal'))} />
+        <Route
+          path="/overview"
+          component={lazy(() => import('pages/Overview'))}
+        />
 
         <Route component={lazy(() => import('pages/NotFound'))} />
       </Switch>

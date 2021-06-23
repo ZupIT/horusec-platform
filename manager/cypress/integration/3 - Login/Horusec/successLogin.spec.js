@@ -39,7 +39,5 @@ describe('Login in the application when a correct username and password.', () =>
     cy.wait('@authenticate');
 
     cy.wait('@getWorkspaces');
-
-    cy.get('h1').should('contain.text', NEW_WORKSPACE_SCREEN.MESSAGE);
   });
 });
