@@ -135,6 +135,7 @@ func (au *UseCases) sliceTools() []interface{} {
 		tools.MixAudit,
 		tools.OwaspDependencyCheck,
 		tools.DotnetCli,
+		tools.Nancy,
 	}
 }
 
