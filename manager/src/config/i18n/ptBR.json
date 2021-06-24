@@ -458,6 +458,7 @@
   },
   "HEADER": {
     "TITLE": {
+      "HOME": "Home",
       "DASHBOARDREPOSITORY": "Dashboard / Repositório",
       "DASHBOARDWORKSPACE": "Dashboard / Workspace",
       "VULNERABILITIES": "Vulnerabilidades",
@@ -477,7 +478,9 @@
       "WEBHOOKS": "Tela de manipulação de webhooks.",
       "CONFIGURATION": "Tela de configurações",
       "WORKSPACES": "Tela para gerenciar os workspaces.",
-      "ADD_WORKSPACE": "Tela para redirecionamento para criação de um workspace."
+      "ADD_WORKSPACE": "Tela para redirecionamento para criação de um workspace.",
+      "HOME": "Tela Home, nessa tela você poderá selecionar um workspace ou repositório para visualizar os dados referentes.",
+      "GOHOME": "Ir para tela inicial - Home"
     }
   }
 }

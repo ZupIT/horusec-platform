@@ -458,6 +458,7 @@
   },
   "HEADER": {
     "TITLE": {
+      "HOME": "Home",
       "DASHBOARDREPOSITORY": "Tablero / Eepositorio",
       "DASHBOARDWORKSPACE": "Panel de control / Espacio de trabajo",
       "VULNERABILITIES": "Vulnerabilidades",
@@ -477,7 +478,9 @@
       "WEBHOOKS": "Pantalla de manipulación de webhook.",
       "CONFIGURATION": "Pantalla de configuración",
       "WORKSPACES": "Pantalla para gestionar los espacios de trabajo.",
-      "ADD_WORKSPACE": "Pantalla para la redirección para crear un espacio de trabajo."
+      "ADD_WORKSPACE": "Pantalla para la redirección para crear un espacio de trabajo.",
+      "HOME": "Pantalla de inicio En esta pantalla puede seleccionar un espacio de trabajo o un repositorio para ver los lanzamientos.",
+      "GOHOME": "Ir a la pantalla de inicio - Home"
     }
   }
 }

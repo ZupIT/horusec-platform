@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Icon } from 'components';
+import { Icon as IconComponent } from 'components';
 import styled, { css } from 'styled-components';
 
 interface ItemProps {
@@ -22,7 +22,6 @@ interface ItemProps {
 }
 
 const Wrapper = styled.div`
-  padding-left: 15px;
   position: sticky;
 `;
 
@@ -87,7 +86,7 @@ const Item = styled.li<ItemProps>`
   }
 `;
 
-const ConfigIcon = styled(Icon)`
+const Icon = styled(IconComponent)`
   cursor: pointer;
   color: ${({ theme }) => theme.colors.text.opaque};
 `;
@@ -106,6 +105,6 @@ export default {
   Wrapper,
   List,
   Item,
-  ConfigIcon,
+  Icon,
   ConfigText,
 };

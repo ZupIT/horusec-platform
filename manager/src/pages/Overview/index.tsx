@@ -24,7 +24,6 @@ import Dashboard from 'pages/Overview/Dashboard';
 import Repositories from 'pages/Overview/Repositories';
 import Vulnerabilities from 'pages/Overview/Vulnerabilities';
 import Webhooks from 'pages/Overview/Webhooks';
-import Settings from 'pages/Overview/Settings';
 import AddWorkspace from 'pages/Overview/AddWorkspace';
 import Workspaces from 'pages/Overview/Workspaces';
 
@@ -85,12 +84,6 @@ function InternalRoutes() {
           exact
           path={`${path}/webhooks`}
           component={() => <Webhooks />}
-        />
-
-        <PrivateRoute
-          exact
-          path={`${path}/settings`}
-          component={() => <Settings />}
         />
       </Switch>
     </InternalLayout>

@@ -31,6 +31,13 @@ const Header: React.FC = () => {
     const path = window.location.pathname;
 
     const titles: ObjectLiteral = {
+      '/home': {
+        text: t('HEADER.TITLE.HOME'),
+        aria: t('HEADER.ARIA.HOME'),
+        icon: 'home',
+        helper:
+          'https://docs.horusec.io/docs/web/services/manager/introduction',
+      },
       '/overview/dashboard/repositories': {
         text: t('HEADER.TITLE.DASHBOARDREPOSITORY'),
         aria: t('DASHBOARD_SCREEN.ARIA_TITLE_REPOSITORY'),
@@ -73,7 +80,7 @@ const Header: React.FC = () => {
         helper:
           'https://docs.horusec.io/docs/web/services/manager/workspace-management',
       },
-      '/overview/settings': {
+      '/settings': {
         text: t('HEADER.TITLE.CONFIGURATION'),
         aria: t('HEADER.ARIA.CONFIGURATION'),
         icon: 'config',
@@ -119,19 +126,30 @@ const Header: React.FC = () => {
         </Styled.Title>
 
         <Styled.List tabIndex={0}>
-          <Styled.Item>
-            <Helper url={getTitleByURL().helper} />
+          <Styled.Item
+            tabIndex={0}
+            aria-label={t('HEADER.ARIA.CONFIG')}
+            active={history.location.pathname.includes('/home')}
+            onClick={() => history.replace('/home')}
+          >
+            <Styled.Icon name="home" size="18px" />
+
+            <Styled.ConfigText>{t('HEADER.TITLE.HOME')}</Styled.ConfigText>
           </Styled.Item>
 
           <Styled.Item
             tabIndex={0}
-            aria-label={t('HEADER.ARIA.CONFIG')}
-            active={history.location.pathname.includes('/overview/settings')}
-            onClick={() => history.replace('/overview/settings')}
+            aria-label={t('HEADER.ARIA.GOHOME')}
+            active={history.location.pathname.includes('/settings')}
+            onClick={() => history.replace('/settings')}
           >
-            <Styled.ConfigIcon name="config" size="15" />
+            <Styled.Icon name="config" size="15px" />
 
             <Styled.ConfigText>{t('SIDE_MENU.CONFIG')}</Styled.ConfigText>
+          </Styled.Item>
+
+          <Styled.Item>
+            <Helper url={getTitleByURL().helper} />
           </Styled.Item>
 
           <Styled.Item>

@@ -38,7 +38,9 @@ function InternalLayout({ children }: { children: JSX.Element }) {
             <SideMenu />
 
             <Styled.Content>
-              <Header />
+              <Styled.HeaderWrapper>
+                <Header />
+              </Styled.HeaderWrapper>
               {children}
             </Styled.Content>
           </Styled.Wrapper>

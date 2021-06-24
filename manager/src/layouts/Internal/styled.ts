@@ -28,4 +28,8 @@ const Content = styled.div`
   width: 100%;
 `;
 
-export default { Wrapper, Content };
+const HeaderWrapper = styled.div`
+  padding-left: 15px;
+`;
+
+export default { Wrapper, Content, HeaderWrapper };

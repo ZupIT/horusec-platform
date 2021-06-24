@@ -17,7 +17,7 @@
 import React from 'react';
 import Styled from './styled';
 import { useTranslation } from 'react-i18next';
-
+import { Header } from 'components';
 import { useHistory } from 'react-router-dom';
 
 const Home: React.FC = () => {
@@ -25,9 +25,13 @@ const Home: React.FC = () => {
   const history = useHistory();
 
   return (
-    <Styled.Content>
-      <h1>Home</h1>
-    </Styled.Content>
+    <Styled.Wrapper>
+      <Header />
+
+      <Styled.Content>
+        <h1>Home</h1>
+      </Styled.Content>
+    </Styled.Wrapper>
   );
 };
 

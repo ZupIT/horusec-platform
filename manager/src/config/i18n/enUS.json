@@ -456,6 +456,7 @@
   },
   "HEADER": {
     "TITLE": {
+      "HOME": "Home",
       "DASHBOARDREPOSITORY": "Dashboard / Repository",
       "DASHBOARDWORKSPACE": "Dashboard / Workspace",
       "VULNERABILITIES": "Vulnerabilities",
@@ -475,7 +476,9 @@
       "WEBHOOKS": "Webhooks manipulation screen.",
       "CONFIGURATION": "Settings screen",
       "WORKSPACES": "Screen to manage the workspaces.",
-      "ADD_WORKSPACE": "Screen for redirection for creating a workspace."
+      "ADD_WORKSPACE": "Screen for redirection for creating a workspace.",
+      "HOME": "Home screen on this screen You can select a workspace or repository to view the releases.",
+      "GOHOME": "Go to Home Screen - Home"
     }
   }
 }
