@@ -22,6 +22,7 @@ const Wrapper = styled.section`
   height: 95%;
   display: flex;
   flex-direction: column;
+  gap: 22px;
 `;
 
 const Options = styled.div`
@@ -33,7 +34,6 @@ const Options = styled.div`
 `;
 
 const Content = styled.div`
-  margin-top: 15px;
   padding: 15px 15px 15px 25px;
   background-color: ${({ theme }) => theme.colors.background.secundary};
   border-radius: 4px;

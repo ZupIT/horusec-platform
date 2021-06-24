@@ -31,19 +31,11 @@ import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import { getCurrentUser } from 'helpers/localStorage/currentUser';
 import { findIndex, cloneDeep } from 'lodash';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
-import { Checkbox } from '@material-ui/core';
+import { Checkbox, IconButton } from '@material-ui/core';
+import { Link, useHistory, useParams } from 'react-router-dom';
+import { ArrowBack } from '@material-ui/icons';
 
-interface Props {
-  isVisible?: boolean;
-  repoToInvite: Repository;
-  onClose: () => void;
-}
-
-const InviteToRepository: React.FC<Props> = ({
-  isVisible,
-  repoToInvite,
-  onClose,
-}) => {
+function RepositoryInvite() {
   const { t } = useTranslation();
   const { dispatchMessage } = useResponseMessage();
   const { showSuccessFlash } = useFlashMessage();
@@ -59,6 +51,12 @@ const InviteToRepository: React.FC<Props> = ({
   const [isLoading, setLoading] = useState(false);
   const [permissionsIsOpen, setPermissionsOpen] = useState(false);
 
+  const [repoToInvite, setRepoToInvite] = useState<Repository>(null);
+
+  const { workspaceId, repositoryId } =
+    useParams<{ workspaceId: string; repositoryId: string }>();
+  const history = useHistory();
+
   const roles = [
     {
       label: t('PERMISSIONS.ADMIN'),
@@ -73,6 +71,27 @@ const InviteToRepository: React.FC<Props> = ({
       value: 'member',
     },
   ];
+
+  function getOneRepository() {
+    setLoading(true);
+    coreService
+      .getOneRepository(workspaceId, repositoryId)
+      .then((result) => {
+        setRepoToInvite(result.data.content);
+      })
+      .catch((err) => {
+        dispatchMessage(err?.response?.data);
+        history.goBack();
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }
+
+  useEffect(() => {
+    if (workspaceId && repositoryId) getOneRepository();
+    //eslint-disable-next-line
+  }, [workspaceId, repositoryId]);
 
   const fetchUsersInRepository = (allUsersInWorkspace: Account[]) => {
     coreService
@@ -195,17 +214,22 @@ const InviteToRepository: React.FC<Props> = ({
     // eslint-disable-next-line
   }, [repoToInvite]);
 
-  return isVisible ? (
-    <Styled.Background>
-      <Styled.Wrapper>
-        <Styled.Header>
+  return (
+    <Styled.Wrapper>
+      <Styled.Header>
+        <Styled.TitleContent>
+          <Link to="/overview/repositories">
+            <IconButton size="small">
+              <ArrowBack />
+            </IconButton>
+          </Link>
           <Styled.Title>
             {t('REPOSITORIES_SCREEN.INVITE_TO_REPOSITORY')}
           </Styled.Title>
+        </Styled.TitleContent>
+      </Styled.Header>
 
-          <Styled.Close name="close" size="24px" onClick={onClose} />
-        </Styled.Header>
-
+      <Styled.Content>
         <Styled.SubTitle>
           {t('REPOSITORIES_SCREEN.INVITE_USER_BELOW')}
         </Styled.SubTitle>
@@ -272,18 +296,16 @@ const InviteToRepository: React.FC<Props> = ({
             };
             return repo;
           })}
-          isLoading={isLoading}
           emptyListText={t('REPOSITORIES_SCREEN.NO_USERS_TO_INVITE')}
         />
-      </Styled.Wrapper>
-
+      </Styled.Content>
       <Permissions
         isOpen={permissionsIsOpen}
         onClose={() => setPermissionsOpen(false)}
         rolesType="REPOSITORY"
       />
-    </Styled.Background>
-  ) : null;
-};
+    </Styled.Wrapper>
+  );
+}
 
-export default InviteToRepository;
+export default RepositoryInvite;

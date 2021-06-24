@@ -17,9 +17,24 @@
 import styled, { css } from 'styled-components';
 import { Icon } from 'components';
 
-interface LoadingWrapperProps {
-  isLoading: boolean;
-}
+const Header = styled.div`
+  background-color: ${({ theme }) => theme.colors.background.secundary};
+  border-radius: 4px;
+  padding: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+const Content = styled.div`
+  margin-top: 25px;
+  padding: 25px 15px;
+  background-color: ${({ theme }) => theme.colors.background.secundary};
+  border-radius: 4px;
+  overflow: hidden;
+  max-width: 95vw;
+  height: 100%;
+`;
 
 const Background = styled.div`
   width: 100vw;
@@ -34,17 +49,18 @@ const Background = styled.div`
   left: 0;
 `;
 
-const Wrapper = styled.div`
-  background-color: ${({ theme }) => theme.colors.dialog.background};
-  width: 720px;
-  padding: 30px 40px;
-  border-radius: 4px;
+const Wrapper = styled.section`
+  padding: 35px 15px;
+  width: 100%;
+  height: 95%;
+  display: flex;
+  flex-direction: column;
 `;
 
-const Header = styled.div`
+const TitleContent = styled.div`
   display: flex;
-  justify-content: space-between;
-  margin-bottom: 30px;
+  gap: 15px;
+  align-items: center;
 `;
 
 const Title = styled.div`
@@ -56,6 +72,7 @@ const Title = styled.div`
 const Close = styled(Icon)`
   transition-duration: 0.5s;
   transition-property: transform;
+
   :hover {
     transform: rotate(90deg);
     -webkit-transform: rotate(90deg);
@@ -68,5 +85,7 @@ export default {
   Wrapper,
   Header,
   Title,
+  TitleContent,
   Close,
+  Content,
 };

@@ -31,6 +31,7 @@ import { getCurrentConfig } from 'helpers/localStorage/horusecConfig';
 import { authTypes } from 'helpers/enums/authTypes';
 import { getCurrentUser } from 'helpers/localStorage/currentUser';
 import useRepository from 'helpers/hooks/useRepository';
+import { useHistory } from 'react-router-dom';
 
 const Repositories: React.FC = () => {
   const { t } = useTranslation();
@@ -51,6 +52,7 @@ const Repositories: React.FC = () => {
   const [repoToInvite, setRepoToInvite] = useState<Repository>(null);
 
   const [searchQuery, setSearchQuery] = useState('');
+  const history = useHistory();
 
   const filteredRepositories = () =>
     allRepositories.filter((repo) =>
@@ -85,6 +87,18 @@ const Repositories: React.FC = () => {
   const handleConfirmRepositoryEdit = (repository: Repository) => {
     setVisibleHandleModal(false);
     fetchAllRepositories();
+  };
+
+  const handleRepositoryToken = (repository: Repository) => {
+    history.push(
+      `workspaces/${repository.workspaceID}/repositories/${repository.repositoryID}/tokens`
+    );
+  };
+
+  const handleRepositoryInvite = (repository: Repository) => {
+    history.push(
+      `workspaces/${repository.workspaceID}/repositories/${repository.repositoryID}/invite`
+    );
   };
 
   return (
@@ -149,7 +163,7 @@ const Repositories: React.FC = () => {
                   repo.actions.push({
                     title: t('REPOSITORIES_SCREEN.INVITE'),
                     icon: 'users',
-                    function: () => setRepoToInvite(row),
+                    function: () => handleRepositoryInvite(row),
                   });
                 }
               }
@@ -157,7 +171,7 @@ const Repositories: React.FC = () => {
               repo.actions.push({
                 title: t('REPOSITORIES_SCREEN.TOKENS'),
                 icon: 'lock',
-                function: () => setRepoToManagerTokens(row),
+                function: () => handleRepositoryToken(row),
               });
             }
             return repo;
@@ -184,17 +198,17 @@ const Repositories: React.FC = () => {
         onConfirm={handleConfirmRepositoryEdit}
       />
 
-      <InviteToRepository
+      {/* <InviteToRepository
         isVisible={!!repoToInvite}
         repoToInvite={repoToInvite}
         onClose={() => setRepoToInvite(null)}
-      />
+      /> */}
 
-      <Tokens
+      {/* <Tokens
         isVisible={!!repoToManagerTokens}
         repoToManagerTokens={repoToManagerTokens}
         onClose={() => setRepoToManagerTokens(null)}
-      />
+      /> */}
     </Styled.Wrapper>
   );
 };

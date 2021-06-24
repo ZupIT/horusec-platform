@@ -27,6 +27,10 @@ import Webhooks from 'pages/Overview/Webhooks';
 import Settings from 'pages/Overview/Settings';
 import AddWorkspace from 'pages/Overview/AddWorkspace';
 import Workspaces from 'pages/Overview/Workspaces';
+import RepositoryTokens from './Repositories/Tokens';
+import RepositoryInvite from './Repositories/Invite';
+import WorkspaceTokens from './Workspaces/Tokens';
+import WorkspaceUsers from './Workspaces/Users';
 
 function InternalRoutes() {
   const { path } = useRouteMatch();
@@ -45,6 +49,18 @@ function InternalRoutes() {
           exact
           path={`${path}/workspaces`}
           component={() => <Workspaces />}
+        />
+
+        <PrivateRoute
+          exact
+          path={`${path}/workspaces/:workspaceId/tokens`}
+          component={() => <WorkspaceTokens />}
+        />
+
+        <PrivateRoute
+          exact
+          path={`${path}/workspaces/:workspaceId/users`}
+          component={() => <WorkspaceUsers />}
         />
 
         <Redirect
@@ -83,7 +99,19 @@ function InternalRoutes() {
 
         <PrivateRoute
           exact
-          path={`${path}/webhooks`}
+          path={`${path}/workspaces/:workspaceId/repositories/:repositoryId/invite`}
+          component={() => <RepositoryInvite />}
+        />
+
+        <PrivateRoute
+          exact
+          path={`${path}/workspaces/:workspaceId/repositories/:repositoryId/tokens`}
+          component={() => <RepositoryTokens />}
+        />
+
+        <PrivateRoute
+          exact
+          path={`${path}/workspaces/:workspaceId/webhooks`}
           component={() => <Webhooks />}
         />
 
