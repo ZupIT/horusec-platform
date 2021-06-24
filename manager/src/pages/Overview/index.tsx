@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React from 'react';
+import React, { lazy } from 'react';
 import { Redirect, Switch, useRouteMatch } from 'react-router-dom';
 import { PrivateRoute } from 'components';
 import InternalLayout from 'layouts/Internal';
@@ -43,24 +43,6 @@ function InternalRoutes() {
           exact
           path={`${path}/add-workspace`}
           component={() => <AddWorkspace />}
-        />
-
-        <PrivateRoute
-          exact
-          path={`${path}/workspaces`}
-          component={() => <Workspaces />}
-        />
-
-        <PrivateRoute
-          exact
-          path={`${path}/workspaces/:workspaceId/tokens`}
-          component={() => <WorkspaceTokens />}
-        />
-
-        <PrivateRoute
-          exact
-          path={`${path}/workspaces/:workspaceId/users`}
-          component={() => <WorkspaceUsers />}
         />
 
         <Redirect
@@ -95,6 +77,24 @@ function InternalRoutes() {
           exact
           path={`${path}/repositories`}
           component={() => <Repositories />}
+        />
+
+        <PrivateRoute
+          exact
+          path={`${path}/workspaces/:workspaceId`}
+          component={() => <Workspaces />}
+        />
+
+        <PrivateRoute
+          exact
+          path={`${path}/workspaces/:workspaceId/tokens`}
+          component={() => <WorkspaceTokens />}
+        />
+
+        <PrivateRoute
+          exact
+          path={`${path}/workspaces/:workspaceId/users`}
+          component={() => <WorkspaceUsers />}
         />
 
         <PrivateRoute

@@ -20,19 +20,20 @@ import HorusecLogo from 'assets/logos/horusec.svg';
 import HorusecLogoMin from 'assets/logos/horusec_minimized.svg';
 import { useTranslation } from 'react-i18next';
 import { Icon } from 'components';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import { InternalRoute } from 'helpers/interfaces/InternalRoute';
-import useWorkspace from 'helpers/hooks/useWorkspace';
-import SelectMenu from 'components/SelectMenu';
-import { Workspace } from 'helpers/interfaces/Workspace';
 import ReactTooltip from 'react-tooltip';
+import useParamsRoute from 'helpers/hooks/useParamsRoute';
 
 const SideMenu: React.FC = () => {
   const history = useHistory();
-  const { currentWorkspace, allWorkspaces, handleSetCurrentWorkspace } =
-    useWorkspace();
+
   const { t } = useTranslation();
   const [isMinimized, setIsMinimized] = useState<boolean>(false);
+
+  const { path } = useRouteMatch();
+
+  const { workspace, repository, workspaceId, repositoryId } = useParamsRoute();
 
   const routes: InternalRoute[] = [
     {
@@ -41,52 +42,57 @@ const SideMenu: React.FC = () => {
       type: 'route',
       path: '/overview/dashboard',
       roles: ['admin', 'member'],
-      subRoutes: [
-        {
-          name: t('SIDE_MENU.WORKSPACE'),
-          icon: 'grid',
-          path: '/overview/dashboard/workspace',
-          type: 'subRoute',
-          roles: ['admin'],
-        },
-        {
-          name: t('SIDE_MENU.REPOSITORIES'),
-          icon: 'columns',
-          path: '/overview/dashboard/repositories',
-          type: 'subRoute',
-          roles: ['admin', 'member'],
-        },
-      ],
-    },
-    {
-      name: t('SIDE_MENU.VULNERABILITIES'),
-      icon: 'shield',
-      path: '/overview/vulnerabilities',
-      type: 'route',
-      roles: ['admin', 'member'],
-    },
-    {
-      name: t('SIDE_MENU.REPOSITORIES'),
-      icon: 'columns',
-      path: '/overview/repositories',
-      type: 'route',
-      roles: ['admin', 'member'],
-    },
-    {
-      name: t('SIDE_MENU.WEBHOOK'),
-      icon: 'webhook',
-      path: `/overview/workspaces/${currentWorkspace?.workspaceID}/webhooks`,
-      type: 'route',
-      roles: ['admin'],
     },
   ];
+
+  if (!!workspaceId === true && !!repositoryId === false) {
+    routes.push({
+      name: t('WORKSPACES_SCREEN.TOKENS'),
+      icon: 'lock',
+      path: `${path}/workspaces/${workspaceId}/tokens`,
+      type: 'route',
+      roles: ['admin', 'member'],
+    });
+
+    routes.push({
+      name: t('WORKSPACES_SCREEN.USERS.TITLE'),
+      icon: 'users',
+      path: `${path}/workspaces/${workspaceId}/users`,
+      type: 'route',
+      roles: ['admin', 'member'],
+    });
+
+    routes.push({
+      name: t('SIDE_MENU.WEBHOOK'),
+      icon: 'webhook',
+      path: `${path}/workspaces/${workspaceId}/webhooks`,
+      type: 'route',
+      roles: ['admin', 'member'],
+    });
+  } else if (!!workspaceId === true && !!repositoryId === true) {
+    routes.push({
+      name: t('REPOSITORIES_SCREEN.TOKENS'),
+      icon: 'lock',
+      path: `${path}/workspaces/${workspaceId}/repositories/${repositoryId}/tokens`,
+      type: 'route',
+      roles: ['admin', 'member'],
+    });
+
+    routes.push({
+      name: t('REPOSITORIES_SCREEN.INVITE'),
+      icon: 'users',
+      path: `${path}/workspaces/${workspaceId}/repositories/${repositoryId}/invite`,
+      type: 'route',
+      roles: ['admin', 'member'],
+    });
+  }
 
   const handleSelectedRoute = (route: InternalRoute) => {
     history.push(route.path);
   };
 
   const renderRoute = (route: InternalRoute, index: number) => {
-    if (route.roles.includes(currentWorkspace?.role)) {
+    if (route.roles.includes(workspace?.role)) {
       if (!route?.rule || (route?.rule && route?.rule())) {
         return (
           <div key={index}>
@@ -105,7 +111,7 @@ const SideMenu: React.FC = () => {
 
             <Styled.SubRoutes>
               {route?.subRoutes?.map((subRoute, index) => {
-                if (subRoute?.roles?.includes(currentWorkspace?.role)) {
+                if (subRoute?.roles?.includes(workspace?.role)) {
                   return (
                     <Styled.SubRouteItem
                       isActive={window.location.pathname.includes(
@@ -126,11 +132,6 @@ const SideMenu: React.FC = () => {
         );
       }
     }
-  };
-
-  const handleSelectedWorkspace = (workspace: Workspace) => {
-    handleSetCurrentWorkspace(workspace);
-    history.replace('/overview/dashboard');
   };
 
   return (
@@ -156,23 +157,6 @@ const SideMenu: React.FC = () => {
             src={isMinimized ? HorusecLogoMin : HorusecLogo}
             alt="Horusec Logo"
           />
-
-          {!isMinimized && allWorkspaces && allWorkspaces.length > 0 ? (
-            <Styled.SelectWrapper>
-              <SelectMenu
-                title={'WORKSPACE'}
-                value={currentWorkspace?.name}
-                options={allWorkspaces.map((el) => ({
-                  title: el.name,
-                  action: () => handleSelectedWorkspace(el),
-                }))}
-                fixItem={{
-                  title: t('SIDE_MENU.MANAGE_WORKSPACES'),
-                  action: () => history.push('/overview/workspaces'),
-                }}
-              />
-            </Styled.SelectWrapper>
-          ) : null}
 
           <Styled.Nav aria-label={t('SIDE_MENU.ARIA_TITLE')}>
             <Styled.RoutesList>
