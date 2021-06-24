@@ -25,18 +25,12 @@ import { RepositoryToken } from 'helpers/interfaces/RepositoryToken';
 import AddToken from './Add';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
 import { formatToHumanDate } from 'helpers/formatters/date';
+import { Link, useHistory, useParams } from 'react-router-dom';
+import useWorkspace from 'helpers/hooks/useWorkspace';
+import { IconButton } from '@material-ui/core';
+import { ArrowBack } from '@material-ui/icons';
 
-interface Props {
-  isVisible: boolean;
-  repoToManagerTokens: Repository;
-  onClose: () => void;
-}
-
-const Tokens: React.FC<Props> = ({
-  isVisible,
-  onClose,
-  repoToManagerTokens,
-}) => {
+function RepositoryTokens() {
   const { t } = useTranslation();
   const { dispatchMessage } = useResponseMessage();
   const { showSuccessFlash } = useFlashMessage();
@@ -47,6 +41,34 @@ const Tokens: React.FC<Props> = ({
 
   const [tokenToDelete, setTokenToDelete] = useState<RepositoryToken>(null);
   const [addTokenVisible, setAddTokenVisible] = useState(false);
+
+  const [repoToManagerTokens, setRepoToManagerTokens] =
+    useState<Repository>(null);
+
+  const { workspaceId, repositoryId } =
+    useParams<{ workspaceId: string; repositoryId: string }>();
+  const history = useHistory();
+
+  function getOneRepository() {
+    setLoading(true);
+    coreService
+      .getOneRepository(workspaceId, repositoryId)
+      .then((result) => {
+        setRepoToManagerTokens(result.data.content);
+      })
+      .catch((err) => {
+        dispatchMessage(err?.response?.data);
+        history.goBack();
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }
+
+  useEffect(() => {
+    if (workspaceId && repositoryId) getOneRepository();
+    //eslint-disable-next-line
+  }, [workspaceId, repositoryId]);
 
   const fetchData = () => {
     setLoading(true);
@@ -94,14 +116,17 @@ const Tokens: React.FC<Props> = ({
     //eslint-disable-next-line
   }, [repoToManagerTokens]);
 
-  return isVisible ? (
-    <Styled.Background>
-      <Styled.Wrapper>
-        <Styled.Header>
+  return (
+    <Styled.Wrapper>
+      <Styled.Header>
+        <Styled.TitleContent>
+          <Link to="/overview/repositories">
+            <IconButton size="small">
+              <ArrowBack />
+            </IconButton>
+          </Link>
           <Styled.Title>{t('REPOSITORIES_SCREEN.TOKENS')}</Styled.Title>
-
-          <Styled.Close name="close" size="24px" onClick={onClose} />
-        </Styled.Header>
+        </Styled.TitleContent>
 
         <Button
           text={t('REPOSITORIES_SCREEN.ADD_TOKEN')}
@@ -110,7 +135,9 @@ const Tokens: React.FC<Props> = ({
           icon="plus"
           onClick={() => setAddTokenVisible(true)}
         />
+      </Styled.Header>
 
+      <Styled.Content>
         <Datatable
           columns={[
             {
@@ -152,10 +179,9 @@ const Tokens: React.FC<Props> = ({
             };
             return repo;
           })}
-          isLoading={isLoading}
           emptyListText={t('REPOSITORIES_SCREEN.NO_TOKENS')}
         />
-      </Styled.Wrapper>
+      </Styled.Content>
 
       <Dialog
         message={t('REPOSITORIES_SCREEN.CONFIRM_DELETE_TOKEN')}
@@ -177,8 +203,8 @@ const Tokens: React.FC<Props> = ({
           fetchData();
         }}
       />
-    </Styled.Background>
-  ) : null;
-};
+    </Styled.Wrapper>
+  );
+}
 
-export default Tokens;
+export default RepositoryTokens;

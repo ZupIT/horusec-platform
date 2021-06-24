@@ -21,17 +21,20 @@ import { Button, Dialog, SearchBar, Datatable, Datasource } from 'components';
 import { Webhook } from 'helpers/interfaces/Webhook';
 import { useTheme } from 'styled-components';
 import { get } from 'lodash';
+import coreService from 'services/core';
 import webhookService from 'services/webhook';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
 import useWorkspace from 'helpers/hooks/useWorkspace';
 
 import HandleWebhook from './Handle';
+import { useHistory, useParams } from 'react-router-dom';
+import { Workspace } from 'helpers/interfaces/Workspace';
 
 const Webhooks: React.FC = () => {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const { currentWorkspace } = useWorkspace();
+
   const { dispatchMessage } = useResponseMessage();
   const { showSuccessFlash } = useFlashMessage();
 
@@ -45,11 +48,36 @@ const Webhooks: React.FC = () => {
   const [deleteIsLoading, setDeleteIsLoading] = useState(false);
   const [addWebhookVisible, setAddWebhookVisible] = useState(false);
 
+  const [selectedWorkspace, setSelectedWorkspace] = useState<Workspace>(null);
+  const { workspaceId } = useParams<{ workspaceId: string }>();
+  const history = useHistory();
+
+  function getOneWorkspace() {
+    setLoading(true);
+    coreService
+      .getOneWorkspace(workspaceId)
+      .then((result) => {
+        setSelectedWorkspace(result.data.content);
+      })
+      .catch((err) => {
+        dispatchMessage(err?.response?.data);
+        history.goBack();
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }
+
+  useEffect(() => {
+    if (workspaceId) getOneWorkspace();
+    //eslint-disable-next-line
+  }, [workspaceId]);
+
   const fetchData = () => {
     setLoading(true);
 
     webhookService
-      .getAll(currentWorkspace?.workspaceID)
+      .getAll(selectedWorkspace?.workspaceID)
       .then((result) => {
         setWebhooks(result?.data?.content);
         setFilteredWebhooks(result?.data?.content);
@@ -93,9 +121,9 @@ const Webhooks: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchData();
+    if (selectedWorkspace) fetchData();
     // eslint-disable-next-line
-  }, [])
+  }, [selectedWorkspace]);
 
   return (
     <Styled.Wrapper>

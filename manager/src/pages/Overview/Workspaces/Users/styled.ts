@@ -17,35 +17,37 @@
 import styled, { css } from 'styled-components';
 import { Icon } from 'components';
 
-interface LoadingWrapperProps {
-  isLoading: boolean;
-}
-
-const Background = styled.div`
-  width: 100vw;
-  height: 100vh;
-  position: fixed;
-  background-color: ${({ theme }) => theme.colors.dialog.backgroundScreen};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 3;
-  top: 0;
-  left: 0;
-`;
-
-const Wrapper = styled.div`
-  background-color: ${({ theme }) => theme.colors.dialog.background};
-  width: 890px;
-  padding: 30px 40px;
-  border-radius: 4px;
-`;
-
 const Header = styled.div`
+  background-color: ${({ theme }) => theme.colors.background.secundary};
+  border-radius: 4px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 30px;
+  justify-content: space-between;
+  padding: 22px;
+`;
+
+const Content = styled.div`
+  padding: 25px 15px;
+  background-color: ${({ theme }) => theme.colors.background.secundary};
+  border-radius: 4px;
+  overflow: hidden;
+  max-width: 95vw;
+  height: 100%;
+`;
+
+const Wrapper = styled.section`
+  padding: 35px 15px;
+  width: 100%;
+  height: 95%;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+`;
+
+const TitleContent = styled.div`
+  display: flex;
+  gap: 15px;
+  align-items: center;
 `;
 
 const Title = styled.div`
@@ -57,6 +59,7 @@ const Title = styled.div`
 const Close = styled(Icon)`
   transition-duration: 0.5s;
   transition-property: transform;
+
   :hover {
     transform: rotate(90deg);
     -webkit-transform: rotate(90deg);
@@ -64,10 +67,27 @@ const Close = styled(Icon)`
   }
 `;
 
+const SubTitle = styled.div`
+  color: ${({ theme }) => theme.colors.text.secundary};
+  font-size: ${({ theme }) => theme.metrics.fontSize.small};
+  margin-bottom: 20px;
+`;
+
+const HelpIcon = styled(Icon)`
+  cursor: pointer;
+
+  :hover {
+    transform: scale(1.2);
+  }
+`;
+
 export default {
-  Background,
-  Wrapper,
   Header,
+  Wrapper,
   Title,
+  TitleContent,
   Close,
+  Content,
+  SubTitle,
+  HelpIcon,
 };
