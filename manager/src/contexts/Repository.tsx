@@ -27,6 +27,7 @@ interface RepositoryCtxInterface {
   isMemberOfRepository: boolean;
   setAllRepositories: (repositories: Repository[]) => void;
   setCurrentRepository: (repository: string | Repository) => void;
+  getOneRepository: (repositoryID: string) => void;
   fetchAllRepositories: () => void;
 }
 
@@ -37,6 +38,7 @@ const RepositoryContext = React.createContext<RepositoryCtxInterface>({
   isMemberOfRepository: false,
   setCurrentRepository: null,
   fetchAllRepositories: null,
+  getOneRepository: null,
 });
 
 const RepositoryProvider = ({ children }: { children: JSX.Element }) => {
@@ -89,6 +91,21 @@ const RepositoryProvider = ({ children }: { children: JSX.Element }) => {
     }
   };
 
+  const getOneRepository = (repositoryID: string) => {
+    if (currentWorkspace?.workspaceID) {
+      coreService
+        .getOneRepository(currentWorkspace?.workspaceID, repositoryID)
+        .then((result) => {
+          const repository = result?.data?.content as Repository;
+          setCurrentRepository(repository);
+        })
+        .catch((err) => {
+          dispatchMessage(err?.response?.data);
+          setCurrentRepository(null);
+        });
+    }
+  };
+
   useEffect(() => {
     fetchAllRepositories();
     // eslint-disable-next-line
@@ -99,6 +116,7 @@ const RepositoryProvider = ({ children }: { children: JSX.Element }) => {
       value={{
         currentRepository,
         allRepositories,
+        getOneRepository,
         setCurrentRepository,
         fetchAllRepositories,
         isMemberOfRepository,

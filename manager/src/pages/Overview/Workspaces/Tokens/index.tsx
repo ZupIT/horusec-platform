@@ -25,14 +25,11 @@ import AddToken from './Add';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
 import { formatToHumanDate } from 'helpers/formatters/date';
 import { Workspace } from 'helpers/interfaces/Workspace';
+import { Link, useHistory, useParams } from 'react-router-dom';
+import { IconButton } from '@material-ui/core';
+import { ArrowBack } from '@material-ui/icons';
 
-interface Props {
-  isVisible: boolean;
-  selectedWorkspace: Workspace;
-  onClose: () => void;
-}
-
-const Tokens: React.FC<Props> = ({ isVisible, onClose, selectedWorkspace }) => {
+function WorkspaceTokens() {
   const { t } = useTranslation();
   const { dispatchMessage } = useResponseMessage();
   const { showSuccessFlash } = useFlashMessage();
@@ -43,6 +40,31 @@ const Tokens: React.FC<Props> = ({ isVisible, onClose, selectedWorkspace }) => {
 
   const [tokenToDelete, setTokenToDelete] = useState<RepositoryToken>(null);
   const [addTokenVisible, setAddTokenVisible] = useState(false);
+  const [selectedWorkspace, setSelectedWorkspace] = useState<Workspace>(null);
+
+  const { workspaceId } = useParams<{ workspaceId: string }>();
+  const history = useHistory();
+
+  function getOneWorkspace() {
+    setLoading(true);
+    coreService
+      .getOneWorkspace(workspaceId)
+      .then((result) => {
+        setSelectedWorkspace(result.data.content);
+      })
+      .catch((err) => {
+        dispatchMessage(err?.response?.data);
+        history.goBack();
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }
+
+  useEffect(() => {
+    if (workspaceId) getOneWorkspace();
+    //eslint-disable-next-line
+  }, [workspaceId]);
 
   const fetchData = () => {
     setLoading(true);
@@ -83,14 +105,17 @@ const Tokens: React.FC<Props> = ({ isVisible, onClose, selectedWorkspace }) => {
     //eslint-disable-next-line
   }, [selectedWorkspace]);
 
-  return isVisible ? (
-    <Styled.Background>
-      <Styled.Wrapper>
-        <Styled.Header>
+  return (
+    <Styled.Wrapper>
+      <Styled.Header>
+        <Styled.TitleContent>
+          <Link to="/overview/workspaces">
+            <IconButton size="small">
+              <ArrowBack />
+            </IconButton>
+          </Link>
           <Styled.Title>{t('WORKSPACES_SCREEN.TOKENS')}</Styled.Title>
-
-          <Styled.Close name="close" size="24px" onClick={onClose} />
-        </Styled.Header>
+        </Styled.TitleContent>
 
         <Button
           text={t('WORKSPACES_SCREEN.ADD_TOKEN')}
@@ -99,7 +124,9 @@ const Tokens: React.FC<Props> = ({ isVisible, onClose, selectedWorkspace }) => {
           icon="plus"
           onClick={() => setAddTokenVisible(true)}
         />
+      </Styled.Header>
 
+      <Styled.Content>
         <Datatable
           columns={[
             {
@@ -144,7 +171,7 @@ const Tokens: React.FC<Props> = ({ isVisible, onClose, selectedWorkspace }) => {
           isLoading={isLoading}
           emptyListText={t('WORKSPACES_SCREEN.NO_TOKENS')}
         />
-      </Styled.Wrapper>
+      </Styled.Content>
 
       <Dialog
         message={t('WORKSPACES_SCREEN.CONFIRM_DELETE_TOKEN')}
@@ -166,8 +193,8 @@ const Tokens: React.FC<Props> = ({ isVisible, onClose, selectedWorkspace }) => {
           fetchData();
         }}
       />
-    </Styled.Background>
-  ) : null;
-};
+    </Styled.Wrapper>
+  );
+}
 
-export default Tokens;
+export default WorkspaceTokens;

@@ -27,14 +27,11 @@ import { getCurrentUser } from 'helpers/localStorage/currentUser';
 
 import InviteToCompany from './Invite';
 import EditUserRole from './Edit';
+import { Link, useHistory, useParams } from 'react-router-dom';
+import { IconButton } from '@material-ui/core';
+import { ArrowBack } from '@material-ui/icons';
 
-interface Props {
-  isVisible: boolean;
-  selectedWorkspace: Workspace;
-  onClose: () => void;
-}
-
-const Users: React.FC<Props> = ({ isVisible, onClose, selectedWorkspace }) => {
+function WorkspaceUsers() {
   const { t } = useTranslation();
   const currentUser = getCurrentUser();
   const { dispatchMessage } = useResponseMessage();
@@ -49,6 +46,32 @@ const Users: React.FC<Props> = ({ isVisible, onClose, selectedWorkspace }) => {
   const [userToEdit, setUserToEdit] = useState<Account>(null);
   const [userToDelete, setUserToDelete] = useState<Account>(null);
   const [inviteUserVisible, setInviteUserVisible] = useState(false);
+
+  const [selectedWorkspace, setSelectedWorkspace] = useState<Workspace>(null);
+
+  const { workspaceId } = useParams<{ workspaceId: string }>();
+  const history = useHistory();
+
+  function getOneWorkspace() {
+    setLoading(true);
+    coreService
+      .getOneWorkspace(workspaceId)
+      .then((result) => {
+        setSelectedWorkspace(result.data.content);
+      })
+      .catch((err) => {
+        dispatchMessage(err?.response?.data);
+        history.goBack();
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }
+
+  useEffect(() => {
+    if (workspaceId) getOneWorkspace();
+    //eslint-disable-next-line
+  }, [workspaceId]);
 
   const onSearch = (search: string) => {
     if (search) {
@@ -104,30 +127,34 @@ const Users: React.FC<Props> = ({ isVisible, onClose, selectedWorkspace }) => {
     // eslint-disable-next-line
   }, [selectedWorkspace]);
 
-  return isVisible ? (
-    <Styled.Background>
-      <Styled.Wrapper>
-        <Styled.Header>
+  return (
+    <Styled.Wrapper>
+      <Styled.Header>
+        <Styled.TitleContent>
+          <Link to="/overview/workspaces">
+            <IconButton size="small">
+              <ArrowBack />
+            </IconButton>
+          </Link>
           <Styled.Title>{t('WORKSPACES_SCREEN.USERS.TITLE')}</Styled.Title>
+        </Styled.TitleContent>
+      </Styled.Header>
 
-          <Styled.Close name="close" size="24px" onClick={onClose} />
-        </Styled.Header>
+      <Styled.Header>
+        <SearchBar
+          placeholder={t('WORKSPACES_SCREEN.USERS.SEARCH')}
+          onSearch={(value) => onSearch(value)}
+        />
 
-        <Styled.Header>
-          <SearchBar
-            placeholder={t('WORKSPACES_SCREEN.USERS.SEARCH')}
-            onSearch={(value) => onSearch(value)}
-          />
-
-          <Button
-            text={t('WORKSPACES_SCREEN.USERS.INVITE')}
-            rounded
-            width={180}
-            icon="plus"
-            onClick={() => setInviteUserVisible(true)}
-          />
-        </Styled.Header>
-
+        <Button
+          text={t('WORKSPACES_SCREEN.USERS.INVITE')}
+          rounded
+          width={180}
+          icon="plus"
+          onClick={() => setInviteUserVisible(true)}
+        />
+      </Styled.Header>
+      <Styled.Content>
         <Datatable
           columns={[
             {
@@ -181,7 +208,7 @@ const Users: React.FC<Props> = ({ isVisible, onClose, selectedWorkspace }) => {
           isLoading={isLoading}
           emptyListText={t('WORKSPACES_SCREEN.USERS.TABLE.EMPTY')}
         />
-      </Styled.Wrapper>
+      </Styled.Content>
 
       <InviteToCompany
         isVisible={inviteUserVisible}
@@ -213,8 +240,8 @@ const Users: React.FC<Props> = ({ isVisible, onClose, selectedWorkspace }) => {
           fetchData();
         }}
       />
-    </Styled.Background>
-  ) : null;
-};
+    </Styled.Wrapper>
+  );
+}
 
-export default Users;
+export default WorkspaceUsers;

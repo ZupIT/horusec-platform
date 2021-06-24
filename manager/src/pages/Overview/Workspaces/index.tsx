@@ -36,13 +36,13 @@ import { getCurrentConfig } from 'helpers/localStorage/horusecConfig';
 import { authTypes } from 'helpers/enums/authTypes';
 
 import HandleWorkspace from './Handle';
-import Tokens from './Tokens';
-import Users from './Users';
+
 import {
   getCurrentUser,
   isApplicationAdmin,
 } from 'helpers/localStorage/currentUser';
 import useRepository from 'helpers/hooks/useRepository';
+import { useHistory } from 'react-router-dom';
 
 const Workspaces: React.FC = () => {
   const { t } = useTranslation();
@@ -68,6 +68,8 @@ const Workspaces: React.FC = () => {
     useState<Workspace>(null);
   const [filteredWorkspaces, setFilteredWorkspaces] =
     useState<Workspace[]>(allWorkspaces);
+
+  const history = useHistory();
 
   const onSearch = (search: string) => {
     if (search) {
@@ -108,6 +110,15 @@ const Workspaces: React.FC = () => {
     return () => fetchAllRepositories();
     // eslint-disable-next-line
   }, [allWorkspaces]);
+
+  const handleWorkspaceToken = (workspace: Workspace) => {
+    history.push(`workspaces/${workspace.workspaceID}/tokens`);
+  };
+
+  const handleWorkspaceUsers = (workspace: Workspace) => {
+    history.push(`workspaces/${workspace.workspaceID}/users`);
+  };
+
   return (
     <Styled.Wrapper>
       <Styled.Options>
@@ -127,7 +138,7 @@ const Workspaces: React.FC = () => {
         )}
       </Styled.Options>
 
-      <Styled.Options style={{ marginTop: 15 }}>
+      <Styled.Options>
         <Styled.Favorite>
           <Icon name="favorite" />
           {favoriteWorkspace
@@ -190,14 +201,14 @@ const Workspaces: React.FC = () => {
                 data.actions.push({
                   title: t('WORKSPACES_SCREEN.TABLE.USERS'),
                   icon: 'grid',
-                  function: () => setWorkspaceToManagerUsers(row),
+                  function: () => handleWorkspaceUsers(row),
                 });
               }
 
               data.actions.push({
                 title: t('WORKSPACES_SCREEN.TABLE.TOKENS'),
                 icon: 'lock',
-                function: () => setWorkspaceToManagerTokens(row),
+                function: () => handleWorkspaceToken(row),
               });
 
               data.actions.push({
@@ -234,7 +245,7 @@ const Workspaces: React.FC = () => {
         onConfirm={handleConfirmDeleteWorkspace}
       />
 
-      <Tokens
+      {/* <Tokens
         isVisible={!!workspaceToManagerTokens}
         selectedWorkspace={workspaceToManagerTokens}
         onClose={() => setWorkspaceToManagerTokens(null)}
@@ -244,7 +255,7 @@ const Workspaces: React.FC = () => {
         isVisible={!!workspaceToManagerUsers}
         selectedWorkspace={workspaceToManagerUsers}
         onClose={() => setWorkspaceToManagerUsers(null)}
-      />
+      /> */}
     </Styled.Wrapper>
   );
 };

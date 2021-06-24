@@ -75,7 +75,7 @@ const SideMenu: React.FC = () => {
     {
       name: t('SIDE_MENU.WEBHOOK'),
       icon: 'webhook',
-      path: '/overview/webhooks',
+      path: `/overview/workspaces/${currentWorkspace?.workspaceID}/webhooks`,
       type: 'route',
       roles: ['admin'],
     },

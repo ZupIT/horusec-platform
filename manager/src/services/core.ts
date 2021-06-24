@@ -120,6 +120,12 @@ const getAllRepositories = (workspaceID: string) => {
   );
 };
 
+const getOneRepository = (workspaceID: string, repositoryID: string) => {
+  return http.get(
+    `${SERVICE_CORE}/core/workspaces/${workspaceID}/repositories/${repositoryID}`
+  );
+};
+
 const createRepository = (
   workspaceID: string,
   name: string,
@@ -253,6 +259,7 @@ export default {
   removeTokenOfWorkspace,
   getAllTokensOfWorkspace,
   getAllRepositories,
+  getOneRepository,
   createRepository,
   updateRepository,
   deleteRepository,

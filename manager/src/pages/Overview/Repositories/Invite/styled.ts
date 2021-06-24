@@ -17,40 +17,41 @@
 import styled, { css } from 'styled-components';
 import { Icon } from 'components';
 
-interface LoadingWrapperProps {
-  isLoading: boolean;
-}
-
-const Background = styled.div`
-  width: 100vw;
-  height: 100vh;
-  position: fixed;
-  background-color: ${({ theme }) => theme.colors.dialog.backgroundScreen};
+const Header = styled.div`
+  background-color: ${({ theme }) => theme.colors.background.secundary};
+  border-radius: 4px;
+  padding: 22px;
   display: flex;
   align-items: center;
-  justify-content: center;
-  z-index: 3;
-  top: 0;
-  left: 0;
-`;
-
-const Wrapper = styled.div`
-  background-color: ${({ theme }) => theme.colors.dialog.background};
-  min-width: 720px;
-  width: 50vw;
-  padding: 30px 40px;
-  border-radius: 4px;
-  overflow: visible;
-`;
-
-const Header = styled.div`
-  display: flex;
   justify-content: space-between;
-  margin-bottom: 30px;
+`;
+
+const Content = styled.div`
+  margin-top: 25px;
+  padding: 25px 15px;
+  background-color: ${({ theme }) => theme.colors.background.secundary};
+  border-radius: 4px;
+  overflow: hidden;
+  max-width: 95vw;
+  height: 100%;
+`;
+
+const Wrapper = styled.section`
+  padding: 35px 15px;
+  width: 100%;
+  height: 95%;
+  display: flex;
+  flex-direction: column;
+`;
+
+const TitleContent = styled.div`
+  display: flex;
+  gap: 15px;
+  align-items: center;
 `;
 
 const Title = styled.div`
-  color: ${({ theme }) => theme.colors.text.primary};
+  color: ${({ theme }) => theme.colors.dialog.text};
   font-size: ${({ theme }) => theme.metrics.fontSize.xxlarge};
   line-height: 22px;
 `;
@@ -81,11 +82,12 @@ const HelpIcon = styled(Icon)`
 `;
 
 export default {
-  Background,
-  Wrapper,
   Header,
+  Wrapper,
   Title,
+  TitleContent,
   Close,
+  Content,
   SubTitle,
   HelpIcon,
 };
