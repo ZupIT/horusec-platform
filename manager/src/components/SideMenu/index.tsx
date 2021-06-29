@@ -20,7 +20,7 @@ import HorusecLogo from 'assets/logos/horusec.svg';
 import HorusecLogoMin from 'assets/logos/horusec_minimized.svg';
 import { useTranslation } from 'react-i18next';
 import { Icon } from 'components';
-import { useHistory, useRouteMatch } from 'react-router-dom';
+import { useHistory, useRouteMatch, Link } from 'react-router-dom';
 import { InternalRoute } from 'helpers/interfaces/InternalRoute';
 import ReactTooltip from 'react-tooltip';
 import useParamsRoute from 'helpers/hooks/useParamsRoute';
@@ -153,10 +153,12 @@ const SideMenu: React.FC = () => {
         </Styled.SizeHandler>
 
         <Styled.WrapperLogoRoutes>
-          <Styled.Logo
-            src={isMinimized ? HorusecLogoMin : HorusecLogo}
-            alt="Horusec Logo"
-          />
+          <Link to="/" about="Horusec Logo">
+            <Styled.Logo
+              src={isMinimized ? HorusecLogoMin : HorusecLogo}
+              alt="Horusec Logo"
+            />
+          </Link>
 
           <Styled.Nav aria-label={t('SIDE_MENU.ARIA_TITLE')}>
             <Styled.RoutesList>
