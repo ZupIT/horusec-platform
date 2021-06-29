@@ -1,4 +1,25 @@
 {
+  "HOME_SCREEN": {
+    "WELCOME": "¡Bienvenido a Horusec Manager!",
+    "MY_WORKSPACES": "Mis espacios de trabajo",
+    "SEARCH_WORKSPACE": "Buscar espacio de trabajo por nombre",
+    "ADD_WORKSPACE": "Añadir espacio de trabajo",
+    "CHOOSE_WORKSPACE": "¿Con qué espacio de trabajo quieres trabajar?",
+    "REPOSITORIES": "Repositorios",
+    "ADMIN": "administrador",
+    "MEMBER": "Miembro",
+    "SELECT": "Seleccionar",
+    "HANDLER": "Administrar",
+    "OVERVIEW": "Visión general",
+    "BACK_WORKSPACES": "Volver a los espacios de trabajo",
+    "SEARCH_REPO": "Buscar repositorios por nombre",
+    "ADD_REPO": "Añadir repositorio",
+    "CHOOSE_REPO": "Seleccione un repositorio para elegir una acción.",
+    "LOADING_WORKSPACES": "Buscando sus espacios de trabajo, por favor espere...",
+    "LOADING_REPOSITORIES": "Buscando los repositorios actuales del espacio de trabajo...",
+    "EMPTY_WORKSPACES": "Añada su primer espacio de trabajo para comenzar...",
+    "EMPTY_REPOSITORIES": "Agregue un nuevo repositorio, para proceder..."
+  },
   "LOGIN_SCREEN": {
     "EMAIL": "Correo electrónico",
     "PASSWORD": "Contraseña",

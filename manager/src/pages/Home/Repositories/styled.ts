@@ -14,17 +14,20 @@
  * limitations under the License.
  */
 
+import styled from 'styled-components';
+
+const Wrapper = styled.section`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+`;
+
+const Content = styled.div`
+  height: calc(100vh - 36px);
+  width: 100%;
+`;
+
 export default {
-  metrics: {
-    fontSize: {
-      xsmall: '14px',
-      small: '15px',
-      medium: '16px',
-      large: '18px',
-      xlarge: '20px',
-      xxlarge: '22px',
-      title: '32px',
-      big: '42px',
-    },
-  },
+  Content,
+  Wrapper,
 };

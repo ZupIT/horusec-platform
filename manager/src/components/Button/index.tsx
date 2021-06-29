@@ -24,6 +24,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   outline?: boolean;
   rounded?: boolean;
   opaque?: boolean;
+  pulsing?: boolean;
   isDisabled?: boolean;
   isLoading?: boolean;
   width?: number | string;
@@ -47,6 +48,7 @@ const Button: React.FC<ButtonProps> = ({
   icon,
   disabledColor,
   onClick,
+  pulsing,
   ...props
 }) => {
   const { t } = useTranslation();
@@ -68,6 +70,7 @@ const Button: React.FC<ButtonProps> = ({
       width={width}
       height={height}
       color={color}
+      pulsing={pulsing}
       disabledColor={disabledColor}
       onClick={handleClickEvent}
     >

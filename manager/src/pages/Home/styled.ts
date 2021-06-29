@@ -25,9 +25,56 @@ const Wrapper = styled.section`
 const Content = styled.div`
   height: calc(100vh - 36px);
   width: 100%;
+  padding: 3%;
+`;
+
+const Title = styled.h1`
+  color: ${({ theme }) => theme.colors.chart.title};
+  font-size: ${({ theme }) => theme.metrics.fontSize.title};
+  letter-spacing: 1px;
+`;
+
+const SearchWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  background-color: ${({ theme }) => theme.colors.background.secundary};
+  padding: 10px 15px;
+  margin-top: 20px;
+  border-radius: 5px;
+`;
+
+const ListWrapper = styled.div`
+  background-color: ${({ theme }) => theme.colors.background.secundary};
+  padding: 30px 20px;
+  border-radius: 5px;
+  margin-top: 30px;
+`;
+
+const Phrase = styled.h3`
+  color: ${({ theme }) => theme.colors.text.primary};
+  font-size: ${({ theme }) => theme.metrics.fontSize.large};
+  margin-bottom: 20px;
+  font-weight: normal;
+`;
+
+const Message = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const MessageText = styled(Phrase)`
+  margin: 0;
+  color: ${({ theme }) => theme.colors.text.secundary};
 `;
 
 export default {
   Content,
   Wrapper,
+  Title,
+  SearchWrapper,
+  ListWrapper,
+  Phrase,
+  Message,
+  MessageText,
 };

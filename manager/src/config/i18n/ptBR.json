@@ -1,4 +1,25 @@
 {
+  "HOME_SCREEN": {
+    "WELCOME": "Bem vindo ao Horusec Manager!",
+    "MY_WORKSPACES": "Meus Workspaces",
+    "SEARCH_WORKSPACE": "Buscar workspace pelo nome",
+    "ADD_WORKSPACE": "Add Workspace",
+    "CHOOSE_WORKSPACE": "Em qual workspace você deseja trabalhar?",
+    "REPOSITORIES": "Repositórios",
+    "ADMIN": "Administrador",
+    "MEMBER": "Membro",
+    "SELECT": "Selecionar",
+    "HANDLER": "Gerenciar",
+    "OVERVIEW": "Visão Geral",
+    "BACK_WORKSPACES": "Voltar para workspaces",
+    "SEARCH_REPO": "Pesquisar repositórios por nome",
+    "ADD_REPO": "Add Repositório",
+    "CHOOSE_REPO": "Selecione um repositório para escolher uma ação",
+    "LOADING_WORKSPACES": "Buscando seus workspaces, por favor, aguarde...",
+    "LOADING_REPOSITORIES": "Buscando os repositórios do workspace atual...",
+    "EMPTY_WORKSPACES": "Adicione seu primeiro workspace para começarmos...",
+    "EMPTY_REPOSITORIES": "Adicione um novo repositório, para prosseguirmos..."
+  },
   "LOGIN_SCREEN": {
     "EMAIL": "Email",
     "PASSWORD": "Senha",

@@ -32,7 +32,7 @@ const Routes = () => (
         <Route path="/auth" component={lazy(() => import('pages/Auth'))} />
 
         <PrivateRoute
-          exact={true}
+          exact={false}
           path="/home"
           component={lazy(() => import('pages/Home'))}
         />

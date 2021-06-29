@@ -14,17 +14,31 @@
  * limitations under the License.
  */
 
+import styled from 'styled-components';
+import HomeStyles from '../styled';
+
+const { Title, SearchWrapper, ListWrapper, Phrase, Message, MessageText } =
+  HomeStyles;
+
+const Subtitle = styled.h2`
+  color: ${({ theme }) => theme.colors.chart.title};
+  font-size: ${({ theme }) => theme.metrics.fontSize.xxlarge};
+  margin-top: 40px;
+`;
+
+const List = styled.ul`
+  display: flex;
+  margin-top: 40px;
+  list-style: none;
+`;
+
 export default {
-  metrics: {
-    fontSize: {
-      xsmall: '14px',
-      small: '15px',
-      medium: '16px',
-      large: '18px',
-      xlarge: '20px',
-      xxlarge: '22px',
-      title: '32px',
-      big: '42px',
-    },
-  },
+  Title,
+  SearchWrapper,
+  ListWrapper,
+  Subtitle,
+  Phrase,
+  List,
+  Message,
+  MessageText,
 };
