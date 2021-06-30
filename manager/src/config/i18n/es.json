@@ -1,4 +1,28 @@
 {
+  "HOME_SCREEN": {
+    "WELCOME": "¡Bienvenido a Horusec Manager!",
+    "MY_WORKSPACES": "Mis espacios de trabajo",
+    "SEARCH_WORKSPACE": "Buscar espacio de trabajo por nombre",
+    "ADD_WORKSPACE": "Añadir espacio de trabajo",
+    "CHOOSE_WORKSPACE": "¿Con qué espacio de trabajo quieres trabajar?",
+    "REPOSITORIES": "Repositorios",
+    "ADMIN": "administrador",
+    "MEMBER": "Miembro",
+    "SELECT": "Seleccionar",
+    "HANDLER": "Administrar",
+    "OVERVIEW": "Visión general",
+    "BACK_WORKSPACES": "Volver a los espacios de trabajo",
+    "SEARCH_REPO": "Buscar repositorios por nombre",
+    "ADD_REPO": "Añadir repositorio",
+    "CHOOSE_REPO": "Seleccione un repositorio para elegir una acción.",
+    "LOADING_WORKSPACES": "Buscando sus espacios de trabajo, por favor espere...",
+    "LOADING_REPOSITORIES": "Buscando los repositorios actuales del espacio de trabajo...",
+    "EMPTY_WORKSPACES": "Añada su primer espacio de trabajo para comenzar...",
+    "EMPTY_REPOSITORIES": "Agregue un nuevo repositorio, para proceder...",
+    "DELETE_REPO": "También puede eliminar este repositorio.",
+    "DELETE_WORKSPACE": "También puede eliminar este espacio de trabajo.",
+    "DELETE": "Eliminar"
+  },
   "LOGIN_SCREEN": {
     "EMAIL": "Correo electrónico",
     "PASSWORD": "Contraseña",
@@ -458,6 +482,7 @@
   },
   "HEADER": {
     "TITLE": {
+      "HOME": "Home",
       "DASHBOARDREPOSITORY": "Tablero / Eepositorio",
       "DASHBOARDWORKSPACE": "Panel de control / Espacio de trabajo",
       "VULNERABILITIES": "Vulnerabilidades",
@@ -477,7 +502,9 @@
       "WEBHOOKS": "Pantalla de manipulación de webhook.",
       "CONFIGURATION": "Pantalla de configuración",
       "WORKSPACES": "Pantalla para gestionar los espacios de trabajo.",
-      "ADD_WORKSPACE": "Pantalla para la redirección para crear un espacio de trabajo."
+      "ADD_WORKSPACE": "Pantalla para la redirección para crear un espacio de trabajo.",
+      "HOME": "Pantalla de inicio En esta pantalla puede seleccionar un espacio de trabajo o un repositorio para ver los lanzamientos.",
+      "GOHOME": "Ir a la pantalla de inicio - Home"
     }
   }
 }

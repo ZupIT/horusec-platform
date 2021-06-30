@@ -15,21 +15,31 @@
  */
 
 import styled from 'styled-components';
+import HomeStyles from '../styled';
 
-const Wrapper = styled.div`
-  display: flex;
-  height: 95%;
-  padding-bottom: 10px;
+const {
+  Title,
+  SearchWrapper,
+  ListWrapper,
+  Phrase,
+  Message,
+  MessageText,
+  List,
+} = HomeStyles;
+
+const Subtitle = styled.h2`
+  color: ${({ theme }) => theme.colors.chart.title};
+  font-size: ${({ theme }) => theme.metrics.fontSize.xxlarge};
+  margin-top: 40px;
 `;
 
-const Content = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-`;
-
-const HeaderWrapper = styled.div`
-  padding-left: 15px;
-`;
-
-export default { Wrapper, Content, HeaderWrapper };
+export default {
+  Title,
+  SearchWrapper,
+  ListWrapper,
+  Subtitle,
+  Phrase,
+  List,
+  Message,
+  MessageText,
+};

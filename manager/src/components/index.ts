@@ -37,6 +37,7 @@ import Splash from './Splash';
 import Datatable, { TableColumn, Datasource } from './Datatable';
 import BarChart from './BarChart';
 import Header from './Header';
+import HomeCard from './HomeCard';
 
 export {
   Button,
@@ -62,6 +63,7 @@ export {
   Datatable,
   BarChart,
   Header,
+  HomeCard,
 };
 
 export type { TableColumn, Datasource };

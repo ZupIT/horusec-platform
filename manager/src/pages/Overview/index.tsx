@@ -14,19 +14,14 @@
  * limitations under the License.
  */
 
-import React, { lazy } from 'react';
+import React from 'react';
 import { Redirect, Switch, useRouteMatch } from 'react-router-dom';
 import { PrivateRoute } from 'components';
 import InternalLayout from 'layouts/Internal';
 import useWorkspace from 'helpers/hooks/useWorkspace';
 
 import Dashboard from 'pages/Overview/Dashboard';
-import Repositories from 'pages/Overview/Repositories';
-import Vulnerabilities from 'pages/Overview/Vulnerabilities';
 import Webhooks from 'pages/Overview/Webhooks';
-import Settings from 'pages/Overview/Settings';
-import AddWorkspace from 'pages/Overview/AddWorkspace';
-import Workspaces from 'pages/Overview/Workspaces';
 import RepositoryTokens from './Repositories/Tokens';
 import RepositoryInvite from './Repositories/Invite';
 import WorkspaceTokens from './Workspaces/Tokens';
@@ -41,8 +36,14 @@ function InternalRoutes() {
       <Switch>
         <PrivateRoute
           exact
-          path={`${path}/add-workspace`}
-          component={() => <AddWorkspace />}
+          path={`${path}/workspaces/:workspaceId/tokens`}
+          component={() => <WorkspaceTokens />}
+        />
+
+        <PrivateRoute
+          exact
+          path={`${path}/workspaces/:workspaceId/users`}
+          component={() => <WorkspaceUsers />}
         />
 
         <Redirect
@@ -69,36 +70,6 @@ function InternalRoutes() {
 
         <PrivateRoute
           exact
-          path={`${path}/vulnerabilities`}
-          component={() => <Vulnerabilities />}
-        />
-
-        <PrivateRoute
-          exact
-          path={`${path}/repositories`}
-          component={() => <Repositories />}
-        />
-
-        <PrivateRoute
-          exact
-          path={`${path}/workspaces/:workspaceId`}
-          component={() => <Workspaces />}
-        />
-
-        <PrivateRoute
-          exact
-          path={`${path}/workspaces/:workspaceId/tokens`}
-          component={() => <WorkspaceTokens />}
-        />
-
-        <PrivateRoute
-          exact
-          path={`${path}/workspaces/:workspaceId/users`}
-          component={() => <WorkspaceUsers />}
-        />
-
-        <PrivateRoute
-          exact
           path={`${path}/workspaces/:workspaceId/repositories/:repositoryId/invite`}
           component={() => <RepositoryInvite />}
         />
@@ -113,12 +84,6 @@ function InternalRoutes() {
           exact
           path={`${path}/workspaces/:workspaceId/webhooks`}
           component={() => <Webhooks />}
-        />
-
-        <PrivateRoute
-          exact
-          path={`${path}/settings`}
-          component={() => <Settings />}
         />
       </Switch>
     </InternalLayout>

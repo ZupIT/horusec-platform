@@ -7,10 +7,10 @@
         <g transform="translate(-24.000000, -185.000000)">
             <g transform="translate(0.000000, 168.000000)">
                 <g transform="translate(24.000000, 17.000000)">
-                    <mask  fill="white">
+                    <mask  fill="currentColor">
                         <use xlink:href="#grid-svg"></use>
                     </mask>
-                    <use id="Icon-Grid" fill="#98989E" xlink:href="#grid-svg"></use>
+                    <use id="Icon-Grid" fill="currentColor" xlink:href="#grid-svg"></use>
                 </g>
             </g>
         </g>

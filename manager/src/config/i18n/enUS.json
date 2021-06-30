@@ -1,4 +1,28 @@
 {
+  "HOME_SCREEN": {
+    "WELCOME": "Welcome to Horusec Manager!",
+    "MY_WORKSPACES": "My Workspaces",
+    "SEARCH_WORKSPACE": "Search Workspace by name",
+    "ADD_WORKSPACE": "Add Workspace",
+    "CHOOSE_WORKSPACE": "Which workspace do you want to work with?",
+    "REPOSITORIES": "Repositories",
+    "ADMIN": "Administrator",
+    "MEMBER": "Member",
+    "SELECT": "Select",
+    "HANDLER": "Handler",
+    "OVERVIEW": "Overview",
+    "BACK_WORKSPACES": "Back to Workspaces",
+    "SEARCH_REPO": "Search repositories by name",
+    "ADD_REPO": "Add Repository",
+    "CHOOSE_REPO": "Select a repository to choose an action",
+    "LOADING_WORKSPACES": "Searching for your workspaces, please wait ...",
+    "LOADING_REPOSITORIES": "Searching for the current workspace repositories ...",
+    "EMPTY_WORKSPACES": "Add your first workspace to start ...",
+    "EMPTY_REPOSITORIES": "Add a new repository, to proceed ...",
+    "DELETE_REPO": "You can also delete this repository.",
+    "DELETE_WORKSPACE": "You can also delete this workspace.",
+    "DELETE": "Delete"
+  },
   "LOGIN_SCREEN": {
     "EMAIL": "E-mail",
     "PASSWORD": "Password",
@@ -456,6 +480,7 @@
   },
   "HEADER": {
     "TITLE": {
+      "HOME": "Home",
       "DASHBOARDREPOSITORY": "Dashboard / Repository",
       "DASHBOARDWORKSPACE": "Dashboard / Workspace",
       "VULNERABILITIES": "Vulnerabilities",
@@ -475,7 +500,9 @@
       "WEBHOOKS": "Webhooks manipulation screen.",
       "CONFIGURATION": "Settings screen",
       "WORKSPACES": "Screen to manage the workspaces.",
-      "ADD_WORKSPACE": "Screen for redirection for creating a workspace."
+      "ADD_WORKSPACE": "Screen for redirection for creating a workspace.",
+      "HOME": "Home screen on this screen You can select a workspace or repository to view the releases.",
+      "GOHOME": "Go to Home Screen - Home"
     }
   }
 }
