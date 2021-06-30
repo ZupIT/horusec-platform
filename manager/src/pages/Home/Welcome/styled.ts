@@ -14,21 +14,32 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import Styled from './styled';
-import { useTranslation } from 'react-i18next';
-import { Header } from 'components';
-import { useHistory } from 'react-router-dom';
+import styled from 'styled-components';
+import HomeStyles from '../styled';
 
-const Home: React.FC = () => {
-  const { t } = useTranslation();
-  const history = useHistory();
+const {
+  Title,
+  SearchWrapper,
+  ListWrapper,
+  Phrase,
+  Message,
+  MessageText,
+  List,
+} = HomeStyles;
 
-  return (
-    <div>
-      <h1>Repositories</h1>
-    </div>
-  );
+const Subtitle = styled.h2`
+  color: ${({ theme }) => theme.colors.chart.title};
+  font-size: ${({ theme }) => theme.metrics.fontSize.xxlarge};
+  margin-top: 40px;
+`;
+
+export default {
+  Title,
+  SearchWrapper,
+  ListWrapper,
+  Subtitle,
+  Phrase,
+  List,
+  Message,
+  MessageText,
 };
-
-export default Home;

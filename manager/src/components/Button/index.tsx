@@ -24,6 +24,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   outline?: boolean;
   rounded?: boolean;
   opaque?: boolean;
+  ghost?: boolean;
   pulsing?: boolean;
   isDisabled?: boolean;
   isLoading?: boolean;
@@ -40,6 +41,7 @@ const Button: React.FC<ButtonProps> = ({
   outline,
   rounded,
   opaque,
+  ghost,
   isDisabled,
   isLoading,
   width,
@@ -64,6 +66,7 @@ const Button: React.FC<ButtonProps> = ({
       outline={outline}
       rounded={rounded}
       opaque={opaque}
+      ghost={ghost}
       aria-disabled={isDisabled || isLoading}
       isDisabled={isDisabled || isLoading}
       type={props.type || 'button'}

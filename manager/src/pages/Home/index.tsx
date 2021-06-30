@@ -17,10 +17,10 @@
 import React from 'react';
 import Styled from './styled';
 import { Header } from 'components';
-import { Switch, useRouteMatch, Route, Redirect } from 'react-router-dom';
+import { Switch, useRouteMatch } from 'react-router-dom';
 import { PrivateRoute } from 'components';
-import Workspaces from './Workspaces';
-import Repositories from './Repositories';
+import Workspaces from './Welcome';
+import Repositories from './Workspace';
 
 const Home: React.FC = () => {
   const { path } = useRouteMatch();
@@ -31,19 +31,11 @@ const Home: React.FC = () => {
 
       <Styled.Content>
         <Switch>
-          <Route exact path={path}>
-            <Redirect to={`${path}/workspaces`} />
-          </Route>
+          <PrivateRoute exact path={path} component={() => <Workspaces />} />
 
           <PrivateRoute
             exact
-            path={`${path}/workspaces`}
-            component={() => <Workspaces />}
-          />
-
-          <PrivateRoute
-            exact
-            path={`${path}/workspace/:id/repositories`}
+            path={`${path}/workspace/:workspaceID`}
             component={() => <Repositories />}
           />
         </Switch>

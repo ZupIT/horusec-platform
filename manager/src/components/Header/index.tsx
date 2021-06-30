@@ -87,12 +87,6 @@ const Header: React.FC = () => {
         helper:
           'https://docs.horusec.io/docs/web/services/manager/account-management/',
       },
-      '/overview/add-workspace': {
-        text: '',
-        aria: t('HEADER.ARIA.ADD_WORKSPACE'),
-        icon: 'zup',
-        helper: 'https://docs.horusec.io/docs/web/overview/',
-      },
       default: {
         text: '',
         aria: '',

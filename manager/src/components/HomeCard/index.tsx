@@ -24,9 +24,16 @@ import Styled from './styled';
 interface Props {
   workspace?: Workspace;
   repository?: Repository;
+  onHandle?: () => void;
+  onOverview?: () => void;
 }
 
-const HomeCard: React.FC<Props> = ({ workspace, repository }) => {
+const HomeCard: React.FC<Props> = ({
+  workspace,
+  repository,
+  onHandle,
+  onOverview,
+}) => {
   const { t } = useTranslation();
   const history = useHistory();
 
@@ -62,9 +69,7 @@ const HomeCard: React.FC<Props> = ({ workspace, repository }) => {
         {isWorkspace ? (
           <Styled.Option
             onClick={() =>
-              history.push(
-                `/home/workspace/${context.workspaceID}/repositories`
-              )
+              history.push(`/home/workspace/${context.workspaceID}`)
             }
           >
             <Styled.InfoIcon name="check" size="16px" />
@@ -72,11 +77,11 @@ const HomeCard: React.FC<Props> = ({ workspace, repository }) => {
           </Styled.Option>
         ) : (
           <>
-            <Styled.Option>
+            <Styled.Option onClick={onHandle}>
               <Styled.InfoIcon name="tool" size="16px" />
               {t('HOME_SCREEN.HANDLER')}
             </Styled.Option>
-            <Styled.Option>
+            <Styled.Option onClick={onOverview}>
               <Styled.InfoIcon name="goto" size="16px" />
               {t('HOME_SCREEN.OVERVIEW')}
             </Styled.Option>

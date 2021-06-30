@@ -20,6 +20,7 @@ interface ButtonProps {
   outline?: boolean;
   rounded?: boolean;
   opaque?: boolean;
+  ghost?: boolean;
   pulsing?: boolean;
   isLoading?: boolean;
   isDisabled?: boolean;
@@ -76,6 +77,13 @@ const Button = styled.button<ButtonProps>`
     css`
       background: transparent;
       border: 1px solid ${({ theme }) => theme.colors.button.border};
+    `};
+
+  ${({ ghost }) =>
+    ghost &&
+    css`
+      background: transparent;
+      border: none;
     `};
 
   ${({ opaque }) =>

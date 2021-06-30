@@ -16,29 +16,41 @@
 
 import styled from 'styled-components';
 import HomeStyles from '../styled';
+import { Icon as IconComponent } from 'components';
 
-const { Title, SearchWrapper, ListWrapper, Phrase, Message, MessageText } =
-  HomeStyles;
+const {
+  Title,
+  SearchWrapper,
+  ListWrapper,
+  Phrase,
+  Message,
+  MessageText,
+  List,
+} = HomeStyles;
 
-const Subtitle = styled.h2`
-  color: ${({ theme }) => theme.colors.chart.title};
-  font-size: ${({ theme }) => theme.metrics.fontSize.xxlarge};
-  margin-top: 40px;
+const Head = styled.div`
+  display: flex;
+  justify-content: space-between;
 `;
 
-const List = styled.ul`
+const Icon = styled(IconComponent)`
+  margin-right: 10px;
+`;
+
+const TitleWrapper = styled.div`
   display: flex;
-  margin-top: 40px;
-  list-style: none;
+  align-items: center;
 `;
 
 export default {
   Title,
+  TitleWrapper,
   SearchWrapper,
   ListWrapper,
-  Subtitle,
+  Head,
   Phrase,
   List,
   Message,
   MessageText,
+  Icon,
 };

@@ -18,37 +18,56 @@ import React, { useState, useEffect } from 'react';
 import Styled from './styled';
 import { useTranslation } from 'react-i18next';
 import { Button, HomeCard, Icon } from 'components';
-import { useHistory } from 'react-router-dom';
 import { SearchBar } from 'components';
 import { Workspace } from 'helpers/interfaces/Workspace';
 import coreService from 'services/core';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
+import HandleWorkspace from '../Workspace/HandleWorkspace';
 
-const Home: React.FC = () => {
+const Welcome: React.FC = () => {
   const { dispatchMessage } = useResponseMessage();
   const { t } = useTranslation();
-  const history = useHistory();
 
-  const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
+  const [allWorkspaces, setAllWorkspaces] = useState<Workspace[]>([]);
+  const [filteredWorkspaces, setFilteredWorkspaces] =
+    useState<Workspace[]>(allWorkspaces);
+
   const [isLoading, setLoading] = useState<boolean>(false);
+  const [isOpenAddWorkspaceModal, setOpenAddWorkspaceModal] =
+    useState<boolean>(false);
+
+  const onSearch = (search: string) => {
+    if (search) {
+      const filtered = allWorkspaces.filter((workspace) =>
+        workspace.name.toLocaleLowerCase().includes(search.toLocaleLowerCase())
+      );
+
+      setFilteredWorkspaces(filtered);
+    } else {
+      setFilteredWorkspaces(allWorkspaces);
+    }
+  };
+
+  const fetchAllWorkspaces = () => {
+    setLoading(true);
+    coreService
+      .getAllWorkspaces()
+      .then((result) => {
+        const workspaces = (result?.data?.content as Workspace[]) || [];
+        setAllWorkspaces(workspaces);
+        setFilteredWorkspaces(workspaces);
+      })
+      .catch((err) => {
+        dispatchMessage(err?.response?.data);
+        setAllWorkspaces([]);
+        setFilteredWorkspaces([]);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
 
   useEffect(() => {
-    const fetchAllWorkspaces = () => {
-      setLoading(true);
-      coreService
-        .getAllWorkspaces()
-        .then((result) => {
-          const workspaces = (result?.data?.content as Workspace[]) || [];
-          setWorkspaces(workspaces);
-        })
-        .catch((err) => {
-          dispatchMessage(err?.response?.data);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    };
-
     fetchAllWorkspaces();
     // eslint-disable-next-line
   }, []);
@@ -61,7 +80,7 @@ const Home: React.FC = () => {
 
       <Styled.SearchWrapper>
         <SearchBar
-          onSearch={(a) => console.log(a)}
+          onSearch={onSearch}
           placeholder={t('HOME_SCREEN.SEARCH_WORKSPACE')}
         />
 
@@ -70,7 +89,8 @@ const Home: React.FC = () => {
           icon="add"
           rounded
           width="180px"
-          pulsing={!isLoading && workspaces.length <= 0}
+          pulsing={!isLoading && allWorkspaces.length <= 0}
+          onClick={() => setOpenAddWorkspaceModal(true)}
         />
       </Styled.SearchWrapper>
 
@@ -86,7 +106,7 @@ const Home: React.FC = () => {
           </Styled.Message>
         ) : null}
 
-        {!isLoading && workspaces.length <= 0 ? (
+        {!isLoading && filteredWorkspaces.length <= 0 ? (
           <Styled.Message>
             <Styled.MessageText>
               {t('HOME_SCREEN.EMPTY_WORKSPACES')}
@@ -95,13 +115,22 @@ const Home: React.FC = () => {
         ) : null}
 
         <Styled.List>
-          {workspaces.map((workspace) => (
+          {filteredWorkspaces.map((workspace) => (
             <HomeCard workspace={workspace} key={workspace.workspaceID} />
           ))}
         </Styled.List>
       </Styled.ListWrapper>
+
+      <HandleWorkspace
+        isVisible={isOpenAddWorkspaceModal}
+        onConfirm={() => {
+          setOpenAddWorkspaceModal(false);
+          fetchAllWorkspaces();
+        }}
+        onCancel={() => setOpenAddWorkspaceModal(false)}
+      />
     </>
   );
 };
 
-export default Home;
+export default Welcome;

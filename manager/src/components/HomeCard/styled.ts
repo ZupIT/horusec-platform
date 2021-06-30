@@ -24,8 +24,8 @@ const Card = styled.li`
   margin-bottom: 30px;
   padding: 20px;
   border-radius: 5px;
-  width: 300px;
-  min-height: 110px;
+  width: 290px;
+  min-height: 140px;
 
   :hover {
     footer {

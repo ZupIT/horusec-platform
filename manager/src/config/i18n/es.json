@@ -18,7 +18,10 @@
     "LOADING_WORKSPACES": "Buscando sus espacios de trabajo, por favor espere...",
     "LOADING_REPOSITORIES": "Buscando los repositorios actuales del espacio de trabajo...",
     "EMPTY_WORKSPACES": "Añada su primer espacio de trabajo para comenzar...",
-    "EMPTY_REPOSITORIES": "Agregue un nuevo repositorio, para proceder..."
+    "EMPTY_REPOSITORIES": "Agregue un nuevo repositorio, para proceder...",
+    "DELETE_REPO": "También puede eliminar este repositorio.",
+    "DELETE_WORKSPACE": "También puede eliminar este espacio de trabajo.",
+    "DELETE": "Eliminar"
   },
   "LOGIN_SCREEN": {
     "EMAIL": "Correo electrónico",

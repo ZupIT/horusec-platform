@@ -68,6 +68,24 @@ const MessageText = styled(Phrase)`
   color: ${({ theme }) => theme.colors.text.secundary};
 `;
 
+const List = styled.ul`
+  display: flex;
+  margin-top: 40px;
+  list-style: none;
+  flex-wrap: wrap;
+  max-height: 320px;
+  overflow-y: auto;
+
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: ${({ theme }) => theme.colors.scrollbar};
+    border-radius: 4px;
+  }
+`;
+
 export default {
   Content,
   Wrapper,
@@ -77,4 +95,5 @@ export default {
   Phrase,
   Message,
   MessageText,
+  List,
 };

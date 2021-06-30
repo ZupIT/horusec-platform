@@ -18,7 +18,10 @@
     "LOADING_WORKSPACES": "Searching for your workspaces, please wait ...",
     "LOADING_REPOSITORIES": "Searching for the current workspace repositories ...",
     "EMPTY_WORKSPACES": "Add your first workspace to start ...",
-    "EMPTY_REPOSITORIES": "Add a new repository, to proceed ..."
+    "EMPTY_REPOSITORIES": "Add a new repository, to proceed ...",
+    "DELETE_REPO": "You can also delete this repository.",
+    "DELETE_WORKSPACE": "You can also delete this workspace.",
+    "DELETE": "Delete"
   },
   "LOGIN_SCREEN": {
     "EMAIL": "E-mail",
