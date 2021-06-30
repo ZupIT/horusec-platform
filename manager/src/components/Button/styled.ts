@@ -20,6 +20,8 @@ interface ButtonProps {
   outline?: boolean;
   rounded?: boolean;
   opaque?: boolean;
+  ghost?: boolean;
+  pulsing?: boolean;
   isLoading?: boolean;
   isDisabled?: boolean;
   width?: number | string;
@@ -52,6 +54,12 @@ const Button = styled.button<ButtonProps>`
     transform: scale(1.03);
   }
 
+  ${({ pulsing }) =>
+    pulsing &&
+    css`
+      animation: pulse 2s infinite;
+    `};
+
   ${({ color }) =>
     color &&
     css`
@@ -69,6 +77,13 @@ const Button = styled.button<ButtonProps>`
     css`
       background: transparent;
       border: 1px solid ${({ theme }) => theme.colors.button.border};
+    `};
+
+  ${({ ghost }) =>
+    ghost &&
+    css`
+      background: transparent;
+      border: none;
     `};
 
   ${({ opaque }) =>
@@ -94,6 +109,21 @@ const Button = styled.button<ButtonProps>`
         transform: scale(1);
       }
     `};
+
+  @keyframes pulse {
+    0% {
+      box-shadow: 0 0 0 0 rgba(239, 65, 35, 0.315);
+      background-color: rgba(239, 65, 35, 0.4);
+    }
+
+    70% {
+      box-shadow: 0 0 0 20px rgba(0, 0, 0, 0);
+    }
+
+    100% {
+      box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+    }
+  }
 `;
 
 const Label = styled.span`

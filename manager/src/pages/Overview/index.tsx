@@ -24,8 +24,6 @@ import Dashboard from 'pages/Overview/Dashboard';
 import Repositories from 'pages/Overview/Repositories';
 import Vulnerabilities from 'pages/Overview/Vulnerabilities';
 import Webhooks from 'pages/Overview/Webhooks';
-import Settings from 'pages/Overview/Settings';
-import AddWorkspace from 'pages/Overview/AddWorkspace';
 import Workspaces from 'pages/Overview/Workspaces';
 import RepositoryTokens from './Repositories/Tokens';
 import RepositoryInvite from './Repositories/Invite';
@@ -39,12 +37,6 @@ function InternalRoutes() {
   return (
     <InternalLayout>
       <Switch>
-        <PrivateRoute
-          exact
-          path={`${path}/add-workspace`}
-          component={() => <AddWorkspace />}
-        />
-
         <PrivateRoute
           exact
           path={`${path}/workspaces`}
@@ -113,12 +105,6 @@ function InternalRoutes() {
           exact
           path={`${path}/workspaces/:workspaceId/webhooks`}
           component={() => <Webhooks />}
-        />
-
-        <PrivateRoute
-          exact
-          path={`${path}/settings`}
-          component={() => <Settings />}
         />
       </Switch>
     </InternalLayout>

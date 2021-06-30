@@ -15,21 +15,42 @@
  */
 
 import styled from 'styled-components';
+import HomeStyles from '../styled';
+import { Icon as IconComponent } from 'components';
 
-const Wrapper = styled.div`
+const {
+  Title,
+  SearchWrapper,
+  ListWrapper,
+  Phrase,
+  Message,
+  MessageText,
+  List,
+} = HomeStyles;
+
+const Head = styled.div`
   display: flex;
-  height: 95%;
-  padding-bottom: 10px;
+  justify-content: space-between;
 `;
 
-const Content = styled.div`
+const Icon = styled(IconComponent)`
+  margin-right: 10px;
+`;
+
+const TitleWrapper = styled.div`
   display: flex;
-  flex-direction: column;
-  width: 100%;
+  align-items: center;
 `;
 
-const HeaderWrapper = styled.div`
-  padding-left: 15px;
-`;
-
-export default { Wrapper, Content, HeaderWrapper };
+export default {
+  Title,
+  TitleWrapper,
+  SearchWrapper,
+  ListWrapper,
+  Head,
+  Phrase,
+  List,
+  Message,
+  MessageText,
+  Icon,
+};

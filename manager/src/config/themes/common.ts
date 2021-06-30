@@ -23,6 +23,7 @@ export default {
       large: '18px',
       xlarge: '20px',
       xxlarge: '22px',
+      title: '32px',
       big: '42px',
     },
   },

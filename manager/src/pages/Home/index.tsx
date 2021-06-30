@@ -16,18 +16,31 @@
 
 import React from 'react';
 import Styled from './styled';
-import { useTranslation } from 'react-i18next';
-
-import { useHistory } from 'react-router-dom';
+import { Header } from 'components';
+import { Switch, useRouteMatch } from 'react-router-dom';
+import { PrivateRoute } from 'components';
+import Workspaces from './Welcome';
+import Repositories from './Workspace';
 
 const Home: React.FC = () => {
-  const { t } = useTranslation();
-  const history = useHistory();
+  const { path } = useRouteMatch();
 
   return (
-    <Styled.Content>
-      <h1>Home</h1>
-    </Styled.Content>
+    <Styled.Wrapper>
+      <Header />
+
+      <Styled.Content>
+        <Switch>
+          <PrivateRoute exact path={path} component={() => <Workspaces />} />
+
+          <PrivateRoute
+            exact
+            path={`${path}/workspace/:workspaceID`}
+            component={() => <Repositories />}
+          />
+        </Switch>
+      </Styled.Content>
+    </Styled.Wrapper>
   );
 };
 
