@@ -26,9 +26,9 @@ import { getCurrentConfig } from 'helpers/localStorage/horusecConfig';
 import { authTypes } from 'helpers/enums/authTypes';
 import { getCurrentUser } from 'helpers/localStorage/currentUser';
 import { Repository } from 'helpers/interfaces/Repository';
-import useWorkspace from 'helpers/hooks/useWorkspace';
 import { FieldArray, Formik, FormikHelpers } from 'formik';
 import * as Yup from 'yup';
+import useParamsRoute from 'helpers/hooks/useParamsRoute';
 
 interface Props {
   isVisible: boolean;
@@ -49,7 +49,7 @@ const HandleRepository: React.FC<Props> = ({
   const { dispatchMessage } = useResponseMessage();
   const { showSuccessFlash } = useFlashMessage();
   const { applicationAdminEnable } = getCurrentConfig();
-  const { currentWorkspace } = useWorkspace();
+  const { workspace: currentWorkspace } = useParamsRoute();
 
   const [isLoading, setLoading] = useState(false);
 

@@ -26,7 +26,6 @@ import AddToken from './Add';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
 import { formatToHumanDate } from 'helpers/formatters/date';
 import { Link, useHistory, useParams } from 'react-router-dom';
-import useWorkspace from 'helpers/hooks/useWorkspace';
 import { IconButton } from '@material-ui/core';
 import { ArrowBack } from '@material-ui/icons';
 

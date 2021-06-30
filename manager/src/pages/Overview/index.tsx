@@ -18,7 +18,6 @@ import React from 'react';
 import { Redirect, Switch, useRouteMatch } from 'react-router-dom';
 import { PrivateRoute } from 'components';
 import InternalLayout from 'layouts/Internal';
-import useWorkspace from 'helpers/hooks/useWorkspace';
 
 import Dashboard from 'pages/Overview/Dashboard';
 import Webhooks from 'pages/Overview/Webhooks';
@@ -26,10 +25,11 @@ import RepositoryTokens from './Repositories/Tokens';
 import RepositoryInvite from './Repositories/Invite';
 import WorkspaceTokens from './Workspaces/Tokens';
 import WorkspaceUsers from './Workspaces/Users';
+import useParamsRoute from 'helpers/hooks/useParamsRoute';
 
 function InternalRoutes() {
   const { path } = useRouteMatch();
-  const { isAdminOfWorkspace } = useWorkspace();
+  const { workspace: isAdminOfWorkspace } = useParamsRoute();
 
   return (
     <InternalLayout>

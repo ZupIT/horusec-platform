@@ -25,7 +25,6 @@ import coreService from 'services/core';
 import webhookService from 'services/webhook';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
-import useWorkspace from 'helpers/hooks/useWorkspace';
 
 import HandleWebhook from './Handle';
 import { useHistory, useParams } from 'react-router-dom';
