@@ -80,7 +80,7 @@ const Dashboard: React.FC<Props> = ({ type }) => {
         .getDashboardData(filters)
         .then((result: AxiosResponse) => {
           if (!isCancelled) {
-            const data = result?.data?.content?.data as DashboardData;
+            const data = result?.data?.content as DashboardData;
             setDashboardData(data);
           }
         })

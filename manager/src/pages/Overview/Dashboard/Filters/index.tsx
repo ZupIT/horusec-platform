@@ -101,6 +101,11 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
     type,
   };
 
+  useEffect(() => {
+    onApply(initialValues);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <Formik
       initialValues={initialValues}

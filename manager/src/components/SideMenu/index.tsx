@@ -47,7 +47,7 @@ const SideMenu: React.FC = () => {
     });
 
     routes.push({
-      name: t('WORKSPACES_SCREEN.TOKENS'),
+      name: t('SIDE_MENU.TOKENS'),
       icon: 'lock',
       path: `${path}/workspaces/${workspaceId}/tokens`,
       type: 'route',
@@ -55,7 +55,7 @@ const SideMenu: React.FC = () => {
     });
 
     routes.push({
-      name: t('WORKSPACES_SCREEN.USERS.TITLE'),
+      name: t('SIDE_MENU.WORKSPACES_USERS'),
       icon: 'users',
       path: `${path}/workspaces/${workspaceId}/users`,
       type: 'route',
@@ -87,7 +87,7 @@ const SideMenu: React.FC = () => {
     });
 
     routes.push({
-      name: t('REPOSITORIES_SCREEN.TOKENS'),
+      name: t('SIDE_MENU.TOKENS'),
       icon: 'lock',
       path: `${path}/workspaces/${workspaceId}/repository/${repositoryId}/tokens`,
       type: 'route',
@@ -95,7 +95,7 @@ const SideMenu: React.FC = () => {
     });
 
     routes.push({
-      name: t('REPOSITORIES_SCREEN.INVITE'),
+      name: t('SIDE_MENU.INVITE'),
       icon: 'users',
       path: `${path}/workspaces/${workspaceId}/repository/${repositoryId}/invite`,
       type: 'route',
