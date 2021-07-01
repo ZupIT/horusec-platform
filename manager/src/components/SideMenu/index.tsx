@@ -33,19 +33,19 @@ const SideMenu: React.FC = () => {
 
   const { path } = useRouteMatch();
 
-  const { workspace, repository, workspaceId, repositoryId } = useParamsRoute();
+  const { workspace, workspaceId, repositoryId } = useParamsRoute();
 
-  const routes: InternalRoute[] = [
-    {
+  const routes: InternalRoute[] = [];
+
+  if (!!workspaceId === true && !!repositoryId === false) {
+    routes.push({
       name: t('SIDE_MENU.DASHBOARD'),
       icon: 'pie',
       type: 'route',
-      path: '/overview/dashboard',
+      path: `/overview/workspaces/${workspaceId}/dashboard`,
       roles: ['admin', 'member'],
-    },
-  ];
+    });
 
-  if (!!workspaceId === true && !!repositoryId === false) {
     routes.push({
       name: t('WORKSPACES_SCREEN.TOKENS'),
       icon: 'lock',
@@ -71,9 +71,25 @@ const SideMenu: React.FC = () => {
     });
   } else if (!!workspaceId === true && !!repositoryId === true) {
     routes.push({
+      name: t('SIDE_MENU.DASHBOARD'),
+      icon: 'pie',
+      type: 'route',
+      path: `/overview/workspaces/${workspaceId}/repository/${repositoryId}/dashboard`,
+      roles: ['admin', 'member'],
+    });
+
+    routes.push({
+      name: t('SIDE_MENU.VULNERABILITIES'),
+      icon: 'shield',
+      path: `${path}/workspaces/${workspaceId}/repository/${repositoryId}/vulnerabilities`,
+      type: 'route',
+      roles: ['admin', 'member'],
+    });
+
+    routes.push({
       name: t('REPOSITORIES_SCREEN.TOKENS'),
       icon: 'lock',
-      path: `${path}/workspaces/${workspaceId}/repositories/${repositoryId}/tokens`,
+      path: `${path}/workspaces/${workspaceId}/repository/${repositoryId}/tokens`,
       type: 'route',
       roles: ['admin', 'member'],
     });
@@ -81,7 +97,7 @@ const SideMenu: React.FC = () => {
     routes.push({
       name: t('REPOSITORIES_SCREEN.INVITE'),
       icon: 'users',
-      path: `${path}/workspaces/${workspaceId}/repositories/${repositoryId}/invite`,
+      path: `${path}/workspaces/${workspaceId}/repository/${repositoryId}/invite`,
       type: 'route',
       roles: ['admin', 'member'],
     });

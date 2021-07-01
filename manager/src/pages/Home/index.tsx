@@ -35,7 +35,7 @@ const Home: React.FC = () => {
 
           <PrivateRoute
             exact
-            path={`${path}/workspace/:workspaceID`}
+            path={`${path}/workspace/:workspaceId`}
             component={() => <Repositories />}
           />
         </Switch>

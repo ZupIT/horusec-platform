@@ -37,27 +37,53 @@ const useParamsRoute = () => {
   const { repositoryId = '' } = matchPath<{ repositoryId: string }>(
     history.location.pathname,
     {
-      path: `${path}/workspaces/:workspaceId/repositories/:repositoryId`,
+      path: `${path}/workspaces/:workspaceId/repository/:repositoryId`,
     }
   )?.params || { repositoryId: '' };
 
-  useEffect(() => {
-    function getWorkspace() {
-      core.getOneWorkspace(workspaceId).then((result) => {
-        setWorkspace(result.data.content);
-      });
+  async function getWorkspace(workspace = workspaceId) {
+    try {
+      const { data } = await core.getOneWorkspace(workspace);
+      setWorkspace(data.content);
+      return data.content;
+    } catch (error) {
+      history.push('/home');
     }
+  }
 
-    function getRepository() {
-      core.getOneRepository(workspaceId, repositoryId).then((result) => {
-        setRepository(result.data.content);
-      });
+  async function getRepository(
+    workspace = workspaceId,
+    repository = repositoryId
+  ) {
+    try {
+      const { data } = await core.getOneRepository(workspace, repository);
+      setRepository(data.content);
+      return data.content;
+    } catch (error) {
+      history.push('/home');
     }
-    if (workspaceId) getWorkspace();
-    if (workspaceId && repositoryId) getRepository();
+  }
+
+  useEffect(() => {
+    let isCancelled = false;
+    if (!isCancelled) {
+      if (workspaceId) getWorkspace();
+      if (workspaceId && repositoryId) getRepository();
+    }
+    return () => {
+      isCancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [workspaceId, repositoryId]);
 
-  return { workspaceId, repositoryId, workspace, repository };
+  return {
+    workspaceId,
+    repositoryId,
+    workspace,
+    repository,
+    getWorkspace,
+    getRepository,
+  };
 };
 
 export default useParamsRoute;

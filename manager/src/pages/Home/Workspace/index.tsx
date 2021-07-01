@@ -26,15 +26,12 @@ import HandleWorkspace from './HandleWorkspace';
 import HandleRepository from '../Workspace/HandleRepository';
 import { Repository } from 'helpers/interfaces/Repository';
 import { useParams, useHistory } from 'react-router-dom';
-
-interface RouteParams {
-  workspaceID: string;
-}
+import { RouteParams } from 'helpers/interfaces/RouteParams';
 
 const Home: React.FC = () => {
   const { dispatchMessage } = useResponseMessage();
   const { t } = useTranslation();
-  const { workspaceID } = useParams<RouteParams>();
+  const { workspaceId } = useParams<RouteParams>();
   const history = useHistory();
 
   const [currentWorkspace, setCurrentWorkspace] = useState<Workspace>();
@@ -54,7 +51,7 @@ const Home: React.FC = () => {
   const fetchWorkspaceData = () => {
     setLoading(true);
     coreService
-      .getOneWorkspace(workspaceID)
+      .getOneWorkspace(workspaceId)
       .then((result) => {
         const workspace = result.data.content as Workspace;
         setCurrentWorkspace(workspace);
@@ -69,7 +66,7 @@ const Home: React.FC = () => {
   const fetchAllRepositoriesByWorkspace = () => {
     setLoading(true);
     coreService
-      .getAllRepositories(workspaceID)
+      .getAllRepositories(workspaceId)
       .then((result) => {
         const listOfRepositories = result.data.content as Repository[];
         setRepositories(listOfRepositories);
@@ -128,7 +125,7 @@ const Home: React.FC = () => {
             icon="goto"
             style={{ marginLeft: '10px' }}
             onClick={() =>
-              history.push(`/overview/workspaces/${workspaceID}/dashboard`)
+              history.push(`/overview/workspaces/${workspaceId}/dashboard`)
             }
           />
         </Styled.TitleWrapper>
@@ -191,7 +188,7 @@ const Home: React.FC = () => {
               }}
               onOverview={() =>
                 history.push(
-                  `/overview/workspaces/${workspaceID}/repository/${repo.repositoryID}/dashboard`
+                  `/overview/workspaces/${workspaceId}/repository/${repo.repositoryID}/dashboard`
                 )
               }
             />
@@ -210,7 +207,7 @@ const Home: React.FC = () => {
       />
 
       <HandleRepository
-        workspaceID={workspaceID}
+        workspaceID={workspaceId}
         isVisible={isOpenRepositoryModal}
         repositoryToEdit={repositoryToEdit}
         onConfirm={() => {

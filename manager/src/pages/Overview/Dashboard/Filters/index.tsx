@@ -23,6 +23,8 @@ import { ObjectLiteral } from 'helpers/interfaces/ObjectLiteral';
 import { Formik, FormikProps } from 'formik';
 import * as Yup from 'yup';
 import SearchSelect from 'components/SearchSelect';
+import { useParams } from 'react-router-dom';
+import { RouteParams } from 'helpers/interfaces/RouteParams';
 interface FilterProps {
   onApply: (values: FilterValues) => void;
   type: 'workspace' | 'repository';
@@ -30,6 +32,7 @@ interface FilterProps {
 
 const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
   const { t } = useTranslation();
+  const { repositoryId, workspaceId } = useParams<RouteParams>();
 
   const formikRef = React.createRef<FormikProps<FilterValues>>();
 
@@ -93,6 +96,8 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
     period: fixedRanges[0].value,
     initialDate: getRangeOfPeriod[fixedRanges[0].value][0],
     finalDate: getRangeOfPeriod[fixedRanges[0].value][1],
+    repositoryID: repositoryId,
+    workspaceID: workspaceId,
     type,
   };
 
