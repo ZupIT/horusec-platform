@@ -109,7 +109,7 @@ services:
       HORUSEC_KEYCLOAK_CLIENT_SECRET: ${HORUSEC_KEYCLOAK_CLIENT_SECRET} # Get secret inside of keycloak server
       HORUSEC_KEYCLOAK_REALM: ${HORUSEC_KEYCLOAK_REALM}
       HORUSEC_LDAP_BASE: "dc=wimpi,dc=net"
-      HORUSEC_LDAP_HOST: "127.0.0.1"
+      HORUSEC_LDAP_HOST: "ldap-service"
       HORUSEC_LDAP_PORT: "10389"
       HORUSEC_LDAP_USESSL: "false"
       HORUSEC_LDAP_SKIP_TLS: "true"
