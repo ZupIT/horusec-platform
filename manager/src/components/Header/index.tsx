@@ -92,10 +92,8 @@ const Header: React.FC = () => {
 
     Object.entries(titles).forEach((item) => {
       const [key, value] = item;
-      console.log(key, value);
       if (path.includes(key)) title = value;
     });
-    console.log(title);
     return title;
   };
 

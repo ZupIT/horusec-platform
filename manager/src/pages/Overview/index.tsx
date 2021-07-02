@@ -40,58 +40,65 @@ function InternalRoutes() {
     <InternalLayout>
       <Switch>
         <PrivateRoute
-          exact
-          path={`${path}/workspaces/:workspaceId/tokens`}
-          component={() => <WorkspaceTokens />}
-        />
-
-        <PrivateRoute
-          exact
-          path={`${path}/workspaces/:workspaceId/users`}
-          component={() => <WorkspaceUsers />}
-        />
-
-        <Redirect
-          exact
-          from={`${path}/workspaces/:workspaceId`}
-          to={`${path}/workspaces/${workspaceId}/dashboard`}
-        />
-
-        <PrivateRoute
-          path={`${path}/workspaces/:workspaceId/dashboard`}
+          path={`${path}/workspace/:workspaceId/dashboard`}
           exact
           component={() => <Dashboard type="workspace" />}
         />
 
         <PrivateRoute
-          path={`${path}/workspaces/:workspaceId/repository/:repositoryId/dashboard`}
+          path={`${path}/workspace/:workspaceId/repository/:repositoryId/dashboard`}
           exact
-          component={() => <Dashboard type="repository" />}
+          component={() => <Dashboard type="workspace" />}
         />
 
         <PrivateRoute
           exact
-          path={`${path}/workspaces/:workspaceId/repository/:repositoryId/invite`}
-          component={() => <RepositoryInvite />}
-        />
-
-        <PrivateRoute
-          exact
-          path={`${path}/workspaces/:workspaceId/repository/:repositoryId/tokens`}
-          component={() => <RepositoryTokens />}
-        />
-
-        <PrivateRoute
-          exact
-          path={`${path}/workspaces/:workspaceId/repository/:repositoryId/vulnerabilities`}
+          path={`${path}/workspace/:workspaceId/vulnerabilities`}
           component={() => <Vulnerabilities />}
         />
 
         <PrivateRoute
           exact
-          path={`${path}/workspaces/:workspaceId/webhooks`}
+          path={`${path}/workspace/:workspaceId/repository/:repositoryId/vulnerabilities`}
+          component={() => <Vulnerabilities />}
+        />
+
+        <PrivateRoute
+          exact
+          path={`${path}/workspace/:workspaceId/tokens`}
+          component={() => <WorkspaceTokens />}
+        />
+
+        <PrivateRoute
+          exact
+          path={`${path}/workspace/:workspaceId/repository/:repositoryId/tokens`}
+          component={() => <WorkspaceTokens />}
+        />
+
+        <PrivateRoute
+          exact
+          path={`${path}/workspace/:workspaceId/users`}
+          component={() => <WorkspaceUsers />}
+        />
+
+        <PrivateRoute
+          exact
+          path={`${path}/workspace/:workspaceId/repository/:repositoryId/users`}
+          component={() => <WorkspaceUsers />}
+        />
+
+        <PrivateRoute
+          exact
+          path={`${path}/workspace/:workspaceId/webhooks`}
           component={() => <Webhooks />}
         />
+
+        <PrivateRoute
+          exact
+          path={`${path}/workspace/:workspaceId/repository/:repositoryId/webhooks`}
+          component={() => <Webhooks />}
+        />
+
         <Redirect from="*" to="/home" />
       </Switch>
     </InternalLayout>

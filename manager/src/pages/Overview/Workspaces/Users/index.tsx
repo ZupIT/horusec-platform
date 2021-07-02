@@ -131,7 +131,7 @@ function WorkspaceUsers() {
     <Styled.Wrapper>
       <Styled.Header>
         <Styled.TitleContent>
-          <Link to="/overview/workspaces">
+          <Link to="/overview/workspace">
             <IconButton size="small">
               <ArrowBack />
             </IconButton>
