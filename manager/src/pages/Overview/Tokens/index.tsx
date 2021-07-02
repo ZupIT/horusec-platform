@@ -28,8 +28,13 @@ import { formatToHumanDate } from 'helpers/formatters/date';
 import { Link, useHistory, useParams } from 'react-router-dom';
 import { IconButton } from '@material-ui/core';
 import { ArrowBack } from '@material-ui/icons';
+import { RouteParams } from 'helpers/interfaces/RouteParams';
 
-function RepositoryTokens() {
+interface Props {
+  type: 'workspace' | 'repository';
+}
+
+const Tokens: React.FC<Props> = ({ type }) => {
   const { t } = useTranslation();
   const { dispatchMessage } = useResponseMessage();
   const { showSuccessFlash } = useFlashMessage();
@@ -41,92 +46,92 @@ function RepositoryTokens() {
   const [tokenToDelete, setTokenToDelete] = useState<RepositoryToken>(null);
   const [addTokenVisible, setAddTokenVisible] = useState(false);
 
-  const [repoToManagerTokens, setRepoToManagerTokens] =
-    useState<Repository>(null);
-
-  const { workspaceId, repositoryId } =
-    useParams<{ workspaceId: string; repositoryId: string }>();
-  const history = useHistory();
-
-  function getOneRepository() {
-    setLoading(true);
-    coreService
-      .getOneRepository(workspaceId, repositoryId)
-      .then((result) => {
-        setRepoToManagerTokens(result.data.content);
-      })
-      .catch((err) => {
-        dispatchMessage(err?.response?.data);
-        history.goBack();
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }
-
-  useEffect(() => {
-    if (workspaceId && repositoryId) getOneRepository();
-    //eslint-disable-next-line
-  }, [workspaceId, repositoryId]);
+  const { workspaceId, repositoryId } = useParams<RouteParams>();
 
   const fetchData = () => {
     setLoading(true);
-    coreService
-      .getAllTokensOfRepository(
-        repoToManagerTokens.workspaceID,
-        repoToManagerTokens.repositoryID
-      )
-      .then((result) => {
-        setTokens(result?.data?.content);
-      })
-      .catch((err) => {
-        dispatchMessage(err?.response?.data);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+
+    if (type === 'workspace' && workspaceId) {
+      coreService
+        .getAllTokensOfWorkspace(workspaceId)
+        .then((result) => {
+          setTokens(result?.data?.content);
+        })
+        .catch((err) => {
+          dispatchMessage(err?.response?.data);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
+
+    if (type === 'repository' && workspaceId && repositoryId) {
+      coreService
+        .getAllTokensOfRepository(workspaceId, repositoryId)
+        .then((result) => {
+          setTokens(result?.data?.content);
+        })
+        .catch((err) => {
+          dispatchMessage(err?.response?.data);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
   };
 
   const handleConfirmDeleteToken = () => {
     setDeleteIsLoading(true);
-    coreService
-      .removeTokenOfRepository(
-        tokenToDelete.workspaceID,
-        tokenToDelete.repositoryID,
-        tokenToDelete.tokenID
-      )
-      .then(() => {
-        showSuccessFlash(t('REPOSITORIES_SCREEN.REMOVE_SUCCESS_TOKEN'));
-        setTokenToDelete(null);
-        fetchData();
-      })
-      .catch((err) => {
-        dispatchMessage(err?.response?.data);
-      })
-      .finally(() => {
-        setDeleteIsLoading(false);
-      });
+
+    if (type === 'workspace') {
+      coreService
+        .removeTokenOfWorkspace(
+          tokenToDelete.workspaceID,
+          tokenToDelete.tokenID
+        )
+        .then(() => {
+          showSuccessFlash(t('REPOSITORIES_SCREEN.REMOVE_SUCCESS_TOKEN'));
+          setTokenToDelete(null);
+          fetchData();
+        })
+        .catch((err) => {
+          dispatchMessage(err?.response?.data);
+        })
+        .finally(() => {
+          setDeleteIsLoading(false);
+        });
+    }
+
+    if (type === 'repository') {
+      coreService
+        .removeTokenOfRepository(
+          tokenToDelete.workspaceID,
+          tokenToDelete.repositoryID,
+          tokenToDelete.tokenID
+        )
+        .then(() => {
+          showSuccessFlash(t('REPOSITORIES_SCREEN.REMOVE_SUCCESS_TOKEN'));
+          setTokenToDelete(null);
+          fetchData();
+        })
+        .catch((err) => {
+          dispatchMessage(err?.response?.data);
+        })
+        .finally(() => {
+          setDeleteIsLoading(false);
+        });
+    }
   };
 
   useEffect(() => {
-    if (repoToManagerTokens) {
-      fetchData();
-    }
+    fetchData();
     //eslint-disable-next-line
-  }, [repoToManagerTokens]);
+  }, [workspaceId, repositoryId]);
 
   return (
     <Styled.Wrapper>
       <Styled.Header>
-        <Styled.TitleContent>
-          <Link to="/overview/repositories">
-            <IconButton size="small">
-              <ArrowBack />
-            </IconButton>
-          </Link>
-          <Styled.Title>{t('REPOSITORIES_SCREEN.TOKENS')}</Styled.Title>
-        </Styled.TitleContent>
-
+        <Styled.TitleContent />
         <Button
           text={t('REPOSITORIES_SCREEN.ADD_TOKEN')}
           rounded
@@ -179,6 +184,7 @@ function RepositoryTokens() {
             return repo;
           })}
           emptyListText={t('REPOSITORIES_SCREEN.NO_TOKENS')}
+          isLoading={isLoading}
         />
       </Styled.Content>
 
@@ -195,7 +201,8 @@ function RepositoryTokens() {
 
       <AddToken
         isVisible={addTokenVisible}
-        currentRepository={repoToManagerTokens}
+        currentParams={{ workspaceId, repositoryId }}
+        type={type}
         onCancel={() => setAddTokenVisible(false)}
         onConfirm={() => {
           setAddTokenVisible(false);
@@ -204,6 +211,6 @@ function RepositoryTokens() {
       />
     </Styled.Wrapper>
   );
-}
+};
 
-export default RepositoryTokens;
+export default Tokens;

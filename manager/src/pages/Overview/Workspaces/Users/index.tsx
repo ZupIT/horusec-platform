@@ -31,7 +31,11 @@ import { Link, useHistory, useParams } from 'react-router-dom';
 import { IconButton } from '@material-ui/core';
 import { ArrowBack } from '@material-ui/icons';
 
-function WorkspaceUsers() {
+interface Props {
+  type: 'workspace' | 'repository';
+}
+
+const WorkspaceUsers: React.FC<Props> = () => {
   const { t } = useTranslation();
   const currentUser = getCurrentUser();
   const { dispatchMessage } = useResponseMessage();
@@ -78,7 +82,6 @@ function WorkspaceUsers() {
       const filtered = users.filter((user) =>
         user.email.toLocaleLowerCase().includes(search.toLocaleLowerCase())
       );
-
       setFilteredUsers(filtered);
     } else {
       setFilteredUsers(users);
@@ -242,6 +245,6 @@ function WorkspaceUsers() {
       />
     </Styled.Wrapper>
   );
-}
+};
 
 export default WorkspaceUsers;

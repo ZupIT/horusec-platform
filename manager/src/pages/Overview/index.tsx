@@ -21,7 +21,7 @@ import InternalLayout from 'layouts/Internal';
 
 import Dashboard from 'pages/Overview/Dashboard';
 import Webhooks from 'pages/Overview/Webhooks';
-import RepositoryTokens from './Repositories/Tokens';
+import Tokens from './Tokens';
 import RepositoryInvite from './Repositories/Invite';
 import WorkspaceTokens from './Workspaces/Tokens';
 import WorkspaceUsers from './Workspaces/Users';
@@ -48,7 +48,7 @@ function InternalRoutes() {
         <PrivateRoute
           path={`${path}/workspace/:workspaceId/repository/:repositoryId/dashboard`}
           exact
-          component={() => <Dashboard type="workspace" />}
+          component={() => <Dashboard type="repository" />}
         />
 
         <PrivateRoute
@@ -66,37 +66,37 @@ function InternalRoutes() {
         <PrivateRoute
           exact
           path={`${path}/workspace/:workspaceId/tokens`}
-          component={() => <WorkspaceTokens />}
+          component={() => <Tokens type="workspace" />}
         />
 
         <PrivateRoute
           exact
           path={`${path}/workspace/:workspaceId/repository/:repositoryId/tokens`}
-          component={() => <WorkspaceTokens />}
+          component={() => <Tokens type="repository" />}
         />
 
         <PrivateRoute
           exact
           path={`${path}/workspace/:workspaceId/users`}
-          component={() => <WorkspaceUsers />}
+          component={() => <WorkspaceUsers type="workspace" />}
         />
 
         <PrivateRoute
           exact
           path={`${path}/workspace/:workspaceId/repository/:repositoryId/users`}
-          component={() => <WorkspaceUsers />}
+          component={() => <WorkspaceUsers type="repository" />}
         />
 
         <PrivateRoute
           exact
           path={`${path}/workspace/:workspaceId/webhooks`}
-          component={() => <Webhooks />}
+          component={() => <Webhooks type="workspace" />}
         />
 
         <PrivateRoute
           exact
           path={`${path}/workspace/:workspaceId/repository/:repositoryId/webhooks`}
-          component={() => <Webhooks />}
+          component={() => <Webhooks type="repository" />}
         />
 
         <Redirect from="*" to="/home" />

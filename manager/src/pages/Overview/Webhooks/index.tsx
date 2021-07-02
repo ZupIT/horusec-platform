@@ -29,8 +29,13 @@ import useFlashMessage from 'helpers/hooks/useFlashMessage';
 import HandleWebhook from './Handle';
 import { useHistory, useParams } from 'react-router-dom';
 import { Workspace } from 'helpers/interfaces/Workspace';
+import { RouteParams } from 'helpers/interfaces/RouteParams';
 
-const Webhooks: React.FC = () => {
+interface Props {
+  type: 'workspace' | 'repository';
+}
+
+const Webhooks: React.FC<Props> = ({ type }) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
 
@@ -48,7 +53,7 @@ const Webhooks: React.FC = () => {
   const [addWebhookVisible, setAddWebhookVisible] = useState(false);
 
   const [selectedWorkspace, setSelectedWorkspace] = useState<Workspace>(null);
-  const { workspaceId } = useParams<{ workspaceId: string }>();
+  const { workspaceId } = useParams<RouteParams>();
   const history = useHistory();
 
   function getOneWorkspace() {
