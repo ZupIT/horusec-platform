@@ -30,6 +30,7 @@ import EditUserRole from './Edit';
 import { Link, useHistory, useParams } from 'react-router-dom';
 import { IconButton } from '@material-ui/core';
 import { ArrowBack } from '@material-ui/icons';
+import { RouteParams } from 'helpers/interfaces/RouteParams';
 
 function WorkspaceUsers() {
   const { t } = useTranslation();
@@ -49,7 +50,7 @@ function WorkspaceUsers() {
 
   const [selectedWorkspace, setSelectedWorkspace] = useState<Workspace>(null);
 
-  const { workspaceId } = useParams<{ workspaceId: string }>();
+  const { workspaceId } = useParams<RouteParams>();
   const history = useHistory();
 
   function getOneWorkspace() {
@@ -129,17 +130,6 @@ function WorkspaceUsers() {
 
   return (
     <Styled.Wrapper>
-      <Styled.Header>
-        <Styled.TitleContent>
-          <Link to="/overview/workspaces">
-            <IconButton size="small">
-              <ArrowBack />
-            </IconButton>
-          </Link>
-          <Styled.Title>{t('WORKSPACES_SCREEN.USERS.TITLE')}</Styled.Title>
-        </Styled.TitleContent>
-      </Styled.Header>
-
       <Styled.Header>
         <SearchBar
           placeholder={t('WORKSPACES_SCREEN.USERS.SEARCH')}

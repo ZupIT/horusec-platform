@@ -28,6 +28,7 @@ import { formatToHumanDate } from 'helpers/formatters/date';
 import { Link, useHistory, useParams } from 'react-router-dom';
 import { IconButton } from '@material-ui/core';
 import { ArrowBack } from '@material-ui/icons';
+import { RouteParams } from 'helpers/interfaces/RouteParams';
 
 function RepositoryTokens() {
   const { t } = useTranslation();
@@ -44,8 +45,7 @@ function RepositoryTokens() {
   const [repoToManagerTokens, setRepoToManagerTokens] =
     useState<Repository>(null);
 
-  const { workspaceId, repositoryId } =
-    useParams<{ workspaceId: string; repositoryId: string }>();
+  const { workspaceId, repositoryId } = useParams<RouteParams>();
   const history = useHistory();
 
   function getOneRepository() {
@@ -118,15 +118,7 @@ function RepositoryTokens() {
   return (
     <Styled.Wrapper>
       <Styled.Header>
-        <Styled.TitleContent>
-          <Link to="/overview/repositories">
-            <IconButton size="small">
-              <ArrowBack />
-            </IconButton>
-          </Link>
-          <Styled.Title>{t('REPOSITORIES_SCREEN.TOKENS')}</Styled.Title>
-        </Styled.TitleContent>
-
+        <Styled.TitleContent />
         <Button
           text={t('REPOSITORIES_SCREEN.ADD_TOKEN')}
           rounded

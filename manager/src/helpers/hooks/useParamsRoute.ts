@@ -16,6 +16,7 @@
 
 import { Repository } from 'helpers/interfaces/Repository';
 import { Workspace } from 'helpers/interfaces/Workspace';
+import { isEmpty } from 'lodash';
 import { useEffect, useState } from 'react';
 import { matchPath, useHistory, useRouteMatch } from 'react-router-dom';
 import core from 'services/core';
@@ -67,14 +68,18 @@ const useParamsRoute = () => {
   useEffect(() => {
     let isCancelled = false;
     if (!isCancelled) {
-      if (workspaceId) getWorkspace();
-      if (workspaceId && repositoryId) getRepository();
+      if (workspaceId) {
+        if (isEmpty(workspace)) getWorkspace();
+      }
+      if (workspaceId && repositoryId) {
+        if (isEmpty(repository)) getRepository();
+      }
     }
     return () => {
       isCancelled = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [workspaceId, repositoryId]);
+  }, []);
 
   return {
     workspaceId,

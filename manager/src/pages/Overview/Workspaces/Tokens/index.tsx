@@ -28,6 +28,7 @@ import { Workspace } from 'helpers/interfaces/Workspace';
 import { Link, useHistory, useParams } from 'react-router-dom';
 import { IconButton } from '@material-ui/core';
 import { ArrowBack } from '@material-ui/icons';
+import { RouteParams } from 'helpers/interfaces/RouteParams';
 
 function WorkspaceTokens() {
   const { t } = useTranslation();
@@ -42,7 +43,7 @@ function WorkspaceTokens() {
   const [addTokenVisible, setAddTokenVisible] = useState(false);
   const [selectedWorkspace, setSelectedWorkspace] = useState<Workspace>(null);
 
-  const { workspaceId } = useParams<{ workspaceId: string }>();
+  const { workspaceId } = useParams<RouteParams>();
   const history = useHistory();
 
   function getOneWorkspace() {
@@ -108,15 +109,7 @@ function WorkspaceTokens() {
   return (
     <Styled.Wrapper>
       <Styled.Header>
-        <Styled.TitleContent>
-          <Link to="/overview/workspaces">
-            <IconButton size="small">
-              <ArrowBack />
-            </IconButton>
-          </Link>
-          <Styled.Title>{t('WORKSPACES_SCREEN.TOKENS')}</Styled.Title>
-        </Styled.TitleContent>
-
+        <Styled.TitleContent />
         <Button
           text={t('WORKSPACES_SCREEN.ADD_TOKEN')}
           rounded

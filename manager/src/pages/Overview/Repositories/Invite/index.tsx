@@ -34,6 +34,7 @@ import useFlashMessage from 'helpers/hooks/useFlashMessage';
 import { Checkbox, IconButton } from '@material-ui/core';
 import { Link, useHistory, useParams } from 'react-router-dom';
 import { ArrowBack } from '@material-ui/icons';
+import { RouteParams } from 'helpers/interfaces/RouteParams';
 
 function RepositoryInvite() {
   const { t } = useTranslation();
@@ -53,8 +54,7 @@ function RepositoryInvite() {
 
   const [repoToInvite, setRepoToInvite] = useState<Repository>(null);
 
-  const { workspaceId, repositoryId } =
-    useParams<{ workspaceId: string; repositoryId: string }>();
+  const { workspaceId, repositoryId } = useParams<RouteParams>();
   const history = useHistory();
 
   const roles = [
@@ -216,19 +216,6 @@ function RepositoryInvite() {
 
   return (
     <Styled.Wrapper>
-      <Styled.Header>
-        <Styled.TitleContent>
-          <Link to="/overview/repositories">
-            <IconButton size="small">
-              <ArrowBack />
-            </IconButton>
-          </Link>
-          <Styled.Title>
-            {t('REPOSITORIES_SCREEN.INVITE_TO_REPOSITORY')}
-          </Styled.Title>
-        </Styled.TitleContent>
-      </Styled.Header>
-
       <Styled.Content>
         <Styled.SubTitle>
           {t('REPOSITORIES_SCREEN.INVITE_USER_BELOW')}

@@ -35,6 +35,7 @@ import useParamsRoute from 'helpers/hooks/useParamsRoute';
 import { Workspace } from 'helpers/interfaces/Workspace';
 import { Repository } from 'helpers/interfaces/Repository';
 import { useHistory, useParams } from 'react-router-dom';
+import { RouteParams } from 'helpers/interfaces/RouteParams';
 
 const INITIAL_PAGE = 1;
 interface RefreshInterface {
@@ -49,8 +50,7 @@ interface KeyValueVuln {
 }
 
 const Vulnerabilities: React.FC = () => {
-  const { workspaceId, repositoryId } =
-    useParams<{ workspaceId: string; repositoryId: string }>();
+  const { workspaceId, repositoryId } = useParams<RouteParams>();
 
   const { getRepository } = useParamsRoute();
   const [currentRepository, setCurrentRepository] = useState<Repository>(null);
