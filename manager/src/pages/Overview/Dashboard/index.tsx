@@ -42,13 +42,19 @@ import * as htmlToImage from 'html-to-image';
 import { useTranslation } from 'react-i18next';
 import XLSX from 'xlsx';
 import download from 'downloadjs';
+import useParamsRoute from 'helpers/hooks/useParamsRoute';
+import { useParams } from 'react-router-dom';
 
 interface Props {
   type: 'workspace' | 'repository';
 }
 
 const Dashboard: React.FC<Props> = ({ type }) => {
+  const { workspaceId, repositoryId } =
+    useParams<{ workspaceId: string; repositoryId: string }>();
+
   const [filters, setFilters] = useState<FilterValues>(null);
+
   const [dashboardData, setDashboardData] = useState<DashboardData>();
   const [isLoading, setLoading] = useState(false);
   const { showSuccessFlash } = useFlashMessage();

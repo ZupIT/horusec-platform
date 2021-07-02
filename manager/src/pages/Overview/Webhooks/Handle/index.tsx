@@ -27,12 +27,11 @@ import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import webhookService from 'services/webhook';
 import { Webhook, WebhookHeader } from 'helpers/interfaces/Webhook';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
-import useWorkspace from 'helpers/hooks/useWorkspace';
 import { FieldArray, Formik, FormikHelpers } from 'formik';
 import SearchSelect from 'components/SearchSelect';
 import * as Yup from 'yup';
-import useRepository from 'helpers/hooks/useRepository';
-
+import { Workspace } from 'helpers/interfaces/Workspace';
+import { useParams } from 'react-router-dom';
 interface Props {
   isVisible: boolean;
   isNew: boolean;
@@ -53,14 +52,33 @@ const HandleWebhook: React.FC<Props> = ({
   const { t } = useTranslation();
   const { colors } = useTheme();
 
-  const { currentWorkspace } = useWorkspace();
-  const { allRepositories } = useRepository();
+  const [currentWorkspace, setCurrentWorkspace] = useState<Workspace>(null);
+  const [allRepositories, setAllRepositories] = useState<Repository[]>([]);
 
   const { dispatchMessage } = useResponseMessage();
   const { showSuccessFlash } = useFlashMessage();
 
   const [isLoading, setLoading] = useState(false);
 
+  const { workspaceId } = useParams<{ workspaceId: string }>();
+
+  useEffect(() => {
+    function getCurrentWorkspace() {
+      coreService.getOneWorkspace(workspaceId).then((result) => {
+        setCurrentWorkspace(result.data.content);
+      });
+    }
+    function loadRepositories() {
+      coreService.getAllRepositories(workspaceId).then((result) => {
+        setAllRepositories(result.data.content);
+      });
+    }
+
+    if (workspaceId) {
+      getCurrentWorkspace();
+      loadRepositories();
+    }
+  }, [workspaceId]);
   const updateWebhook = (
     values: InitialValue,
     action: FormikHelpers<InitialValue>

@@ -22,10 +22,10 @@ import coreService from 'services/core';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import { Account } from 'helpers/interfaces/Account';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
-import useWorkspace from 'helpers/hooks/useWorkspace';
 import SearchSelect from 'components/SearchSelect';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
+import useParamsRoute from 'helpers/hooks/useParamsRoute';
 interface Props {
   isVisible: boolean;
   userToEdit: Account;
@@ -45,7 +45,7 @@ const EditUserRole: React.FC<Props> = ({
   onConfirm,
 }) => {
   const { t } = useTranslation();
-  const { currentWorkspace } = useWorkspace();
+  const { workspace: currentWorkspace } = useParamsRoute();
   const { dispatchMessage } = useResponseMessage();
   const { showSuccessFlash } = useFlashMessage();
 

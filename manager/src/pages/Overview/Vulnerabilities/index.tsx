@@ -27,12 +27,14 @@ import Details from './Details';
 import { FilterVuln } from 'helpers/interfaces/FIlterVuln';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
 import { useTheme } from 'styled-components';
-import useWorkspace from 'helpers/hooks/useWorkspace';
 import { AxiosError, AxiosResponse } from 'axios';
 import { Autocomplete } from '@material-ui/lab';
 import { TextField } from '@material-ui/core';
-import useRepository from 'helpers/hooks/useRepository';
 import { Search } from '@material-ui/icons';
+import useParamsRoute from 'helpers/hooks/useParamsRoute';
+import { Workspace } from 'helpers/interfaces/Workspace';
+import { Repository } from 'helpers/interfaces/Repository';
+import { useHistory, useParams } from 'react-router-dom';
 
 const INITIAL_PAGE = 1;
 interface RefreshInterface {
@@ -47,13 +49,13 @@ interface KeyValueVuln {
 }
 
 const Vulnerabilities: React.FC = () => {
-  const { currentWorkspace } = useWorkspace();
-  const {
-    currentRepository,
-    setCurrentRepository,
-    allRepositories,
-    isMemberOfRepository,
-  } = useRepository();
+  const { workspaceId, repositoryId } =
+    useParams<{ workspaceId: string; repositoryId: string }>();
+
+  const { getRepository } = useParamsRoute();
+  const [currentRepository, setCurrentRepository] = useState<Repository>(null);
+
+  const history = useHistory();
 
   const { t } = useTranslation();
   const { colors } = useTheme();
@@ -66,7 +68,7 @@ const Vulnerabilities: React.FC = () => {
   const [updateVulnIds, setUpdateVulnIds] = useState<KeyValueVuln[]>([]);
 
   const [filters, setFilters] = useState<FilterVuln>({
-    workspaceID: currentWorkspace?.workspaceID,
+    workspaceID: currentRepository?.workspaceID,
     repositoryID: currentRepository?.repositoryID,
     vulnHash: '',
     vulnSeverity: 'ALL',
@@ -139,6 +141,23 @@ const Vulnerabilities: React.FC = () => {
     },
   ];
 
+  useEffect(() => {
+    let isCancelled = false;
+    if (workspaceId && repositoryId) {
+      getRepository(workspaceId, repositoryId)
+        .then((result) => {
+          if (!isCancelled) setCurrentRepository(result);
+        })
+        .catch((error) => {
+          if (!isCancelled) history.push('/home');
+        });
+    }
+    return () => {
+      isCancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [workspaceId, repositoryId]);
+
   const handleSearch = debounce((searchString: string) => {
     setRefresh((state) => ({
       ...state,
@@ -156,7 +175,6 @@ const Vulnerabilities: React.FC = () => {
       )
       .then(() => {
         resetUpdateVuln();
-
         showSuccessFlash(t('VULNERABILITIES_SCREEN.SUCCESS_UPDATE'));
       })
       .catch((err: AxiosError) => {
@@ -181,6 +199,10 @@ const Vulnerabilities: React.FC = () => {
 
         if (!filter.repositoryID) {
           filter.repositoryID = currentRepository?.repositoryID;
+        }
+
+        if (!filter.workspaceID) {
+          filter.workspaceID = currentRepository?.workspaceID;
         }
 
         const filterAux = {
@@ -355,37 +377,6 @@ const Vulnerabilities: React.FC = () => {
             });
           }}
         />
-
-        <Autocomplete
-          style={{ width: '250px' }}
-          options={allRepositories.map((el) => ({
-            label: el.name,
-            value: el.repositoryID,
-          }))}
-          getOptionLabel={(option) => option.label || ''}
-          getOptionSelected={(option, value) => {
-            return value !== undefined ? option.value === value.value : false;
-          }}
-          value={getValueRepo()}
-          onChange={(_event, value: any) => {
-            setRefresh({
-              filter: { ...filters, repositoryID: value.value },
-              page: { ...pagination, currentPage: INITIAL_PAGE },
-            });
-            setCurrentRepository(value.value);
-          }}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              label={t('VULNERABILITIES_SCREEN.REPOSITORY')}
-              FormHelperTextProps={{ tabIndex: 0 }}
-            />
-          )}
-          popupIcon={<Search />}
-          forcePopupIcon
-          disableClearable
-          noOptionsText={t('GENERAL.NO_OPTIONS')}
-        />
       </Styled.Options>
 
       <Styled.Content>
@@ -453,7 +444,10 @@ const Vulnerabilities: React.FC = () => {
                   width="150px"
                   value={row.severity}
                   options={severities.slice(1)}
-                  disabled={isMemberOfRepository}
+                  disabled={
+                    false
+                    //isMemberOfRepository
+                  }
                   onChangeValue={(value) => {
                     updateVulnerability(row, value, row.type);
                   }}
@@ -465,7 +459,10 @@ const Vulnerabilities: React.FC = () => {
                   options={vulnTypes.slice(1)}
                   width="200px"
                   variant="filled"
-                  disabled={isMemberOfRepository}
+                  disabled={
+                    false
+                    //isMemberOfRepository
+                  }
                   onChangeValue={(value) => {
                     updateVulnerability(row, row.severity, value);
                   }}

@@ -19,12 +19,12 @@ import Styled from './styled';
 import { useTranslation } from 'react-i18next';
 import { Calendar } from 'components';
 import { FilterValues } from 'helpers/interfaces/FilterValues';
-import useWorkspace from 'helpers/hooks/useWorkspace';
 import { ObjectLiteral } from 'helpers/interfaces/ObjectLiteral';
 import { Formik, FormikProps } from 'formik';
 import * as Yup from 'yup';
 import SearchSelect from 'components/SearchSelect';
-import useRepository from 'helpers/hooks/useRepository';
+import { useParams } from 'react-router-dom';
+import { RouteParams } from 'helpers/interfaces/RouteParams';
 interface FilterProps {
   onApply: (values: FilterValues) => void;
   type: 'workspace' | 'repository';
@@ -32,9 +32,7 @@ interface FilterProps {
 
 const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
   const { t } = useTranslation();
-  const { currentWorkspace } = useWorkspace();
-  const { currentRepository, setCurrentRepository, allRepositories } =
-    useRepository();
+  const { repositoryId, workspaceId } = useParams<RouteParams>();
 
   const formikRef = React.createRef<FormikProps<FilterValues>>();
 
@@ -86,33 +84,6 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
     type: Yup.string().oneOf(['workspace', 'repository']).required(),
   });
 
-  useEffect(() => {
-    function setValues() {
-      formikRef.current.setFieldValue(
-        'repositoryID',
-        currentRepository?.repositoryID
-      );
-      formikRef.current.setFieldValue(
-        'workspaceID',
-        currentWorkspace?.workspaceID
-      );
-    }
-    setValues();
-  }, [
-    currentRepository?.repositoryID,
-    currentWorkspace?.workspaceID,
-    formikRef,
-  ]);
-
-  useEffect(() => {
-    if (type === 'repository' && !currentRepository?.repositoryID) {
-      return;
-    } else {
-      onApply(initialValues);
-    }
-    // eslint-disable-next-line
-  }, [currentWorkspace, currentRepository]);
-
   const getRangeOfPeriod: ObjectLiteral = {
     beginning: [firstYear, today],
     customRange: [today, today],
@@ -125,10 +96,15 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
     period: fixedRanges[0].value,
     initialDate: getRangeOfPeriod[fixedRanges[0].value][0],
     finalDate: getRangeOfPeriod[fixedRanges[0].value][1],
-    repositoryID: currentRepository?.repositoryID,
-    workspaceID: currentWorkspace?.workspaceID,
+    repositoryID: repositoryId,
+    workspaceID: workspaceId,
     type,
   };
+
+  useEffect(() => {
+    onApply(initialValues);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <Formik
@@ -143,7 +119,6 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
           values.initialDate = new Date(values.initialDate);
           values.finalDate = new Date(values.finalDate);
         }
-        if (values?.repositoryID) setCurrentRepository(values.repositoryID);
         onApply(values);
       }}
     >
@@ -180,18 +155,6 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
               />
             </Styled.CalendarWrapper>
           </div>
-          {type === 'repository' ? (
-            <Styled.Wrapper>
-              <SearchSelect
-                name="repositoryID"
-                label={t('DASHBOARD_SCREEN.REPOSITORY')}
-                options={allRepositories.map((el) => ({
-                  label: el.name,
-                  value: el.repositoryID,
-                }))}
-              />
-            </Styled.Wrapper>
-          ) : null}
           <Styled.ApplyButton
             text={t('DASHBOARD_SCREEN.APPLY')}
             rounded

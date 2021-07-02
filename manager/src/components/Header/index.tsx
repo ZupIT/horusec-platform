@@ -38,47 +38,40 @@ const Header: React.FC = () => {
         helper:
           'https://docs.horusec.io/docs/web/services/manager/introduction',
       },
-      '/overview/dashboard/repositories': {
-        text: t('HEADER.TITLE.DASHBOARDREPOSITORY'),
-        aria: t('DASHBOARD_SCREEN.ARIA_TITLE_REPOSITORY'),
+      '/dashboard': {
+        text: t('HEADER.TITLE.DASHBOARD'),
+        aria: t('DASHBOARD_SCREEN.ARIA_TITLE_DASHBOARD'),
         icon: 'pie',
         helper:
           'https://docs.horusec.io/docs/web/services/manager/introduction/#analytics-dashboard',
       },
-      '/overview/dashboard/workspace': {
-        text: t('HEADER.TITLE.DASHBOARDWORKSPACE'),
-        aria: t('DASHBOARD_SCREEN.ARIA_TITLE_WORKSPACE'),
-        icon: 'pie',
-        helper:
-          'https://docs.horusec.io/docs/web/services/manager/introduction/#analytics-dashboard',
-      },
-      '/overview/vulnerabilities': {
+      '/vulnerabilities': {
         text: t('HEADER.TITLE.VULNERABILITIES'),
         aria: t('HEADER.ARIA.VULNERABILITIES'),
         icon: 'shield',
         helper:
           'https://docs.horusec.io/docs/web/services/manager/vulnerabilities-management/',
       },
-      '/overview/repositories': {
-        text: t('HEADER.TITLE.REPOSITORIES'),
-        aria: t('HEADER.ARIA.REPOSITORIES'),
-        icon: 'columns',
+      '/tokens': {
+        text: t('HEADER.TITLE.TOKENS'),
+        aria: t('HEADER.ARIA.TOKENS'),
+        icon: 'shield',
         helper:
-          'https://docs.horusec.io/docs/web/services/manager/repository-management/',
+          'https://docs.horusec.io/docs/web/services/manager/vulnerabilities-management/',
       },
-      '/overview/webhooks': {
+      '/invite': {
+        text: t('HEADER.TITLE.INVITE'),
+        aria: t('HEADER.ARIA.INVITE'),
+        icon: 'shield',
+        helper:
+          'https://docs.horusec.io/docs/web/services/manager/vulnerabilities-management/',
+      },
+      '/webhooks': {
         text: t('HEADER.TITLE.WEBHOOKS'),
         aria: t('HEADER.ARIA.WEBHOOKS'),
         icon: 'webhook',
         helper:
           'https://docs.horusec.io/docs/web/services/manager/webhooks-management/',
-      },
-      '/overview/workspaces': {
-        text: t('HEADER.TITLE.WORKSPACES'),
-        aria: t('HEADER.ARIA.WORKSPACES'),
-        icon: 'grid',
-        helper:
-          'https://docs.horusec.io/docs/web/services/manager/workspace-management',
       },
       '/settings': {
         text: t('HEADER.TITLE.CONFIGURATION'),
@@ -99,9 +92,10 @@ const Header: React.FC = () => {
 
     Object.entries(titles).forEach((item) => {
       const [key, value] = item;
+      console.log(key, value);
       if (path.includes(key)) title = value;
     });
-
+    console.log(title);
     return title;
   };
 
