@@ -23,15 +23,17 @@ import coreService from 'services/core';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 
 import SuccessAddToken from './Success';
-import { Repository } from 'helpers/interfaces/Repository';
 import validateExpiresAt from 'helpers/validators/validateExpiresAt';
 import { Formik, FormikHelpers } from 'formik';
 import * as Yup from 'yup';
+import { RouteParams } from 'helpers/interfaces/RouteParams';
+
 interface Props {
   isVisible: boolean;
   onCancel: () => void;
   onConfirm: () => void;
-  currentRepository: Repository;
+  currentParams: RouteParams;
+  type: 'workspace' | 'repository';
 }
 
 const MIN_DATE = new Date(Date.now() + 86400000);
@@ -40,7 +42,8 @@ const AddToken: React.FC<Props> = ({
   isVisible,
   onCancel,
   onConfirm,
-  currentRepository,
+  currentParams,
+  type,
 }) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
@@ -84,23 +87,41 @@ const AddToken: React.FC<Props> = ({
       delete data.expiresAt;
     }
 
-    coreService
-      .createTokenInRepository(
-        currentRepository.workspaceID,
-        currentRepository.repositoryID,
-        data
-      )
-      .then((res) => {
-        onConfirm();
-        actions.resetForm();
-        setTokenCreated(res?.data?.content);
-      })
-      .catch((err) => {
-        dispatchMessage(err?.response?.data);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    if (type === 'repository') {
+      coreService
+        .createTokenInRepository(
+          currentParams.workspaceId,
+          currentParams.repositoryId,
+          data
+        )
+        .then((res) => {
+          onConfirm();
+          actions.resetForm();
+          setTokenCreated(res?.data?.content);
+        })
+        .catch((err) => {
+          dispatchMessage(err?.response?.data);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
+
+    if (type === 'workspace') {
+      coreService
+        .createTokenInWorkspace(currentParams.workspaceId, data)
+        .then((res) => {
+          onConfirm();
+          actions.resetForm();
+          setTokenCreated(res?.data?.content);
+        })
+        .catch((err) => {
+          dispatchMessage(err?.response?.data);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
   };
 
   return (

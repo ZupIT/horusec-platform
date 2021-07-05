@@ -21,5 +21,4 @@ export interface InternalRoute {
   roles?: string[];
   rule?(): boolean;
   subRoutes?: InternalRoute[];
-  type: 'route' | 'subRoute';
 }

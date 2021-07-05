@@ -31,80 +31,47 @@ const SideMenu: React.FC = () => {
   const { t } = useTranslation();
   const [isMinimized, setIsMinimized] = useState<boolean>(false);
 
-  const { path } = useRouteMatch();
-
   const { workspace, workspaceId, repositoryId } = useParamsRoute();
 
-  const routes: InternalRoute[] = [];
-
-  if (!!workspaceId === true && !!repositoryId === false) {
-    routes.push({
+  const routes: InternalRoute[] = [
+    {
       name: t('SIDE_MENU.DASHBOARD'),
       icon: 'pie',
-      type: 'route',
-      path: `/overview/workspaces/${workspaceId}/dashboard`,
+      path: '/dashboard',
       roles: ['admin', 'member'],
-    });
-
-    routes.push({
-      name: t('SIDE_MENU.TOKENS'),
-      icon: 'lock',
-      path: `${path}/workspaces/${workspaceId}/tokens`,
-      type: 'route',
-      roles: ['admin', 'member'],
-    });
-
-    routes.push({
-      name: t('SIDE_MENU.WORKSPACES_USERS'),
-      icon: 'users',
-      path: `${path}/workspaces/${workspaceId}/users`,
-      type: 'route',
-      roles: ['admin', 'member'],
-    });
-
-    routes.push({
-      name: t('SIDE_MENU.WEBHOOK'),
-      icon: 'webhook',
-      path: `${path}/workspaces/${workspaceId}/webhooks`,
-      type: 'route',
-      roles: ['admin', 'member'],
-    });
-  } else if (!!workspaceId === true && !!repositoryId === true) {
-    routes.push({
-      name: t('SIDE_MENU.DASHBOARD'),
-      icon: 'pie',
-      type: 'route',
-      path: `/overview/workspaces/${workspaceId}/repository/${repositoryId}/dashboard`,
-      roles: ['admin', 'member'],
-    });
-
-    routes.push({
+    },
+    {
       name: t('SIDE_MENU.VULNERABILITIES'),
       icon: 'shield',
-      path: `${path}/workspaces/${workspaceId}/repository/${repositoryId}/vulnerabilities`,
-      type: 'route',
+      path: '/vulnerabilities',
       roles: ['admin', 'member'],
-    });
-
-    routes.push({
+    },
+    {
       name: t('SIDE_MENU.TOKENS'),
       icon: 'lock',
-      path: `${path}/workspaces/${workspaceId}/repository/${repositoryId}/tokens`,
-      type: 'route',
+      path: '/tokens',
       roles: ['admin', 'member'],
-    });
-
-    routes.push({
-      name: t('SIDE_MENU.INVITE'),
+    },
+    {
+      name: t('SIDE_MENU.USERS'),
       icon: 'users',
-      path: `${path}/workspaces/${workspaceId}/repository/${repositoryId}/invite`,
-      type: 'route',
+      path: '/users',
       roles: ['admin', 'member'],
-    });
-  }
+    },
+    {
+      name: t('SIDE_MENU.WEBHOOK'),
+      icon: 'webhook',
+      path: '/webhooks',
+      roles: ['admin', 'member'],
+    },
+  ];
 
   const handleSelectedRoute = (route: InternalRoute) => {
-    history.push(route.path);
+    const fullPath = `/overview/workspace/${workspaceId}${
+      repositoryId ? `/repository/${repositoryId}${route.path}` : route.path
+    }`;
+
+    history.push(fullPath);
   };
 
   const renderRoute = (route: InternalRoute, index: number) => {
@@ -169,7 +136,7 @@ const SideMenu: React.FC = () => {
         </Styled.SizeHandler>
 
         <Styled.WrapperLogoRoutes>
-          <Link to="/" about="Horusec Logo">
+          <Link to="/home" about="Horusec Logo">
             <Styled.Logo
               src={isMinimized ? HorusecLogoMin : HorusecLogo}
               alt="Horusec Logo"
