@@ -55,17 +55,23 @@ const Header: React.FC = () => {
       '/tokens': {
         text: t('HEADER.TITLE.TOKENS'),
         aria: t('HEADER.ARIA.TOKENS'),
-        icon: 'shield',
-      },
-      '/users': {
-        text: t('HEADER.TITLE.USERS'),
-        aria: t('HEADER.ARIA.USERS'),
-        icon: 'shield',
+        icon: 'lock',
+        helper:
+          'https://docs.horusec.io/docs/web/services/manager/workspace-management/#workspace-token/',
       },
       '/invite': {
         text: t('HEADER.TITLE.INVITE'),
         aria: t('HEADER.ARIA.INVITE'),
         icon: 'shield',
+        helper:
+          'https://docs.horusec.io/docs/web/services/manager/repository-management/#repositorys-users',
+      },
+      '/users': {
+        text: t('HEADER.TITLE.USERS'),
+        aria: t('HEADER.ARIA.USERS'),
+        icon: 'users',
+        helper:
+          'https://docs.horusec.io/docs/web/services/manager/workspace-management/#workspace-users',
       },
       '/webhooks': {
         text: t('HEADER.TITLE.WEBHOOKS'),

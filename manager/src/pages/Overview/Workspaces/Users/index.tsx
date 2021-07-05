@@ -32,7 +32,7 @@ import { IconButton } from '@material-ui/core';
 import { ArrowBack } from '@material-ui/icons';
 import { RouteParams } from 'helpers/interfaces/RouteParams';
 
-function WorkspaceUsers() {
+const WorkspaceUsers: React.FC = () => {
   const { t } = useTranslation();
   const currentUser = getCurrentUser();
   const { dispatchMessage } = useResponseMessage();
@@ -79,7 +79,6 @@ function WorkspaceUsers() {
       const filtered = users.filter((user) =>
         user.email.toLocaleLowerCase().includes(search.toLocaleLowerCase())
       );
-
       setFilteredUsers(filtered);
     } else {
       setFilteredUsers(users);
@@ -232,6 +231,6 @@ function WorkspaceUsers() {
       />
     </Styled.Wrapper>
   );
-}
+};
 
 export default WorkspaceUsers;

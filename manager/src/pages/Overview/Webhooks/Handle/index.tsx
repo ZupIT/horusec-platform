@@ -39,6 +39,7 @@ interface Props {
   webhookInitial: Webhook;
   onCancel: () => void;
   onConfirm: () => void;
+  type: 'repository' | 'workspace';
 }
 
 const webhookHttpMethods = [{ value: 'POST' }, { value: 'GET' }];
@@ -49,6 +50,7 @@ const HandleWebhook: React.FC<Props> = ({
   onCancel,
   onConfirm,
   webhookInitial,
+  type,
 }) => {
   const { t } = useTranslation();
   const { colors } = useTheme();

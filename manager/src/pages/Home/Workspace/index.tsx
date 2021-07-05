@@ -125,7 +125,7 @@ const Home: React.FC = () => {
             icon="goto"
             style={{ marginLeft: '10px' }}
             onClick={() =>
-              history.push(`/overview/workspaces/${workspaceId}/dashboard`)
+              history.push(`/overview/workspace/${workspaceId}/dashboard`)
             }
           />
         </Styled.TitleWrapper>
@@ -188,7 +188,7 @@ const Home: React.FC = () => {
               }}
               onOverview={() =>
                 history.push(
-                  `/overview/workspaces/${workspaceId}/repository/${repo.repositoryID}/dashboard`
+                  `/overview/workspace/${workspaceId}/repository/${repo.repositoryID}/dashboard`
                 )
               }
             />

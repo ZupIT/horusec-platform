@@ -451,7 +451,9 @@
     "LOGOUT": "Fuera",
     "MANAGE_WORKSPACES": "Gestionar espacios de trabajo",
     "MAX_MENU": "Maximizar el menú",
-    "MIN_MENU": "Minimizar el menú"
+    "MIN_MENU": "Minimizar el menú",
+    "TOKENS": "Tokens",
+    "USERS": "Usuarios"
   },
   "API_ERRORS": {
     "GENERIC_ERROR": "Sucedió algo inesperado, inténtalo de nuevo.",
@@ -491,7 +493,10 @@
       "CONFIGURATION": "Ajustes",
       "HELPER": "Ayudar",
       "WORKSPACES": "Espacios de trabajo",
-      "DEFAULT": "Horusec"
+      "DEFAULT": "Horusec",
+      "TOKENS": "Tokens",
+      "DASHBOARD": "Dashboard",
+      "USERS": "Usuarios"
     },
     "ARIA": {
       "LOGOUT": "Cerrar sesión",
