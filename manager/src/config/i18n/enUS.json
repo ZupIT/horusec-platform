@@ -438,6 +438,9 @@
   "SIDE_MENU": {
     "ARIA_TITLE": "Navigation between pages",
     "DASHBOARD": "Dashboard",
+    "TOKENS": "Tokens",
+    "INVITE": "Users",
+    "WORKSPACES_USERS": "Users",
     "VULNERABILITIES": "Vulnerabilities",
     "REPOSITORIES": "Repositories",
     "WORKSPACE": "Workspace",

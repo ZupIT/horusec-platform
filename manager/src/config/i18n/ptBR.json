@@ -440,6 +440,9 @@
   "SIDE_MENU": {
     "ARIA_TITLE": "Navegação entre páginas",
     "DASHBOARD": "Dashboard",
+    "TOKENS": "Tokens",
+    "INVITE": "Usuários",
+    "WORKSPACES_USERS": "Usuários",
     "VULNERABILITIES": "Vulnerabilidades",
     "REPOSITORIES": "Repositórios",
     "WORKSPACE": "Workspace",
@@ -483,8 +486,9 @@
   "HEADER": {
     "TITLE": {
       "HOME": "Home",
-      "DASHBOARDREPOSITORY": "Dashboard / Repositório",
-      "DASHBOARDWORKSPACE": "Dashboard / Workspace",
+      "DASHBOARD": "Dashboard",
+      "TOKENS": "Tokens",
+      "USERS": "Usuários",
       "VULNERABILITIES": "Vulnerabilidades",
       "REPOSITORIES": "Repositórios",
       "WEBHOOKS": "Webhooks",

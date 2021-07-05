@@ -33,7 +33,7 @@ const SideMenu: React.FC = () => {
 
   const { path } = useRouteMatch();
 
-  const { workspace, workspaceId, repositoryId } = useParamsRoute();
+  const { workspace, workspaceId, repositoryId, repository } = useParamsRoute();
 
   const routes: InternalRoute[] = [];
 
@@ -169,12 +169,19 @@ const SideMenu: React.FC = () => {
         </Styled.SizeHandler>
 
         <Styled.WrapperLogoRoutes>
-          <Link to="/" about="Horusec Logo">
+          <Link to="/home" about="Horusec Logo">
             <Styled.Logo
               src={isMinimized ? HorusecLogoMin : HorusecLogo}
               alt="Horusec Logo"
             />
           </Link>
+
+          <Styled.NameWrapper>
+            <Styled.NameTitle>Overview: </Styled.NameTitle>
+            <Styled.NameText>
+              {repository?.name || workspace?.name}
+            </Styled.NameText>
+          </Styled.NameWrapper>
 
           <Styled.Nav aria-label={t('SIDE_MENU.ARIA_TITLE')}>
             <Styled.RoutesList>

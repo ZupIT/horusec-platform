@@ -440,6 +440,9 @@
   "SIDE_MENU": {
     "ARIA_TITLE": "Navegación entre páginas",
     "DASHBOARD": "Tablero",
+    "TOKENS": "Fichas",
+    "INVITE": "Usuarios",
+    "WORKSPACES_USERS": "Usuarios",
     "VULNERABILITIES": "Vulnerabilidades",
     "REPOSITORIES": "Repositorios",
     "WORKSPACE": "Espacio de trabajo",
