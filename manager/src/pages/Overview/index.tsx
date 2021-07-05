@@ -22,19 +22,12 @@ import InternalLayout from 'layouts/Internal';
 import Dashboard from 'pages/Overview/Dashboard';
 import Webhooks from 'pages/Overview/Webhooks';
 import Tokens from './Tokens';
-import RepositoryInvite from './Repositories/Invite';
-import WorkspaceTokens from './Workspaces/Tokens';
 import WorkspaceUsers from './Workspaces/Users';
+import RepositoriesInvite from './Repositories/Invite';
 import Vulnerabilities from './Vulnerabilities';
-import useParamsRoute from 'helpers/hooks/useParamsRoute';
 
 function InternalRoutes() {
   const { path } = useRouteMatch();
-  const {
-    workspace: isAdminOfWorkspace,
-    workspaceId,
-    repositoryId,
-  } = useParamsRoute();
 
   return (
     <InternalLayout>
@@ -78,13 +71,13 @@ function InternalRoutes() {
         <PrivateRoute
           exact
           path={`${path}/workspace/:workspaceId/users`}
-          component={() => <WorkspaceUsers type="workspace" />}
+          component={() => <WorkspaceUsers />}
         />
 
         <PrivateRoute
           exact
           path={`${path}/workspace/:workspaceId/repository/:repositoryId/users`}
-          component={() => <WorkspaceUsers type="repository" />}
+          component={() => <RepositoriesInvite />}
         />
 
         <PrivateRoute

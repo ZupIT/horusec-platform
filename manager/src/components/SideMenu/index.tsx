@@ -53,7 +53,7 @@ const SideMenu: React.FC = () => {
       roles: ['admin', 'member'],
     },
     {
-      name: t('SIDE_MENU.INVITE'),
+      name: t('SIDE_MENU.USERS'),
       icon: 'users',
       path: '/users',
       roles: ['admin', 'member'],
@@ -136,7 +136,7 @@ const SideMenu: React.FC = () => {
         </Styled.SizeHandler>
 
         <Styled.WrapperLogoRoutes>
-          <Link to="/" about="Horusec Logo">
+          <Link to="/home" about="Horusec Logo">
             <Styled.Logo
               src={isMinimized ? HorusecLogoMin : HorusecLogo}
               alt="Horusec Logo"

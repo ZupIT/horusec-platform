@@ -225,6 +225,7 @@ const Webhooks: React.FC<Props> = ({ type }) => {
         isNew={false}
         onCancel={() => setWebhookToEdit(null)}
         webhookInitial={webhookToEdit}
+        type={type}
         onConfirm={() => {
           setWebhookToEdit(null);
           fetchData();
@@ -233,12 +234,13 @@ const Webhooks: React.FC<Props> = ({ type }) => {
 
       <HandleWebhook
         isVisible={addWebhookVisible}
+        webhookInitial={webhookToCopy}
         isNew={true}
+        type={type}
         onCancel={() => {
           setWebhookToCopy(null);
           setAddWebhookVisible(false);
         }}
-        webhookInitial={webhookToCopy}
         onConfirm={() => {
           setWebhookToCopy(null);
           setAddWebhookVisible(false);
