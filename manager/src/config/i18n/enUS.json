@@ -452,7 +452,9 @@
     "LOGOUT": "Logout",
     "MANAGE_WORKSPACES": "Manage Workspaces",
     "MAX_MENU": "Maximize the menu",
-    "MIN_MENU": "Minimize the menu"
+    "MIN_MENU": "Minimize the menu",
+    "TOKENS": "Tokens",
+    "USERS": "Users"
   },
   "API_ERRORS": {
     "GENERIC_ERROR": "Something unexpected happened, try again.",
@@ -492,7 +494,10 @@
       "CONFIGURATION": "Settings",
       "HELPER": "Helper",
       "WORKSPACES": "Workspaces",
-      "DEFAULT": "Horusec"
+      "DEFAULT": "Horusec",
+      "DASHBOARD": "Dashboard",
+      "TOKENS": "Tokens",
+      "USERS": "Users"
     },
     "ARIA": {
       "LOGOUT": "Logout",

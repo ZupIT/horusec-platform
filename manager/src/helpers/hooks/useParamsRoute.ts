@@ -30,14 +30,14 @@ const useParamsRoute = () => {
   const { workspaceId = '' } = matchPath<{ workspaceId: string }>(
     history.location.pathname,
     {
-      path: `${path}/workspaces/:workspaceId`,
+      path: `${path}/workspace/:workspaceId`,
     }
   )?.params || { workspaceId: '' };
 
   const { repositoryId = '' } = matchPath<{ repositoryId: string }>(
     history.location.pathname,
     {
-      path: `${path}/workspaces/:workspaceId/repository/:repositoryId`,
+      path: `${path}/workspace/:workspaceId/repository/:repositoryId`,
     }
   )?.params || { repositoryId: '' };
 

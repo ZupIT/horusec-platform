@@ -216,19 +216,6 @@ function RepositoryInvite() {
 
   return (
     <Styled.Wrapper>
-      <Styled.Header>
-        <Styled.TitleContent>
-          <Link to="/overview/repositories">
-            <IconButton size="small">
-              <ArrowBack />
-            </IconButton>
-          </Link>
-          <Styled.Title>
-            {t('REPOSITORIES_SCREEN.INVITE_TO_REPOSITORY')}
-          </Styled.Title>
-        </Styled.TitleContent>
-      </Styled.Header>
-
       <Styled.Content>
         <Styled.SubTitle>
           {t('REPOSITORIES_SCREEN.INVITE_USER_BELOW')}

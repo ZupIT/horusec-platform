@@ -32,12 +32,14 @@ import SearchSelect from 'components/SearchSelect';
 import * as Yup from 'yup';
 import { Workspace } from 'helpers/interfaces/Workspace';
 import { useParams } from 'react-router-dom';
+import { RouteParams } from 'helpers/interfaces/RouteParams';
 interface Props {
   isVisible: boolean;
   isNew: boolean;
   webhookInitial: Webhook;
   onCancel: () => void;
   onConfirm: () => void;
+  type: 'repository' | 'workspace';
 }
 
 const webhookHttpMethods = [{ value: 'POST' }, { value: 'GET' }];
@@ -48,6 +50,7 @@ const HandleWebhook: React.FC<Props> = ({
   onCancel,
   onConfirm,
   webhookInitial,
+  type,
 }) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
@@ -60,7 +63,7 @@ const HandleWebhook: React.FC<Props> = ({
 
   const [isLoading, setLoading] = useState(false);
 
-  const { workspaceId } = useParams<{ workspaceId: string }>();
+  const { workspaceId } = useParams<RouteParams>();
 
   useEffect(() => {
     function getCurrentWorkspace() {

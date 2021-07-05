@@ -30,8 +30,9 @@ import EditUserRole from './Edit';
 import { Link, useHistory, useParams } from 'react-router-dom';
 import { IconButton } from '@material-ui/core';
 import { ArrowBack } from '@material-ui/icons';
+import { RouteParams } from 'helpers/interfaces/RouteParams';
 
-function WorkspaceUsers() {
+const WorkspaceUsers: React.FC = () => {
   const { t } = useTranslation();
   const currentUser = getCurrentUser();
   const { dispatchMessage } = useResponseMessage();
@@ -49,7 +50,7 @@ function WorkspaceUsers() {
 
   const [selectedWorkspace, setSelectedWorkspace] = useState<Workspace>(null);
 
-  const { workspaceId } = useParams<{ workspaceId: string }>();
+  const { workspaceId } = useParams<RouteParams>();
   const history = useHistory();
 
   function getOneWorkspace() {
@@ -78,7 +79,6 @@ function WorkspaceUsers() {
       const filtered = users.filter((user) =>
         user.email.toLocaleLowerCase().includes(search.toLocaleLowerCase())
       );
-
       setFilteredUsers(filtered);
     } else {
       setFilteredUsers(users);
@@ -129,17 +129,6 @@ function WorkspaceUsers() {
 
   return (
     <Styled.Wrapper>
-      <Styled.Header>
-        <Styled.TitleContent>
-          <Link to="/overview/workspaces">
-            <IconButton size="small">
-              <ArrowBack />
-            </IconButton>
-          </Link>
-          <Styled.Title>{t('WORKSPACES_SCREEN.USERS.TITLE')}</Styled.Title>
-        </Styled.TitleContent>
-      </Styled.Header>
-
       <Styled.Header>
         <SearchBar
           placeholder={t('WORKSPACES_SCREEN.USERS.SEARCH')}
@@ -242,6 +231,6 @@ function WorkspaceUsers() {
       />
     </Styled.Wrapper>
   );
-}
+};
 
 export default WorkspaceUsers;

@@ -454,7 +454,9 @@
     "LOGOUT": "Sair",
     "MANAGE_WORKSPACES": "Gerenciar Workspaces",
     "MAX_MENU": "Maximizar o menu",
-    "MIN_MENU": "Minimizar o menu"
+    "MIN_MENU": "Minimizar o menu",
+    "TOKENS": "Tokens",
+    "USERS": "Usuários"
   },
   "API_ERRORS": {
     "GENERIC_ERROR": "Algo inesperado aconteceu, tente novamente.",
@@ -495,7 +497,10 @@
       "CONFIGURATION": "Configuração",
       "HELPER": "Ajuda",
       "WORKSPACES": "Workspaces",
-      "DEFAULT": "Horusec"
+      "DEFAULT": "Horusec",
+      "DASHBOARD": "Dashboard",
+      "TOKENS": "Tokens",
+      "USERS": "Usuários"
     },
     "ARIA": {
       "LOGOUT": "Realizar logout",
