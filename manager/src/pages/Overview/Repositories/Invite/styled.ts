@@ -27,7 +27,6 @@ const Header = styled.div`
 `;
 
 const Content = styled.div`
-  margin-top: 25px;
   padding: 25px 15px;
   background-color: ${({ theme }) => theme.colors.background.secundary};
   border-radius: 4px;
