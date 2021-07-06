@@ -91,6 +91,13 @@ const removeUserInWorkspace = (workspaceID: string, accountId: string) => {
   );
 };
 
+const getAllTokens = (workspaceID: string, repositoryId?: string) => {
+  const path = repositoryId ? `/repositories/${repositoryId}` : '';
+  return http.get(
+    `${SERVICE_CORE}/core/workspaces/${workspaceID}${path}/tokens`
+  );
+};
+
 const getAllTokensOfWorkspace = (workspaceID: string) => {
   return http.get(`${SERVICE_CORE}/core/workspaces/${workspaceID}/tokens`);
 };
@@ -111,6 +118,16 @@ const createTokenInWorkspace = (
 const removeTokenOfWorkspace = (workspaceID: string, tokenId: string) => {
   return http.delete(
     `${SERVICE_CORE}/core/workspaces/${workspaceID}/tokens/${tokenId}`
+  );
+};
+
+const removeToken = (
+  data: { workspaceID: string; repositoryID?: string },
+  tokenId: string
+) => {
+  const path = data.repositoryID ? `/repositories/${data.repositoryID}` : '';
+  return http.delete(
+    `${SERVICE_CORE}/core/workspaces/${data.workspaceID}${path}/tokens/${tokenId}`
   );
 };
 
@@ -258,6 +275,7 @@ export default {
   createTokenInWorkspace,
   removeTokenOfWorkspace,
   getAllTokensOfWorkspace,
+  getAllTokens,
   getAllRepositories,
   getOneRepository,
   createRepository,
@@ -266,6 +284,7 @@ export default {
   getAllTokensOfRepository,
   createTokenInRepository,
   removeTokenOfRepository,
+  removeToken,
   getUsersInRepository,
   includeUserInRepository,
   removeUserOfRepository,
