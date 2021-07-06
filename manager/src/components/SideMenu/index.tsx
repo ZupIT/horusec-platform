@@ -33,6 +33,8 @@ const SideMenu: React.FC = () => {
 
   const { workspace, workspaceId, repositoryId, repository } = useParamsRoute();
 
+  const isRepositoryOverview = repositoryId ? true : false;
+
   const routes: InternalRoute[] = [
     {
       name: t('SIDE_MENU.DASHBOARD'),
@@ -68,7 +70,9 @@ const SideMenu: React.FC = () => {
 
   const handleSelectedRoute = (route: InternalRoute) => {
     const fullPath = `/overview/workspace/${workspaceId}${
-      repositoryId ? `/repository/${repositoryId}${route.path}` : route.path
+      isRepositoryOverview
+        ? `/repository/${repositoryId}${route.path}`
+        : route.path
     }`;
 
     history.push(fullPath);
@@ -145,7 +149,9 @@ const SideMenu: React.FC = () => {
 
           {isMinimized ? null : (
             <Styled.NameWrapper>
-              <Styled.NameTitle>Overview: </Styled.NameTitle>
+              <Styled.NameTitle>
+                {isRepositoryOverview ? 'Repository:' : 'Workspace:'}
+              </Styled.NameTitle>
               <Styled.NameText>
                 {repository?.name || workspace?.name}
               </Styled.NameText>
