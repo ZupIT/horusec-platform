@@ -28,11 +28,7 @@ import { FilterVuln } from 'helpers/interfaces/FIlterVuln';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
 import { useTheme } from 'styled-components';
 import { AxiosError, AxiosResponse } from 'axios';
-import { Autocomplete } from '@material-ui/lab';
-import { TextField } from '@material-ui/core';
-import { Search } from '@material-ui/icons';
 import useParamsRoute from 'helpers/hooks/useParamsRoute';
-import { Workspace } from 'helpers/interfaces/Workspace';
 import { Repository } from 'helpers/interfaces/Repository';
 import { useHistory, useParams } from 'react-router-dom';
 import { RouteParams } from 'helpers/interfaces/RouteParams';
@@ -52,6 +48,8 @@ interface KeyValueVuln {
 const Vulnerabilities: React.FC = () => {
   const { workspaceId, repositoryId } = useParams<RouteParams>();
 
+  const overviewType = repositoryId ? 'repository' : 'workspace';
+
   const { getRepository } = useParamsRoute();
   const [currentRepository, setCurrentRepository] = useState<Repository>(null);
 
@@ -68,8 +66,8 @@ const Vulnerabilities: React.FC = () => {
   const [updateVulnIds, setUpdateVulnIds] = useState<KeyValueVuln[]>([]);
 
   const [filters, setFilters] = useState<FilterVuln>({
-    workspaceID: currentRepository?.workspaceID,
-    repositoryID: currentRepository?.repositoryID,
+    workspaceID: workspaceId,
+    repositoryID: repositoryId,
     vulnHash: '',
     vulnSeverity: 'ALL',
     vulnType: 'ALL',
@@ -187,78 +185,68 @@ const Vulnerabilities: React.FC = () => {
     let isCancelled = false;
 
     const fetchVulnerabilities = () => {
-      if (currentRepository?.repositoryID) {
-        setLoading(true);
+      setLoading(true);
 
-        const page = refresh.page;
-        const filter = refresh.filter;
+      const page = refresh.page;
+      const filter = refresh.filter;
 
-        if (page.pageSize !== pagination.pageSize) {
-          page.currentPage = INITIAL_PAGE;
-        }
+      if (page.pageSize !== pagination.pageSize) {
+        page.currentPage = INITIAL_PAGE;
+      }
 
-        if (!filter.repositoryID) {
-          filter.repositoryID = currentRepository?.repositoryID;
-        }
+      const filterAux = {
+        ...filter,
+        vulnSeverity: filter.vulnHash ? null : filter.vulnSeverity,
+        vulnType: filter.vulnHash ? null : filter.vulnType,
+      };
 
-        if (!filter.workspaceID) {
-          filter.workspaceID = currentRepository?.workspaceID;
-        }
+      setFilters(filter);
 
-        const filterAux = {
-          ...filter,
-          vulnSeverity: filter.vulnHash ? null : filter.vulnSeverity,
-          vulnType: filter.vulnHash ? null : filter.vulnType,
-        };
+      vulnerabilitiesService
+        .getAllVulnerabilities(filterAux, overviewType, page)
+        .then((result: AxiosResponse) => {
+          if (!isCancelled) {
+            const response = result.data?.content;
 
-        setFilters(filter);
+            const data: Vulnerability[] = response?.data;
 
-        vulnerabilitiesService
-          .getAllVulnerabilities(filterAux, 'repository', page)
-          .then((result: AxiosResponse) => {
-            if (!isCancelled) {
-              const response = result.data?.content;
-
-              const data: Vulnerability[] = response?.data;
-
-              for (const row of data) {
-                const { type = row.type, severity = row.severity } =
-                  updateVulnIds.find(
-                    (x) => x.vulnerabilityID === row.vulnerabilityID
-                  ) || {};
-                row.type = type;
-                row.severity = severity;
-              }
-
-              setVulnerabilities(data);
-              const totalItems = response?.totalItems;
-
-              let totalPages = totalItems
-                ? Math.ceil(totalItems / page.pageSize)
-                : 1;
-
-              if (totalPages <= 0) {
-                totalPages = 1;
-              }
-
-              setPagination({ ...page, totalPages, totalItems });
+            for (const row of data) {
+              const { type = row.type, severity = row.severity } =
+                updateVulnIds.find(
+                  (x) => x.vulnerabilityID === row.vulnerabilityID
+                ) || {};
+              row.type = type;
+              row.severity = severity;
             }
-          })
-          .catch((err: AxiosError) => {
-            if (!isCancelled) {
-              dispatchMessage(err?.response?.data);
-              setVulnerabilities([]);
+
+            setVulnerabilities(data);
+            const totalItems = response?.totalItems;
+
+            let totalPages = totalItems
+              ? Math.ceil(totalItems / page.pageSize)
+              : 1;
+
+            if (totalPages <= 0) {
+              totalPages = 1;
             }
-          })
-          .finally(() => {
-            if (!isCancelled) {
-              setLoading(false);
-            }
-          });
-      } else {
-        if (!isCancelled) {
-          setLoading(false);
-        }
+
+            setPagination({ ...page, totalPages, totalItems });
+          }
+        })
+        .catch((err: AxiosError) => {
+          if (!isCancelled) {
+            dispatchMessage(err?.response?.data);
+            setVulnerabilities([]);
+          }
+        })
+        .finally(() => {
+          if (!isCancelled) {
+            setLoading(false);
+          }
+        });
+
+      if (!isCancelled) {
+        setLoading(false);
       }
     };
 
@@ -269,17 +257,11 @@ const Vulnerabilities: React.FC = () => {
     // eslint-disable-next-line
   }, [refresh, currentRepository, pagination.pageSize]);
 
-  const getValueRepo = () => {
-    return currentRepository
-      ? { label: currentRepository.name, value: currentRepository.repositoryID }
-      : null;
-  };
-
   function resetUpdateVuln() {
     setUpdateVulnIds([]);
     setLoading(true);
     vulnerabilitiesService
-      .getAllVulnerabilities(refresh.filter, 'repository', refresh.page)
+      .getAllVulnerabilities(refresh.filter, overviewType, refresh.page)
       .then((result: AxiosResponse) => {
         const response = result.data?.content;
         const data: Vulnerability[] = response?.data;

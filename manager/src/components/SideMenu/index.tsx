@@ -31,7 +31,9 @@ const SideMenu: React.FC = () => {
   const { t } = useTranslation();
   const [isMinimized, setIsMinimized] = useState<boolean>(false);
 
-  const { workspace, workspaceId, repositoryId } = useParamsRoute();
+  const { workspace, workspaceId, repositoryId, repository } = useParamsRoute();
+
+  const isRepositoryOverview = repositoryId ? true : false;
 
   const routes: InternalRoute[] = [
     {
@@ -68,7 +70,9 @@ const SideMenu: React.FC = () => {
 
   const handleSelectedRoute = (route: InternalRoute) => {
     const fullPath = `/overview/workspace/${workspaceId}${
-      repositoryId ? `/repository/${repositoryId}${route.path}` : route.path
+      isRepositoryOverview
+        ? `/repository/${repositoryId}${route.path}`
+        : route.path
     }`;
 
     history.push(fullPath);
@@ -142,6 +146,17 @@ const SideMenu: React.FC = () => {
               alt="Horusec Logo"
             />
           </Link>
+
+          {isMinimized ? null : (
+            <Styled.NameWrapper>
+              <Styled.NameTitle>
+                {isRepositoryOverview ? 'Repository:' : 'Workspace:'}
+              </Styled.NameTitle>
+              <Styled.NameText>
+                {repository?.name || workspace?.name}
+              </Styled.NameText>
+            </Styled.NameWrapper>
+          )}
 
           <Styled.Nav aria-label={t('SIDE_MENU.ARIA_TITLE')}>
             <Styled.RoutesList>

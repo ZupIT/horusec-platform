@@ -35,7 +35,7 @@ const SuccessAddToken: React.FC<Props> = ({ tokenValue, onConfirm }) => {
         <Styled.Head>
           <Icon name="lock" size="24px" />
 
-          <Styled.Title>{t('REPOSITORIES_SCREEN.TOKEN_SUCCESS')}</Styled.Title>
+          <Styled.Title>{t('TOKENS_SCREEN.TOKEN_SUCCESS')}</Styled.Title>
         </Styled.Head>
 
         <Styled.TokenWrapper isCopy={isCopied} onClick={setCopied}>
@@ -44,10 +44,10 @@ const SuccessAddToken: React.FC<Props> = ({ tokenValue, onConfirm }) => {
           <Icon name="copy" size="20px" className="copy" />
         </Styled.TokenWrapper>
 
-        <Styled.Info>{t('REPOSITORIES_SCREEN.TOKEN_INFO')}</Styled.Info>
+        <Styled.Info>{t('TOKENS_SCREEN.TOKEN_INFO')}</Styled.Info>
 
         <Button
-          text={t('REPOSITORIES_SCREEN.CONFIRM')}
+          text={t('TOKENS_SCREEN.CONFIRM')}
           rounded
           width={110}
           onClick={onConfirm}

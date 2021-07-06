@@ -56,7 +56,7 @@ const AddToken: React.FC<Props> = ({
     description: Yup.string().required(),
     isExpirable: Yup.boolean().optional(),
     expiresAt: Yup.date()
-      .test('boolean', t('REPOSITORIES_SCREEN.INVALID_EXPIRES_AT'), (date) =>
+      .test('boolean', t('TOKENS_SCREEN.INVALID_EXPIRES_AT'), (date) =>
         validateExpiresAt(date.toString())
       )
       .optional(),
@@ -135,13 +135,13 @@ const AddToken: React.FC<Props> = ({
         {(props) => (
           <Dialog
             isVisible={isVisible}
-            message={t('REPOSITORIES_SCREEN.CREATE_NEW_TOKEN')}
+            message={t('TOKENS_SCREEN.CREATE_NEW_TOKEN')}
             onCancel={() => {
               onCancel();
               props.resetForm();
             }}
             onConfirm={props.submitForm}
-            confirmText={t('REPOSITORIES_SCREEN.SAVE')}
+            confirmText={t('TOKENS_SCREEN.SAVE')}
             disableConfirm={!props.isValid}
             disabledColor={colors.button.disableInDark}
             loadingConfirm={isLoading}
@@ -150,26 +150,26 @@ const AddToken: React.FC<Props> = ({
             hasCancel
           >
             <Styled.SubTitle>
-              {t('REPOSITORIES_SCREEN.CREATE_TOKEN_BELOW')}
+              {t('TOKENS_SCREEN.CREATE_TOKEN_BELOW')}
             </Styled.SubTitle>
 
             <Styled.Form>
               <Styled.Field
-                label={t('REPOSITORIES_SCREEN.DESCRIPTION')}
+                label={t('TOKENS_SCREEN.DESCRIPTION')}
                 name="description"
               />
 
               <Styled.ContainerCheckbox>
                 <Checkbox
                   name="isExpirable"
-                  label={t('REPOSITORIES_SCREEN.IS_EXPIRABLE')}
+                  label={t('TOKENS_SCREEN.IS_EXPIRABLE')}
                 />
               </Styled.ContainerCheckbox>
 
               {props.values.isExpirable && (
                 <Calendar
                   name="expiresAt"
-                  title={t('REPOSITORIES_SCREEN.EXPIRES_AT')}
+                  title={t('TOKENS_SCREEN.EXPIRES_AT')}
                   minDate={MIN_DATE}
                 />
               )}
