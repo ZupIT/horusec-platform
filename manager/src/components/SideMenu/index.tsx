@@ -143,12 +143,14 @@ const SideMenu: React.FC = () => {
             />
           </Link>
 
-          <Styled.NameWrapper>
-            <Styled.NameTitle>Overview: </Styled.NameTitle>
-            <Styled.NameText>
-              {repository?.name || workspace?.name}
-            </Styled.NameText>
-          </Styled.NameWrapper>
+          {isMinimized ? null : (
+            <Styled.NameWrapper>
+              <Styled.NameTitle>Overview: </Styled.NameTitle>
+              <Styled.NameText>
+                {repository?.name || workspace?.name}
+              </Styled.NameText>
+            </Styled.NameWrapper>
+          )}
 
           <Styled.Nav aria-label={t('SIDE_MENU.ARIA_TITLE')}>
             <Styled.RoutesList>
