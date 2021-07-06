@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-import React, { memo, useEffect, useState } from 'react';
-import isEmpty from 'lodash/isEmpty';
+import React, { memo } from 'react';
 import { TextField, TextFieldProps } from '@material-ui/core';
 import { useField, connect } from 'formik';
 import { Autocomplete } from '@material-ui/lab';

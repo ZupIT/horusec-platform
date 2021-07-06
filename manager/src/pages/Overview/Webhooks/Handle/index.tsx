@@ -39,7 +39,6 @@ interface Props {
   webhookInitial: Webhook;
   onCancel: () => void;
   onConfirm: () => void;
-  type: 'repository' | 'workspace';
 }
 
 const webhookHttpMethods = [{ value: 'POST' }, { value: 'GET' }];
@@ -50,7 +49,6 @@ const HandleWebhook: React.FC<Props> = ({
   onCancel,
   onConfirm,
   webhookInitial,
-  type,
 }) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
@@ -63,7 +61,7 @@ const HandleWebhook: React.FC<Props> = ({
 
   const [isLoading, setLoading] = useState(false);
 
-  const { workspaceId } = useParams<RouteParams>();
+  const { workspaceId, repositoryId } = useParams<RouteParams>();
 
   useEffect(() => {
     function getCurrentWorkspace() {
@@ -82,6 +80,7 @@ const HandleWebhook: React.FC<Props> = ({
       loadRepositories();
     }
   }, [workspaceId]);
+
   const updateWebhook = (
     values: InitialValue,
     action: FormikHelpers<InitialValue>
@@ -163,7 +162,7 @@ const HandleWebhook: React.FC<Props> = ({
     description: webhookInitial?.description || '',
     url: webhookInitial?.url || '',
     headers: webhookInitial?.headers || [{ key: '', value: '' }],
-    repositoryID: webhookInitial?.repositoryID || '',
+    repositoryID: webhookInitial?.repositoryID || repositoryId || '',
     httpMethod: webhookInitial?.method || 'POST',
   };
 
@@ -202,17 +201,23 @@ const HandleWebhook: React.FC<Props> = ({
               width="100%"
             />
 
-            <Styled.Label>{t('WEBHOOK_SCREEN.RESPOSITORY_LABEL')}</Styled.Label>
+            {!repositoryId ? (
+              <>
+                <Styled.Label>
+                  {t('WEBHOOK_SCREEN.REPOSITORY_LABEL')}
+                </Styled.Label>
 
-            <SearchSelect
-              options={allRepositories.map((el) => ({
-                label: el.name,
-                value: el.repositoryID,
-              }))}
-              label={t('WEBHOOK_SCREEN.REPOSITORY')}
-              width="100%"
-              name="repositoryID"
-            />
+                <SearchSelect
+                  options={allRepositories.map((el) => ({
+                    label: el.name,
+                    value: el.repositoryID,
+                  }))}
+                  label={t('WEBHOOK_SCREEN.REPOSITORY')}
+                  width="100%"
+                  name="repositoryID"
+                />
+              </>
+            ) : null}
 
             <Styled.Label>{t('WEBHOOK_SCREEN.URL_LABEL')}</Styled.Label>
 

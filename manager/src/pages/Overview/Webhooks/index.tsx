@@ -53,7 +53,7 @@ const Webhooks: React.FC<Props> = ({ type }) => {
   const [addWebhookVisible, setAddWebhookVisible] = useState(false);
 
   const [selectedWorkspace, setSelectedWorkspace] = useState<Workspace>(null);
-  const { workspaceId } = useParams<RouteParams>();
+  const { workspaceId, repositoryId } = useParams<RouteParams>();
   const history = useHistory();
 
   function getOneWorkspace() {
@@ -84,7 +84,16 @@ const Webhooks: React.FC<Props> = ({ type }) => {
       .getAll(selectedWorkspace?.workspaceID)
       .then((result) => {
         setWebhooks(result?.data?.content);
-        setFilteredWebhooks(result?.data?.content);
+        if (repositoryId) {
+          const data = result?.data?.content.filter(
+            (item: any) => item.repositoryID === repositoryId
+          );
+          setFilteredWebhooks(data);
+          setWebhooks(data);
+        } else {
+          setWebhooks(result?.data?.content);
+          setFilteredWebhooks(result?.data?.content);
+        }
       })
       .catch((err) => {
         dispatchMessage(err?.response?.data);
@@ -225,7 +234,6 @@ const Webhooks: React.FC<Props> = ({ type }) => {
         isNew={false}
         onCancel={() => setWebhookToEdit(null)}
         webhookInitial={webhookToEdit}
-        type={type}
         onConfirm={() => {
           setWebhookToEdit(null);
           fetchData();
@@ -236,7 +244,6 @@ const Webhooks: React.FC<Props> = ({ type }) => {
         isVisible={addWebhookVisible}
         webhookInitial={webhookToCopy}
         isNew={true}
-        type={type}
         onCancel={() => {
           setWebhookToCopy(null);
           setAddWebhookVisible(false);

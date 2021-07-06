@@ -16,7 +16,6 @@
 
 import React, { useState, useEffect } from 'react';
 import Styled from './styled';
-import { Repository } from 'helpers/interfaces/Repository';
 import { useTranslation } from 'react-i18next';
 import { Button, Dialog, Datatable, Datasource } from 'components';
 import coreService from 'services/core';
@@ -25,9 +24,7 @@ import { RepositoryToken } from 'helpers/interfaces/RepositoryToken';
 import AddToken from './Add';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
 import { formatToHumanDate } from 'helpers/formatters/date';
-import { Link, useHistory, useParams } from 'react-router-dom';
-import { IconButton } from '@material-ui/core';
-import { ArrowBack } from '@material-ui/icons';
+import { useParams } from 'react-router-dom';
 import { RouteParams } from 'helpers/interfaces/RouteParams';
 
 interface Props {
@@ -90,7 +87,7 @@ const Tokens: React.FC<Props> = ({ type }) => {
           tokenToDelete.tokenID
         )
         .then(() => {
-          showSuccessFlash(t('REPOSITORIES_SCREEN.REMOVE_SUCCESS_TOKEN'));
+          showSuccessFlash(t('TOKENS_SCREEN.REMOVE_SUCCESS_TOKEN'));
           setTokenToDelete(null);
           fetchData();
         })
@@ -110,7 +107,7 @@ const Tokens: React.FC<Props> = ({ type }) => {
           tokenToDelete.tokenID
         )
         .then(() => {
-          showSuccessFlash(t('REPOSITORIES_SCREEN.REMOVE_SUCCESS_TOKEN'));
+          showSuccessFlash(t('TOKENS_SCREEN.REMOVE_SUCCESS_TOKEN'));
           setTokenToDelete(null);
           fetchData();
         })
@@ -133,9 +130,9 @@ const Tokens: React.FC<Props> = ({ type }) => {
       <Styled.Header>
         <Styled.TitleContent />
         <Button
-          text={t('REPOSITORIES_SCREEN.ADD_TOKEN')}
+          text={t('TOKENS_SCREEN.ADD_TOKEN')}
           rounded
-          width={150}
+          width={200}
           icon="plus"
           onClick={() => setAddTokenVisible(true)}
         />
@@ -145,22 +142,22 @@ const Tokens: React.FC<Props> = ({ type }) => {
         <Datatable
           columns={[
             {
-              label: t('REPOSITORIES_SCREEN.TOKEN'),
+              label: t('TOKENS_SCREEN.TOKEN'),
               property: 'token',
               type: 'text',
             },
             {
-              label: t('REPOSITORIES_SCREEN.DESCRIPTION'),
+              label: t('TOKENS_SCREEN.DESCRIPTION'),
               property: 'description',
               type: 'text',
             },
             {
-              label: t('REPOSITORIES_SCREEN.EXPIRES'),
+              label: t('TOKENS_SCREEN.EXPIRES'),
               property: 'expiresAt',
               type: 'text',
             },
             {
-              label: t('REPOSITORIES_SCREEN.ACTION'),
+              label: t('TOKENS_SCREEN.ACTION'),
               property: 'actions',
               type: 'actions',
             },
@@ -175,7 +172,7 @@ const Tokens: React.FC<Props> = ({ type }) => {
                 : t('GENERAL.NOT_EXPIRABLE'),
               actions: [
                 {
-                  title: t('REPOSITORIES_SCREEN.DELETE'),
+                  title: t('TOKENS_SCREEN.DELETE'),
                   icon: 'delete',
                   function: () => setTokenToDelete(row),
                 },
@@ -183,14 +180,14 @@ const Tokens: React.FC<Props> = ({ type }) => {
             };
             return repo;
           })}
-          emptyListText={t('REPOSITORIES_SCREEN.NO_TOKENS')}
+          emptyListText={t('TOKENS_SCREEN.NO_TOKENS')}
           isLoading={isLoading}
         />
       </Styled.Content>
 
       <Dialog
-        message={t('REPOSITORIES_SCREEN.CONFIRM_DELETE_TOKEN')}
-        confirmText={t('REPOSITORIES_SCREEN.YES')}
+        message={t('TOKENS_SCREEN.CONFIRM_DELETE_TOKEN')}
+        confirmText={t('TOKENS_SCREEN.YES')}
         loadingConfirm={deleteIsLoading}
         defaultButton
         hasCancel
