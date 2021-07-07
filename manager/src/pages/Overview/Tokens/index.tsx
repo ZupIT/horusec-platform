@@ -162,7 +162,6 @@ const Tokens: React.FC<Props> = ({ type }) => {
       <AddToken
         isVisible={addTokenVisible}
         currentParams={{ workspaceId, repositoryId }}
-        type={type}
         onCancel={() => setAddTokenVisible(false)}
         onConfirm={() => {
           setAddTokenVisible(false);
