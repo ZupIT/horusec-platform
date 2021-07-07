@@ -17,7 +17,7 @@
 import React, { useState, useEffect } from 'react';
 import Styled from './styled';
 import { useTranslation } from 'react-i18next';
-import { Button, Dialog, Datatable, Datasource } from 'components';
+import { Button, Dialog, Datatable, DataSource } from 'components';
 import coreService from 'services/core';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import { RepositoryToken } from 'helpers/interfaces/RepositoryToken';
@@ -162,8 +162,8 @@ const Tokens: React.FC<Props> = ({ type }) => {
               type: 'actions',
             },
           ]}
-          datasource={tokens.map((row) => {
-            const repo: Datasource = {
+          dataSource={tokens.map((row) => {
+            const repo: DataSource = {
               ...row,
               id: row.tokenID,
               token: '*********' + row.suffixValue,

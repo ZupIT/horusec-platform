@@ -42,7 +42,7 @@ export interface TableColumn {
   cssClass?: string[];
 }
 
-export interface Datasource {
+export interface DataSource {
   [x: string]: any;
   id?: string | number;
   buttons?: {
@@ -58,7 +58,7 @@ export interface Datasource {
 interface DatatableInterface {
   title?: string;
   columns: TableColumn[];
-  datasource: Datasource[];
+  dataSource: DataSource[];
   total?: number;
   paginate?: {
     pagination: PaginationInfo;
@@ -80,7 +80,7 @@ interface DatatableInterface {
 const Datatable: React.FC<DatatableInterface> = (props) => {
   const {
     columns,
-    datasource,
+    dataSource,
     emptyListText,
     isLoading,
     paginate,
@@ -123,14 +123,14 @@ const Datatable: React.FC<DatatableInterface> = (props) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {!datasource || datasource.length <= 0 ? (
+            {!dataSource || dataSource.length <= 0 ? (
               <TableRow>
                 <TableCell colSpan={columns.length} align="center">
                   {emptyListText}
                 </TableCell>
               </TableRow>
             ) : (
-              datasource.map((row, dataId) => (
+              dataSource.map((row, dataId) => (
                 <TableRow key={`${row.id || 'item'}-${dataId}`}>
                   {columns.map((column, columnId) => {
                     const renderTooltipProps = (tip: string) => {
@@ -189,7 +189,7 @@ const Datatable: React.FC<DatatableInterface> = (props) => {
                                     <Menu {...bindMenu(popupState)}>
                                       {row[column.type].map(
                                         (
-                                          action: Datasource,
+                                          action: DataSource,
                                           actionId: React.Key
                                         ) => (
                                           <MenuItem
@@ -234,7 +234,7 @@ const Datatable: React.FC<DatatableInterface> = (props) => {
           </TableBody>
         </Table>
       </TableContainer>
-      {datasource && datasource.length > 0 && paginate ? (
+      {dataSource && dataSource.length > 0 && paginate ? (
         <Pagination
           pagination={paginate.pagination}
           onChange={paginate.onChange}

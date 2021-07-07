@@ -244,6 +244,39 @@
     "IS_EXPIRABLE": "É Expirável.",
     "EXPIRES_AT": "Expira en"
   },
+  "USERS_SCREEN": {
+    "SEARCH": "Search user by e-mail",
+    "INVITE": "Invite",
+    "TABLE": {
+      "USER": "Usuário",
+      "EMAIL": "Email",
+      "PERMISSION": "Permissão",
+      "ACTION": "Acción",
+      "EMPTY":"Nenhum usuário encontrado.",
+      "EDIT": "Editar",
+      "REMOVE": "Remover"
+    },
+    "ROLE": {
+      "ADMIN": "Administrador",
+      "SUPERVISOR": "Supervisor",
+      "MEMBER": "Membro"
+    },
+    "HANDLE_MODAL": {
+      "TITLE": "Convidar usuário",
+      "TITLE_EDIT": "Editar usuário",
+      "INVALID_EMAIL": "Email inválido",
+      "SUCCESS": "Alterações realizadas com sucesso!",
+      "SAVE": "Salvar",
+      "INVITE_SUBTITLE": "Convide um novo usuário abaixo:",
+      "EDIT_SUBTITLE":"Editar el usuario a continuación:",
+      "EMAIL": "Email",
+      "ROLE": "Permissão",
+      "USER": "Usuario"
+    },
+    "CONFIRM_REMOVE":"Deseja realmente remover este usuário?",
+    "REMOVE_SUCCESS":"¡Usuario eliminado correctamente!",
+    "YES": "Sí"
+  },
   "REPOSITORIES_SCREEN": {
     "SEARCH_REPO": "Buscar repositorios por nombre",
     "CREATE_REPO": "Crear repositorio",

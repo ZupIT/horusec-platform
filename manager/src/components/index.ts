@@ -34,7 +34,7 @@ import Checkbox from './Checkbox';
 import Permissions from './Permissions';
 import Pagination from './Pagination';
 import Splash from './Splash';
-import Datatable, { TableColumn, Datasource } from './Datatable';
+import Datatable, { TableColumn, DataSource } from './Datatable';
 import BarChart from './BarChart';
 import Header from './Header';
 import HomeCard from './HomeCard';
@@ -66,4 +66,4 @@ export {
   HomeCard,
 };
 
-export type { TableColumn, Datasource };
+export type { TableColumn, DataSource };

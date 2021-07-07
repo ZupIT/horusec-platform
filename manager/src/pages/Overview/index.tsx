@@ -22,9 +22,8 @@ import InternalLayout from 'layouts/Internal';
 import Dashboard from 'pages/Overview/Dashboard';
 import Webhooks from 'pages/Overview/Webhooks';
 import Tokens from './Tokens';
-import WorkspaceUsers from './Workspaces/Users';
-import RepositoriesInvite from './Repositories/Invite';
 import Vulnerabilities from './Vulnerabilities';
+import Users from './Users';
 
 function InternalRoutes() {
   const { path } = useRouteMatch();
@@ -32,6 +31,18 @@ function InternalRoutes() {
   return (
     <InternalLayout>
       <Switch>
+        <PrivateRoute
+          exact
+          path={`${path}/workspace/:workspaceId/users`}
+          component={() => <Users />}
+        />
+
+        <PrivateRoute
+          exact
+          path={`${path}/workspace/:workspaceId/repository/:repositoryId/users`}
+          component={() => <Users />}
+        />
+
         <PrivateRoute
           path={`${path}/workspace/:workspaceId/dashboard`}
           exact
@@ -66,18 +77,6 @@ function InternalRoutes() {
           exact
           path={`${path}/workspace/:workspaceId/repository/:repositoryId/tokens`}
           component={() => <Tokens type="repository" />}
-        />
-
-        <PrivateRoute
-          exact
-          path={`${path}/workspace/:workspaceId/users`}
-          component={() => <WorkspaceUsers />}
-        />
-
-        <PrivateRoute
-          exact
-          path={`${path}/workspace/:workspaceId/repository/:repositoryId/users`}
-          component={() => <RepositoriesInvite />}
         />
 
         <PrivateRoute
