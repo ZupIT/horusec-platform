@@ -240,7 +240,8 @@
     "TOKEN_SUCCESS": "Congratulations!Token created successfully!",
     "CONFIRM": "Ok, I got it.",
     "IS_EXPIRABLE": "É Expirárável.",
-    "EXPIRES_AT": "Expires in"
+    "EXPIRES_AT": "Expires in",
+    "YES": "Yes"
   },
   "USERS_SCREEN": {
     "SEARCH": "Search user by e-mail",

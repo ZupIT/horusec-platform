@@ -33,7 +33,6 @@ interface Props {
   onCancel: () => void;
   onConfirm: () => void;
   currentParams: RouteParams;
-  type: 'workspace' | 'repository';
 }
 
 const MIN_DATE = new Date(Date.now() + 86400000);
@@ -43,7 +42,6 @@ const AddToken: React.FC<Props> = ({
   onCancel,
   onConfirm,
   currentParams,
-  type,
 }) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
@@ -87,41 +85,25 @@ const AddToken: React.FC<Props> = ({
       delete data.expiresAt;
     }
 
-    if (type === 'repository') {
-      coreService
-        .createTokenInRepository(
-          currentParams.workspaceId,
-          currentParams.repositoryId,
-          data
-        )
-        .then((res) => {
-          onConfirm();
-          actions.resetForm();
-          setTokenCreated(res?.data?.content);
-        })
-        .catch((err) => {
-          dispatchMessage(err?.response?.data);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    }
-
-    if (type === 'workspace') {
-      coreService
-        .createTokenInWorkspace(currentParams.workspaceId, data)
-        .then((res) => {
-          onConfirm();
-          actions.resetForm();
-          setTokenCreated(res?.data?.content);
-        })
-        .catch((err) => {
-          dispatchMessage(err?.response?.data);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    }
+    coreService
+      .createToken(
+        {
+          workspaceID: currentParams.workspaceId,
+          repositoryID: currentParams.repositoryId,
+        },
+        data
+      )
+      .then((res) => {
+        onConfirm();
+        actions.resetForm();
+        setTokenCreated(res?.data?.content);
+      })
+      .catch((err) => {
+        dispatchMessage(err?.response?.data);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   return (
