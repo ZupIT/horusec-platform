@@ -22,7 +22,7 @@ import (
 	dashboard5 "github.com/ZupIT/horusec-platform/analytic/internal/events/dashboard"
 	dashboard4 "github.com/ZupIT/horusec-platform/analytic/internal/handlers/dashboard"
 	"github.com/ZupIT/horusec-platform/analytic/internal/handlers/health"
-	"github.com/ZupIT/horusec-platform/analytic/internal/repositories/dashboard"
+	dashboard "github.com/ZupIT/horusec-platform/analytic/internal/repositories/dashboard/repository"
 	"github.com/ZupIT/horusec-platform/analytic/internal/router"
 	dashboard2 "github.com/ZupIT/horusec-platform/analytic/internal/usecases/dashboard"
 )

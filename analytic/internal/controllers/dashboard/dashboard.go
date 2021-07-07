@@ -6,12 +6,13 @@ import (
 
 	"github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard"
 	dashboardEnums "github.com/ZupIT/horusec-platform/analytic/internal/enums/dashboard"
-	repoDashboard "github.com/ZupIT/horusec-platform/analytic/internal/repositories/dashboard"
+	repositoryDashboard "github.com/ZupIT/horusec-platform/analytic/internal/repositories/dashboard/repository"
 	dashboardUseCases "github.com/ZupIT/horusec-platform/analytic/internal/usecases/dashboard"
 )
 
 type IController interface {
-	GetAllDashboardCharts(filter *dashboard.Filter) (*dashboard.Response, error)
+	GetAllDashboardChartsWorkspace(filter *dashboard.Filter) (*dashboard.Response, error)
+	GetAllDashboardChartsRepository(filter *dashboard.Filter) (*dashboard.Response, error)
 	AddVulnerabilitiesByAuthor(entity *analysisEntities.Analysis) error
 	AddVulnerabilitiesByRepository(entity *analysisEntities.Analysis) error
 	AddVulnerabilitiesByLanguage(entity *analysisEntities.Analysis) error
@@ -19,12 +20,12 @@ type IController interface {
 }
 
 type Controller struct {
-	repository    repoDashboard.IRepoDashboard
+	repository    repositoryDashboard.IRepoDashboard
 	useCases      dashboardUseCases.IUseCases
 	databaseWrite database.IDatabaseWrite
 }
 
-func NewDashboardController(repository repoDashboard.IRepoDashboard,
+func NewDashboardController(repository repositoryDashboard.IRepoDashboard,
 	connection *database.Connection, useCases dashboardUseCases.IUseCases) IController {
 	return &Controller{
 		repository:    repository,
@@ -53,7 +54,7 @@ func (c *Controller) AddVulnerabilitiesByTime(analysis *analysisEntities.Analysi
 		dashboardEnums.TableVulnerabilitiesByTime).GetError()
 }
 
-func (c *Controller) GetAllDashboardCharts(filter *dashboard.Filter) (*dashboard.Response, error) {
+func (c *Controller) GetAllDashboardChartsWorkspace(filter *dashboard.Filter) (*dashboard.Response, error) {
 	response := &dashboard.Response{}
 
 	if err := response.SetTotalAuthors(c.repository.GetDashboardTotalDevelopers(filter)); err != nil {
@@ -64,10 +65,10 @@ func (c *Controller) GetAllDashboardCharts(filter *dashboard.Filter) (*dashboard
 		return nil, err
 	}
 
-	return c.getChartsBySeverityAndAuthor(filter, response)
+	return c.getChartsBySeverityAndAuthorWorkspace(filter, response)
 }
 
-func (c *Controller) getChartsBySeverityAndAuthor(filter *dashboard.Filter,
+func (c *Controller) getChartsBySeverityAndAuthorWorkspace(filter *dashboard.Filter,
 	response *dashboard.Response) (*dashboard.Response, error) {
 	if err := response.SetChartBySeverity(c.repository.GetDashboardVulnBySeverity(filter)); err != nil {
 		return nil, err
@@ -77,10 +78,10 @@ func (c *Controller) getChartsBySeverityAndAuthor(filter *dashboard.Filter,
 		return nil, err
 	}
 
-	return c.getChartsByRepositoryAndLanguage(filter, response)
+	return c.getChartsByRepositoryAndLanguageWorkspace(filter, response)
 }
 
-func (c *Controller) getChartsByRepositoryAndLanguage(filter *dashboard.Filter,
+func (c *Controller) getChartsByRepositoryAndLanguageWorkspace(filter *dashboard.Filter,
 	response *dashboard.Response) (*dashboard.Response, error) {
 	if err := response.SetChartByRepository(c.repository.GetDashboardVulnByRepository(filter)); err != nil {
 		return nil, err
@@ -90,10 +91,46 @@ func (c *Controller) getChartsByRepositoryAndLanguage(filter *dashboard.Filter,
 		return nil, err
 	}
 
-	return c.getChartByTime(filter, response)
+	return c.getChartByTimeWorkspace(filter, response)
 }
 
-func (c *Controller) getChartByTime(filter *dashboard.Filter,
+func (c *Controller) getChartByTimeWorkspace(filter *dashboard.Filter,
+	response *dashboard.Response) (*dashboard.Response, error) {
+	if err := response.SetChartByTime(c.repository.GetDashboardVulnByTime(filter)); err != nil {
+		return nil, err
+	}
+
+	return response, nil
+}
+
+func (c *Controller) GetAllDashboardChartsRepository(filter *dashboard.Filter) (*dashboard.Response, error) {
+	response := &dashboard.Response{}
+
+	if err := response.SetTotalAuthors(c.repository.GetDashboardTotalDevelopers(filter)); err != nil {
+		return nil, err
+	}
+
+	if err := response.SetChartBySeverity(c.repository.GetDashboardVulnBySeverity(filter)); err != nil {
+		return nil, err
+	}
+
+	return c.getChartsByLanguageAndAuthorRepository(filter, response)
+}
+
+func (c *Controller) getChartsByLanguageAndAuthorRepository(filter *dashboard.Filter,
+	response *dashboard.Response) (*dashboard.Response, error) {
+	if err := response.SetChartByAuthor(c.repository.GetDashboardVulnByAuthor(filter)); err != nil {
+		return nil, err
+	}
+
+	if err := response.SetChartByLanguage(c.repository.GetDashboardVulnByLanguage(filter)); err != nil {
+		return nil, err
+	}
+
+	return c.getChartByTimeRepository(filter, response)
+}
+
+func (c *Controller) getChartByTimeRepository(filter *dashboard.Filter,
 	response *dashboard.Response) (*dashboard.Response, error) {
 	if err := response.SetChartByTime(c.repository.GetDashboardVulnByTime(filter)); err != nil {
 		return nil, err

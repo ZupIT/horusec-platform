@@ -20,7 +20,7 @@ import (
 	dashboardEvents "github.com/ZupIT/horusec-platform/analytic/internal/events/dashboard"
 	"github.com/ZupIT/horusec-platform/analytic/internal/handlers/dashboard"
 	"github.com/ZupIT/horusec-platform/analytic/internal/handlers/health"
-	dashboardRepository "github.com/ZupIT/horusec-platform/analytic/internal/repositories/dashboard"
+	dashboardRepository "github.com/ZupIT/horusec-platform/analytic/internal/repositories/dashboard/repository"
 	"github.com/ZupIT/horusec-platform/analytic/internal/router"
 	dashboardUseCases "github.com/ZupIT/horusec-platform/analytic/internal/usecases/dashboard"
 )

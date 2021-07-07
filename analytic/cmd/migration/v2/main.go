@@ -19,7 +19,7 @@ import (
 	"github.com/ZupIT/horusec-platform/analytic/cmd/migration/v2/enums"
 	dashboardController "github.com/ZupIT/horusec-platform/analytic/internal/controllers/dashboard"
 	dashboardEnums "github.com/ZupIT/horusec-platform/analytic/internal/enums/dashboard"
-	dashboardRepository "github.com/ZupIT/horusec-platform/analytic/internal/repositories/dashboard"
+	dashboardRepository "github.com/ZupIT/horusec-platform/analytic/internal/repositories/dashboard/repository"
 	dashboardUseCases "github.com/ZupIT/horusec-platform/analytic/internal/usecases/dashboard"
 )
 
