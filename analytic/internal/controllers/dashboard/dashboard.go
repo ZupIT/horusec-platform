@@ -57,35 +57,35 @@ func (c *Controller) AddVulnerabilitiesByTime(analysis *analysisEntities.Analysi
 func (c *Controller) GetAllDashboardChartsWorkspace(filter *dashboard.Filter) (*dashboard.Response, error) {
 	response := &dashboard.Response{}
 
-	if err := response.SetTotalAuthors(c.repository.GetDashboardTotalDevelopers(filter)); err != nil {
-		return nil, err
-	}
+	//if err := response.SetTotalAuthors(c.repository.GetDashboardTotalDevelopers(filter)); err != nil {
+	//	return nil, err
+	//}
 
-	if err := response.SetTotalRepositories(c.repository.GetDashboardTotalRepositories(filter)); err != nil {
-		return nil, err
-	}
+	//if err := response.SetTotalRepositories(c.repository.GetDashboardTotalRepositories(filter)); err != nil {
+	//	return nil, err
+	//}
 
 	return c.getChartsBySeverityAndAuthorWorkspace(filter, response)
 }
 
 func (c *Controller) getChartsBySeverityAndAuthorWorkspace(filter *dashboard.Filter,
 	response *dashboard.Response) (*dashboard.Response, error) {
-	if err := response.SetChartBySeverity(c.repository.GetDashboardVulnBySeverity(filter)); err != nil {
-		return nil, err
-	}
-
-	if err := response.SetChartByAuthor(c.repository.GetDashboardVulnByAuthor(filter)); err != nil {
-		return nil, err
-	}
+	//if err := response.SetChartBySeverity(c.repository.GetDashboardVulnBySeverity(filter)); err != nil {
+	//	return nil, err
+	//}
+	//
+	//if err := response.SetChartByAuthor(c.repository.GetDashboardVulnByAuthor(filter)); err != nil {
+	//	return nil, err
+	//}
 
 	return c.getChartsByRepositoryAndLanguageWorkspace(filter, response)
 }
 
 func (c *Controller) getChartsByRepositoryAndLanguageWorkspace(filter *dashboard.Filter,
 	response *dashboard.Response) (*dashboard.Response, error) {
-	if err := response.SetChartByRepository(c.repository.GetDashboardVulnByRepository(filter)); err != nil {
-		return nil, err
-	}
+	//if err := response.SetChartByRepository(c.repository.GetDashboardVulnByRepository(filter)); err != nil {
+	//	return nil, err
+	//}
 
 	if err := response.SetChartByLanguage(c.repository.GetDashboardVulnByLanguage(filter)); err != nil {
 		return nil, err
