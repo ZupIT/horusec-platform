@@ -197,7 +197,7 @@ func (r *RepoDashboard) queryGetDashboardVulnByLanguage() string {
 
 func (r *RepoDashboard) GetDashboardVulnByTime(
 	filter *dashboard.Filter) (vulns []*dashboard.VulnerabilitiesByTime, err error) {
-	condition, args := filter.GetConditionFilter()
+	condition, args := filter.GetConditionTimelineFilter()
 
 	query := fmt.Sprintf(r.queryGetDashboardVulnByTime(),
 		r.queryDefaultFields(), dashboardEnums.TableVulnerabilitiesByTime, condition)

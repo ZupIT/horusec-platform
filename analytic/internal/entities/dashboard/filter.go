@@ -25,6 +25,12 @@ type Filter struct {
 func (f *Filter) GetConditionFilter() (string, []interface{}) {
 	query, args := f.getWorkspaceFilter()
 	query, args = f.getRepositoryFilter(query, args)
+
+	return query, args
+}
+
+func (f *Filter) GetConditionTimelineFilter() (string, []interface{}) {
+	query, args := f.GetConditionFilter()
 	query, args = f.getInitialDateFilter(query, args)
 	query, args = f.getFinalDateFilter(query, args)
 
