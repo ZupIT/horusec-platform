@@ -91,26 +91,20 @@ const removeUserInWorkspace = (workspaceID: string, accountId: string) => {
   );
 };
 
-const getAllTokensOfWorkspace = (workspaceID: string) => {
-  return http.get(`${SERVICE_CORE}/core/workspaces/${workspaceID}/tokens`);
+const getAllTokens = (workspaceID: string, repositoryId?: string) => {
+  const path = repositoryId ? `/repositories/${repositoryId}` : '';
+  return http.get(
+    `${SERVICE_CORE}/core/workspaces/${workspaceID}${path}/tokens`
+  );
 };
 
-const createTokenInWorkspace = (
-  workspaceID: string,
-  data: {
-    description: string;
-    isExpirable?: boolean;
-    expiredAt?: string;
-  }
+const removeToken = (
+  data: { workspaceID: string; repositoryID?: string },
+  tokenId: string
 ) => {
-  return http.post(`${SERVICE_CORE}/core/workspaces/${workspaceID}/tokens`, {
-    ...data,
-  });
-};
-
-const removeTokenOfWorkspace = (workspaceID: string, tokenId: string) => {
+  const path = data.repositoryID ? `/repositories/${data.repositoryID}` : '';
   return http.delete(
-    `${SERVICE_CORE}/core/workspaces/${workspaceID}/tokens/${tokenId}`
+    `${SERVICE_CORE}/core/workspaces/${data.workspaceID}${path}/tokens/${tokenId}`
   );
 };
 
@@ -161,39 +155,22 @@ const deleteRepository = (workspaceID: string, repositoryId: string) => {
   );
 };
 
-const getAllTokensOfRepository = (
-  workspaceID: string,
-  repositoryId: string
-) => {
-  return http.get(
-    `${SERVICE_CORE}/core/workspaces/${workspaceID}/repositories/${repositoryId}/tokens`
-  );
-};
-
-const createTokenInRepository = (
-  workspaceID: string,
-  repositoryId: string,
+const createToken = (
+  params: { workspaceID: string; repositoryID?: string },
   data: {
     description: string;
     isExpirable?: boolean;
     expiredAt?: string;
   }
 ) => {
+  const path = params.repositoryID
+    ? `/repositories/${params.repositoryID}`
+    : '';
   return http.post(
-    `${SERVICE_CORE}/core/workspaces/${workspaceID}/repositories/${repositoryId}/tokens`,
+    `${SERVICE_CORE}/core/workspaces/${params.workspaceID}${path}/tokens`,
     {
       ...data,
     }
-  );
-};
-
-const removeTokenOfRepository = (
-  workspaceID: string,
-  repositoryId: string,
-  tokenId: string
-) => {
-  return http.delete(
-    `${SERVICE_CORE}/core/workspaces/${workspaceID}/repositories/${repositoryId}/tokens/${tokenId}`
   );
 };
 
@@ -255,17 +232,14 @@ export default {
   createUserInWorkspace,
   editUserInWorkspace,
   removeUserInWorkspace,
-  createTokenInWorkspace,
-  removeTokenOfWorkspace,
-  getAllTokensOfWorkspace,
   getAllRepositories,
   getOneRepository,
   createRepository,
   updateRepository,
   deleteRepository,
-  getAllTokensOfRepository,
-  createTokenInRepository,
-  removeTokenOfRepository,
+  getAllTokens,
+  createToken,
+  removeToken,
   getUsersInRepository,
   includeUserInRepository,
   removeUserOfRepository,
