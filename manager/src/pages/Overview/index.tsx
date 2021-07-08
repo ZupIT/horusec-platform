@@ -70,13 +70,13 @@ function InternalRoutes() {
         <PrivateRoute
           exact
           path={`${path}/workspace/:workspaceId/tokens`}
-          component={() => <Tokens type="workspace" />}
+          component={() => <Tokens />}
         />
 
         <PrivateRoute
           exact
           path={`${path}/workspace/:workspaceId/repository/:repositoryId/tokens`}
-          component={() => <Tokens type="repository" />}
+          component={() => <Tokens />}
         />
 
         <PrivateRoute
