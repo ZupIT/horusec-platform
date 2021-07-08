@@ -47,77 +47,40 @@ const Tokens: React.FC<Props> = ({ type }) => {
 
   const fetchData = () => {
     setLoading(true);
-
-    if (type === 'workspace' && workspaceId) {
-      coreService
-        .getAllTokensOfWorkspace(workspaceId)
-        .then((result) => {
-          setTokens(result?.data?.content);
-        })
-        .catch((err) => {
-          dispatchMessage(err?.response?.data);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    }
-
-    if (type === 'repository' && workspaceId && repositoryId) {
-      coreService
-        .getAllTokensOfRepository(workspaceId, repositoryId)
-        .then((result) => {
-          setTokens(result?.data?.content);
-        })
-        .catch((err) => {
-          dispatchMessage(err?.response?.data);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    }
+    coreService
+      .getAllTokens(workspaceId, repositoryId)
+      .then((result) => {
+        setTokens(result?.data?.content);
+      })
+      .catch((err) => {
+        dispatchMessage(err?.response?.data);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   const handleConfirmDeleteToken = () => {
     setDeleteIsLoading(true);
-
-    if (type === 'workspace') {
-      coreService
-        .removeTokenOfWorkspace(
-          tokenToDelete.workspaceID,
-          tokenToDelete.tokenID
-        )
-        .then(() => {
-          showSuccessFlash(t('TOKENS_SCREEN.REMOVE_SUCCESS_TOKEN'));
-          setTokenToDelete(null);
-          fetchData();
-        })
-        .catch((err) => {
-          dispatchMessage(err?.response?.data);
-        })
-        .finally(() => {
-          setDeleteIsLoading(false);
-        });
-    }
-
-    if (type === 'repository') {
-      coreService
-        .removeTokenOfRepository(
-          tokenToDelete.workspaceID,
-          tokenToDelete.repositoryID,
-          tokenToDelete.tokenID
-        )
-        .then(() => {
-          showSuccessFlash(t('TOKENS_SCREEN.REMOVE_SUCCESS_TOKEN'));
-          setTokenToDelete(null);
-          fetchData();
-        })
-        .catch((err) => {
-          dispatchMessage(err?.response?.data);
-        })
-        .finally(() => {
-          setDeleteIsLoading(false);
-        });
-    }
+    coreService
+      .removeToken(
+        {
+          workspaceID: tokenToDelete.workspaceID,
+          repositoryID: tokenToDelete.repositoryID,
+        },
+        tokenToDelete.tokenID
+      )
+      .then(() => {
+        showSuccessFlash(t('REPOSITORIES_SCREEN.REMOVE_SUCCESS_TOKEN'));
+        setTokenToDelete(null);
+        fetchData();
+      })
+      .catch((err) => {
+        dispatchMessage(err?.response?.data);
+      })
+      .finally(() => {
+        setDeleteIsLoading(false);
+      });
   };
 
   useEffect(() => {
@@ -199,7 +162,6 @@ const Tokens: React.FC<Props> = ({ type }) => {
       <AddToken
         isVisible={addTokenVisible}
         currentParams={{ workspaceId, repositoryId }}
-        type={type}
         onCancel={() => setAddTokenVisible(false)}
         onConfirm={() => {
           setAddTokenVisible(false);
