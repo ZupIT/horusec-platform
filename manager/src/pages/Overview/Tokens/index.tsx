@@ -27,11 +27,7 @@ import { formatToHumanDate } from 'helpers/formatters/date';
 import { useParams } from 'react-router-dom';
 import { RouteParams } from 'helpers/interfaces/RouteParams';
 
-interface Props {
-  type: 'workspace' | 'repository';
-}
-
-const Tokens: React.FC<Props> = ({ type }) => {
+const Tokens: React.FC = () => {
   const { t } = useTranslation();
   const { dispatchMessage } = useResponseMessage();
   const { showSuccessFlash } = useFlashMessage();
@@ -65,13 +61,13 @@ const Tokens: React.FC<Props> = ({ type }) => {
     coreService
       .removeToken(
         {
-          workspaceID: tokenToDelete.workspaceID,
-          repositoryID: tokenToDelete.repositoryID,
+          workspaceID: workspaceId,
+          repositoryID: repositoryId,
         },
         tokenToDelete.tokenID
       )
       .then(() => {
-        showSuccessFlash(t('REPOSITORIES_SCREEN.REMOVE_SUCCESS_TOKEN'));
+        showSuccessFlash(t('TOKENS_SCREEN.REMOVE_SUCCESS_TOKEN'));
         setTokenToDelete(null);
         fetchData();
       })
@@ -86,7 +82,7 @@ const Tokens: React.FC<Props> = ({ type }) => {
   useEffect(() => {
     fetchData();
     //eslint-disable-next-line
-  }, [workspaceId, repositoryId]);
+   }, [workspaceId, repositoryId]);
 
   return (
     <Styled.Wrapper>
