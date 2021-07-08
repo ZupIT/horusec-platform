@@ -239,42 +239,42 @@
     "REMOVE_SUCCESS_TOKEN": "Token eliminado con éxito!",
     "CREATE_TOKEN_BELOW": "Añadir un nuevo token a continuación:",
     "TOKEN_INFO": "Con token, accede a los análisis de este contexto.Ahorre en un lugar seguro y no comparta.",
-    "TOKEN_SUCCESS": "¡Felicidades!Token creado con éxito!",
+    "TOKEN_SUCCESS": "¡Felicidades! Token creado con éxito!",
     "CONFIRM": "OK entendí.",
     "IS_EXPIRABLE": "É Expirável.",
     "EXPIRES_AT": "Expira en",
     "YES": "Sí"
   },
   "USERS_SCREEN": {
-    "SEARCH": "Search user by e-mail",
-    "INVITE": "Invite",
+    "SEARCH": "Buscar usuario por correo electrónico",
+    "INVITE": "Invitación",
     "TABLE": {
-      "USER": "Usuário",
-      "EMAIL": "Email",
-      "PERMISSION": "Permissão",
+      "USER": "Usuario",
+      "EMAIL": "Correo electrónico",
+      "PERMISSION": "Permiso",
       "ACTION": "Acción",
-      "EMPTY":"Nenhum usuário encontrado.",
-      "EDIT": "Editar",
-      "REMOVE": "Remover"
+      "EMPTY":"Usuario no encontrado.",
+      "EDIT": "editar",
+      "REMOVE": "Agente de mudanzas"
     },
     "ROLE": {
-      "ADMIN": "Administrador",
-      "SUPERVISOR": "Supervisor",
-      "MEMBER": "Membro"
+      "ADMIN": "administrador",
+      "SUPERVISOR": "Supervisora",
+      "MEMBER": "Miembro"
     },
     "HANDLE_MODAL": {
-      "TITLE": "Convidar usuário",
-      "TITLE_EDIT": "Editar usuário",
-      "INVALID_EMAIL": "Email inválido",
-      "SUCCESS": "Alterações realizadas com sucesso!",
-      "SAVE": "Salvar",
-      "INVITE_SUBTITLE": "Convide um novo usuário abaixo:",
-      "EDIT_SUBTITLE":"Editar el usuario a continuación:",
-      "EMAIL": "Email",
-      "ROLE": "Permissão",
-      "USER": "Usuario"
+      "TITLE": "Invitar al usuario",
+      "TITLE_EDIT": "editar usuario",
+      "INVALID_EMAIL": "emailInválido",
+      "SUCCESS": "Cambios realizados con éxito!",
+      "SAVE": "Ahorrar",
+      "INVITE_SUBTITLE": "Invite a un nuevo usuario a continuación:",
+      "EDIT_SUBTITLE":"editarElUsuarioAContinuación:",
+      "EMAIL": "Correo electrónico",
+      "ROLE": "Permiso",
+      "USER": "usuario"
     },
-    "CONFIRM_REMOVE":"Deseja realmente remover este usuário?",
+    "CONFIRM_REMOVE":"¿De verdad quieres eliminar a este usuario?",
     "REMOVE_SUCCESS":"¡Usuario eliminado correctamente!",
     "YES": "Sí"
   },
