@@ -72,11 +72,32 @@ func (r *RepoDashboard) GetDashboardVulnByAuthor(
 //nolint:funlen // need to be bigger than 15
 func (r *RepoDashboard) queryGetDashboardVulnByAuthor() string {
 	return `
-			SELECT DISTINCT ON(author) author, *
+	SELECT *
+	FROM 
+	(
+		SELECT  DISTINCT ON(vba.author) vulnSum.total, vba.*
+		FROM %[1]s as vba
+		INNER JOIN 
+		(
+			SELECT vulnerability_id,
+			(
+					critical_vulnerability + critical_false_positive + critical_risk_accepted + critical_corrected + 
+					high_vulnerability + high_false_positive + high_risk_accepted + high_corrected +
+					medium_vulnerability + medium_false_positive + medium_risk_accepted + medium_corrected +
+					low_vulnerability + low_false_positive + low_risk_accepted + low_corrected +info_vulnerability + 
+					info_false_positive + info_risk_accepted + info_corrected +unknown_vulnerability + 
+					unknown_false_positive + unknown_risk_accepted + unknown_corrected
+			) AS total
 			FROM %[1]s
 			WHERE repository_id = @repositoryID
-			AND created_at = (SELECT MAX(created_at) FROM %[1]s WHERE repository_id = @repositoryID)  
-			LIMIT 5
+			AND created_at = (SELECT MAX(created_at) FROM %[1]s WHERE repository_id = @repositoryID)
+		) AS vulnSum 
+		ON vba.vulnerability_id = vulnSum.vulnerability_id
+		WHERE repository_id = @repositoryID
+		AND created_at = (SELECT MAX(created_at) FROM %[1]s WHERE repository_id = @repositoryID) 
+	) AS vulnsResult
+	ORDER BY (vulnsResult.total) DESC
+	LIMIT 5
 	`
 }
 
@@ -108,7 +129,7 @@ func (r *RepoDashboard) GetDashboardVulnByTime(filter *dashboard.Filter) (vulns 
 
 func (r *RepoDashboard) queryGetDashboardVulnByTime() string {
 	return `
-		SELECT DISTINCT ON(created_at) *
+		SELECT DISTINCT ON(DATE(created_at)) *
 		FROM %[1]s
 		WHERE repository_id = @repositoryID
 		%[2]s
@@ -117,6 +138,6 @@ func (r *RepoDashboard) queryGetDashboardVulnByTime() string {
 			FROM %[1]s
 			WHERE repository_id = @repositoryID
 			%[2]s
-			GROUP BY created_at )		
+			GROUP BY DATE(created_at) )		
 	`
 }
