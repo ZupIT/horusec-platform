@@ -5,5 +5,10 @@
     "**/*_test.go",
     "**/deployments/**",
     "**/docs/**"
+  ],
+  "horusecCliFalsePositiveHashes": [
+    "e8c6a9744859f048a44a4eb160ce0e22df524507a288cfbfcbfcdc26d2533c63",
+    "b9f0d3772a885673b4a968d21eb9c350d25aae332b7c1a9bf113b5af24704ff9",
+    "4d7473267cca7ab58ec81d5c287e6c31f4dbad2e09d38531c66f51dc2e661dba"
   ]
 }
