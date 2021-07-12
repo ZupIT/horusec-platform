@@ -206,18 +206,25 @@ func (r *WorkspaceRepository) GetDashboardVulnByTime(
 
 func (r *WorkspaceRepository) queryGetDashboardVulnByTime() string {
 	return `
-		SELECT DATE(created_at) AS created_at, %[1]s
-		FROM %[2]s AS vuln_by_time
-		INNER JOIN
+		SELECT %[1]s, DATE(created_at) AS created_at
+		FROM 
 		(
-			SELECT DISTINCT ON(repository_id, created_at::date) MAX(created_at) AS max_time, vulnerability_id 
-			FROM %[2]s 
-			GROUP BY DATE(created_at), repository_id, vulnerability_id
-		) AS vuln_by_time_sub_query
-		ON vuln_by_time.created_at  = vuln_by_time_sub_query.max_time 
-		AND vuln_by_time.vulnerability_id  = vuln_by_time_sub_query.vulnerability_id
-		WHERE %[3]s  
-		GROUP BY DATE(created_at)
+			SELECT vulns.*
+			FROM %[2]s AS vulns
+			INNER JOIN 
+			(
+				SELECT MAX(created_at) max_time, repository_id
+				FROM %[2]s
+				WHERE workspace_id = @workspaceID
+				GROUP BY(DATE(created_at), repository_id)
+			) AS last_analysis
+			ON vulns.created_at = last_analysis.max_time 
+			AND vulns.repository_id = last_analysis.repository_id
+			WHERE workspace_id = @workspaceID
+		) AS result
+		WHERE workspace_id = @workspaceID
+		%[3]s
+		GROUP BY(DATE(created_at))
 	`
 }
 

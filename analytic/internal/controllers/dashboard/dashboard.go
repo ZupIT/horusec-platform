@@ -99,9 +99,9 @@ func (c *Controller) getChartsByRepositoryAndLanguageWorkspace(filter *dashboard
 
 func (c *Controller) getChartByTimeWorkspace(filter *dashboard.Filter,
 	response *dashboard.Response) (*dashboard.Response, error) {
-	//if err := response.SetChartByTime(c.repository.GetDashboardVulnByTime(filter)); err != nil {
-	//	return nil, err
-	//}
+	if err := response.SetChartByTime(c.workspaceRepository.GetDashboardVulnByTime(filter)); err != nil {
+		return nil, err
+	}
 
 	return response, nil
 }
