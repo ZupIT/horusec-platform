@@ -59,20 +59,6 @@ const HandleUser: React.FC<Props> = ({
   const isRepository = !!repositoryId;
   const isEditing = !!user;
 
-  const ValidationScheme = Yup.object({
-    email: Yup.string().email(t('USERS_SCREEN.HANDLE_MODAL.INVALID_EMAIL')),
-    role: Yup.string().oneOf(['admin', 'member', 'supervisor']).required(),
-    user: Yup.object(),
-  });
-
-  type InitialValue = Yup.InferType<typeof ValidationScheme>;
-
-  const initialValues: InitialValue = {
-    email: '',
-    role: '',
-    user: {},
-  };
-
   const getRoles = () => {
     const roles: Role[] = [
       {
@@ -92,6 +78,35 @@ const HandleUser: React.FC<Props> = ({
       });
 
     return roles;
+  };
+
+  const ValidationScheme = Yup.object({
+    email: Yup.lazy(() => {
+      if (!isRepository) {
+        return Yup.string().required();
+      }
+      return Yup.string().notRequired();
+    }),
+    role: Yup.string().oneOf(['admin', 'member', 'supervisor']).required(),
+    user: Yup.lazy(() => {
+      if (isRepository) {
+        return Yup.object({
+          accountID: Yup.string(),
+          email: Yup.string(),
+          username: Yup.string(),
+          role: Yup.string(),
+        }).required();
+      }
+      return Yup.object().notRequired();
+    }),
+  });
+
+  type InitialValue = Yup.InferType<typeof ValidationScheme>;
+
+  const initialValues: InitialValue = {
+    email: user?.email || '',
+    role: user?.role || '',
+    user: user || {},
   };
 
   const renderUserField = () => {
@@ -179,6 +194,7 @@ const HandleUser: React.FC<Props> = ({
     <Formik
       initialValues={initialValues}
       validationSchema={ValidationScheme}
+      enableReinitialize
       onSubmit={(value, actions) => {
         setLoading(true);
 
