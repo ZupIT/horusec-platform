@@ -39,156 +39,158 @@ func (r *WorkspaceRepository) GetDashboardTotalDevelopers(filter *dashboard.Filt
 
 func (r *WorkspaceRepository) queryGetDashboardTotalDevelopers() string {
 	return `
-		SELECT COUNT(DISTINCT(author))  
-		FROM %[1]s
+		SELECT COUNT(DISTINCT(vulns.author))
+		FROM %[1]s AS vulns
+		INNER JOIN 
+		(
+			SELECT MAX(created_at) max_time, repository_id
+			FROM %[1]s
+			WHERE workspace_id = @workspaceID
+			GROUP BY(repository_id)
+		) AS last_analysis
+		ON vulns.created_at = last_analysis.max_time 
+		AND vulns.repository_id = last_analysis.repository_id
 		WHERE workspace_id = @workspaceID
-		AND 
-			
 	`
 }
 
 func (r *WorkspaceRepository) GetDashboardTotalRepositories(filter *dashboard.Filter) (count int, err error) {
-	condition, args := filter.GetDateFilter()
+	query := fmt.Sprintf(r.queryGetDashboardTotalRepositories(), dashboardEnums.TableVulnerabilitiesByRepository)
 
-	query := fmt.Sprintf(r.queryGetDashboardTotalRepositories(),
-		dashboardEnums.TableVulnerabilitiesByRepository, condition)
-
-	return count, r.databaseRead.Raw(query, &count, args...).GetErrorExceptNotFound()
+	return count, r.databaseRead.Raw(query, &count, filter.GetWorkspaceFilter()).GetErrorExceptNotFound()
 }
 
 func (r *WorkspaceRepository) queryGetDashboardTotalRepositories() string {
 	return `
-		SELECT COUNT(*) 
-		FROM (
-				SELECT DISTINCT ON(repository_id) repository_id
-				FROM %[1]s
-				WHERE %[2]s
-		) AS result
+		SELECT COUNT(DISTINCT(repository_id)) 
+		FROM %[1]s
+		WHERE workspace_id = @workspaceID
 	`
 }
 
 func (r *WorkspaceRepository) GetDashboardVulnBySeverity(filter *dashboard.Filter) (*dashboard.Vulnerability, error) {
 	vulns := &dashboard.Vulnerability{}
-	condition, args := filter.GetDateFilter()
 
 	query := fmt.Sprintf(r.queryGetDashboardVulnBySeverity(), r.queryDefaultFields(),
-		dashboardEnums.TableVulnerabilitiesByTime, condition)
+		dashboardEnums.TableVulnerabilitiesByTime)
 
-	return vulns, r.databaseRead.Raw(query, vulns, args...).GetErrorExceptNotFound()
+	return vulns, r.databaseRead.Raw(query, vulns, filter.GetWorkspaceFilter()).GetErrorExceptNotFound()
 }
 
 func (r *WorkspaceRepository) queryGetDashboardVulnBySeverity() string {
 	return `
-		SELECT %[1]s
-		FROM (
-				SELECT DISTINCT ON(repository_id, created_at) *
+		SELECT %[1]s 
+		FROM 
+		(
+			SELECT vulns.*
+			FROM %[2]s AS vulns
+			INNER JOIN 
+			(
+				SELECT MAX(created_at) max_time, repository_id
 				FROM %[2]s
-				WHERE %[3]s AND created_at 
-				IN 
-				(
-					SELECT MAX(created_at) FROM %[2]s GROUP BY (repository_id, DATE(created_at))
-				)
-				ORDER BY repository_id, created_at DESC
+				WHERE workspace_id = @workspaceID
+				GROUP BY(repository_id)
+			) AS last_analysis
+			ON vulns.created_at = last_analysis.max_time 
+			AND vulns.repository_id = last_analysis.repository_id
+			WHERE workspace_id = @workspaceID
 		) AS result
 	`
 }
 
 func (r *WorkspaceRepository) GetDashboardVulnByAuthor(
 	filter *dashboard.Filter) (vulns []*dashboard.VulnerabilitiesByAuthor, err error) {
-	condition, args := filter.GetDateFilter()
-
 	query := fmt.Sprintf(r.queryGetDashboardVulnByAuthor(), r.queryDefaultFields(),
-		dashboardEnums.TableVulnerabilitiesByAuthor, condition)
+		dashboardEnums.TableVulnerabilitiesByAuthor)
 
-	return vulns, r.databaseRead.Raw(query, &vulns, args...).GetErrorExceptNotFound()
+	return vulns, r.databaseRead.Raw(query, &vulns, filter.GetWorkspaceFilter()).GetErrorExceptNotFound()
 }
 
 //nolint:funlen // need to be bigger than 15
 func (r *WorkspaceRepository) queryGetDashboardVulnByAuthor() string {
 	return `
-		SELECT author, %[1]s
-		FROM (
-				SELECT *
-				FROM %[2]s AS vuln_by_author
-				INNER JOIN
-				(
-					SELECT DISTINCT ON (author, created_at, repository_id) vulnerability_id 
-					FROM %[2]s
-					WHERE created_at 
-					IN 
-					(
-						SELECT MAX(created_at) FROM %[2]s GROUP BY (author, repository_id, DATE(created_at))
-					)
-				) AS vuln_by_author_sub_query
-				ON vuln_by_author.vulnerability_id  = vuln_by_author_sub_query.vulnerability_id
-				WHERE %[3]s
-				LIMIT 5
+		SELECT %[1]s, author
+		FROM 
+		(
+			SELECT vulns.*
+			FROM %[2]s AS vulns
+			INNER JOIN 
+			(
+				SELECT MAX(created_at) max_time, repository_id
+				FROM %[2]s
+				WHERE workspace_id = @workspaceID
+				GROUP BY(repository_id)
+			) AS last_analysis
+			ON vulns.created_at = last_analysis.max_time 
+			AND vulns.repository_id = last_analysis.repository_id
+			WHERE workspace_id = @workspaceID
 		) AS result
-		GROUP BY author
+		GROUP BY(author)
+		LIMIT 5
 	`
 }
 
 func (r *WorkspaceRepository) GetDashboardVulnByRepository(
 	filter *dashboard.Filter) (vulns []*dashboard.VulnerabilitiesByRepository, err error) {
-	condition, args := filter.GetDateFilter()
 
-	query := fmt.Sprintf(r.queryGetDashboardVulnByRepository(),
-		r.queryDefaultFields(), dashboardEnums.TableVulnerabilitiesByRepository, condition)
+	query := fmt.Sprintf(r.queryGetDashboardVulnByRepository(), r.queryDefaultFields(),
+		dashboardEnums.TableVulnerabilitiesByRepository)
 
-	return vulns, r.databaseRead.Raw(query, &vulns, args...).GetErrorExceptNotFound()
+	return vulns, r.databaseRead.Raw(query, &vulns, filter.GetWorkspaceFilter()).GetErrorExceptNotFound()
 }
 
 func (r *WorkspaceRepository) queryGetDashboardVulnByRepository() string {
 	return `
-		SELECT repository_name, %[1]s
-		FROM (
-				SELECT DISTINCT ON (repository_id, created_at) *
+		SELECT %[1]s, repository_name, repository_id
+		FROM 
+		(
+			SELECT vulns.*
+			FROM %[2]s AS vulns
+			INNER JOIN 
+			(
+				SELECT MAX(created_at) max_time, repository_id
 				FROM %[2]s
-				WHERE %[3]s AND created_at 
-				IN 
-				(
-					SELECT MAX(created_at) FROM %[2]s GROUP BY (repository_id, DATE(created_at)) 
-				)
-				ORDER BY repository_id, created_at DESC
+				WHERE workspace_id = @workspaceID
+				GROUP BY(repository_id)
+			) AS last_analysis
+			ON vulns.created_at = last_analysis.max_time 
+			AND vulns.repository_id = last_analysis.repository_id
+			WHERE workspace_id = @workspaceID
 		) AS result
-		GROUP BY (repository_name, repository_id)
+		GROUP BY(repository_id, repository_name)
 		LIMIT 5
 	`
 }
 
 func (r *WorkspaceRepository) GetDashboardVulnByLanguage(
 	filter *dashboard.Filter) (vulns []*dashboard.VulnerabilitiesByLanguage, err error) {
-	condition, args := filter.GetDateFilter()
-
 	query := fmt.Sprintf(r.queryGetDashboardVulnByLanguage(), r.queryDefaultFields(),
-		dashboardEnums.TableVulnerabilitiesByLanguage, condition)
+		dashboardEnums.TableVulnerabilitiesByLanguage)
 
-	return vulns, r.databaseRead.Raw(query, &vulns, args...).GetErrorExceptNotFound()
+	return vulns, r.databaseRead.Raw(query, &vulns, filter.GetWorkspaceFilter()).GetErrorExceptNotFound()
 }
 
 //nolint:funlen // need to be bigger than 15
 func (r *WorkspaceRepository) queryGetDashboardVulnByLanguage() string {
 	return `
-		SELECT language, %[1]s
-		FROM (
-				SELECT *
-				FROM %[2]s AS vuln_by_language
-				INNER JOIN
-				(
-					SELECT DISTINCT ON(repository_id, created_at, language) vulnerability_id 
-					FROM %[2]s
-					WHERE created_at 
-					IN 
-					(
-						SELECT MAX(created_at) FROM %[2]s GROUP BY(repository_id, DATE(created_at), language)
-					)
-				) AS vuln_by_language_sub_query
-				ON vuln_by_language.vulnerability_id  = vuln_by_language_sub_query.vulnerability_id 
-				WHERE %[3]s
-				ORDER BY repository_id, created_at DESC
-				LIMIT 5
+		SELECT %[1]s, language
+		FROM 
+		(
+			SELECT vulns.*
+			FROM %[2]s AS vulns
+			INNER JOIN 
+			(
+				SELECT MAX(created_at) max_time, repository_id
+				FROM %[2]s
+				WHERE workspace_id = @workspaceID
+				GROUP BY(repository_id)
+			) AS last_analysis
+			ON vulns.created_at = last_analysis.max_time 
+			AND vulns.repository_id = last_analysis.repository_id
+			WHERE workspace_id = @workspaceID
 		) AS result
-		GROUP BY language
+		GROUP BY(language)
+		LIMIT 5
 	`
 }
 
