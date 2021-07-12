@@ -57,37 +57,57 @@ const deleteWorkspace = (workspaceID: string) => {
   return http.delete(`${SERVICE_CORE}/core/workspaces/${workspaceID}`);
 };
 
-const getUsersInWorkspace = (workspaceID: string) => {
-  return http.get(`${SERVICE_CORE}/core/workspaces/${workspaceID}/roles`);
+const getUsers = (workspaceID: string, repositoryID: string) => {
+  const path = repositoryID ? `/repositories/${repositoryID}/roles` : '/roles';
+  return http.get(`${SERVICE_CORE}/core/workspaces/${workspaceID}${path}`);
 };
 
-const createUserInWorkspace = (
+const inviteUser = (
   workspaceID: string,
   email: string,
-  role: string
+  role: string,
+  repositoryId?: string,
+  accountID?: string,
+  username?: string
 ) => {
-  return http.post(`${SERVICE_CORE}/core/workspaces/${workspaceID}/roles`, {
-    email,
-    role,
-  });
+  const path = repositoryId ? `/repositories/${repositoryId}/` : '/';
+
+  return http.post(
+    `${SERVICE_CORE}/core/workspaces/${workspaceID}${path}roles`,
+    {
+      email,
+      role,
+      accountID,
+      username,
+    }
+  );
 };
 
-const editUserInWorkspace = (
+const updateUserRole = (
   workspaceID: string,
+  repositoryId: string,
   accountId: string,
   role: string
 ) => {
+  const path = repositoryId ? `/repositories/${repositoryId}/` : '/';
+
   return http.patch(
-    `${SERVICE_CORE}/core/workspaces/${workspaceID}/roles/${accountId}`,
+    `${SERVICE_CORE}/core/workspaces/${workspaceID}${path}roles/${accountId}`,
     {
       role,
     }
   );
 };
 
-const removeUserInWorkspace = (workspaceID: string, accountId: string) => {
+const removeUser = (
+  workspaceID: string,
+  repositoryId: string,
+  accountId: string
+) => {
+  const path = repositoryId ? `/repositories/${repositoryId}/` : '/';
+
   return http.delete(
-    `${SERVICE_CORE}/core/workspaces/${workspaceID}/roles/${accountId}`
+    `${SERVICE_CORE}/core/workspaces/${workspaceID}${path}roles/${accountId}`
   );
 };
 
@@ -174,74 +194,22 @@ const createToken = (
   );
 };
 
-const getUsersInRepository = (workspaceID: string, repositoryId: string) => {
-  return http.get(
-    `${SERVICE_CORE}/core/workspaces/${workspaceID}/repositories/${repositoryId}/roles`
-  );
-};
-
-const includeUserInRepository = (
-  workspaceID: string,
-  repositoryId: string,
-  email: string,
-  role: string,
-  accountID: string,
-  username: string
-) => {
-  return http.post(
-    `${SERVICE_CORE}/core/workspaces/${workspaceID}/repositories/${repositoryId}/roles`,
-    {
-      email,
-      role,
-      accountID,
-      username,
-    }
-  );
-};
-const removeUserOfRepository = (
-  workspaceID: string,
-  repositoryId: string,
-  accountId: string
-) => {
-  return http.delete(
-    `${SERVICE_CORE}/core/workspaces/${workspaceID}/repositories/${repositoryId}/roles/${accountId}`
-  );
-};
-
-const updateUserRoleInRepository = (
-  workspaceID: string,
-  repositoryId: string,
-  accountId: string,
-  role: string
-) => {
-  return http.patch(
-    `${SERVICE_CORE}/core/workspaces/${workspaceID}/repositories/${repositoryId}/roles/${accountId}`,
-    {
-      role,
-    }
-  );
-};
-
 export default {
   getAllWorkspaces,
   createWorkspace,
   updateWorkspace,
   deleteWorkspace,
   getOneWorkspace,
-  getUsersInWorkspace,
-  createUserInWorkspace,
-  editUserInWorkspace,
-  removeUserInWorkspace,
   getAllRepositories,
   getOneRepository,
   createRepository,
   updateRepository,
   deleteRepository,
+  getUsers,
+  removeUser,
+  inviteUser,
+  updateUserRole,
   getAllTokens,
   createToken,
   removeToken,
-  getUsersInRepository,
-  includeUserInRepository,
-  removeUserOfRepository,
-  updateUserRoleInRepository,
 };

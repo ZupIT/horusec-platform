@@ -166,7 +166,7 @@ const VulnerabilitiesDetails: React.FC<Props> = ({ filters }) => {
             type: 'text',
           },
         ]}
-        datasource={dataValues}
+        dataSource={dataValues}
         paginate={{
           pagination,
           onChange: (pag) => setRefresh(pag),

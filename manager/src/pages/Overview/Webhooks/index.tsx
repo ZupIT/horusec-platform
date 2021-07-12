@@ -17,7 +17,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import Styled from './styled';
-import { Button, Dialog, SearchBar, Datatable, Datasource } from 'components';
+import { Button, Dialog, SearchBar, Datatable, DataSource } from 'components';
 import { Webhook } from 'helpers/interfaces/Webhook';
 import { useTheme } from 'styled-components';
 import { get } from 'lodash';
@@ -185,8 +185,8 @@ const Webhooks: React.FC<Props> = ({ type }) => {
               type: 'actions',
             },
           ]}
-          datasource={filteredWebhooks.map((row) => {
-            const data: Datasource = {
+          dataSource={filteredWebhooks.map((row) => {
+            const data: DataSource = {
               ...row,
               id: row.webhookID,
               repository: row?.repository?.name,

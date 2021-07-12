@@ -20,14 +20,15 @@ import { Icon } from 'components';
 const Header = styled.div`
   background-color: ${({ theme }) => theme.colors.background.secundary};
   border-radius: 4px;
+  padding: 22px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 22px;
+  margin-bottom: 25px;
 `;
 
 const Content = styled.div`
-  padding: 25px 15px;
+  padding: 15px;
   background-color: ${({ theme }) => theme.colors.background.secundary};
   border-radius: 4px;
   overflow: hidden;
@@ -41,7 +42,6 @@ const Wrapper = styled.section`
   height: 95%;
   display: flex;
   flex-direction: column;
-  gap: 22px;
 `;
 
 const TitleContent = styled.div`
