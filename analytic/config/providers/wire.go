@@ -20,7 +20,7 @@ import (
 	dashboardEvents "github.com/ZupIT/horusec-platform/analytic/internal/events/dashboard"
 	"github.com/ZupIT/horusec-platform/analytic/internal/handlers/dashboard"
 	"github.com/ZupIT/horusec-platform/analytic/internal/handlers/health"
-	dashboardRepository "github.com/ZupIT/horusec-platform/analytic/internal/repositories/dashboard/repository"
+	dashboardRepository "github.com/ZupIT/horusec-platform/analytic/internal/repositories/dashboard"
 	"github.com/ZupIT/horusec-platform/analytic/internal/router"
 	dashboardUseCases "github.com/ZupIT/horusec-platform/analytic/internal/usecases/dashboard"
 )
@@ -44,6 +44,7 @@ var configProviders = wire.NewSet(
 
 var repositoriesProviders = wire.NewSet(
 	dashboardRepository.NewRepoDashboard,
+	dashboardRepository.NewWorkspaceDashboard,
 )
 
 var controllersProviders = wire.NewSet(

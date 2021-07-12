@@ -15,16 +15,15 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth/proto"
 	router2 "github.com/ZupIT/horusec-devkit/pkg/services/http/router"
 	"github.com/ZupIT/horusec-devkit/pkg/services/middlewares"
-	"github.com/google/wire"
-
 	"github.com/ZupIT/horusec-platform/analytic/config/cors"
 	dashboard3 "github.com/ZupIT/horusec-platform/analytic/internal/controllers/dashboard"
 	dashboard5 "github.com/ZupIT/horusec-platform/analytic/internal/events/dashboard"
 	dashboard4 "github.com/ZupIT/horusec-platform/analytic/internal/handlers/dashboard"
 	"github.com/ZupIT/horusec-platform/analytic/internal/handlers/health"
-	dashboard "github.com/ZupIT/horusec-platform/analytic/internal/repositories/dashboard/repository"
+	"github.com/ZupIT/horusec-platform/analytic/internal/repositories/dashboard"
 	"github.com/ZupIT/horusec-platform/analytic/internal/router"
 	dashboard2 "github.com/ZupIT/horusec-platform/analytic/internal/usecases/dashboard"
+	"github.com/google/wire"
 )
 
 // Injectors from wire.go:
@@ -45,9 +44,10 @@ func Initialize(string2 string) (router.IRouter, error) {
 		return nil, err
 	}
 	handler := health.NewHealthHandler(connection, iBroker)
-	iRepoDashboard := dashboard.NewRepoDashboard(connection)
+	iRepoRepository := dashboard.NewRepoDashboard(connection)
+	iWorkspaceRepository := dashboard.NewWorkspaceDashboard(connection)
 	iUseCases := dashboard2.NewUseCaseDashboard()
-	iController := dashboard3.NewDashboardController(iRepoDashboard, connection, iUseCases)
+	iController := dashboard3.NewDashboardController(iRepoRepository, iWorkspaceRepository, connection, iUseCases)
 	dashboardHandler := dashboard4.NewDashboardHandler(iController)
 	events := dashboard5.NewDashboardEvents(iBroker, iController)
 	routerIRouter := router.NewHTTPRouter(iRouter, iAuthzMiddleware, handler, dashboardHandler, events)
@@ -60,7 +60,7 @@ var devKitProviders = wire.NewSet(auth.NewAuthGRPCConnection, proto.NewAuthServi
 
 var configProviders = wire.NewSet(cors.NewCorsConfig, router.NewHTTPRouter)
 
-var repositoriesProviders = wire.NewSet(dashboard.NewRepoDashboard)
+var repositoriesProviders = wire.NewSet(dashboard.NewRepoDashboard, dashboard.NewWorkspaceDashboard)
 
 var controllersProviders = wire.NewSet(dashboard3.NewDashboardController)
 

@@ -9,7 +9,7 @@ import (
 	dashboardEnums "github.com/ZupIT/horusec-platform/analytic/internal/enums/dashboard"
 )
 
-type IRepoDashboard interface {
+type IRepoRepository interface {
 	GetDashboardTotalDevelopers(filter *dashboard.Filter) (int, error)
 	GetDashboardVulnBySeverity(filter *dashboard.Filter) (*dashboard.Vulnerability, error)
 	GetDashboardVulnByAuthor(filter *dashboard.Filter) ([]*dashboard.VulnerabilitiesByAuthor, error)
@@ -17,25 +17,25 @@ type IRepoDashboard interface {
 	GetDashboardVulnByTime(filter *dashboard.Filter) ([]*dashboard.VulnerabilitiesByTime, error)
 }
 
-type RepoDashboard struct {
+type RepoRepository struct {
 	databaseRead  database.IDatabaseRead
 	databaseWrite database.IDatabaseWrite
 }
 
-func NewRepoDashboard(connection *database.Connection) IRepoDashboard {
-	return &RepoDashboard{
+func NewRepoDashboard(connection *database.Connection) IRepoRepository {
+	return &RepoRepository{
 		databaseRead:  connection.Read,
 		databaseWrite: connection.Write,
 	}
 }
 
-func (r *RepoDashboard) GetDashboardTotalDevelopers(filter *dashboard.Filter) (count int, err error) {
+func (r *RepoRepository) GetDashboardTotalDevelopers(filter *dashboard.Filter) (count int, err error) {
 	query := fmt.Sprintf(r.queryGetDashboardTotalDevelopers(), dashboardEnums.TableVulnerabilitiesByAuthor)
 
 	return count, r.databaseRead.Raw(query, &count, filter.GetRepositoryFilter()).GetErrorExceptNotFound()
 }
 
-func (r *RepoDashboard) queryGetDashboardTotalDevelopers() string {
+func (r *RepoRepository) queryGetDashboardTotalDevelopers() string {
 	return `
 			SELECT COUNT(DISTINCT(author)) 
 			FROM %[1]s
@@ -44,7 +44,7 @@ func (r *RepoDashboard) queryGetDashboardTotalDevelopers() string {
 	`
 }
 
-func (r *RepoDashboard) GetDashboardVulnBySeverity(filter *dashboard.Filter) (*dashboard.Vulnerability, error) {
+func (r *RepoRepository) GetDashboardVulnBySeverity(filter *dashboard.Filter) (*dashboard.Vulnerability, error) {
 	vulns := &dashboard.Vulnerability{}
 
 	query := fmt.Sprintf(r.queryGetDashboardVulnBySeverity(), dashboardEnums.TableVulnerabilitiesByTime)
@@ -52,7 +52,7 @@ func (r *RepoDashboard) GetDashboardVulnBySeverity(filter *dashboard.Filter) (*d
 	return vulns, r.databaseRead.Raw(query, vulns, filter.GetRepositoryFilter()).GetErrorExceptNotFound()
 }
 
-func (r *RepoDashboard) queryGetDashboardVulnBySeverity() string {
+func (r *RepoRepository) queryGetDashboardVulnBySeverity() string {
 	return `
 			SELECT *
 			FROM %[1]s
@@ -61,7 +61,7 @@ func (r *RepoDashboard) queryGetDashboardVulnBySeverity() string {
 	`
 }
 
-func (r *RepoDashboard) GetDashboardVulnByAuthor(
+func (r *RepoRepository) GetDashboardVulnByAuthor(
 	filter *dashboard.Filter) (vulns []*dashboard.VulnerabilitiesByAuthor, err error) {
 
 	query := fmt.Sprintf(r.queryGetDashboardVulnByAuthor(), dashboardEnums.TableVulnerabilitiesByAuthor)
@@ -70,7 +70,7 @@ func (r *RepoDashboard) GetDashboardVulnByAuthor(
 }
 
 //nolint:funlen // need to be bigger than 15
-func (r *RepoDashboard) queryGetDashboardVulnByAuthor() string {
+func (r *RepoRepository) queryGetDashboardVulnByAuthor() string {
 	return `
 	SELECT *
 	FROM 
@@ -101,7 +101,7 @@ func (r *RepoDashboard) queryGetDashboardVulnByAuthor() string {
 	`
 }
 
-func (r *RepoDashboard) GetDashboardVulnByLanguage(
+func (r *RepoRepository) GetDashboardVulnByLanguage(
 	filter *dashboard.Filter) (vulns []*dashboard.VulnerabilitiesByLanguage, err error) {
 	query := fmt.Sprintf(r.queryGetDashboardVulnByLanguage(), dashboardEnums.TableVulnerabilitiesByLanguage)
 
@@ -109,7 +109,7 @@ func (r *RepoDashboard) GetDashboardVulnByLanguage(
 }
 
 //nolint:funlen // need to be bigger than 15
-func (r *RepoDashboard) queryGetDashboardVulnByLanguage() string {
+func (r *RepoRepository) queryGetDashboardVulnByLanguage() string {
 	return `
 			SELECT DISTINCT ON(language) language, *
 			FROM %[1]s
@@ -119,7 +119,7 @@ func (r *RepoDashboard) queryGetDashboardVulnByLanguage() string {
 	`
 }
 
-func (r *RepoDashboard) GetDashboardVulnByTime(filter *dashboard.Filter) (vulns []*dashboard.VulnerabilitiesByTime, err error) {
+func (r *RepoRepository) GetDashboardVulnByTime(filter *dashboard.Filter) (vulns []*dashboard.VulnerabilitiesByTime, err error) {
 	condition, args := filter.GetDateFilter()
 
 	query := fmt.Sprintf(r.queryGetDashboardVulnByTime(), dashboardEnums.TableVulnerabilitiesByTime, condition)
@@ -127,7 +127,7 @@ func (r *RepoDashboard) GetDashboardVulnByTime(filter *dashboard.Filter) (vulns 
 	return vulns, r.databaseRead.Raw(query, &vulns, args...).GetErrorExceptNotFound()
 }
 
-func (r *RepoDashboard) queryGetDashboardVulnByTime() string {
+func (r *RepoRepository) queryGetDashboardVulnByTime() string {
 	return `
 		SELECT DISTINCT ON(DATE(created_at)) *
 		FROM %[1]s
