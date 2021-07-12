@@ -77,6 +77,7 @@ func (r *WorkspaceRepository) GetDashboardVulnBySeverity(filter *dashboard.Filte
 	return vulns, r.databaseRead.Raw(query, vulns, filter.GetWorkspaceFilter()).GetErrorExceptNotFound()
 }
 
+//nolint:funlen // need to be bigger than 15
 func (r *WorkspaceRepository) queryGetDashboardVulnBySeverity() string {
 	return `
 		SELECT %[1]s 
@@ -132,13 +133,13 @@ func (r *WorkspaceRepository) queryGetDashboardVulnByAuthor() string {
 
 func (r *WorkspaceRepository) GetDashboardVulnByRepository(
 	filter *dashboard.Filter) (vulns []*dashboard.VulnerabilitiesByRepository, err error) {
-
 	query := fmt.Sprintf(r.queryGetDashboardVulnByRepository(), r.queryDefaultFields(),
 		dashboardEnums.TableVulnerabilitiesByRepository)
 
 	return vulns, r.databaseRead.Raw(query, &vulns, filter.GetWorkspaceFilter()).GetErrorExceptNotFound()
 }
 
+//nolint:funlen // need to be bigger than 15
 func (r *WorkspaceRepository) queryGetDashboardVulnByRepository() string {
 	return `
 		SELECT %[1]s, repository_name, repository_id
@@ -204,6 +205,7 @@ func (r *WorkspaceRepository) GetDashboardVulnByTime(
 	return vulns, r.databaseRead.Raw(query, &vulns, args...).GetErrorExceptNotFound()
 }
 
+//nolint:funlen // need to be bigger than 15
 func (r *WorkspaceRepository) queryGetDashboardVulnByTime() string {
 	return `
 		SELECT %[1]s, DATE(created_at) AS created_at

@@ -14,8 +14,8 @@ import (
 	dashboardEnums "github.com/ZupIT/horusec-platform/analytic/internal/enums/dashboard"
 )
 
-func TestGetConditionFilter(t *testing.T) {
-	t.Run("should success get condition filter", func(t *testing.T) {
+func TestGetRepositoryFilter(t *testing.T) {
+	t.Run("should success get filter", func(t *testing.T) {
 		filter := &Filter{
 			RepositoryID: uuid.New(),
 			WorkspaceID:  uuid.New(),
@@ -25,11 +25,41 @@ func TestGetConditionFilter(t *testing.T) {
 			Size:         20,
 		}
 
-		where, args := filter.GetConditionFilter()
-
-		assert.NotEmpty(t, where)
+		args := filter.GetRepositoryFilter()
 		assert.NotEmpty(t, args)
-		assert.Equal(t, "workspace_id = ? AND repository_id = ? AND created_at >= ? AND created_at <= ? ", where)
+	})
+}
+
+func TestGetWorkspaceFilter(t *testing.T) {
+	t.Run("should success get filter", func(t *testing.T) {
+		filter := &Filter{
+			RepositoryID: uuid.New(),
+			WorkspaceID:  uuid.New(),
+			StartTime:    time.Now(),
+			EndTime:      time.Now(),
+			Page:         20,
+			Size:         20,
+		}
+
+		args := filter.GetWorkspaceFilter()
+		assert.NotEmpty(t, args)
+	})
+}
+
+func TestGetDateFilter(t *testing.T) {
+	t.Run("should success get filter", func(t *testing.T) {
+		filter := &Filter{
+			RepositoryID: uuid.New(),
+			WorkspaceID:  uuid.New(),
+			StartTime:    time.Now(),
+			EndTime:      time.Now(),
+			Page:         20,
+			Size:         20,
+		}
+
+		condition, args := filter.GetDateFilter()
+		assert.NotEmpty(t, args)
+		assert.Equal(t, "AND created_at >= @startTime AND created_at <= @endTime ", condition)
 	})
 }
 
