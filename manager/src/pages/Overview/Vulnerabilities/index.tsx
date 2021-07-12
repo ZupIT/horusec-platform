@@ -16,7 +16,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Styled from './styled';
-import { SearchBar, Select, Icon, Datatable, Datasource } from 'components';
+import { SearchBar, Select, Icon, Datatable, DataSource } from 'components';
 import { useTranslation } from 'react-i18next';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import vulnerabilitiesService from 'services/vulnerabilities';
@@ -404,8 +404,8 @@ const Vulnerabilities: React.FC = () => {
               type: 'custom',
             },
           ]}
-          datasource={vulnerabilities.map((row) => {
-            const repo: Datasource = {
+          dataSource={vulnerabilities.map((row) => {
+            const repo: DataSource = {
               ...row,
               id: row.vulnerabilityID,
               hash: row.vulnHash,

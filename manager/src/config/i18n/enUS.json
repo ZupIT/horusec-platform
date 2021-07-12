@@ -240,7 +240,41 @@
     "TOKEN_SUCCESS": "Congratulations!Token created successfully!",
     "CONFIRM": "Ok, I got it.",
     "IS_EXPIRABLE": "É Expirárável.",
-    "EXPIRES_AT": "Expires in"
+    "EXPIRES_AT": "Expires in",
+    "YES": "Yes"
+  },
+  "USERS_SCREEN": {
+    "SEARCH": "Search user by e-mail",
+    "INVITE": "Invite",
+    "TABLE": {
+      "USER": "User",
+      "EMAIL": "Email",
+      "PERMISSION": "Permission",
+      "ACTION": "Action",
+      "EMPTY":"No user found.",
+      "EDIT": "Edit",
+      "REMOVE": "Remove"
+    },
+    "ROLE": {
+      "ADMIN": "Admin",
+      "SUPERVISOR": "Supervisor",
+      "MEMBER": "Member"
+    },
+    "HANDLE_MODAL": {
+      "TITLE": "Invite user",
+      "TITLE_EDIT": "Edit user",
+      "INVALID_EMAIL": "Invalid email",
+      "SUCCESS": "Changes made successfully!",
+      "SAVE": "Save",
+      "INVITE_SUBTITLE": "Invite a new user below:",
+      "EDIT_SUBTITLE": "Edit the user below:",
+      "EMAIL": "Email",
+      "ROLE": "Permission",
+      "USER": "User"
+    },
+    "CONFIRM_REMOVE":"Do you really want to remove this user?",
+    "REMOVE_SUCCESS": "User removed successfully!",
+    "YES": "Yes"
   },
   "REPOSITORIES_SCREEN": {
     "SEARCH_REPO": "Search repositories by name",

@@ -16,60 +16,42 @@
 
 import styled from 'styled-components';
 import { Input, Icon } from 'components';
-import { Form as FormMik } from 'formik';
-
-const Title = styled.h1`
-  font-weight: normal;
-  font-size: ${({ theme }) => theme.metrics.fontSize.xxlarge};
-  color: ${({ theme }) => theme.colors.text.primary};
-  align-self: flex-start;
-`;
 
 const SubTitle = styled.h3`
   font-weight: normal;
-  font-size: ${({ theme }) => theme.metrics.fontSize.medium};
+  font-size: ${({ theme }) => theme.metrics.fontSize.small};
   color: ${({ theme }) => theme.colors.text.secundary};
-  align-self: flex-start;
-  margin-bottom: 25px;
-  margin-top: 30px;
 `;
 
-const Form = styled(FormMik)`
-  display: block;
-`;
-
-const Wrapper = styled.div`
+const Form = styled.form`
   display: flex;
-  align-items: flex-start;
-  margin-top: 20px;
-  width: 100%;
-`;
-
-const WrapperColumn = styled(Wrapper)`
   flex-direction: column;
 `;
 
-const Label = styled.label`
-  font-size: ${({ theme }) => theme.metrics.fontSize.medium};
-  color: ${({ theme }) => theme.colors.text.secundary};
-  width: 150px;
-`;
-
 const Field = styled(Input)`
-  margin: 20px 0 30px 0;
+  margin-top: 25px;
+  margin-bottom: 30px;
 `;
 
-const OptionIcon = styled(Icon)`
-  margin-right: 10px;
+const RoleWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  margin: 10px 0 20px 0;
+`;
+
+const HelpIcon = styled(Icon)`
+  margin-left: 10px;
+  cursor: pointer;
+
+  :hover {
+    transform: scale(1.2);
+  }
 `;
 
 export default {
-  Title,
   SubTitle,
   Form,
-  Wrapper,
-  Label,
   Field,
-  OptionIcon,
-  WrapperColumn,
+  RoleWrapper,
+  HelpIcon,
 };
