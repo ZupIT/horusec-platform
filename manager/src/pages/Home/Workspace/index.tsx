@@ -25,16 +25,17 @@ import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import HandleWorkspace from './HandleWorkspace';
 import HandleRepository from '../Workspace/HandleRepository';
 import { Repository } from 'helpers/interfaces/Repository';
-import { useParams, useHistory } from 'react-router-dom';
-import { RouteParams } from 'helpers/interfaces/RouteParams';
+import { useHistory } from 'react-router-dom';
+import usePermissions from 'helpers/hooks/usePermissions';
+import useParamsRoute from 'helpers/hooks/useParamsRoute';
 
 const Home: React.FC = () => {
   const { dispatchMessage } = useResponseMessage();
   const { t } = useTranslation();
-  const { workspaceId } = useParams<RouteParams>();
   const history = useHistory();
+  const { ACTIONS, isAuthorizedAction } = usePermissions();
+  const { workspaceId, workspace, getWorkspace } = useParamsRoute();
 
-  const [currentWorkspace, setCurrentWorkspace] = useState<Workspace>();
   const [repositories, setRepositories] = useState<Repository[]>([]);
   const [filteredRepositories, setFilteredRepositories] =
     useState<Repository[]>(repositories);
@@ -48,23 +49,13 @@ const Home: React.FC = () => {
   const [isOpenRepositoryModal, setOpenRepositoryModal] =
     useState<boolean>(false);
 
-  const fetchWorkspaceData = () => {
+  const fetchWorkspaceData = async () => {
     setLoading(true);
-    coreService
-      .getOneWorkspace(workspaceId)
-      .then((result) => {
-        const workspace = result.data.content as Workspace;
-        setCurrentWorkspace(workspace);
-        fetchAllRepositoriesByWorkspace();
-      })
-      .catch((err) => {
-        dispatchMessage(err?.response?.data);
-        setLoading(false);
-      });
+    await getWorkspace();
+    fetchAllRepositoriesByWorkspace();
   };
 
   const fetchAllRepositoriesByWorkspace = () => {
-    setLoading(true);
     coreService
       .getAllRepositories(workspaceId)
       .then((result) => {
@@ -104,30 +95,34 @@ const Home: React.FC = () => {
         <Styled.TitleWrapper>
           <Styled.Title>
             <Styled.Icon name="grid" size="22px" />
-            {currentWorkspace?.name}
+            {workspace?.name}
           </Styled.Title>
 
-          <Button
-            text={t('HOME_SCREEN.HANDLER')}
-            width="150px"
-            outline
-            rounded
-            icon="tool"
-            style={{ marginLeft: '30px' }}
-            onClick={() => setOpenWorkspaceEditModal(true)}
-          />
+          {isAuthorizedAction(ACTIONS.HANDLE_WORKSPACE) && (
+            <Button
+              text={t('HOME_SCREEN.HANDLER')}
+              width="150px"
+              outline
+              rounded
+              icon="tool"
+              style={{ marginLeft: '30px' }}
+              onClick={() => setOpenWorkspaceEditModal(true)}
+            />
+          )}
 
-          <Button
-            text={t('HOME_SCREEN.OVERVIEW')}
-            width="150px"
-            outline
-            rounded
-            icon="goto"
-            style={{ marginLeft: '10px' }}
-            onClick={() =>
-              history.push(`/overview/workspace/${workspaceId}/dashboard`)
-            }
-          />
+          {isAuthorizedAction(ACTIONS.VIEW_WORKSPACE) && (
+            <Button
+              text={t('HOME_SCREEN.OVERVIEW')}
+              width="150px"
+              outline
+              rounded
+              icon="goto"
+              style={{ marginLeft: '10px' }}
+              onClick={() =>
+                history.push(`/overview/workspace/${workspaceId}/dashboard`)
+              }
+            />
+          )}
         </Styled.TitleWrapper>
 
         <Button
@@ -138,23 +133,27 @@ const Home: React.FC = () => {
         />
       </Styled.Head>
 
+      <Styled.Description>{workspace?.description}</Styled.Description>
+
       <Styled.SearchWrapper>
         <SearchBar
           onSearch={onSearch}
           placeholder={t('HOME_SCREEN.SEARCH_REPO')}
         />
 
-        <Button
-          onClick={() => {
-            setRepositoryToEdit(null);
-            setOpenRepositoryModal(true);
-          }}
-          text={t('HOME_SCREEN.ADD_REPO')}
-          pulsing={!isLoading && repositories.length <= 0}
-          width="180px"
-          icon="add"
-          rounded
-        />
+        {isAuthorizedAction(ACTIONS.CREATE_REPOSITORY) && (
+          <Button
+            onClick={() => {
+              setRepositoryToEdit(null);
+              setOpenRepositoryModal(true);
+            }}
+            text={t('HOME_SCREEN.ADD_REPO')}
+            pulsing={!isLoading && repositories.length <= 0}
+            width="180px"
+            icon="add"
+            rounded
+          />
+        )}
       </Styled.SearchWrapper>
 
       <Styled.ListWrapper>
@@ -198,7 +197,7 @@ const Home: React.FC = () => {
 
       <HandleWorkspace
         isVisible={isOpenWorkspaceEditModal}
-        workspaceToEdit={currentWorkspace}
+        workspaceToEdit={workspace}
         onConfirm={() => {
           setOpenWorkspaceEditModal(false);
           fetchWorkspaceData();

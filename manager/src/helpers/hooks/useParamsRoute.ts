@@ -15,10 +15,16 @@
  */
 
 import { Repository } from 'helpers/interfaces/Repository';
+import { RouteParams } from 'helpers/interfaces/RouteParams';
 import { Workspace } from 'helpers/interfaces/Workspace';
 import { isEmpty } from 'lodash';
 import { useEffect, useState } from 'react';
-import { matchPath, useHistory, useRouteMatch } from 'react-router-dom';
+import {
+  matchPath,
+  useHistory,
+  useParams,
+  useRouteMatch,
+} from 'react-router-dom';
 import core from 'services/core';
 
 const useParamsRoute = () => {
@@ -28,19 +34,21 @@ const useParamsRoute = () => {
   const [workspace, setWorkspace] = useState<Workspace>({} as Workspace);
   const [repository, setRepository] = useState<Repository>({} as Repository);
 
+  const params = useParams<RouteParams>();
+
   const { workspaceId = '' } = matchPath<{ workspaceId: string }>(
     history.location.pathname,
     {
       path: `${path}/workspace/:workspaceId`,
     }
-  )?.params || { workspaceId: '' };
+  )?.params || { workspaceId: params.workspaceId } || { workspaceId: '' };
 
   const { repositoryId = '' } = matchPath<{ repositoryId: string }>(
     history.location.pathname,
     {
       path: `${path}/workspace/:workspaceId/repository/:repositoryId`,
     }
-  )?.params || { repositoryId: '' };
+  )?.params || { repositoryId: params.repositoryId } || { repositoryId: '' };
 
   async function getWorkspace(workspace = workspaceId) {
     try {
