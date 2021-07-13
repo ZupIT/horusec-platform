@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import { Repository } from 'helpers/interfaces/Repository';
 import { Workspace } from 'helpers/interfaces/Workspace';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
 import Styled from './styled';
+import usePermissions from 'helpers/hooks/usePermissions';
 
 interface Props {
   workspace?: Workspace;
@@ -36,6 +36,8 @@ const HomeCard: React.FC<Props> = ({
 }) => {
   const { t } = useTranslation();
   const history = useHistory();
+
+  const { ACTIONS, isAuthorizedAction } = usePermissions();
 
   const isWorkspace = !!workspace;
   const context = workspace || repository;
@@ -77,10 +79,13 @@ const HomeCard: React.FC<Props> = ({
           </Styled.Option>
         ) : (
           <>
-            <Styled.Option onClick={onHandle}>
-              <Styled.InfoIcon name="tool" size="16px" />
-              {t('HOME_SCREEN.HANDLER')}
-            </Styled.Option>
+            {isAuthorizedAction(ACTIONS.HANDLE_REPOSITORY, context) && (
+              <Styled.Option onClick={onHandle}>
+                <Styled.InfoIcon name="tool" size="16px" />
+                {t('HOME_SCREEN.HANDLER')}
+              </Styled.Option>
+            )}
+
             <Styled.Option onClick={onOverview}>
               <Styled.InfoIcon name="goto" size="16px" />
               {t('HOME_SCREEN.OVERVIEW')}

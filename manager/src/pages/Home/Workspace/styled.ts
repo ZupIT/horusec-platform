@@ -33,6 +33,14 @@ const Head = styled.div`
   justify-content: space-between;
 `;
 
+const Description = styled.h2`
+  color: ${({ theme }) => theme.colors.text.secundary};
+  font-size: ${({ theme }) => theme.metrics.fontSize.xlarge};
+  font-weight: normal;
+  display: block;
+  margin-top: 15px;
+`;
+
 const Icon = styled(IconComponent)`
   margin-right: 10px;
 `;
@@ -53,4 +61,5 @@ export default {
   Message,
   MessageText,
   Icon,
+  Description,
 };

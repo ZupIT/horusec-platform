@@ -32,6 +32,7 @@ import useParamsRoute from 'helpers/hooks/useParamsRoute';
 import { Repository } from 'helpers/interfaces/Repository';
 import { useHistory, useParams } from 'react-router-dom';
 import { RouteParams } from 'helpers/interfaces/RouteParams';
+import usePermissions from 'helpers/hooks/usePermissions';
 
 const INITIAL_PAGE = 1;
 interface RefreshInterface {
@@ -59,6 +60,7 @@ const Vulnerabilities: React.FC = () => {
   const { colors } = useTheme();
   const { dispatchMessage } = useResponseMessage();
   const { showSuccessFlash } = useFlashMessage();
+  const { ACTIONS, isAuthorizedAction } = usePermissions();
 
   const [isLoading, setLoading] = useState(false);
   const [vulnerabilities, setVulnerabilities] = useState<Vulnerability[]>([]);
@@ -427,8 +429,11 @@ const Vulnerabilities: React.FC = () => {
                   value={row.severity}
                   options={severities.slice(1)}
                   disabled={
-                    false
-                    //isMemberOfRepository
+                    !isAuthorizedAction(
+                      repositoryId
+                        ? ACTIONS.HANDLE_VULNERABILITIES_REPOSITORY
+                        : ACTIONS.HANDLE_VULNERABILITIES_WORKSPACE
+                    )
                   }
                   onChangeValue={(value) => {
                     updateVulnerability(row, value, row.type);
@@ -442,8 +447,11 @@ const Vulnerabilities: React.FC = () => {
                   width="200px"
                   variant="filled"
                   disabled={
-                    false
-                    //isMemberOfRepository
+                    !isAuthorizedAction(
+                      repositoryId
+                        ? ACTIONS.HANDLE_VULNERABILITIES_REPOSITORY
+                        : ACTIONS.HANDLE_VULNERABILITIES_WORKSPACE
+                    )
                   }
                   onChangeValue={(value) => {
                     updateVulnerability(row, row.severity, value);

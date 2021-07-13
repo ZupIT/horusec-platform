@@ -8,6 +8,7 @@
     "REPOSITORIES": "Repositórios",
     "ADMIN": "Administrador",
     "MEMBER": "Membro",
+    "SUPERVISOR": "Supervisor",
     "SELECT": "Selecionar",
     "HANDLER": "Gerenciar",
     "OVERVIEW": "Visão Geral",
@@ -352,10 +353,10 @@
     },
     "COMPANY": {
       "RULES": {
-        "HANDLER": "Tem acesso editar/remover a empresa.",
-        "HANDLER_USER": "Tem acesso para visualizar/convidar/editar/remover usuários dentro da empresa.",
+        "HANDLER": "Tem acesso editar/remover o workspace.",
+        "HANDLER_USER": "Tem acesso para visualizar/convidar/editar/remover usuários dentro do workspace.",
         "CREATE": "Tem acesso para criar novos repositórios.",
-        "ANALYTIC_COMPANY": "Tem acesso para visualizar os gráficos da empresa.",
+        "ANALYTIC_COMPANY": "Tem acesso para visualizar os gráficos do workspace.",
         "ANALYTIC_REPO": "Tem acesso para visualizar os gráficos do repositório que ele tem acesso."
       }
     }
