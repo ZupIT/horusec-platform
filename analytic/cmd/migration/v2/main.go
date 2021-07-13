@@ -18,10 +18,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/ZupIT/horusec-devkit/pkg/entities/vulnerability"
-
-	"github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard"
-
 	"github.com/google/uuid"
 
 	analysisEntities "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
