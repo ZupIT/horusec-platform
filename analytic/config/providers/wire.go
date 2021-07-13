@@ -44,6 +44,7 @@ var configProviders = wire.NewSet(
 
 var repositoriesProviders = wire.NewSet(
 	dashboardRepository.NewRepoDashboard,
+	dashboardRepository.NewWorkspaceDashboard,
 )
 
 var controllersProviders = wire.NewSet(

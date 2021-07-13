@@ -45,9 +45,10 @@ func Initialize(string2 string) (router.IRouter, error) {
 		return nil, err
 	}
 	handler := health.NewHealthHandler(connection, iBroker)
-	iRepoDashboard := dashboard.NewRepoDashboard(connection)
+	iRepoRepository := dashboard.NewRepoDashboard(connection)
+	iWorkspaceRepository := dashboard.NewWorkspaceDashboard(connection)
 	iUseCases := dashboard2.NewUseCaseDashboard()
-	iController := dashboard3.NewDashboardController(iRepoDashboard, connection, iUseCases)
+	iController := dashboard3.NewDashboardController(iRepoRepository, iWorkspaceRepository, connection, iUseCases)
 	dashboardHandler := dashboard4.NewDashboardHandler(iController)
 	events := dashboard5.NewDashboardEvents(iBroker, iController)
 	routerIRouter := router.NewHTTPRouter(iRouter, iAuthzMiddleware, handler, dashboardHandler, events)
@@ -60,7 +61,7 @@ var devKitProviders = wire.NewSet(auth.NewAuthGRPCConnection, proto.NewAuthServi
 
 var configProviders = wire.NewSet(cors.NewCorsConfig, router.NewHTTPRouter)
 
-var repositoriesProviders = wire.NewSet(dashboard.NewRepoDashboard)
+var repositoriesProviders = wire.NewSet(dashboard.NewRepoDashboard, dashboard.NewWorkspaceDashboard)
 
 var controllersProviders = wire.NewSet(dashboard3.NewDashboardController)
 

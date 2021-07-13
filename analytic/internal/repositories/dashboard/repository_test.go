@@ -29,24 +29,6 @@ func TestGetDashboardTotalDevelopers(t *testing.T) {
 	})
 }
 
-func TestGetDashboardTotalRepositories(t *testing.T) {
-	t.Run("should return total repositories without error", func(t *testing.T) {
-		databaseReadMock := &database.Mock{}
-		databaseReadMock.On("Raw").Return(response.NewResponse(0, nil, 1))
-
-		connection := &database.Connection{
-			Read:  databaseReadMock,
-			Write: &database.Mock{},
-		}
-
-		repository := NewRepoDashboard(connection)
-
-		total, err := repository.GetDashboardTotalRepositories(&dashboard.Filter{})
-		assert.NoError(t, err)
-		assert.NotNil(t, total)
-	})
-}
-
 func TestGetDashboardVulnBySeverity(t *testing.T) {
 	t.Run("should return get vulns by severity without errors", func(t *testing.T) {
 		databaseReadMock := &database.Mock{}
@@ -80,24 +62,6 @@ func TestGetDashboardVulnByAuthor(t *testing.T) {
 		repository := NewRepoDashboard(connection)
 
 		_, err := repository.GetDashboardVulnByAuthor(&dashboard.Filter{})
-		assert.NoError(t, err)
-	})
-}
-
-func TestGetDashboardVulnByRepository(t *testing.T) {
-	t.Run("should return get vulns by repository without errors", func(t *testing.T) {
-		databaseReadMock := &database.Mock{}
-		databaseReadMock.On("Raw").Return(
-			response.NewResponse(0, nil, []*dashboard.VulnerabilitiesByRepository{}))
-
-		connection := &database.Connection{
-			Read:  databaseReadMock,
-			Write: &database.Mock{},
-		}
-
-		repository := NewRepoDashboard(connection)
-
-		_, err := repository.GetDashboardVulnByRepository(&dashboard.Filter{})
 		assert.NoError(t, err)
 	})
 }
