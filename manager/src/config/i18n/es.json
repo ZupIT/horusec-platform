@@ -511,7 +511,6 @@
     "MANAGE_WORKSPACES": "Gestionar espacios de trabajo",
     "MAX_MENU": "Maximizar el menú",
     "MIN_MENU": "Minimizar el menú",
-    "TOKENS": "Tokens",
     "USERS": "Usuarios"
   },
   "API_ERRORS": {
@@ -527,8 +526,9 @@
     "USERNAME_IN_USE": "Nombre de usuario ya está en uso",
     "SAME_PASSWORD": "La nueva contraseña no puede ser igual a la corriente.",
     "EMPTY_REPOSITORY": "Seleccione un repositorio para ver los datos.",
-    "LDAP_GROUP": "El grupo de usuarios debe ser válido para este usuario.",
-    "KEYCLOAK_LOGIN": "Había algo inesperado al realizar la autenticación, inténtalo de nuevo."
+    "LDAP_GROUP": "No pertenece al grupo administrador informado, o esto no es válido.",
+    "KEYCLOAK_LOGIN": "Había algo inesperado al realizar la autenticación, inténtalo de nuevo.",
+    "WORKSPACE_USER_NOT_BELONG": "Este usuario no pertenece actualmente a este espacio de trabajo."
   },
   "NOT_FOUND_SCREEN": {
     "ERROR": "Error 404.",
