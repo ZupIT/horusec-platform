@@ -55,7 +55,19 @@ func (h *Handler) Options(w http.ResponseWriter, _ *http.Request) {
 // @Failure 500 {object} entities.Response{content=string} "INTERNAL SERVER ERROR"
 // @Router /analytic/dashboard/{workspaceID} [get]
 func (h *Handler) GetAllChartsByWorkspace(w http.ResponseWriter, r *http.Request) {
-	h.getAllCharts(w, r)
+	filter, err := h.useCase.FilterFromRequest(r)
+	if err != nil {
+		httpUtil.StatusBadRequest(w, err)
+		return
+	}
+
+	result, err := h.controller.GetAllDashboardChartsWorkspace(filter)
+	if err != nil {
+		httpUtil.StatusInternalServerError(w, err)
+		return
+	}
+
+	httpUtil.StatusOK(w, result)
 }
 
 // GetAllChartsByRepository
@@ -74,17 +86,13 @@ func (h *Handler) GetAllChartsByWorkspace(w http.ResponseWriter, r *http.Request
 // @Failure 500 {object} entities.Response{content=string} "INTERNAL SERVER ERROR"
 // @Router /analytic/dashboard/{workspaceID}/{repositoryID} [get]
 func (h *Handler) GetAllChartsByRepository(w http.ResponseWriter, r *http.Request) {
-	h.getAllCharts(w, r)
-}
-
-func (h *Handler) getAllCharts(w http.ResponseWriter, r *http.Request) {
 	filter, err := h.useCase.FilterFromRequest(r)
 	if err != nil {
 		httpUtil.StatusBadRequest(w, err)
 		return
 	}
 
-	result, err := h.controller.GetAllDashboardCharts(filter)
+	result, err := h.controller.GetAllDashboardChartsRepository(filter)
 	if err != nil {
 		httpUtil.StatusInternalServerError(w, err)
 		return

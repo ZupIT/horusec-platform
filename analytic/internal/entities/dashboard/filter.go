@@ -15,6 +15,7 @@
 package dashboard
 
 import (
+	"database/sql"
 	"net/http"
 	"strconv"
 	"time"
@@ -36,44 +37,33 @@ type Filter struct {
 	Size         int
 }
 
-func (f *Filter) GetConditionFilter() (string, []interface{}) {
-	query, args := f.getWorkspaceFilter()
-	query, args = f.getRepositoryFilter(query, args)
-	query, args = f.getInitialDateFilter(query, args)
-	query, args = f.getFinalDateFilter(query, args)
-
-	return query, args
+func (f *Filter) GetRepositoryFilter() interface{} {
+	return sql.Named("repositoryID", f.RepositoryID)
 }
 
-func (f *Filter) getWorkspaceFilter() (string, []interface{}) {
-	return "workspace_id = ? ", []interface{}{f.WorkspaceID}
+func (f *Filter) GetWorkspaceFilter() interface{} {
+	return sql.Named("workspaceID", f.WorkspaceID)
 }
 
-func (f *Filter) getRepositoryFilter(query string, args []interface{}) (string, []interface{}) {
-	if f.RepositoryID != uuid.Nil {
-		query += "AND repository_id = ? "
-		args = append(args, f.RepositoryID)
-	}
-
-	return query, args
-}
-
-func (f *Filter) getInitialDateFilter(query string, args []interface{}) (string, []interface{}) {
+func (f *Filter) GetDateFilter() (query string, args []interface{}) {
 	if !f.StartTime.IsZero() {
-		query += "AND created_at >= ? "
-		args = append(args, f.StartTime)
+		query += "AND created_at >= @startTime "
 	}
 
-	return query, args
+	if !f.EndTime.IsZero() {
+		query += "AND created_at <= @endTime "
+	}
+
+	return query, f.getDateFilterArgs()
 }
 
-func (f *Filter) getFinalDateFilter(query string, args []interface{}) (string, []interface{}) {
-	if !f.EndTime.IsZero() {
-		query += "AND created_at <= ? "
-		args = append(args, f.EndTime)
+func (f *Filter) getDateFilterArgs() []interface{} {
+	return []interface{}{
+		sql.Named("startTime", f.StartTime),
+		sql.Named("endTime", f.EndTime),
+		sql.Named("repositoryID", f.RepositoryID),
+		sql.Named("workspaceID", f.WorkspaceID),
 	}
-
-	return query, args
 }
 
 func (f *Filter) Validate() error {

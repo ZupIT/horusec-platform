@@ -27,8 +27,13 @@ type Mock struct {
 	mock.Mock
 }
 
-func (m *Mock) GetAllDashboardCharts(_ *dashboard.Filter) (*dashboard.Response, error) {
-	args := m.MethodCalled("GetAllDashboardCharts")
+func (m *Mock) GetAllDashboardChartsWorkspace(_ *dashboard.Filter) (*dashboard.Response, error) {
+	args := m.MethodCalled("GetAllDashboardChartsWorkspace")
+	return args.Get(0).(*dashboard.Response), utilsMock.ReturnNilOrError(args, 1)
+}
+
+func (m *Mock) GetAllDashboardChartsRepository(_ *dashboard.Filter) (*dashboard.Response, error) {
+	args := m.MethodCalled("GetAllDashboardChartsRepository")
 	return args.Get(0).(*dashboard.Response), utilsMock.ReturnNilOrError(args, 1)
 }
 
