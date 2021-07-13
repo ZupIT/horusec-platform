@@ -57,7 +57,12 @@ func (r *RepoRepository) queryGetDashboardVulnBySeverity() string {
 			SELECT *
 			FROM %[1]s
 			WHERE repository_id = @repositoryID
-			AND vulnerability_id = (SELECT vulnerability_id FROM %[1]s ORDER BY created_at DESC LIMIT 1)
+			AND vulnerability_id = (
+										SELECT vulnerability_id 
+										FROM %[1]s 
+										WHERE repository_id = @repositoryID 
+										ORDER BY created_at DESC LIMIT 1
+									)
 	`
 }
 
