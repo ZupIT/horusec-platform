@@ -25,6 +25,7 @@ import (
 	"github.com/google/uuid"
 
 	analysisEntities "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
+	"github.com/ZupIT/horusec-devkit/pkg/entities/vulnerability"
 	"github.com/ZupIT/horusec-devkit/pkg/services/database"
 	databaseConfig "github.com/ZupIT/horusec-devkit/pkg/services/database/config"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/env"
@@ -32,6 +33,7 @@ import (
 
 	"github.com/ZupIT/horusec-platform/analytic/cmd/migration/v2/enums"
 	dashboardController "github.com/ZupIT/horusec-platform/analytic/internal/controllers/dashboard"
+	"github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard"
 	dashboardEnums "github.com/ZupIT/horusec-platform/analytic/internal/enums/dashboard"
 	dashboardRepository "github.com/ZupIT/horusec-platform/analytic/internal/repositories/dashboard"
 	dashboardUseCases "github.com/ZupIT/horusec-platform/analytic/internal/usecases/dashboard"
@@ -53,6 +55,7 @@ func NewAnalyticMigrationV2() *AnalyticMigration {
 
 	analyticMigration.dashboardController = dashboardController.NewDashboardController(
 		dashboardRepository.NewRepoDashboard(analyticMigration.dbConnectionAnalytic),
+		dashboardRepository.NewWorkspaceDashboard(analyticMigration.dbConnectionAnalytic),
 		analyticMigration.dbConnectionAnalytic, dashboardUseCases.NewUseCaseDashboard())
 
 	return analyticMigration

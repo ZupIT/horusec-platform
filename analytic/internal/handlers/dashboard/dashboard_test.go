@@ -53,7 +53,7 @@ func TestGetAllChartsByWorkspace(t *testing.T) {
 
 	t.Run("should return 200 when success get all charts", func(t *testing.T) {
 		controllerMock := &controller.Mock{}
-		controllerMock.On("GetAllDashboardCharts").Return(&dashboard.Response{}, nil)
+		controllerMock.On("GetAllDashboardChartsWorkspace").Return(&dashboard.Response{}, nil)
 
 		handler := NewDashboardHandler(controllerMock)
 
@@ -74,7 +74,7 @@ func TestGetAllChartsByWorkspace(t *testing.T) {
 
 	t.Run("should return 500 when failed to get charts", func(t *testing.T) {
 		controllerMock := &controller.Mock{}
-		controllerMock.On("GetAllDashboardCharts").Return(&dashboard.Response{}, errors.New("test"))
+		controllerMock.On("GetAllDashboardChartsWorkspace").Return(&dashboard.Response{}, errors.New("test"))
 
 		handler := NewDashboardHandler(controllerMock)
 
@@ -118,7 +118,7 @@ func TestGetAllChartsByRepository(t *testing.T) {
 
 	t.Run("should return 200 when success get all charts", func(t *testing.T) {
 		controllerMock := &controller.Mock{}
-		controllerMock.On("GetAllDashboardCharts").Return(&dashboard.Response{}, nil)
+		controllerMock.On("GetAllDashboardChartsRepository").Return(&dashboard.Response{}, nil)
 
 		handler := NewDashboardHandler(controllerMock)
 
@@ -140,7 +140,7 @@ func TestGetAllChartsByRepository(t *testing.T) {
 
 	t.Run("should return 500 when failed to get charts", func(t *testing.T) {
 		controllerMock := &controller.Mock{}
-		controllerMock.On("GetAllDashboardCharts").Return(&dashboard.Response{}, errors.New("test"))
+		controllerMock.On("GetAllDashboardChartsRepository").Return(&dashboard.Response{}, errors.New("test"))
 
 		handler := NewDashboardHandler(controllerMock)
 

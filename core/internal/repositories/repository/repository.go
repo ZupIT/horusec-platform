@@ -158,9 +158,8 @@ func (r *Repository) queryListRepositoriesAuthTypeLdap() string {
 					       repo.authz_admin, repo.authz_member, repo.authz_supervisor, repo.created_at, repo.updated_at
 					FROM repositories AS repo
 					WHERE repo.workspace_id = @workspaceID AND @permissions && repo.authz_supervisor
+					AND NOT @permissions && repo.authz_admin
 				) AS supervisor
-				WHERE supervisor.repository_id NOT IN (SELECT repo.workspace_id FROM repositories AS repo 
-					  WHERE repo.workspace_id = @workspaceID AND @permissions && repo.authz_admin) 
 
 				UNION ALL
 
@@ -169,17 +168,9 @@ func (r *Repository) queryListRepositoriesAuthTypeLdap() string {
 						   repo.authz_admin, repo.authz_member, repo.authz_supervisor, repo.created_at, repo.updated_at
 					FROM repositories AS repo
 					WHERE repo.workspace_id = @workspaceID AND @permissions && repo.authz_member	
+					AND NOT @permissions && repo.authz_admin 
+					AND NOT @permissions && repo.authz_supervisor
 				) AS member
-					WHERE member.repository_id 
-					NOT IN (
-						SELECT repo.workspace_id FROM repositories AS repo 
-						WHERE repo.workspace_id = @workspaceID AND @permissions && repo.authz_admin
-					) 
-					AND member.repository_id 
-					NOT IN (
-						SELECT repo.workspace_id FROM repositories AS repo 
-						WHERE repo.workspace_id = @workspaceID AND @permissions && repo.authz_supervisor
-					)
 			)
 	`
 }
