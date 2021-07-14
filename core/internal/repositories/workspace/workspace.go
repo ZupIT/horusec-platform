@@ -20,6 +20,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/lib/pq"
 
+	accountEnums "github.com/ZupIT/horusec-devkit/pkg/enums/account"
 	"github.com/ZupIT/horusec-devkit/pkg/services/database"
 
 	roleEntities "github.com/ZupIT/horusec-platform/core/internal/entities/role"
@@ -35,6 +36,7 @@ type IRepository interface {
 	GetAccountWorkspace(accountID, workspaceID uuid.UUID) (*workspaceEntities.AccountWorkspace, error)
 	ListAllWorkspaceUsers(workspaceID uuid.UUID) (*[]roleEntities.Response, error)
 	ListWorkspacesApplicationAdmin() (*[]workspaceEntities.Response, error)
+	IsWorkspaceAdmin(accountID, workspaceID uuid.UUID) bool
 }
 
 type Repository struct {
@@ -140,4 +142,13 @@ func (r *Repository) queryListWorkspacesApplicationAdmin() string {
 			SELECT ws.workspace_id, ws.name, ws.description, 'applicationAdmin' AS role, ws.created_at, ws.updated_at
 			FROM workspaces as ws
 	`
+}
+
+func (r *Repository) IsWorkspaceAdmin(accountID, workspaceID uuid.UUID) bool {
+	accountWorkspace := &workspaceEntities.AccountWorkspace{}
+
+	response := r.databaseRead.Find(accountWorkspace, r.useCases.FilterAccountWorkspaceByID(accountID, workspaceID),
+		workspaceEnums.DatabaseAccountWorkspaceTable)
+
+	return response.GetError() == nil && accountWorkspace.Role == accountEnums.Admin
 }

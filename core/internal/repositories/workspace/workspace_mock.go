@@ -57,3 +57,8 @@ func (m *Mock) ListWorkspacesApplicationAdmin() (*[]workspaceEntities.Response, 
 	args := m.MethodCalled("ListWorkspacesApplicationAdmin")
 	return args.Get(0).(*[]workspaceEntities.Response), mockUtils.ReturnNilOrError(args, 1)
 }
+
+func (m *Mock) IsWorkspaceAdmin(_, _ uuid.UUID) bool {
+	args := m.MethodCalled("IsWorkspaceAdmin")
+	return args.Get(0).(bool)
+}
