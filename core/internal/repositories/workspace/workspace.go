@@ -75,10 +75,13 @@ func (r *Repository) ListWorkspacesAuthTypeHorusec(accountID uuid.UUID) (*[]work
 
 func (r *Repository) queryListWorkspacesAuthTypeHorusec() string {
 	return `
-			SELECT ws.workspace_id, ws.name, ws.description, aw.role, ws.created_at, ws.updated_at
+			SELECT ws.workspace_id, ws.name, ws.description, aw.role, ws.created_at, ws.updated_at, COUNT(repo)
+				AS repositories_count
 			FROM workspaces AS ws
 			INNER JOIN account_workspace AS aw ON aw.workspace_id = ws.workspace_id
+			INNER JOIN repositories AS repo ON repo.workspace_id = ws.workspace_id
 			WHERE aw.account_id = ?
+			GROUP BY ws.workspace_id, aw.role
 	`
 }
 
