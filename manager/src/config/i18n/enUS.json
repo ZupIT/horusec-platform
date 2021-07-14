@@ -509,7 +509,6 @@
     "MANAGE_WORKSPACES": "Manage Workspaces",
     "MAX_MENU": "Maximize the menu",
     "MIN_MENU": "Minimize the menu",
-    "TOKENS": "Tokens",
     "USERS": "Users"
   },
   "API_ERRORS": {
@@ -525,8 +524,9 @@
     "USERNAME_IN_USE": "Username already in use.",
     "SAME_PASSWORD": "The new password cannot be the same as the current one.",
     "EMPTY_REPOSITORY": "Please select a repository to view the data.",
-    "LDAP_GROUP": "The user group must be valid for this user.",
-    "KEYCLOAK_LOGIN": "There was something unexpected when performing authentication, try again."
+    "LDAP_GROUP": "You do not belong to the informed administrator group, or this is not valid.",
+    "KEYCLOAK_LOGIN": "There was something unexpected when performing authentication, try again.",
+    "WORKSPACE_USER_NOT_BELONG": "This user does not currently belong to this workspace."
   },
   "NOT_FOUND_SCREEN": {
     "ERROR": "Error 404.",

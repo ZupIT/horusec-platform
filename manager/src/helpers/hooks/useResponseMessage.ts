@@ -26,8 +26,10 @@ const useResponseMessage = () => {
   const dispatchMessage = React.useCallback(
     (response: APIResponse): void => {
       const messages: ObjectLiteral = {
-        '{ACCOUNT} invalid username or password': t('API_ERRORS.ERROR_LOGIN'),
-        '{ACCOUNT} account email not confirmed': t(
+        '{HORUSEC AUTH} invalid username or password': t(
+          'API_ERRORS.ERROR_LOGIN'
+        ),
+        '{HORUSEC AUTH} account email not confirmed': t(
           'API_ERRORS.UNCONFIRMED_EMAIL'
         ),
         '{ACCOUNT} invalid reset password data': t(
@@ -44,13 +46,16 @@ const useResponseMessage = () => {
           'API_ERRORS.PRIVILEGES'
         ),
         '{ACCOUNT} username already in use': t('API_ERRORS.USERNAME_IN_USE'),
-        '{ACCOUNT} repository name already in use': t(
+        '{CORE_REPOSITORY} repository name already in use': t(
           'API_ERRORS.REPO_NAME_IN_USE'
+        ),
+        '{CORE_REPOSITORY} this user does not belong to this workspace': t(
+          'API_ERRORS.WORKSPACE_USER_NOT_BELONG'
         ),
         '{HORUSEC} webhook already exists to repository selected': t(
           'WEBHOOK_SCREEN.ALREADY_TO_REPOSITORY'
         ),
-        '{ACCOUNT} admin ldap group should be a valid one for this user': t(
+        'admin ldap group should be a valid one for this user': t(
           'API_ERRORS.LDAP_GROUP'
         ),
         '{ACCOUNT} password is not valid': t('API_ERRORS.SAME_PASSWORD'),
