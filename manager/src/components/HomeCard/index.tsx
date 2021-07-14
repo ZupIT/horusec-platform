@@ -20,6 +20,8 @@ import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router-dom';
 import Styled from './styled';
 import usePermissions from 'helpers/hooks/usePermissions';
+import { getCurrentConfig } from 'helpers/localStorage/horusecConfig';
+import { authTypes } from 'helpers/enums/authTypes';
 
 interface Props {
   workspace?: Workspace;
@@ -40,6 +42,8 @@ const HomeCard: React.FC<Props> = ({
   const { ACTIONS, isAuthorizedAction } = usePermissions();
 
   const isWorkspace = !!workspace;
+  const { authType } = getCurrentConfig();
+
   const context = workspace || repository;
 
   return (
@@ -54,10 +58,10 @@ const HomeCard: React.FC<Props> = ({
       ) : null}
 
       <Styled.Info>
-        {isWorkspace ? (
+        {isWorkspace && authType !== authTypes.LDAP ? (
           <Styled.InfoItem>
             <Styled.InfoIcon size="14px" name="columns" />
-            {0} {t('HOME_SCREEN.REPOSITORIES')}
+            {workspace?.repositoriesCount || 0} {t('HOME_SCREEN.REPOSITORIES')}
           </Styled.InfoItem>
         ) : null}
 
