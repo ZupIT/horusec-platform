@@ -79,7 +79,7 @@ func (r *Repository) queryListWorkspacesAuthTypeHorusec() string {
 				AS repositories_count
 			FROM workspaces AS ws
 			INNER JOIN account_workspace AS aw ON aw.workspace_id = ws.workspace_id
-			INNER JOIN repositories AS repo ON repo.workspace_id = ws.workspace_id
+			LEFT JOIN repositories AS repo ON repo.workspace_id = ws.workspace_id
 			WHERE aw.account_id = ?
 			GROUP BY ws.workspace_id, aw.role
 	`
