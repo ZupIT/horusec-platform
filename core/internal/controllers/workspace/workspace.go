@@ -98,6 +98,10 @@ func (c *Controller) Get(data *workspaceEntities.Data) (*workspaceEntities.Respo
 		return c.getWorkspaceWhenAppAdmin(data)
 	}
 
+	if c.appConfig.GetAuthenticationType() == auth.Ldap {
+		return c.repository.GetWorkspaceLdap(data.WorkspaceID, data.Permissions)
+	}
+
 	return c.getWorkspace(data)
 }
 
