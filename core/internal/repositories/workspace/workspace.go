@@ -37,6 +37,7 @@ type IRepository interface {
 	ListAllWorkspaceUsers(workspaceID uuid.UUID) (*[]roleEntities.Response, error)
 	ListWorkspacesApplicationAdmin() (*[]workspaceEntities.Response, error)
 	IsWorkspaceAdmin(accountID, workspaceID uuid.UUID) bool
+	GetWorkspaceLdap(workspaceID uuid.UUID, permissions []string) (*workspaceEntities.Response, error)
 }
 
 type Repository struct {
@@ -154,4 +155,26 @@ func (r *Repository) IsWorkspaceAdmin(accountID, workspaceID uuid.UUID) bool {
 		workspaceEnums.DatabaseAccountWorkspaceTable)
 
 	return response.GetError() == nil && accountWorkspace.Role == accountEnums.Admin
+}
+
+func (r *Repository) GetWorkspaceLdap(
+	workspaceID uuid.UUID, permissions []string) (*workspaceEntities.Response, error) {
+	workspace := &workspaceEntities.Response{}
+
+	return workspace, r.databaseRead.Raw(r.queryGetWorkspaceLdap(), workspace,
+		sql.Named("permissions", pq.StringArray(permissions)),
+		sql.Named("workspaceID", workspaceID)).GetErrorExceptNotFound()
+}
+
+func (r *Repository) queryGetWorkspaceLdap() string {
+	return `
+		SELECT ws.workspace_id, ws.name, ws.description, ws.created_at, ws.updated_at,
+			   ws.authz_admin, ws.authz_member,
+		CASE
+			WHEN @permissions @> ws.authz_admin THEN 'admin'
+			ELSE 'member'
+		END AS role
+		FROM workspaces as ws
+		WHERE workspace_id = @workspaceID
+	`
 }
