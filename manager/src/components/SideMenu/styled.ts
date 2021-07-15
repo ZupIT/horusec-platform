@@ -78,6 +78,30 @@ const Logo = styled.img`
   height: 22px;
 `;
 
+const NameWrapper = styled.div`
+  display: block;
+  width: 100%;
+  padding: 0 5px;
+`;
+
+const NameTitle = styled.span`
+  display: block;
+  color: ${({ theme }) => theme.colors.text.secundary};
+  font-size: ${({ theme }) => theme.metrics.fontSize.small};
+  text-align: center;
+  margin-bottom: 5px;
+`;
+
+const NameText = styled.span`
+  display: block;
+  color: ${({ theme }) => theme.colors.text.primary};
+  font-size: ${({ theme }) => theme.metrics.fontSize.large};
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
+
 const RoutesList = styled.ul`
   margin-top: 20px;
 `;
@@ -178,4 +202,7 @@ export default {
   SubRoutes,
   SubRouteItem,
   SizeHandler,
+  NameWrapper,
+  NameText,
+  NameTitle,
 };

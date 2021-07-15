@@ -28,7 +28,7 @@ const HelpIcon = styled(Icon)`
 const Link = styled.a`
   background: none;
   border: none;
-  cursor: pointer;
+  cursor: help;
   display: flex;
   align-items: center;
 

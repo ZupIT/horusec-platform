@@ -17,6 +17,7 @@
 import React, { Suspense, lazy } from 'react';
 import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom';
 import { isLogged } from 'helpers/localStorage/tokens';
+import { PrivateRoute } from 'components';
 
 const MANAGER_PATH = (window as any).REACT_APP_HORUSEC_MANAGER_PATH || '/';
 
@@ -28,12 +29,25 @@ const Routes = () => (
           {isLogged() ? <Redirect to="/home" /> : <Redirect to="/auth" />}
         </Route>
 
-        <Route
-          path="/auth"
-          component={lazy(() => import('pages/External/Auth'))}
+        <Route path="/auth" component={lazy(() => import('pages/Auth'))} />
+
+        <PrivateRoute
+          exact={false}
+          path="/home"
+          component={lazy(() => import('pages/Home'))}
         />
 
-        <Route path="/home" component={lazy(() => import('pages/Internal'))} />
+        <PrivateRoute
+          exact={false}
+          path="/overview"
+          component={lazy(() => import('pages/Overview'))}
+        />
+
+        <PrivateRoute
+          path="/settings"
+          exact={true}
+          component={lazy(() => import('pages/Settings'))}
+        />
 
         <Route component={lazy(() => import('pages/NotFound'))} />
       </Switch>

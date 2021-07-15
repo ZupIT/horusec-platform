@@ -20,117 +20,79 @@ import HorusecLogo from 'assets/logos/horusec.svg';
 import HorusecLogoMin from 'assets/logos/horusec_minimized.svg';
 import { useTranslation } from 'react-i18next';
 import { Icon } from 'components';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useRouteMatch, Link } from 'react-router-dom';
 import { InternalRoute } from 'helpers/interfaces/InternalRoute';
-import useWorkspace from 'helpers/hooks/useWorkspace';
-import SelectMenu from 'components/SelectMenu';
-import { Workspace } from 'helpers/interfaces/Workspace';
 import ReactTooltip from 'react-tooltip';
+import useParamsRoute from 'helpers/hooks/useParamsRoute';
+import usePermissions from 'helpers/hooks/usePermissions';
 
 const SideMenu: React.FC = () => {
   const history = useHistory();
-  const { currentWorkspace, allWorkspaces, handleSetCurrentWorkspace } =
-    useWorkspace();
+
   const { t } = useTranslation();
   const [isMinimized, setIsMinimized] = useState<boolean>(false);
+
+  const { workspace, workspaceId, repositoryId, repository } = useParamsRoute();
+  const { isAuthorizedRoute } = usePermissions();
+
+  const isRepositoryOverview = !!repositoryId;
 
   const routes: InternalRoute[] = [
     {
       name: t('SIDE_MENU.DASHBOARD'),
       icon: 'pie',
-      type: 'route',
-      path: '/home/dashboard',
-      roles: ['admin', 'member'],
-      subRoutes: [
-        {
-          name: t('SIDE_MENU.WORKSPACE'),
-          icon: 'grid',
-          path: '/home/dashboard/workspace',
-          type: 'subRoute',
-          roles: ['admin'],
-        },
-        {
-          name: t('SIDE_MENU.REPOSITORIES'),
-          icon: 'columns',
-          path: '/home/dashboard/repositories',
-          type: 'subRoute',
-          roles: ['admin', 'member'],
-        },
-      ],
+      path: 'dashboard',
     },
     {
       name: t('SIDE_MENU.VULNERABILITIES'),
       icon: 'shield',
-      path: '/home/vulnerabilities',
-      type: 'route',
-      roles: ['admin', 'member'],
+      path: 'vulnerabilities',
     },
     {
-      name: t('SIDE_MENU.REPOSITORIES'),
-      icon: 'columns',
-      path: '/home/repositories',
-      type: 'route',
-      roles: ['admin', 'member'],
+      name: t('SIDE_MENU.TOKENS'),
+      icon: 'lock',
+      path: 'tokens',
+    },
+    {
+      name: t('SIDE_MENU.USERS'),
+      icon: 'users',
+      path: 'users',
     },
     {
       name: t('SIDE_MENU.WEBHOOK'),
       icon: 'webhook',
-      path: '/home/webhooks',
-      type: 'route',
-      roles: ['admin'],
+      path: 'webhooks',
     },
   ];
 
   const handleSelectedRoute = (route: InternalRoute) => {
-    history.push(route.path);
+    const fullPath = `/overview/workspace/${workspaceId}/${
+      isRepositoryOverview
+        ? `repository/${repositoryId}/${route.path}`
+        : route.path
+    }`;
+
+    history.push(fullPath);
   };
 
   const renderRoute = (route: InternalRoute, index: number) => {
-    if (route.roles.includes(currentWorkspace?.role)) {
-      if (!route?.rule || (route?.rule && route?.rule())) {
-        return (
-          <div key={index}>
-            <Styled.RouteItem
-              tabIndex={0}
-              isActive={window.location.pathname.includes(route?.path)}
-              onClick={() => handleSelectedRoute(route)}
-              onKeyPress={() => handleSelectedRoute(route)}
-            >
-              <Icon name={route.icon} size="15" />
+    if (isAuthorizedRoute(route.path)) {
+      return (
+        <Styled.RouteItem
+          key={index}
+          tabIndex={0}
+          isActive={window.location.pathname.includes(route?.path)}
+          onClick={() => handleSelectedRoute(route)}
+          onKeyPress={() => handleSelectedRoute(route)}
+        >
+          <Icon name={route.icon} size="15" />
 
-              <Styled.RouteName isMinimized={isMinimized}>
-                {route.name}
-              </Styled.RouteName>
-            </Styled.RouteItem>
-
-            <Styled.SubRoutes>
-              {route?.subRoutes?.map((subRoute, index) => {
-                if (subRoute?.roles?.includes(currentWorkspace?.role)) {
-                  return (
-                    <Styled.SubRouteItem
-                      isActive={window.location.pathname.includes(
-                        subRoute.path
-                      )}
-                      key={index}
-                      onClick={() => handleSelectedRoute(subRoute)}
-                      isMinimized={isMinimized}
-                    >
-                      {subRoute?.name}
-                    </Styled.SubRouteItem>
-                  );
-                }
-                return null;
-              })}
-            </Styled.SubRoutes>
-          </div>
-        );
-      }
+          <Styled.RouteName isMinimized={isMinimized}>
+            {route.name}
+          </Styled.RouteName>
+        </Styled.RouteItem>
+      );
     }
-  };
-
-  const handleSelectedWorkspace = (workspace: Workspace) => {
-    handleSetCurrentWorkspace(workspace);
-    history.replace('/home/dashboard');
   };
 
   return (
@@ -152,27 +114,23 @@ const SideMenu: React.FC = () => {
         </Styled.SizeHandler>
 
         <Styled.WrapperLogoRoutes>
-          <Styled.Logo
-            src={isMinimized ? HorusecLogoMin : HorusecLogo}
-            alt="Horusec Logo"
-          />
+          <Link to="/home" about="Horusec Logo">
+            <Styled.Logo
+              src={isMinimized ? HorusecLogoMin : HorusecLogo}
+              alt="Horusec Logo"
+            />
+          </Link>
 
-          {!isMinimized && allWorkspaces && allWorkspaces.length > 0 ? (
-            <Styled.SelectWrapper>
-              <SelectMenu
-                title={'WORKSPACE'}
-                value={currentWorkspace?.name}
-                options={allWorkspaces.map((el) => ({
-                  title: el.name,
-                  action: () => handleSelectedWorkspace(el),
-                }))}
-                fixItem={{
-                  title: t('SIDE_MENU.MANAGE_WORKSPACES'),
-                  action: () => history.push('/home/workspaces'),
-                }}
-              />
-            </Styled.SelectWrapper>
-          ) : null}
+          {isMinimized ? null : (
+            <Styled.NameWrapper>
+              <Styled.NameTitle>
+                {isRepositoryOverview ? 'Repository:' : 'Workspace:'}
+              </Styled.NameTitle>
+              <Styled.NameText>
+                {repository?.name || workspace?.name}
+              </Styled.NameText>
+            </Styled.NameWrapper>
+          )}
 
           <Styled.Nav aria-label={t('SIDE_MENU.ARIA_TITLE')}>
             <Styled.RoutesList>

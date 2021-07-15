@@ -1,4 +1,29 @@
 {
+  "HOME_SCREEN": {
+    "WELCOME": "Bem vindo ao Horusec Manager!",
+    "MY_WORKSPACES": "Meus Workspaces",
+    "SEARCH_WORKSPACE": "Buscar workspace pelo nome",
+    "ADD_WORKSPACE": "Add Workspace",
+    "CHOOSE_WORKSPACE": "Em qual workspace você deseja trabalhar?",
+    "REPOSITORIES": "Repositórios",
+    "ADMIN": "Administrador",
+    "MEMBER": "Membro",
+    "SUPERVISOR": "Supervisor",
+    "SELECT": "Selecionar",
+    "HANDLER": "Gerenciar",
+    "OVERVIEW": "Visão Geral",
+    "BACK_WORKSPACES": "Voltar para workspaces",
+    "SEARCH_REPO": "Pesquisar repositórios por nome",
+    "ADD_REPO": "Add Repositório",
+    "CHOOSE_REPO": "Selecione um repositório para escolher uma ação",
+    "LOADING_WORKSPACES": "Buscando seus workspaces, por favor, aguarde...",
+    "LOADING_REPOSITORIES": "Buscando os repositórios do workspace atual...",
+    "EMPTY_WORKSPACES": "Adicione seu primeiro workspace para começarmos...",
+    "EMPTY_REPOSITORIES": "Adicione um novo repositório, para prosseguirmos...",
+    "DELETE_REPO": "Você também pode deletar este repositório.",
+    "DELETE_WORKSPACE": "Você também pode deletar este workspace.",
+    "DELETE": "Deletar"
+  },
   "LOGIN_SCREEN": {
     "EMAIL": "Email",
     "PASSWORD": "Senha",
@@ -106,21 +131,10 @@
     "WORKSPACE_NAME": "Nome do Workspace",
     "INVALID_WORKSPACE_NAME": "Nome do workspace inválido.",
     "EDIT_WORKSPACE_NAME": "Edite o nome do workspace",
-    "TOKENS": "Tokens",
-    "TOKEN": "Token",
-    "ADD_TOKEN": "Adicionar Token",
-    "EXPIRES": "Expira em:",
-    "NO_TOKENS": "Não há tokens registrados para este workspace.",
     "DELETE": "Deletar",
-    "CONFIRM_DELETE_TOKEN": "Deseja realmente deletar este token? Essa ação não poderá ser desfeita.",
     "CREATE_SUCCESS": "Workspace criado com sucesso!",
     "UPDATE_SUCCESS": "Workspace editado com sucesso!",
-    "REMOVE_SUCCESS_TOKEN": "Token deletado com sucesso!",
-    "TOKEN_SUCCESS": "Parabéns! Token criado com sucesso!",
-    "TOKEN_INFO": "Com o token, você acessa análises para o repositório selecionado. Salve em um lugar seguro e não compartilhe.",
     "CONFIRM": "Ok, entendi.",
-    "CREATE_NEW_TOKEN": "Adicionar novo token ",
-    "CREATE_TOKEN_BELOW": "Adicione um novo token abaixo:",
     "INVALID_DESCRIPTION": "Descrição inválida",
     "REFERENCE_GROUP": "Identifique seu grupo de usuário, para os seguintes grupos do Horusec:",
     "ADMIN": "Administrador:",
@@ -199,6 +213,61 @@
     "PREVIOUS_PAGE": "Anterior",
     "CODE": "Código"
   },
+  "TOKENS_SCREEN": {
+    "ADD_TOKEN": "Adicionar Token",
+    "TOKEN": "Token",
+    "ACTION": "Ação",
+    "DELETE": "Deletar",
+    "SAVE": "Salvar",
+    "DESCRIPTION": "Descrição",
+    "NO_TOKENS": "Você ainda não registrou nenhum token.",
+    "EXPIRES": "Expira em:",
+    "CONFIRM_DELETE_TOKEN": "Deseja realmente deletar este token? Essa ação não poderá ser desfeita.",
+    "CREATE_NEW_TOKEN": "Adicionar novo token",
+    "INVALID_DESCRIPTION": "Descrição inválida",
+    "INVALID_EXPIRES_AT": "Espera-se que demore pelo menos um dia ou mais",
+    "REMOVE_SUCCESS_TOKEN": "Token deletado com sucesso!",
+    "CREATE_TOKEN_BELOW": "Adicione um novo token abaixo:",
+    "TOKEN_INFO": "Com o token, você acessa análises deste contexto. Salve em um lugar seguro e não compartilhe.",
+    "TOKEN_SUCCESS": "Parabéns! Token criado com sucesso!",
+    "CONFIRM": "Ok, entendi.",
+    "IS_EXPIRABLE": "É expirável",
+    "EXPIRES_AT": "Expira em",
+    "YES": "Sim"
+  },
+  "USERS_SCREEN": {
+    "SEARCH": "Pesquisar usuário por e-mail",
+    "INVITE": "Convidar",
+    "TABLE": {
+      "USER": "Usuário",
+      "EMAIL": "Email",
+      "PERMISSION": "Permissão",
+      "ACTION": "Ação",
+      "EMPTY":"Nenhum usuário encontrado.",
+      "EDIT": "Editar",
+      "REMOVE": "Remover"
+    },
+    "ROLE": {
+      "ADMIN": "Administrador",
+      "SUPERVISOR": "Supervisor",
+      "MEMBER": "Membro"
+    },
+    "HANDLE_MODAL": {
+      "TITLE": "Convidar usuário",
+      "TITLE_EDIT": "Editar usuário",
+      "INVALID_EMAIL": "Email inválido",
+      "SUCCESS": "Alterações realizadas com sucesso!",
+      "SAVE": "Salvar",
+      "INVITE_SUBTITLE": "Convide um novo usuário abaixo:",
+      "EDIT_SUBTITLE": "Edite o usuário abaixo:",
+      "EMAIL": "Email",
+      "ROLE": "Permissão",
+      "USER": "Usuário"
+    },
+    "CONFIRM_REMOVE":"Deseja realmente remover este usuário?",
+    "REMOVE_SUCCESS":"Usuário removido com sucesso!",
+    "YES": "Sim"
+  },
   "REPOSITORIES_SCREEN": {
     "SEARCH_REPO": "Pesquisar repositórios por nome",
     "CREATE_REPO": "Criar repositório",
@@ -210,7 +279,6 @@
     "DELETE": "Deletar",
     "EDIT": "Editar",
     "INVITE": "Convidar",
-    "TOKENS": "Tokens",
     "CONFIRM_DELETE_REPO": "Deseja realmente deletar o repositório? Essa ação não poderá ser desfeita.",
     "YES": "Sim",
     "NAME_REPO": "Nome do repositório",
@@ -226,31 +294,17 @@
     "EMAIL": "Email",
     "PERMISSION": "Permissão",
     "NO_USERS_TO_INVITE": "Não há usuários correspondentes para serem convidados.",
-    "ADD_TOKEN": "Adicionar Token",
-    "TOKEN": "Token",
-    "NO_TOKENS": "Não há tokens registrados para este repositório.",
-    "EXPIRES": "Expira em:",
-    "CONFIRM_DELETE_TOKEN": "Deseja realmente deletar este token? Essa ação não poderá ser desfeita.",
-    "CREATE_NEW_TOKEN": "Adicionar novo token",
-    "INVALID_DESCRIPTION": "Descrição inválida",
-    "INVALID_EXPIRES_AT": "Espera-se que demore pelo menos um dia ou mais",
     "SUCCESS_ADD_USER": "Sucesso ao adicionar usuário ao repositório!",
     "SUCCESS_CREATE_REPO": "Repositório criado com sucesso!",
     "SUCCESS_EDIT_REPO": "Repositório editado com sucesso!",
     "SUCCESS_REMOVE_USER": "Usuário removido do repositório com sucesso!",
-    "REMOVE_SUCCESS_TOKEN": "Token deletado com sucesso!",
     "REMOVE_SUCCESS_REPO": "Repositório removido com sucesso!",
-    "CREATE_TOKEN_BELOW": "Adicione um novo token abaixo:",
-    "TOKEN_INFO": "Com o token, você acessa análises para o repositório selecionado. Salve em um lugar seguro e não compartilhe.",
-    "TOKEN_SUCCESS": "Parabéns! Token criado com sucesso!",
     "CONFIRM": "Ok, entendi.",
     "REFERENCE_GROUP": "Identifique seu grupo de usuário, para os seguintes grupos do Horusec:",
     "ADMIN": "Administrador:",
     "SUPERVISOR": "Supervisor:",
     "MEMBER": "Membro",
-    "GROUP_NAME": "Nome do grupo",
-    "IS_EXPIRABLE": "É expirável",
-    "EXPIRES_AT": "Expira em"
+    "GROUP_NAME": "Nome do grupo"
   },
   "GENERAL": {
     "BACK": "Voltar",
@@ -299,10 +353,10 @@
     },
     "COMPANY": {
       "RULES": {
-        "HANDLER": "Tem acesso editar/remover a empresa.",
-        "HANDLER_USER": "Tem acesso para visualizar/convidar/editar/remover usuários dentro da empresa.",
+        "HANDLER": "Tem acesso editar/remover o workspace.",
+        "HANDLER_USER": "Tem acesso para visualizar/convidar/editar/remover usuários dentro do workspace.",
         "CREATE": "Tem acesso para criar novos repositórios.",
-        "ANALYTIC_COMPANY": "Tem acesso para visualizar os gráficos da empresa.",
+        "ANALYTIC_COMPANY": "Tem acesso para visualizar os gráficos do workspace.",
         "ANALYTIC_REPO": "Tem acesso para visualizar os gráficos do repositório que ele tem acesso."
       }
     }
@@ -317,7 +371,7 @@
     "STATUS_TITLE": "Status",
     "SUCCESS_UPDATE": "Status da vulnerabilidade alterada com sucesso!",
     "TABLE": {
-      "EMPTY": "Não há vulnerabilidades para este repositório",
+      "EMPTY": "Não foram encontradas vulnerabilidades.",
       "HASH": "Hash",
       "DETAILS": "Detalhes",
       "SEVERITY": "Severidade",
@@ -353,7 +407,7 @@
     "SEARCH": "Pesquisar por URL",
     "DESCRIPTION_LABEL": "Informe a descrição para o webhook:",
     "DESCRIPTION": "Descrição",
-    "RESPOSITORY_LABEL": "Selecione o repositório que ira acionar o webhook:",
+    "REPOSITORY_LABEL": "Selecione o repositório que ira acionar o webhook:",
     "REPOSITORY": "Repositório",
     "URL_LABEL": "Insira o endpoint (url) para ser acionado pelo Horusec:",
     "URL": "Endpoint (URL)",
@@ -416,6 +470,8 @@
   "SIDE_MENU": {
     "ARIA_TITLE": "Navegação entre páginas",
     "DASHBOARD": "Dashboard",
+    "INVITE": "Usuários",
+    "WORKSPACES_USERS": "Usuários",
     "VULNERABILITIES": "Vulnerabilidades",
     "REPOSITORIES": "Repositórios",
     "WORKSPACE": "Workspace",
@@ -427,7 +483,9 @@
     "LOGOUT": "Sair",
     "MANAGE_WORKSPACES": "Gerenciar Workspaces",
     "MAX_MENU": "Maximizar o menu",
-    "MIN_MENU": "Minimizar o menu"
+    "MIN_MENU": "Minimizar o menu",
+    "TOKENS": "Tokens",
+    "USERS": "Usuários"
   },
   "API_ERRORS": {
     "GENERIC_ERROR": "Algo inesperado aconteceu, tente novamente.",
@@ -442,8 +500,9 @@
     "USERNAME_IN_USE": "Nome de usuário já em uso",
     "SAME_PASSWORD": "A nova senha não pode ser igual a atual.",
     "EMPTY_REPOSITORY": "Por favor, selecione um repositório para visualizar os dados.",
-    "LDAP_GROUP": "O grupo de usuário deve ser válido para este usuário.",
-    "KEYCLOAK_LOGIN": "Houve algo inesperado ao realizar a autenticação, tente novamente."
+    "LDAP_GROUP": "Você não pertence ao grupo de administrador informado, ou este não é valido",
+    "KEYCLOAK_LOGIN": "Houve algo inesperado ao realizar a autenticação, tente novamente.",
+    "WORKSPACE_USER_NOT_BELONG": "Este usuário não pertence a este Workspace."
   },
   "NOT_FOUND_SCREEN": {
     "ERROR": "Erro 404.",
@@ -458,15 +517,17 @@
   },
   "HEADER": {
     "TITLE": {
-      "DASHBOARDREPOSITORY": "Dashboard / Repositório",
-      "DASHBOARDWORKSPACE": "Dashboard / Workspace",
+      "HOME": "Home",
       "VULNERABILITIES": "Vulnerabilidades",
       "REPOSITORIES": "Repositórios",
       "WEBHOOKS": "Webhooks",
       "CONFIGURATION": "Configuração",
       "HELPER": "Ajuda",
       "WORKSPACES": "Workspaces",
-      "DEFAULT": "Horusec"
+      "DEFAULT": "Horusec",
+      "DASHBOARD": "Dashboard",
+      "TOKENS": "Tokens",
+      "USERS": "Usuários"
     },
     "ARIA": {
       "LOGOUT": "Realizar logout",
@@ -477,7 +538,9 @@
       "WEBHOOKS": "Tela de manipulação de webhooks.",
       "CONFIGURATION": "Tela de configurações",
       "WORKSPACES": "Tela para gerenciar os workspaces.",
-      "ADD_WORKSPACE": "Tela para redirecionamento para criação de um workspace."
+      "ADD_WORKSPACE": "Tela para redirecionamento para criação de um workspace.",
+      "HOME": "Tela Home, nessa tela você poderá selecionar um workspace ou repositório para visualizar os dados referentes.",
+      "GOHOME": "Ir para tela inicial - Home"
     }
   }
 }

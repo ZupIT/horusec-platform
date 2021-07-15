@@ -17,8 +17,6 @@
 import React from 'react';
 import { SideMenu, Footer, Header } from 'components';
 import Styled from './styled';
-import { WorkspaceProvider } from 'contexts/Workspace';
-import { RepositoryProvider } from 'contexts/Repository';
 import { keycloakInstance } from 'config/keycloak';
 import { clearTokens } from 'helpers/localStorage/tokens';
 import { clearCurrentUser } from 'helpers/localStorage/currentUser';
@@ -31,22 +29,20 @@ function InternalLayout({ children }: { children: JSX.Element }) {
   };
 
   return (
-    <WorkspaceProvider>
-      <RepositoryProvider>
-        <>
-          <Styled.Wrapper>
-            <SideMenu />
+    <>
+      <Styled.Wrapper>
+        <SideMenu />
 
-            <Styled.Content>
-              <Header />
-              {children}
-            </Styled.Content>
-          </Styled.Wrapper>
+        <Styled.Content>
+          <Styled.HeaderWrapper>
+            <Header />
+          </Styled.HeaderWrapper>
+          {children}
+        </Styled.Content>
+      </Styled.Wrapper>
 
-          <Footer />
-        </>
-      </RepositoryProvider>
-    </WorkspaceProvider>
+      <Footer />
+    </>
   );
 }
 

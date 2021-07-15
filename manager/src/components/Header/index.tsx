@@ -31,60 +31,61 @@ const Header: React.FC = () => {
     const path = window.location.pathname;
 
     const titles: ObjectLiteral = {
-      '/home/dashboard/repositories': {
-        text: t('HEADER.TITLE.DASHBOARDREPOSITORY'),
-        aria: t('DASHBOARD_SCREEN.ARIA_TITLE_REPOSITORY'),
+      '/home': {
+        text: t('HEADER.TITLE.HOME'),
+        aria: t('HEADER.ARIA.HOME'),
+        icon: 'home',
+        helper:
+          'https://docs.horusec.io/docs/web/services/manager/introduction',
+      },
+      '/dashboard': {
+        text: t('HEADER.TITLE.DASHBOARD'),
+        aria: t('DASHBOARD_SCREEN.ARIA_TITLE_DASHBOARD'),
         icon: 'pie',
         helper:
           'https://docs.horusec.io/docs/web/services/manager/introduction/#analytics-dashboard',
       },
-      '/home/dashboard/workspace': {
-        text: t('HEADER.TITLE.DASHBOARDWORKSPACE'),
-        aria: t('DASHBOARD_SCREEN.ARIA_TITLE_WORKSPACE'),
-        icon: 'pie',
-        helper:
-          'https://docs.horusec.io/docs/web/services/manager/introduction/#analytics-dashboard',
-      },
-      '/home/vulnerabilities': {
+      '/vulnerabilities': {
         text: t('HEADER.TITLE.VULNERABILITIES'),
         aria: t('HEADER.ARIA.VULNERABILITIES'),
         icon: 'shield',
         helper:
           'https://docs.horusec.io/docs/web/services/manager/vulnerabilities-management/',
       },
-      '/home/repositories': {
-        text: t('HEADER.TITLE.REPOSITORIES'),
-        aria: t('HEADER.ARIA.REPOSITORIES'),
-        icon: 'columns',
+      '/tokens': {
+        text: t('HEADER.TITLE.TOKENS'),
+        aria: t('HEADER.ARIA.TOKENS'),
+        icon: 'lock',
         helper:
-          'https://docs.horusec.io/docs/web/services/manager/repository-management/',
+          'https://docs.horusec.io/docs/web/services/manager/workspace-management/#workspace-token/',
       },
-      '/home/webhooks': {
+      '/invite': {
+        text: t('HEADER.TITLE.INVITE'),
+        aria: t('HEADER.ARIA.INVITE'),
+        icon: 'shield',
+        helper:
+          'https://docs.horusec.io/docs/web/services/manager/repository-management/#repositorys-users',
+      },
+      '/users': {
+        text: t('HEADER.TITLE.USERS'),
+        aria: t('HEADER.ARIA.USERS'),
+        icon: 'users',
+        helper:
+          'https://docs.horusec.io/docs/web/services/manager/workspace-management/#workspace-users',
+      },
+      '/webhooks': {
         text: t('HEADER.TITLE.WEBHOOKS'),
         aria: t('HEADER.ARIA.WEBHOOKS'),
         icon: 'webhook',
         helper:
           'https://docs.horusec.io/docs/web/services/manager/webhooks-management/',
       },
-      '/home/workspaces': {
-        text: t('HEADER.TITLE.WORKSPACES'),
-        aria: t('HEADER.ARIA.WORKSPACES'),
-        icon: 'grid',
-        helper:
-          'https://docs.horusec.io/docs/web/services/manager/workspace-management',
-      },
-      '/home/settings': {
+      '/settings': {
         text: t('HEADER.TITLE.CONFIGURATION'),
         aria: t('HEADER.ARIA.CONFIGURATION'),
         icon: 'config',
         helper:
           'https://docs.horusec.io/docs/web/services/manager/account-management/',
-      },
-      '/home/add-workspace': {
-        text: '',
-        aria: t('HEADER.ARIA.ADD_WORKSPACE'),
-        icon: 'zup',
-        helper: 'https://docs.horusec.io/docs/web/overview/',
       },
       default: {
         text: '',
@@ -100,7 +101,6 @@ const Header: React.FC = () => {
       const [key, value] = item;
       if (path.includes(key)) title = value;
     });
-
     return title;
   };
 
@@ -119,19 +119,30 @@ const Header: React.FC = () => {
         </Styled.Title>
 
         <Styled.List tabIndex={0}>
-          <Styled.Item>
-            <Helper url={getTitleByURL().helper} />
+          <Styled.Item
+            tabIndex={0}
+            aria-label={t('HEADER.ARIA.CONFIG')}
+            active={history.location.pathname.includes('/home')}
+            onClick={() => history.replace('/home')}
+          >
+            <Styled.Icon name="home" size="18px" />
+
+            <Styled.ConfigText>{t('HEADER.TITLE.HOME')}</Styled.ConfigText>
           </Styled.Item>
 
           <Styled.Item
             tabIndex={0}
-            aria-label={t('HEADER.ARIA.CONFIG')}
-            active={history.location.pathname.includes('/home/settings')}
-            onClick={() => history.replace('/home/settings')}
+            aria-label={t('HEADER.ARIA.GOHOME')}
+            active={history.location.pathname.includes('/settings')}
+            onClick={() => history.replace('/settings')}
           >
-            <Styled.ConfigIcon name="config" size="15" />
+            <Styled.Icon name="config" size="15px" />
 
             <Styled.ConfigText>{t('SIDE_MENU.CONFIG')}</Styled.ConfigText>
+          </Styled.Item>
+
+          <Styled.Item>
+            <Helper url={getTitleByURL().helper} />
           </Styled.Item>
 
           <Styled.Item>

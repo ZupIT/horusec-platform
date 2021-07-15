@@ -57,66 +57,86 @@ const deleteWorkspace = (workspaceID: string) => {
   return http.delete(`${SERVICE_CORE}/core/workspaces/${workspaceID}`);
 };
 
-const getUsersInWorkspace = (workspaceID: string) => {
-  return http.get(`${SERVICE_CORE}/core/workspaces/${workspaceID}/roles`);
+const getUsers = (workspaceID: string, repositoryID: string) => {
+  const path = repositoryID ? `/repositories/${repositoryID}/roles` : '/roles';
+  return http.get(`${SERVICE_CORE}/core/workspaces/${workspaceID}${path}`);
 };
 
-const createUserInWorkspace = (
+const inviteUser = (
   workspaceID: string,
   email: string,
-  role: string
+  role: string,
+  repositoryId?: string,
+  accountID?: string,
+  username?: string
 ) => {
-  return http.post(`${SERVICE_CORE}/core/workspaces/${workspaceID}/roles`, {
-    email,
-    role,
-  });
+  const path = repositoryId ? `/repositories/${repositoryId}/` : '/';
+
+  return http.post(
+    `${SERVICE_CORE}/core/workspaces/${workspaceID}${path}roles`,
+    {
+      email,
+      role,
+      accountID,
+      username,
+    }
+  );
 };
 
-const editUserInWorkspace = (
+const updateUserRole = (
   workspaceID: string,
+  repositoryId: string,
   accountId: string,
   role: string
 ) => {
+  const path = repositoryId ? `/repositories/${repositoryId}/` : '/';
+
   return http.patch(
-    `${SERVICE_CORE}/core/workspaces/${workspaceID}/roles/${accountId}`,
+    `${SERVICE_CORE}/core/workspaces/${workspaceID}${path}roles/${accountId}`,
     {
       role,
     }
   );
 };
 
-const removeUserInWorkspace = (workspaceID: string, accountId: string) => {
+const removeUser = (
+  workspaceID: string,
+  repositoryId: string,
+  accountId: string
+) => {
+  const path = repositoryId ? `/repositories/${repositoryId}/` : '/';
+
   return http.delete(
-    `${SERVICE_CORE}/core/workspaces/${workspaceID}/roles/${accountId}`
+    `${SERVICE_CORE}/core/workspaces/${workspaceID}${path}roles/${accountId}`
   );
 };
 
-const getAllTokensOfWorkspace = (workspaceID: string) => {
-  return http.get(`${SERVICE_CORE}/core/workspaces/${workspaceID}/tokens`);
+const getAllTokens = (workspaceID: string, repositoryId?: string) => {
+  const path = repositoryId ? `/repositories/${repositoryId}` : '';
+  return http.get(
+    `${SERVICE_CORE}/core/workspaces/${workspaceID}${path}/tokens`
+  );
 };
 
-const createTokenInWorkspace = (
-  workspaceID: string,
-  data: {
-    description: string;
-    isExpirable?: boolean;
-    expiredAt?: string;
-  }
+const removeToken = (
+  data: { workspaceID: string; repositoryID?: string },
+  tokenId: string
 ) => {
-  return http.post(`${SERVICE_CORE}/core/workspaces/${workspaceID}/tokens`, {
-    ...data,
-  });
-};
-
-const removeTokenOfWorkspace = (workspaceID: string, tokenId: string) => {
+  const path = data.repositoryID ? `/repositories/${data.repositoryID}` : '';
   return http.delete(
-    `${SERVICE_CORE}/core/workspaces/${workspaceID}/tokens/${tokenId}`
+    `${SERVICE_CORE}/core/workspaces/${data.workspaceID}${path}/tokens/${tokenId}`
   );
 };
 
 const getAllRepositories = (workspaceID: string) => {
   return http.get(
     `${SERVICE_CORE}/core/workspaces/${workspaceID}/repositories`
+  );
+};
+
+const getOneRepository = (workspaceID: string, repositoryID: string) => {
+  return http.get(
+    `${SERVICE_CORE}/core/workspaces/${workspaceID}/repositories/${repositoryID}`
   );
 };
 
@@ -155,86 +175,21 @@ const deleteRepository = (workspaceID: string, repositoryId: string) => {
   );
 };
 
-const getAllTokensOfRepository = (
-  workspaceID: string,
-  repositoryId: string
-) => {
-  return http.get(
-    `${SERVICE_CORE}/core/workspaces/${workspaceID}/repositories/${repositoryId}/tokens`
-  );
-};
-
-const createTokenInRepository = (
-  workspaceID: string,
-  repositoryId: string,
+const createToken = (
+  params: { workspaceID: string; repositoryID?: string },
   data: {
     description: string;
     isExpirable?: boolean;
     expiredAt?: string;
   }
 ) => {
+  const path = params.repositoryID
+    ? `/repositories/${params.repositoryID}`
+    : '';
   return http.post(
-    `${SERVICE_CORE}/core/workspaces/${workspaceID}/repositories/${repositoryId}/tokens`,
+    `${SERVICE_CORE}/core/workspaces/${params.workspaceID}${path}/tokens`,
     {
       ...data,
-    }
-  );
-};
-
-const removeTokenOfRepository = (
-  workspaceID: string,
-  repositoryId: string,
-  tokenId: string
-) => {
-  return http.delete(
-    `${SERVICE_CORE}/core/workspaces/${workspaceID}/repositories/${repositoryId}/tokens/${tokenId}`
-  );
-};
-
-const getUsersInRepository = (workspaceID: string, repositoryId: string) => {
-  return http.get(
-    `${SERVICE_CORE}/core/workspaces/${workspaceID}/repositories/${repositoryId}/roles`
-  );
-};
-
-const includeUserInRepository = (
-  workspaceID: string,
-  repositoryId: string,
-  email: string,
-  role: string,
-  accountID: string,
-  username: string
-) => {
-  return http.post(
-    `${SERVICE_CORE}/core/workspaces/${workspaceID}/repositories/${repositoryId}/roles`,
-    {
-      email,
-      role,
-      accountID,
-      username,
-    }
-  );
-};
-const removeUserOfRepository = (
-  workspaceID: string,
-  repositoryId: string,
-  accountId: string
-) => {
-  return http.delete(
-    `${SERVICE_CORE}/core/workspaces/${workspaceID}/repositories/${repositoryId}/roles/${accountId}`
-  );
-};
-
-const updateUserRoleInRepository = (
-  workspaceID: string,
-  repositoryId: string,
-  accountId: string,
-  role: string
-) => {
-  return http.patch(
-    `${SERVICE_CORE}/core/workspaces/${workspaceID}/repositories/${repositoryId}/roles/${accountId}`,
-    {
-      role,
     }
   );
 };
@@ -245,22 +200,16 @@ export default {
   updateWorkspace,
   deleteWorkspace,
   getOneWorkspace,
-  getUsersInWorkspace,
-  createUserInWorkspace,
-  editUserInWorkspace,
-  removeUserInWorkspace,
-  createTokenInWorkspace,
-  removeTokenOfWorkspace,
-  getAllTokensOfWorkspace,
   getAllRepositories,
+  getOneRepository,
   createRepository,
   updateRepository,
   deleteRepository,
-  getAllTokensOfRepository,
-  createTokenInRepository,
-  removeTokenOfRepository,
-  getUsersInRepository,
-  includeUserInRepository,
-  removeUserOfRepository,
-  updateUserRoleInRepository,
+  getUsers,
+  removeUser,
+  inviteUser,
+  updateUserRole,
+  getAllTokens,
+  createToken,
+  removeToken,
 };

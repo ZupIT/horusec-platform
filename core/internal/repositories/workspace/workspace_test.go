@@ -1,3 +1,17 @@
+// Copyright 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package workspace
 
 import (
@@ -6,6 +20,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 
+	accountEnums "github.com/ZupIT/horusec-devkit/pkg/enums/account"
 	"github.com/ZupIT/horusec-devkit/pkg/services/database"
 	"github.com/ZupIT/horusec-devkit/pkg/services/database/response"
 
@@ -107,5 +122,19 @@ func TestListWorkspacesApplicationAdmin(t *testing.T) {
 		result, err := repository.ListWorkspacesApplicationAdmin()
 		assert.NoError(t, err)
 		assert.NotNil(t, result)
+	})
+}
+
+func TestIsWorkspaceAdmin(t *testing.T) {
+	t.Run("should return false for admin", func(t *testing.T) {
+		accountWorkspace := &workspaceEntities.AccountWorkspace{Role: accountEnums.Admin}
+
+		databaseMock := &database.Mock{}
+		databaseMock.On("Find").Return(response.NewResponse(1, nil, accountWorkspace))
+
+		repository := NewWorkspaceRepository(&database.Connection{Read: databaseMock, Write: databaseMock},
+			workspaceUseCases.NewWorkspaceUseCases())
+
+		assert.False(t, repository.IsWorkspaceAdmin(uuid.New(), uuid.New()))
 	})
 }

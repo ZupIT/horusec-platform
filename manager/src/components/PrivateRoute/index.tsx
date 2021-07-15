@@ -16,7 +16,8 @@
 
 import React from 'react';
 import { Route, Redirect } from 'react-router-dom';
-import { isLogged } from 'helpers/localStorage/tokens';
+
+import usePermissions from 'helpers/hooks/usePermissions';
 
 interface PrivateRouteProps {
   component: React.FC;
@@ -25,7 +26,9 @@ interface PrivateRouteProps {
 }
 
 const PrivateRoute: React.FC<PrivateRouteProps> = (props) => {
-  return isLogged() ? (
+  const { isAuthorizedRoute } = usePermissions();
+
+  return isAuthorizedRoute() ? (
     <Route path={props.path} exact={props.exact} component={props.component} />
   ) : (
     <Redirect to="/auth" />

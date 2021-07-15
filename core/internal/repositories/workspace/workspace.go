@@ -1,3 +1,17 @@
+// Copyright 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package workspace
 
 import (
@@ -6,6 +20,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/lib/pq"
 
+	accountEnums "github.com/ZupIT/horusec-devkit/pkg/enums/account"
 	"github.com/ZupIT/horusec-devkit/pkg/services/database"
 
 	roleEntities "github.com/ZupIT/horusec-platform/core/internal/entities/role"
@@ -21,6 +36,7 @@ type IRepository interface {
 	GetAccountWorkspace(accountID, workspaceID uuid.UUID) (*workspaceEntities.AccountWorkspace, error)
 	ListAllWorkspaceUsers(workspaceID uuid.UUID) (*[]roleEntities.Response, error)
 	ListWorkspacesApplicationAdmin() (*[]workspaceEntities.Response, error)
+	IsWorkspaceAdmin(accountID, workspaceID uuid.UUID) bool
 }
 
 type Repository struct {
@@ -61,10 +77,13 @@ func (r *Repository) ListWorkspacesAuthTypeHorusec(accountID uuid.UUID) (*[]work
 
 func (r *Repository) queryListWorkspacesAuthTypeHorusec() string {
 	return `
-			SELECT ws.workspace_id, ws.name, ws.description, aw.role, ws.created_at, ws.updated_at
+			SELECT ws.workspace_id, ws.name, ws.description, aw.role, ws.created_at, ws.updated_at, COUNT(repo)
+				AS repositories_count
 			FROM workspaces AS ws
 			INNER JOIN account_workspace AS aw ON aw.workspace_id = ws.workspace_id
+			LEFT JOIN repositories AS repo ON repo.workspace_id = ws.workspace_id
 			WHERE aw.account_id = ?
+			GROUP BY ws.workspace_id, aw.role
 	`
 }
 
@@ -126,4 +145,13 @@ func (r *Repository) queryListWorkspacesApplicationAdmin() string {
 			SELECT ws.workspace_id, ws.name, ws.description, 'applicationAdmin' AS role, ws.created_at, ws.updated_at
 			FROM workspaces as ws
 	`
+}
+
+func (r *Repository) IsWorkspaceAdmin(accountID, workspaceID uuid.UUID) bool {
+	accountWorkspace := &workspaceEntities.AccountWorkspace{}
+
+	response := r.databaseRead.Find(accountWorkspace, r.useCases.FilterAccountWorkspaceByID(accountID, workspaceID),
+		workspaceEnums.DatabaseAccountWorkspaceTable)
+
+	return response.GetError() == nil && accountWorkspace.Role == accountEnums.Admin
 }
