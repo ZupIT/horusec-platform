@@ -20,6 +20,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 
+	accountEnums "github.com/ZupIT/horusec-devkit/pkg/enums/account"
 	"github.com/ZupIT/horusec-devkit/pkg/services/database"
 	"github.com/ZupIT/horusec-devkit/pkg/services/database/response"
 
@@ -121,5 +122,19 @@ func TestListWorkspacesApplicationAdmin(t *testing.T) {
 		result, err := repository.ListWorkspacesApplicationAdmin()
 		assert.NoError(t, err)
 		assert.NotNil(t, result)
+	})
+}
+
+func TestIsWorkspaceAdmin(t *testing.T) {
+	t.Run("should return false for admin", func(t *testing.T) {
+		accountWorkspace := &workspaceEntities.AccountWorkspace{Role: accountEnums.Admin}
+
+		databaseMock := &database.Mock{}
+		databaseMock.On("Find").Return(response.NewResponse(1, nil, accountWorkspace))
+
+		repository := NewWorkspaceRepository(&database.Connection{Read: databaseMock, Write: databaseMock},
+			workspaceUseCases.NewWorkspaceUseCases())
+
+		assert.False(t, repository.IsWorkspaceAdmin(uuid.New(), uuid.New()))
 	})
 }

@@ -31,6 +31,7 @@ import (
 	repositoryEnums "github.com/ZupIT/horusec-platform/core/internal/enums/repository"
 	tokenEnums "github.com/ZupIT/horusec-platform/core/internal/enums/token"
 	repositoryRepository "github.com/ZupIT/horusec-platform/core/internal/repositories/repository"
+	workspaceRepository "github.com/ZupIT/horusec-platform/core/internal/repositories/workspace"
 	repositoriesUseCases "github.com/ZupIT/horusec-platform/core/internal/usecases/repository"
 	tokenUseCases "github.com/ZupIT/horusec-platform/core/internal/usecases/token"
 )
@@ -51,26 +52,28 @@ type IController interface {
 }
 
 type Controller struct {
-	broker        brokerService.IBroker
-	databaseRead  database.IDatabaseRead
-	databaseWrite database.IDatabaseWrite
-	appConfig     app.IConfig
-	useCases      repositoriesUseCases.IUseCases
-	repository    repositoryRepository.IRepository
-	tokenUseCases tokenUseCases.IUseCases
+	broker              brokerService.IBroker
+	databaseRead        database.IDatabaseRead
+	databaseWrite       database.IDatabaseWrite
+	appConfig           app.IConfig
+	useCases            repositoriesUseCases.IUseCases
+	repository          repositoryRepository.IRepository
+	workspaceRepository workspaceRepository.IRepository
+	tokenUseCases       tokenUseCases.IUseCases
 }
 
 func NewRepositoryController(broker brokerService.IBroker, databaseConnection *database.Connection,
 	appConfig app.IConfig, useCases repositoriesUseCases.IUseCases, repository repositoryRepository.IRepository,
-	useCasesToken tokenUseCases.IUseCases) IController {
+	useCasesToken tokenUseCases.IUseCases, repositoryWorkspace workspaceRepository.IRepository) IController {
 	return &Controller{
-		databaseRead:  databaseConnection.Read,
-		databaseWrite: databaseConnection.Write,
-		appConfig:     appConfig,
-		useCases:      useCases,
-		repository:    repository,
-		broker:        broker,
-		tokenUseCases: useCasesToken,
+		databaseRead:        databaseConnection.Read,
+		databaseWrite:       databaseConnection.Write,
+		appConfig:           appConfig,
+		useCases:            useCases,
+		repository:          repository,
+		broker:              broker,
+		tokenUseCases:       useCasesToken,
+		workspaceRepository: repositoryWorkspace,
 	}
 }
 
@@ -108,19 +111,24 @@ func (c *Controller) createTransaction(accountID uuid.UUID,
 
 func (c *Controller) Get(data *repositoryEntities.Data) (*repositoryEntities.Response, error) {
 	if data.IsApplicationAdmin {
-		return c.getRepositoryWhenAppAdmin(data)
+		return c.getRepositoryWhenAdmin(data, accountEnums.ApplicationAdmin)
+	}
+
+	if c.workspaceRepository.IsWorkspaceAdmin(data.AccountID, data.WorkspaceID) {
+		return c.getRepositoryWhenAdmin(data, accountEnums.Admin)
 	}
 
 	return c.getRepository(data)
 }
 
-func (c *Controller) getRepositoryWhenAppAdmin(data *repositoryEntities.Data) (*repositoryEntities.Response, error) {
+func (c *Controller) getRepositoryWhenAdmin(
+	data *repositoryEntities.Data, role accountEnums.Role) (*repositoryEntities.Response, error) {
 	repository, err := c.repository.GetRepository(data.RepositoryID)
 	if err != nil {
 		return nil, err
 	}
 
-	return repository.ToRepositoryResponse(accountEnums.ApplicationAdmin), nil
+	return repository.ToRepositoryResponse(role), nil
 }
 
 func (c *Controller) getRepository(data *repositoryEntities.Data) (*repositoryEntities.Response, error) {

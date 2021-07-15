@@ -37,6 +37,7 @@ import (
 	workspaceEntities "github.com/ZupIT/horusec-platform/core/internal/entities/workspace"
 	repositoryEnums "github.com/ZupIT/horusec-platform/core/internal/enums/repository"
 	repositoryRepository "github.com/ZupIT/horusec-platform/core/internal/repositories/repository"
+	workspaceRepository "github.com/ZupIT/horusec-platform/core/internal/repositories/workspace"
 	repositoryUseCases "github.com/ZupIT/horusec-platform/core/internal/usecases/repository"
 	tokenUseCases "github.com/ZupIT/horusec-platform/core/internal/usecases/token"
 )
@@ -62,6 +63,7 @@ func TestCreate(t *testing.T) {
 	}
 
 	t.Run("should success create a new repository", func(t *testing.T) {
+		workspaceRepositoryMock := &workspaceRepository.Mock{}
 		appConfig := &app.Mock{}
 
 		repositoryMock := &repositoryRepository.Mock{}
@@ -76,7 +78,8 @@ func TestCreate(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
-			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{})
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{},
+			workspaceRepositoryMock)
 
 		result, err := controller.Create(data)
 		assert.NoError(t, err)
@@ -84,6 +87,8 @@ func TestCreate(t *testing.T) {
 	})
 
 	t.Run("should success create a new repository with the workspace groups", func(t *testing.T) {
+		workspaceRepositoryMock := &workspaceRepository.Mock{}
+
 		data := &repositoryEntities.Data{
 			AccountID:   uuid.New(),
 			Name:        "test",
@@ -107,7 +112,8 @@ func TestCreate(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
-			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{})
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{},
+			workspaceRepositoryMock)
 
 		data.AuthzAdmin = []string{}
 		data.AuthzMember = []string{}
@@ -122,6 +128,8 @@ func TestCreate(t *testing.T) {
 	})
 
 	t.Run("should return error when creating account repository", func(t *testing.T) {
+		workspaceRepositoryMock := &workspaceRepository.Mock{}
+
 		repositoryMock := &repositoryRepository.Mock{}
 		repositoryMock.On("GetRepositoryByName").Return(
 			&repositoryEntities.Repository{}, databaseEnums.ErrorNotFoundRecords)
@@ -138,13 +146,16 @@ func TestCreate(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
-			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{})
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{},
+			workspaceRepositoryMock)
 
 		_, err := controller.Create(data)
 		assert.Error(t, err)
 	})
 
 	t.Run("should return error when creating repository", func(t *testing.T) {
+		workspaceRepositoryMock := &workspaceRepository.Mock{}
+
 		repositoryMock := &repositoryRepository.Mock{}
 		repositoryMock.On("GetRepositoryByName").Return(
 			&repositoryEntities.Repository{}, databaseEnums.ErrorNotFoundRecords)
@@ -160,13 +171,15 @@ func TestCreate(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
-			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{})
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{},
+			workspaceRepositoryMock)
 
 		_, err := controller.Create(data)
 		assert.Error(t, err)
 	})
 
 	t.Run("should return error when failed to get workspace", func(t *testing.T) {
+		workspaceRepositoryMock := &workspaceRepository.Mock{}
 		databaseMock := &database.Mock{}
 		appConfig := &app.Mock{}
 
@@ -177,13 +190,16 @@ func TestCreate(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
-			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{})
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{},
+			workspaceRepositoryMock)
 
 		_, err := controller.Create(data)
 		assert.Error(t, err)
 	})
 
 	t.Run("should return error name already in use", func(t *testing.T) {
+		workspaceRepositoryMock := &workspaceRepository.Mock{}
+
 		repositoryMock := &repositoryRepository.Mock{}
 		repositoryMock.On("GetRepositoryByName").Return(
 			&repositoryEntities.Repository{}, nil)
@@ -193,7 +209,8 @@ func TestCreate(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
-			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{})
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{},
+			workspaceRepositoryMock)
 
 		_, err := controller.Create(data)
 		assert.Error(t, err)
@@ -207,6 +224,9 @@ func TestGet(t *testing.T) {
 	}
 
 	t.Run("should success get a repository", func(t *testing.T) {
+		workspaceRepositoryMock := &workspaceRepository.Mock{}
+		workspaceRepositoryMock.On("IsWorkspaceAdmin").Return(false)
+
 		repositoryMock := &repositoryRepository.Mock{}
 		repositoryMock.On("GetRepository").Return(&repositoryEntities.Repository{}, nil)
 		repositoryMock.On("GetAccountRepository").Return(&repositoryEntities.AccountRepository{}, nil)
@@ -216,7 +236,8 @@ func TestGet(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
-			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{})
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{},
+			workspaceRepositoryMock)
 
 		result, err := controller.Get(data)
 		assert.NoError(t, err)
@@ -224,6 +245,9 @@ func TestGet(t *testing.T) {
 	})
 
 	t.Run("should return error when failed to get repository", func(t *testing.T) {
+		workspaceRepositoryMock := &workspaceRepository.Mock{}
+		workspaceRepositoryMock.On("IsWorkspaceAdmin").Return(false)
+
 		repositoryMock := &repositoryRepository.Mock{}
 		repositoryMock.On("GetRepository").Return(&repositoryEntities.Repository{}, errors.New("test"))
 		repositoryMock.On("GetAccountRepository").Return(&repositoryEntities.AccountRepository{}, nil)
@@ -233,13 +257,17 @@ func TestGet(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
-			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{})
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{},
+			workspaceRepositoryMock)
 
 		_, err := controller.Get(data)
 		assert.Error(t, err)
 	})
 
 	t.Run("should return error when failed to get account repository", func(t *testing.T) {
+		workspaceRepositoryMock := &workspaceRepository.Mock{}
+		workspaceRepositoryMock.On("IsWorkspaceAdmin").Return(false)
+
 		repositoryMock := &repositoryRepository.Mock{}
 		repositoryMock.On("GetAccountRepository").Return(
 			&repositoryEntities.AccountRepository{}, errors.New("test"))
@@ -249,13 +277,15 @@ func TestGet(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
-			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{})
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{},
+			workspaceRepositoryMock)
 
 		_, err := controller.Get(data)
 		assert.Error(t, err)
 	})
 
 	t.Run("should success get a repository when application admin", func(t *testing.T) {
+		workspaceRepositoryMock := &workspaceRepository.Mock{}
 		databaseMock := &database.Mock{}
 		appConfig := &app.Mock{}
 
@@ -264,7 +294,8 @@ func TestGet(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
-			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{})
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{},
+			workspaceRepositoryMock)
 
 		data.IsApplicationAdmin = true
 		result, err := controller.Get(data)
@@ -273,6 +304,7 @@ func TestGet(t *testing.T) {
 	})
 
 	t.Run("should return error when failed to get repository and user is application admin", func(t *testing.T) {
+		workspaceRepositoryMock := &workspaceRepository.Mock{}
 		databaseMock := &database.Mock{}
 		appConfig := &app.Mock{}
 
@@ -281,9 +313,52 @@ func TestGet(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
-			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{})
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{},
+			workspaceRepositoryMock)
 
 		data.IsApplicationAdmin = true
+		_, err := controller.Get(data)
+		assert.Error(t, err)
+		assert.Equal(t, errors.New("test"), err)
+	})
+
+	t.Run("should success get a repository when workspace admin", func(t *testing.T) {
+		databaseMock := &database.Mock{}
+		appConfig := &app.Mock{}
+
+		workspaceRepositoryMock := &workspaceRepository.Mock{}
+		workspaceRepositoryMock.On("IsWorkspaceAdmin").Return(true)
+
+		repositoryMock := &repositoryRepository.Mock{}
+		repositoryMock.On("GetRepository").Return(&repositoryEntities.Repository{}, nil)
+
+		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
+		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{},
+			workspaceRepositoryMock)
+
+		data.IsApplicationAdmin = false
+		result, err := controller.Get(data)
+		assert.NoError(t, err)
+		assert.NotNil(t, result)
+	})
+
+	t.Run("should return error when failed to get repository and user is workspace admin", func(t *testing.T) {
+		databaseMock := &database.Mock{}
+		appConfig := &app.Mock{}
+
+		workspaceRepositoryMock := &workspaceRepository.Mock{}
+		workspaceRepositoryMock.On("IsWorkspaceAdmin").Return(true)
+
+		repositoryMock := &repositoryRepository.Mock{}
+		repositoryMock.On("GetRepository").Return(&repositoryEntities.Repository{}, errors.New("test"))
+
+		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
+		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{},
+			workspaceRepositoryMock)
+
+		data.IsApplicationAdmin = false
 		_, err := controller.Get(data)
 		assert.Error(t, err)
 		assert.Equal(t, errors.New("test"), err)
@@ -302,6 +377,8 @@ func TestUpdate(t *testing.T) {
 	}
 
 	t.Run("should success update repository", func(t *testing.T) {
+		workspaceRepositoryMock := &workspaceRepository.Mock{}
+
 		repositoryMock := &repositoryRepository.Mock{}
 		repositoryMock.On("GetRepository").Return(&repositoryEntities.Repository{Name: "test2"}, nil)
 		repositoryMock.On("GetRepositoryByName").Return(
@@ -314,7 +391,8 @@ func TestUpdate(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
-			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{})
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{},
+			workspaceRepositoryMock)
 
 		result, err := controller.Update(data)
 		assert.NoError(t, err)
@@ -322,6 +400,8 @@ func TestUpdate(t *testing.T) {
 	})
 
 	t.Run("should return error name already in use", func(t *testing.T) {
+		workspaceRepositoryMock := &workspaceRepository.Mock{}
+
 		repositoryMock := &repositoryRepository.Mock{}
 		repositoryMock.On("GetRepository").Return(&repositoryEntities.Repository{}, nil)
 		repositoryMock.On("GetRepositoryByName").Return(
@@ -334,13 +414,16 @@ func TestUpdate(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
-			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{})
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{},
+			workspaceRepositoryMock)
 
 		_, err := controller.Update(data)
 		assert.Error(t, err)
 	})
 
 	t.Run("should return error while getting repository", func(t *testing.T) {
+		workspaceRepositoryMock := &workspaceRepository.Mock{}
+
 		repositoryMock := &repositoryRepository.Mock{}
 		repositoryMock.On("GetRepository").Return(&repositoryEntities.Repository{}, errors.New("test"))
 
@@ -351,7 +434,8 @@ func TestUpdate(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
-			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{})
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{},
+			workspaceRepositoryMock)
 
 		_, err := controller.Update(data)
 		assert.Error(t, err)
@@ -360,6 +444,7 @@ func TestUpdate(t *testing.T) {
 
 func TestDelete(t *testing.T) {
 	t.Run("should success delete repository", func(t *testing.T) {
+		workspaceRepositoryMock := &workspaceRepository.Mock{}
 		repositoryMock := &repositoryRepository.Mock{}
 		appConfig := &app.Mock{}
 
@@ -368,7 +453,8 @@ func TestDelete(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
-			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{})
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{},
+			workspaceRepositoryMock)
 
 		assert.NoError(t, controller.Delete(uuid.New()))
 	})
@@ -382,6 +468,7 @@ func TestList(t *testing.T) {
 	}
 
 	t.Run("should success list repositories when horusec auth type", func(t *testing.T) {
+		workspaceRepositoryMock := &workspaceRepository.Mock{}
 		databaseMock := &database.Mock{}
 
 		appConfig := &app.Mock{}
@@ -392,7 +479,8 @@ func TestList(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
-			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{})
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{},
+			workspaceRepositoryMock)
 
 		result, err := controller.List(data)
 		assert.NoError(t, err)
@@ -400,6 +488,7 @@ func TestList(t *testing.T) {
 	})
 
 	t.Run("should success list repositories when ldap auth type", func(t *testing.T) {
+		workspaceRepositoryMock := &workspaceRepository.Mock{}
 		databaseMock := &database.Mock{}
 
 		appConfig := &app.Mock{}
@@ -410,7 +499,8 @@ func TestList(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
-			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{})
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{},
+			workspaceRepositoryMock)
 
 		result, err := controller.List(data)
 		assert.NoError(t, err)
@@ -418,6 +508,7 @@ func TestList(t *testing.T) {
 	})
 
 	t.Run("should success list repositories when application admin", func(t *testing.T) {
+		workspaceRepositoryMock := &workspaceRepository.Mock{}
 		databaseMock := &database.Mock{}
 
 		appConfig := &app.Mock{}
@@ -429,7 +520,8 @@ func TestList(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
-			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{})
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{},
+			workspaceRepositoryMock)
 
 		data.IsApplicationAdmin = true
 		result, err := controller.List(data)
@@ -447,6 +539,8 @@ func TestUpdateRole(t *testing.T) {
 	}
 
 	t.Run("should success update user role", func(t *testing.T) {
+		workspaceRepositoryMock := &workspaceRepository.Mock{}
+
 		repositoryMock := &repositoryRepository.Mock{}
 		repositoryMock.On("IsNotMemberOfWorkspace").Return(false)
 		repositoryMock.On("GetAccountRepository").Return(&repositoryEntities.AccountRepository{}, nil)
@@ -458,7 +552,8 @@ func TestUpdateRole(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
-			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{})
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{},
+			workspaceRepositoryMock)
 
 		result, err := controller.UpdateRole(data)
 		assert.NoError(t, err)
@@ -466,6 +561,8 @@ func TestUpdateRole(t *testing.T) {
 	})
 
 	t.Run("should return error when failed to update", func(t *testing.T) {
+		workspaceRepositoryMock := &workspaceRepository.Mock{}
+
 		repositoryMock := &repositoryRepository.Mock{}
 		repositoryMock.On("IsNotMemberOfWorkspace").Return(false)
 		repositoryMock.On("GetAccountRepository").Return(&repositoryEntities.AccountRepository{}, nil)
@@ -478,13 +575,16 @@ func TestUpdateRole(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
-			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{})
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{},
+			workspaceRepositoryMock)
 
 		_, err := controller.UpdateRole(data)
 		assert.Error(t, err)
 	})
 
 	t.Run("should return error when failed to get account repository", func(t *testing.T) {
+		workspaceRepositoryMock := &workspaceRepository.Mock{}
+
 		repositoryMock := &repositoryRepository.Mock{}
 		repositoryMock.On("IsNotMemberOfWorkspace").Return(false)
 		repositoryMock.On("GetAccountRepository").Return(
@@ -495,7 +595,8 @@ func TestUpdateRole(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
-			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{})
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{},
+			workspaceRepositoryMock)
 
 		result, err := controller.UpdateRole(data)
 		assert.Error(t, err)
@@ -503,6 +604,8 @@ func TestUpdateRole(t *testing.T) {
 	})
 
 	t.Run("should return error when user does not belong to workspace", func(t *testing.T) {
+		workspaceRepositoryMock := &workspaceRepository.Mock{}
+
 		repositoryMock := &repositoryRepository.Mock{}
 		repositoryMock.On("IsNotMemberOfWorkspace").Return(true)
 
@@ -511,7 +614,8 @@ func TestUpdateRole(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
-			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{})
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{},
+			workspaceRepositoryMock)
 
 		result, err := controller.UpdateRole(data)
 		assert.Error(t, err)
@@ -529,6 +633,8 @@ func TestInviteUser(t *testing.T) {
 	}
 
 	t.Run("should success invite user with broker enabled", func(t *testing.T) {
+		workspaceRepositoryMock := &workspaceRepository.Mock{}
+
 		appConfig := &app.Mock{}
 		appConfig.On("IsEmailsDisabled").Return(false)
 
@@ -544,7 +650,8 @@ func TestInviteUser(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewRepositoryController(brokerMock, databaseConnection, appConfig,
-			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{})
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{},
+			workspaceRepositoryMock)
 
 		result, err := controller.InviteUser(data)
 		assert.NoError(t, err)
@@ -552,6 +659,8 @@ func TestInviteUser(t *testing.T) {
 	})
 
 	t.Run("should success invite user with broker disabled", func(t *testing.T) {
+		workspaceRepositoryMock := &workspaceRepository.Mock{}
+
 		appConfig := &app.Mock{}
 		appConfig.On("IsEmailsDisabled").Return(true)
 
@@ -564,7 +673,8 @@ func TestInviteUser(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
-			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{})
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{},
+			workspaceRepositoryMock)
 
 		result, err := controller.InviteUser(data)
 		assert.NoError(t, err)
@@ -572,6 +682,7 @@ func TestInviteUser(t *testing.T) {
 	})
 
 	t.Run("should return error when failed to create", func(t *testing.T) {
+		workspaceRepositoryMock := &workspaceRepository.Mock{}
 		appConfig := &app.Mock{}
 
 		repositoryMock := &repositoryRepository.Mock{}
@@ -584,7 +695,8 @@ func TestInviteUser(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
-			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{})
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{},
+			workspaceRepositoryMock)
 
 		result, err := controller.InviteUser(data)
 		assert.Error(t, err)
@@ -592,6 +704,7 @@ func TestInviteUser(t *testing.T) {
 	})
 
 	t.Run("should return error when failed to get repository", func(t *testing.T) {
+		workspaceRepositoryMock := &workspaceRepository.Mock{}
 		appConfig := &app.Mock{}
 		databaseMock := &database.Mock{}
 
@@ -601,7 +714,8 @@ func TestInviteUser(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
-			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{})
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{},
+			workspaceRepositoryMock)
 
 		result, err := controller.InviteUser(data)
 		assert.Error(t, err)
@@ -609,6 +723,7 @@ func TestInviteUser(t *testing.T) {
 	})
 
 	t.Run("should return error member not member of repository", func(t *testing.T) {
+		workspaceRepositoryMock := &workspaceRepository.Mock{}
 		appConfig := &app.Mock{}
 		databaseMock := &database.Mock{}
 
@@ -617,7 +732,8 @@ func TestInviteUser(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
-			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{})
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{},
+			workspaceRepositoryMock)
 
 		result, err := controller.InviteUser(data)
 		assert.Error(t, err)
@@ -628,6 +744,7 @@ func TestInviteUser(t *testing.T) {
 
 func TestGetUsers(t *testing.T) {
 	t.Run("should success get repository users", func(t *testing.T) {
+		workspaceRepositoryMock := &workspaceRepository.Mock{}
 		appConfig := &app.Mock{}
 		databaseMock := &database.Mock{}
 
@@ -636,7 +753,8 @@ func TestGetUsers(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
-			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{})
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{},
+			workspaceRepositoryMock)
 
 		result, err := controller.GetUsers(uuid.New())
 		assert.NoError(t, err)
@@ -653,6 +771,7 @@ func TestRemoveUser(t *testing.T) {
 	}
 
 	t.Run("should success remove user from repository", func(t *testing.T) {
+		workspaceRepositoryMock := &workspaceRepository.Mock{}
 		appConfig := &app.Mock{}
 		repositoryMock := &repositoryRepository.Mock{}
 
@@ -661,7 +780,8 @@ func TestRemoveUser(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
-			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{})
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{},
+			workspaceRepositoryMock)
 
 		assert.NoError(t, controller.RemoveUser(data))
 	})
@@ -671,6 +791,7 @@ func TestCreateToken(t *testing.T) {
 	data := &tokenEntities.Data{}
 
 	t.Run("should success create a new repository token ", func(t *testing.T) {
+		workspaceRepositoryMock := &workspaceRepository.Mock{}
 		repositoryMock := &repositoryRepository.Mock{}
 		appConfig := &app.Mock{}
 
@@ -679,7 +800,8 @@ func TestCreateToken(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
-			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{})
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{},
+			workspaceRepositoryMock)
 
 		result, err := controller.CreateToken(data)
 		assert.NoError(t, err)
@@ -689,6 +811,7 @@ func TestCreateToken(t *testing.T) {
 
 func TestDeleteToken(t *testing.T) {
 	t.Run("should success delete a repository token ", func(t *testing.T) {
+		workspaceRepositoryMock := &workspaceRepository.Mock{}
 		repositoryMock := &repositoryRepository.Mock{}
 		appConfig := &app.Mock{}
 
@@ -697,7 +820,8 @@ func TestDeleteToken(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
-			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{})
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{},
+			workspaceRepositoryMock)
 
 		assert.NoError(t, controller.DeleteToken(&tokenEntities.Data{}))
 	})
@@ -705,6 +829,7 @@ func TestDeleteToken(t *testing.T) {
 
 func TestListTokens(t *testing.T) {
 	t.Run("should success list repository tokens", func(t *testing.T) {
+		workspaceRepositoryMock := &workspaceRepository.Mock{}
 		repositoryMock := &repositoryRepository.Mock{}
 		appConfig := &app.Mock{}
 
@@ -713,7 +838,8 @@ func TestListTokens(t *testing.T) {
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
-			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{})
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{},
+			workspaceRepositoryMock)
 
 		result, err := controller.ListTokens(&tokenEntities.Data{})
 		assert.NoError(t, err)
