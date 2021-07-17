@@ -42,7 +42,20 @@ install: compose migrate
 	docker restart horusec-messages
 	docker restart horusec-analytic
 
+install-win: compose migrate-win
+	docker restart horusec-auth
+	echo "Waiting grpc connection..."
+	timeout /t 5 /nobreak
+	docker restart horusec-vulnerability
+	docker restart horusec-webhook
+	docker restart horusec-core
+	docker restart horusec-api
+	docker restart horusec-messages
+	docker restart horusec-analytic
+
 migrate: migrate-up
+
+migrate-win: migrate-win-up
 
 cleanup-migrate: migrate-drop migrate-up
 
@@ -53,6 +66,9 @@ migrate-drop:
 migrate-up:
 	chmod +x ./deployments/scripts/migration-run.sh
 	./deployments/scripts/migration-run.sh up
+
+migrate-win-up:
+	.\deployments\scripts\migration-run.bat up
 
 run-web:
 	docker run --privileged --name horusec-all-in-one -p 8000:8000 -p 8001:8001 -p 8003:8003 -p 8004:8004 \
