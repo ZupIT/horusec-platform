@@ -162,6 +162,13 @@ Checkout for our authentication types [docs](https://horusec.io/docs/tutorials/h
 
 [comment]: <> ([documentation]&#40;@todo&#41;.)
 
+## Communication
+
+We have a few channels for contact, feel free to reach out to us at:
+
+- [GitHub Issues](https://github.com/ZupIT/horusec-platform/issues)
+- [Zup Open Source Forum](https://forum.zup.com.br)
+
 ## Contributing
 
 Feel free to use, recommend improvements, or contribute to new implementations.
