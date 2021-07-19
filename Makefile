@@ -65,8 +65,8 @@ stop-web:
 
 license:
 	$(GO) get -u github.com/google/addlicense
-	@$(ADDLICENSE) -check -f ./copyright.txt $(shell find -not -path '*/manager/build*' -not -path '*/.git/*' -not -path '*/node_modules*' -regex '.*\.\(go\|js\|ts\|yml\|yaml\|sh\|dockerfile\)')
+	@$(ADDLICENSE) -check -f ./copyright.txt $(shell find -not -path '*/manager/build*' -not -path '*/.git/*' -not -path '*/node_modules*' -regex '.*\.\(go\|js\|ts\|tsx\|yml\|yaml\|sh\|dockerfile\)')
 
 license-fix:
 	$(GO) get -u github.com/google/addlicense
-	@$(ADDLICENSE) -f ./copyright.txt $(shell find -not -path '*/manager/build*' -not -path '*/.git/*' -not -path '*/node_modules*' -regex '.*\.\(go\|js\|ts\|yml\|yaml\|sh\|dockerfile\)')
+	@$(ADDLICENSE) -f ./copyright.txt $(shell find -not -path '*/manager/build*' -not -path '*/.git/*' -not -path '*/node_modules*' -regex '.*\.\(go\|js\|ts\|tsx\|yml\|yaml\|sh\|dockerfile\)')
