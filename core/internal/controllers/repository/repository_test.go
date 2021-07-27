@@ -722,7 +722,7 @@ func TestInviteUser(t *testing.T) {
 		assert.Nil(t, result)
 	})
 
-	t.Run("should return error member not member of repository", func(t *testing.T) {
+	t.Run("should return error member not member of workspace", func(t *testing.T) {
 		workspaceRepositoryMock := &workspaceRepository.Mock{}
 		appConfig := &app.Mock{}
 		databaseMock := &database.Mock{}

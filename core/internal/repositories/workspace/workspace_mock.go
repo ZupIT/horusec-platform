@@ -62,3 +62,8 @@ func (m *Mock) IsWorkspaceAdmin(_, _ uuid.UUID) bool {
 	args := m.MethodCalled("IsWorkspaceAdmin")
 	return args.Get(0).(bool)
 }
+
+func (m *Mock) ListWorkspaceUsersNoBelong(_, _ uuid.UUID) (*[]roleEntities.Response, error) {
+	args := m.MethodCalled("ListWorkspaceUsersNoBelong")
+	return args.Get(0).(*[]roleEntities.Response), mockUtils.ReturnNilOrError(args, 1)
+}

@@ -18,4 +18,5 @@ const (
 	DatabaseWorkspaceTable        = "workspaces"
 	DatabaseAccountWorkspaceTable = "account_workspace"
 	ID                            = "workspaceID"
+	FilterNotBelongRepositoryID   = "notBelong"
 )
