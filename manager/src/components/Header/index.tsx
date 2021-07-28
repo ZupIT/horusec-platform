@@ -17,15 +17,17 @@
 import React, { useEffect, useRef } from 'react';
 import Styled from './styled';
 import { ObjectLiteral } from 'helpers/interfaces/ObjectLiteral';
-import { get } from 'lodash';
 import { useTranslation } from 'react-i18next';
 import { Logout, Icon, Helper } from 'components';
 import { useHistory } from 'react-router';
+import useParamsRoute from 'helpers/hooks/useParamsRoute';
+import { matchPath } from 'react-router-dom';
 
 const Header: React.FC = () => {
   const { t } = useTranslation();
   const history = useHistory();
   const headerRef = useRef(null);
+  const { workspaceId, repositoryId } = useParamsRoute();
 
   const getTitleByURL = (): any => {
     const path = window.location.pathname;
@@ -108,6 +110,11 @@ const Header: React.FC = () => {
     headerRef?.current?.focus();
   }, [history.location.pathname]);
 
+  const routeActive = (path: string) =>
+    matchPath(history.location.pathname, {
+      path: path,
+    })?.isExact;
+
   return (
     <Styled.Wrapper>
       <Styled.Header ref={headerRef} tabIndex={0}>
@@ -121,20 +128,33 @@ const Header: React.FC = () => {
         <Styled.List tabIndex={0}>
           <Styled.Item
             tabIndex={0}
-            aria-label={t('HEADER.ARIA.CONFIG')}
-            active={history.location.pathname.includes('/home')}
-            onClick={() => history.replace('/home')}
+            aria-label={t('HEADER.ARIA.GOHOME')}
+            active={routeActive('/home')}
+            onClick={() => history.push('/home')}
           >
             <Styled.Icon name="home" size="18px" />
-
             <Styled.ConfigText>{t('HEADER.TITLE.HOME')}</Styled.ConfigText>
           </Styled.Item>
 
+          {workspaceId && (
+            <Styled.Item
+              tabIndex={0}
+              aria-label={t('HEADER.ARIA.REPOSITORIES')}
+              active={routeActive('/home/workspace/:workspaceId')}
+              onClick={() => history.push(`/home/workspace/${workspaceId}`)}
+            >
+              <Styled.Icon name="columns" size="18px" />
+              <Styled.ConfigText>
+                {t('HEADER.TITLE.REPOSITORIES')}
+              </Styled.ConfigText>
+            </Styled.Item>
+          )}
+
           <Styled.Item
             tabIndex={0}
-            aria-label={t('HEADER.ARIA.GOHOME')}
+            aria-label={t('HEADER.ARIA.CONFIG')}
             active={history.location.pathname.includes('/settings')}
-            onClick={() => history.replace('/settings')}
+            onClick={() => history.push('/settings')}
           >
             <Styled.Icon name="config" size="15px" />
 
