@@ -15,14 +15,12 @@
  */
 import { Repository } from 'helpers/interfaces/Repository';
 import { Workspace } from 'helpers/interfaces/Workspace';
-import { getCurrentUser } from 'helpers/localStorage/currentUser';
 import { isLogged } from 'helpers/localStorage/tokens';
 import { get } from 'lodash';
 import { useHistory } from 'react-router-dom';
 import useParamsRoute from './useParamsRoute';
 
 const usePermissions = () => {
-  const currentUser = getCurrentUser();
   const history = useHistory();
   const { repository, workspace, repositoryId, workspaceId } = useParamsRoute();
 
