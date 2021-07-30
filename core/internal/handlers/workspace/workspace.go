@@ -72,7 +72,8 @@ func (h *Handler) getAccountData(r *http.Request) (*proto.GetAccountDataResponse
 }
 
 func (h *Handler) getAccountDataByEmail(email string) (*proto.GetAccountDataResponse, error) {
-	return h.authGRPC.GetAccountInfo(h.context, &proto.GetAccountData{Email: email})
+	res, err := h.authGRPC.GetAccountInfo(h.context, &proto.GetAccountData{Email: email})
+	return res, h.useCases.VerifyErrorForGRPCOnGetDataByEmail(err)
 }
 
 // @Tags Workspace
@@ -377,7 +378,9 @@ func (h *Handler) GetUsers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	users, err := h.controller.GetUsers(workspaceID)
+	notBelongRepositoryID, _ := uuid.Parse(r.URL.Query().Get(workspaceEnums.FilterNotBelongRepositoryID))
+
+	users, err := h.controller.GetUsers(workspaceID, notBelongRepositoryID)
 	if err != nil {
 		httpUtil.StatusInternalServerError(w, err)
 		return

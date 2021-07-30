@@ -576,7 +576,23 @@ func TestGetUsers(t *testing.T) {
 		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection, appConfig,
 			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock, tokenUseCases.NewTokenUseCases())
 
-		result, err := controller.GetUsers(uuid.New())
+		result, err := controller.GetUsers(uuid.New(), uuid.Nil)
+		assert.NoError(t, err)
+		assert.NotNil(t, result)
+	})
+
+	t.Run("should success get all users of workspace with a notBelong filter", func(t *testing.T) {
+		repositoryMock := &workspaceRepository.Mock{}
+		repositoryMock.On("ListWorkspaceUsersNoBelong").Return(usersResponse, nil)
+
+		databaseMock := &database.Mock{}
+		appConfig := &app.Mock{}
+
+		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
+		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection, appConfig,
+			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock, tokenUseCases.NewTokenUseCases())
+
+		result, err := controller.GetUsers(uuid.New(), uuid.New())
 		assert.NoError(t, err)
 		assert.NotNil(t, result)
 	})

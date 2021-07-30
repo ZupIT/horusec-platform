@@ -170,7 +170,7 @@ const HandleUser: React.FC<Props> = ({
   useEffect(() => {
     const fetchAllUsersInWorkspace = () => {
       coreService
-        .getUsers(workspaceId, null)
+        .getUsers(workspaceId, null, repositoryId)
         .then((result) => {
           const users = result?.data?.content?.map((item: Account) => {
             return {
@@ -186,9 +186,9 @@ const HandleUser: React.FC<Props> = ({
         });
     };
 
-    if (isRepository) fetchAllUsersInWorkspace();
+    if (isRepository && isVisible) fetchAllUsersInWorkspace();
     // eslint-disable-next-line
-  }, []);
+  }, [isVisible]);
 
   return (
     <Formik

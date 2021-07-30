@@ -57,9 +57,17 @@ const deleteWorkspace = (workspaceID: string) => {
   return http.delete(`${SERVICE_CORE}/core/workspaces/${workspaceID}`);
 };
 
-const getUsers = (workspaceID: string, repositoryID: string) => {
+const getUsers = (
+  workspaceID: string,
+  repositoryID: string,
+  notBelong?: string
+) => {
   const path = repositoryID ? `/repositories/${repositoryID}/roles` : '/roles';
-  return http.get(`${SERVICE_CORE}/core/workspaces/${workspaceID}${path}`);
+  return http.get(`${SERVICE_CORE}/core/workspaces/${workspaceID}${path}`, {
+    params: {
+      notBelong,
+    },
+  });
 };
 
 const inviteUser = (

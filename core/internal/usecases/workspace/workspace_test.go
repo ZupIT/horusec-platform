@@ -16,6 +16,8 @@ package workspace
 
 import (
 	"encoding/json"
+	"errors"
+	workspaceEnums "github.com/ZupIT/horusec-platform/core/internal/enums/workspace"
 	"testing"
 
 	"github.com/google/uuid"
@@ -135,5 +137,30 @@ func TestNewOrganizationInviteEmail(t *testing.T) {
 			assert.Equal(t, "test", data["Username"])
 			assert.Equal(t, "http://localhost:8043", data["URL"])
 		})
+	})
+}
+
+func TestValidateAccountInfoOfGRPCForInvite(t *testing.T) {
+	t.Run("should return not found record GRPC error instance", func(t *testing.T) {
+		useCases := NewWorkspaceUseCases()
+
+		GRPCError := errors.New("rpc error: code = Unknown desc = {ERROR_DATABASE} database not found records")
+		err := useCases.VerifyErrorForGRPCOnGetDataByEmail(GRPCError)
+		assert.Equal(t, err, workspaceEnums.ErrorNotFoundUserInWorkspace)
+	})
+
+	t.Run("should return the same input error", func(t *testing.T) {
+		useCases := NewWorkspaceUseCases()
+
+		AnyError := errors.New("any error for test")
+		err := useCases.VerifyErrorForGRPCOnGetDataByEmail(AnyError)
+		assert.Equal(t, err, AnyError)
+	})
+
+	t.Run("should return nil if no input error", func(t *testing.T) {
+		useCases := NewWorkspaceUseCases()
+
+		res := useCases.VerifyErrorForGRPCOnGetDataByEmail(nil)
+		assert.Equal(t, res, nil)
 	})
 }

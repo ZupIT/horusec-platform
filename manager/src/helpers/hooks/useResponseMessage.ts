@@ -55,6 +55,10 @@ const useResponseMessage = () => {
         '{HORUSEC} webhook already exists to repository selected': t(
           'WEBHOOK_SCREEN.ALREADY_TO_REPOSITORY'
         ),
+        '{CORE_WORKSPACE} not found user in workspace': t(
+          'API_ERRORS.NOT_FOUND_USER'
+        ),
+        'email: must be a valid email address.': t('API_ERRORS.INVALID_EMAIL'),
         'admin ldap group should be a valid one for this user': t(
           'API_ERRORS.LDAP_GROUP'
         ),
