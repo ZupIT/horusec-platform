@@ -528,7 +528,9 @@
     "EMPTY_REPOSITORY": "Seleccione un repositorio para ver los datos.",
     "LDAP_GROUP": "No pertenece al grupo administrador informado, o esto no es válido.",
     "KEYCLOAK_LOGIN": "Había algo inesperado al realizar la autenticación, inténtalo de nuevo.",
-    "WORKSPACE_USER_NOT_BELONG": "Este usuario no pertenece actualmente a este espacio de trabajo."
+    "WORKSPACE_USER_NOT_BELONG": "Este usuario no pertenece actualmente a este espacio de trabajo.",
+    "INVALID_EMAIL": "¡Por favor introduzca una dirección de correo electrónico válida!",
+    "NOT_FOUND_USER": "Ningún usuario se puede encontrar en el área de trabajo."
   },
   "NOT_FOUND_SCREEN": {
     "ERROR": "Error 404.",

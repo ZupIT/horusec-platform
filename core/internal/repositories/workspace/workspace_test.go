@@ -152,3 +152,18 @@ func TestGetWorkspaceLdap(t *testing.T) {
 		assert.NotNil(t, result)
 	})
 }
+
+func TestListWorkspaceUsersNoBelong(t *testing.T) {
+	t.Run("should success get all workspace users with a not belong repositoryID", func(t *testing.T) {
+		databaseMock := &database.Mock{}
+		databaseMock.On("Raw").
+			Return(response.NewResponse(1, nil, &[]roleEntities.Response{}))
+
+		repository := NewWorkspaceRepository(&database.Connection{Read: databaseMock, Write: databaseMock},
+			workspaceUseCases.NewWorkspaceUseCases())
+
+		result, err := repository.ListWorkspaceUsersNoBelong(uuid.New(), uuid.New())
+		assert.NoError(t, err)
+		assert.NotNil(t, result)
+	})
+}

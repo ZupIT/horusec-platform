@@ -37,6 +37,7 @@ type IRepository interface {
 	ListAllWorkspaceUsers(workspaceID uuid.UUID) (*[]roleEntities.Response, error)
 	ListWorkspacesApplicationAdmin() (*[]workspaceEntities.Response, error)
 	IsWorkspaceAdmin(accountID, workspaceID uuid.UUID) bool
+	ListWorkspaceUsersNoBelong(workspaceID, repositoryID uuid.UUID) (*[]roleEntities.Response, error)
 	GetWorkspaceLdap(workspaceID uuid.UUID, permissions []string) (*workspaceEntities.Response, error)
 }
 
@@ -132,6 +133,27 @@ func (r *Repository) queryListAllWorkspaceUsers() string {
 			FROM accounts AS ac
 			INNER JOIN account_workspace AS aw ON aw.account_id = ac.account_id
 			WHERE aw.workspace_id = ?
+	`
+}
+
+func (r *Repository) ListWorkspaceUsersNoBelong(workspaceID, repositoryID uuid.UUID) (*[]roleEntities.Response, error) {
+	users := &[]roleEntities.Response{}
+	return users, r.databaseRead.Raw(r.queryListWorkspaceUsersNoBelong(), users, workspaceID, repositoryID).
+		GetErrorExceptNotFound()
+}
+
+func (r *Repository) queryListWorkspaceUsersNoBelong() string {
+	return `
+			SELECT DISTINCT ac.email, ac.username, aw.role, ac.account_id
+			FROM accounts as ac
+			INNER JOIN account_workspace as aw ON ac.account_id = aw.account_id
+			LEFT JOIN account_repository as ar ON ac.account_id = ar.account_id
+			WHERE aw.workspace_id = ?
+				AND ac.account_id NOT IN (
+					SELECT account_id
+					FROM account_repository as ar
+					WHERE ar.repository_id = ?
+				)
 	`
 }
 

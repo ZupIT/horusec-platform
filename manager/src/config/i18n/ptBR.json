@@ -502,7 +502,9 @@
     "EMPTY_REPOSITORY": "Por favor, selecione um repositório para visualizar os dados.",
     "LDAP_GROUP": "Você não pertence ao grupo de administrador informado, ou este não é valido",
     "KEYCLOAK_LOGIN": "Houve algo inesperado ao realizar a autenticação, tente novamente.",
-    "WORKSPACE_USER_NOT_BELONG": "Este usuário não pertence a este Workspace."
+    "WORKSPACE_USER_NOT_BELONG": "Este usuário não pertence a este Workspace.",
+    "INVALID_EMAIL": "Por favor, insira um email válido!",
+    "NOT_FOUND_USER": "Não foi encontrado nenhum usuário referente, no workspace"
   },
   "NOT_FOUND_SCREEN": {
     "ERROR": "Erro 404.",

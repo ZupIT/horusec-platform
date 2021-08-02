@@ -18,7 +18,7 @@ image:
   repository: horuszup/horusec-manager
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: v2.16.1
+  tag: v2.16.2
 
 imagePullSecrets: []
 nameOverride: ""

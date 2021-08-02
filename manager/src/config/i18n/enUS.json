@@ -526,7 +526,9 @@
     "EMPTY_REPOSITORY": "Please select a repository to view the data.",
     "LDAP_GROUP": "You do not belong to the informed administrator group, or this is not valid.",
     "KEYCLOAK_LOGIN": "There was something unexpected when performing authentication, try again.",
-    "WORKSPACE_USER_NOT_BELONG": "This user does not currently belong to this workspace."
+    "WORKSPACE_USER_NOT_BELONG": "This user does not currently belong to this workspace.",
+    "INVALID_EMAIL": "Please, insert a valid email",
+    "NOT_FOUND_USER": "No user can be found in the workspace"
   },
   "NOT_FOUND_SCREEN": {
     "ERROR": "Error 404.",

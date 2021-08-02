@@ -761,6 +761,28 @@ func TestGetUsers(t *testing.T) {
 
 		assert.Equal(t, http.StatusBadRequest, w.Code)
 	})
+
+	t.Run("should return 200 when get users with notBelong filter", func(t *testing.T) {
+		authGRPCMock := &proto.Mock{}
+		appConfigMock := &app.Mock{}
+		controllerMock := &workspaceController.Mock{}
+		controllerMock.On("GetUsers").Return(&[]role.Response{}, nil)
+
+		handler := NewWorkspaceHandler(controllerMock, workspaceUseCases.NewWorkspaceUseCases(),
+			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases(), tokenUseCases.NewTokenUseCases())
+
+		r, _ := http.NewRequest(http.MethodGet, "test", nil)
+		w := httptest.NewRecorder()
+
+		ctx := chi.NewRouteContext()
+		ctx.URLParams.Add("workspaceID", uuid.NewString())
+		ctx.URLParams.Add("notBelong", uuid.NewString())
+		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
+
+		handler.GetUsers(w, r)
+
+		assert.Equal(t, http.StatusOK, w.Code)
+	})
 }
 
 func TestRemoveUser(t *testing.T) {

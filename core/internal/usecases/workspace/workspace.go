@@ -17,6 +17,8 @@ package workspace
 import (
 	"io"
 
+	workspaceEnums "github.com/ZupIT/horusec-platform/core/internal/enums/workspace"
+
 	"github.com/google/uuid"
 
 	emailEntities "github.com/ZupIT/horusec-devkit/pkg/entities/email"
@@ -34,6 +36,7 @@ type IUseCases interface {
 	FilterWorkspaceByID(workspaceID uuid.UUID) map[string]interface{}
 	NewWorkspaceData(workspaceID uuid.UUID, accountData *proto.GetAccountDataResponse) *workspace.Data
 	NewOrganizationInviteEmail(email, username, workspaceName string) []byte
+	VerifyErrorForGRPCOnGetDataByEmail(err error) error
 }
 
 type UseCases struct {
@@ -81,4 +84,15 @@ func (u *UseCases) NewOrganizationInviteEmail(email, username, workspaceName str
 	}
 
 	return emailMessage.ToBytes()
+}
+
+func (u *UseCases) VerifyErrorForGRPCOnGetDataByEmail(err error) error {
+	if err != nil && err.Error() == workspaceEnums.ErrorErrorNotFoundRecordsGRPC.Error() {
+		return workspaceEnums.ErrorNotFoundUserInWorkspace
+	}
+
+	if err != nil {
+		return err
+	}
+	return nil
 }
