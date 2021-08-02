@@ -114,6 +114,10 @@ func (c *Controller) Get(data *repositoryEntities.Data) (*repositoryEntities.Res
 		return c.getRepositoryWhenAdmin(data, accountEnums.ApplicationAdmin)
 	}
 
+	if c.appConfig.GetAuthenticationType() == auth.Ldap {
+		return c.repository.GetRepositoryLdap(data.RepositoryID, data.Permissions)
+	}
+
 	if c.workspaceRepository.IsWorkspaceAdmin(data.AccountID, data.WorkspaceID) {
 		return c.getRepositoryWhenAdmin(data, accountEnums.Admin)
 	}

@@ -1,6 +1,8 @@
 DOCKER_COMPOSE ?= docker-compose
 COMPOSE_FILE_NAME ?= compose.yaml
 COMPOSE_DEV_FILE_NAME ?= compose-dev.yaml
+GO ?= go
+ADDLICENSE ?= addlicense
 
 compose: compose-down compose-up
 
@@ -60,3 +62,11 @@ run-web:
 
 stop-web:
 	docker rm -f horusec-all-in-one
+
+license:
+	$(GO) get -u github.com/google/addlicense
+	@$(ADDLICENSE) -check -f ./copyright.txt $(shell find -not -path '*/manager/build*' -not -path '*/.git/*' -not -path '*/node_modules*' -regex '.*\.\(go\|js\|ts\|yml\|yaml\|sh\|dockerfile\)')
+
+license-fix:
+	$(GO) get -u github.com/google/addlicense
+	@$(ADDLICENSE) -f ./copyright.txt $(shell find -not -path '*/manager/build*' -not -path '*/.git/*' -not -path '*/node_modules*' -regex '.*\.\(go\|js\|ts\|yml\|yaml\|sh\|dockerfile\)')

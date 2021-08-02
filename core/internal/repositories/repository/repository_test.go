@@ -220,3 +220,19 @@ func TestListRepositoriesWhenApplicationAdmin(t *testing.T) {
 		assert.NotNil(t, result)
 	})
 }
+
+func TestGetRepositoryLdap(t *testing.T) {
+	t.Run("should success get repository", func(t *testing.T) {
+		workspaceRepositoryMock := &workspaceRepository.Mock{}
+
+		databaseMock := &database.Mock{}
+		databaseMock.On("Raw").Return(&response.Response{})
+
+		repository := NewRepositoryRepository(&database.Connection{Read: databaseMock, Write: databaseMock},
+			repositoryUseCases.NewRepositoryUseCases(), workspaceRepositoryMock)
+
+		result, err := repository.GetRepositoryLdap(uuid.New(), []string{""})
+		assert.NoError(t, err)
+		assert.NotNil(t, result)
+	})
+}

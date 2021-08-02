@@ -139,6 +139,20 @@ func TestIsWorkspaceAdmin(t *testing.T) {
 	})
 }
 
+func TestGetWorkspaceLdap(t *testing.T) {
+	t.Run("should success get workspace", func(t *testing.T) {
+		databaseMock := &database.Mock{}
+		databaseMock.On("Raw").Return(&response.Response{})
+
+		repository := NewWorkspaceRepository(&database.Connection{Read: databaseMock, Write: databaseMock},
+			workspaceUseCases.NewWorkspaceUseCases())
+
+		result, err := repository.GetWorkspaceLdap(uuid.New(), []string{})
+		assert.NoError(t, err)
+		assert.NotNil(t, result)
+	})
+}
+
 func TestListWorkspaceUsersNoBelong(t *testing.T) {
 	t.Run("should success get all workspace users with a not belong repositoryID", func(t *testing.T) {
 		databaseMock := &database.Mock{}

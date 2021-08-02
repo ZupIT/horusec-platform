@@ -67,3 +67,8 @@ func (m *Mock) ListWorkspaceUsersNoBelong(_, _ uuid.UUID) (*[]roleEntities.Respo
 	args := m.MethodCalled("ListWorkspaceUsersNoBelong")
 	return args.Get(0).(*[]roleEntities.Response), mockUtils.ReturnNilOrError(args, 1)
 }
+
+func (m *Mock) GetWorkspaceLdap(_ uuid.UUID, _ []string) (*workspaceEntities.Response, error) {
+	args := m.MethodCalled("GetWorkspaceLdap")
+	return args.Get(0).(*workspaceEntities.Response), mockUtils.ReturnNilOrError(args, 1)
+}

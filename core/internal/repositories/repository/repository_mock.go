@@ -73,3 +73,8 @@ func (m *Mock) ListRepositoriesWhenApplicationAdmin() (*[]repositoryEntities.Res
 	args := m.MethodCalled("ListRepositoriesWhenApplicationAdmin")
 	return args.Get(0).(*[]repositoryEntities.Response), mockUtils.ReturnNilOrError(args, 1)
 }
+
+func (m *Mock) GetRepositoryLdap(_ uuid.UUID, _ []string) (*repositoryEntities.Response, error) {
+	args := m.MethodCalled("GetRepositoryLdap")
+	return args.Get(0).(*repositoryEntities.Response), mockUtils.ReturnNilOrError(args, 1)
+}
