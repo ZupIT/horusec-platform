@@ -1,0 +1,427 @@
+# Copyright 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+name: Release
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - closed
+
+jobs:
+  version:
+    name: "Extract version"
+    if: github.event.pull_request.merged == true && (startsWith(github.event.pull_request.head.ref, 'release/') || startsWith(github.event.pull_request.head.ref, 'hotfix/'))
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.from-branch.outputs.version }}
+    steps:
+      - name: "Extract version from branch name"
+        id: from-branch
+        uses: actions/github-script@v4
+        with:
+          script: |
+            const branch = context.payload.pull_request.head.ref;
+            const version = branch.replace('release/', '').replace('hotfix/', '')
+            core.setOutput('version', version)
+
+  analytic-build:
+    name: "Build Analytic"
+    needs:
+      - version
+    runs-on: ubuntu-latest
+    outputs:
+      tags: ${{ steps.meta.outputs.tags }}
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v2
+
+      - name: "Docker meta"
+        uses: docker/metadata-action@v3
+        id: meta
+        env:
+          RELEASE_VERSION: ${{ needs.version.outputs.version }}
+        with:
+          images: |
+            horuszup/horusec-analytic
+          tags: |
+            type=semver,prefix=v,pattern={{version}},value=${{ env.RELEASE_VERSION }}
+            type=semver,prefix=v,pattern={{major}}.{{minor}},value=${{ env.RELEASE_VERSION }}
+            type=semver,prefix=v,pattern={{major}},value=${{ env.RELEASE_VERSION }}
+
+      - name: "Login to DockerHub"
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: "Build and push"
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          context: ./analytic
+          file: ./analytic/deployments/dockerfiles/Dockerfile
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+  api-build:
+    name: "Build API"
+    needs:
+      - version
+    runs-on: ubuntu-latest
+    outputs:
+      tags: ${{ steps.meta.outputs.tags }}
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v2
+
+      - name: "Docker meta"
+        uses: docker/metadata-action@v3
+        id: meta
+        env:
+          RELEASE_VERSION: ${{ needs.version.outputs.version }}
+        with:
+          images: |
+            horuszup/horusec-api
+          tags: |
+            type=semver,prefix=v,pattern={{version}},value=${{ env.RELEASE_VERSION }}
+            type=semver,prefix=v,pattern={{major}}.{{minor}},value=${{ env.RELEASE_VERSION }}
+            type=semver,prefix=v,pattern={{major}},value=${{ env.RELEASE_VERSION }}
+
+      - name: "Login to DockerHub"
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: "Build and push"
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          context: ./api
+          file: ./api/deployments/dockerfiles/Dockerfile
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+  auth-build:
+    name: "Build Auth"
+    needs:
+      - version
+    runs-on: ubuntu-latest
+    outputs:
+      tags: ${{ steps.meta.outputs.tags }}
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v2
+
+      - name: "Docker meta"
+        uses: docker/metadata-action@v3
+        id: meta
+        env:
+          RELEASE_VERSION: ${{ needs.version.outputs.version }}
+        with:
+          images: |
+            horuszup/horusec-auth
+          tags: |
+            type=semver,prefix=v,pattern={{version}},value=${{ env.RELEASE_VERSION }}
+            type=semver,prefix=v,pattern={{major}}.{{minor}},value=${{ env.RELEASE_VERSION }}
+            type=semver,prefix=v,pattern={{major}},value=${{ env.RELEASE_VERSION }}
+
+      - name: "Login to DockerHub"
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: "Build and push"
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          context: ./auth
+          file: ./auth/deployments/dockerfiles/Dockerfile
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+  core-build:
+    name: "Build Core"
+    needs:
+      - version
+    runs-on: ubuntu-latest
+    outputs:
+      tags: ${{ steps.meta.outputs.tags }}
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v2
+
+      - name: "Docker meta"
+        uses: docker/metadata-action@v3
+        id: meta
+        env:
+          RELEASE_VERSION: ${{ needs.version.outputs.version }}
+        with:
+          images: |
+            horuszup/horusec-core
+          tags: |
+            type=semver,prefix=v,pattern={{version}},value=${{ env.RELEASE_VERSION }}
+            type=semver,prefix=v,pattern={{major}}.{{minor}},value=${{ env.RELEASE_VERSION }}
+            type=semver,prefix=v,pattern={{major}},value=${{ env.RELEASE_VERSION }}
+
+      - name: "Login to DockerHub"
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: "Build and push"
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          context: ./core
+          file: ./core/deployments/dockerfiles/Dockerfile
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+  manager-build:
+    name: "Build Manager"
+    needs:
+      - version
+    runs-on: ubuntu-latest
+    outputs:
+      tags: ${{ steps.meta.outputs.tags }}
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v2
+
+      - name: "Docker meta"
+        uses: docker/metadata-action@v3
+        id: meta
+        env:
+          RELEASE_VERSION: ${{ needs.version.outputs.version }}
+        with:
+          images: |
+            horuszup/horusec-manager
+          tags: |
+            type=semver,prefix=v,pattern={{version}},value=${{ env.RELEASE_VERSION }}
+            type=semver,prefix=v,pattern={{major}}.{{minor}},value=${{ env.RELEASE_VERSION }}
+            type=semver,prefix=v,pattern={{major}},value=${{ env.RELEASE_VERSION }}
+
+      - name: "Login to DockerHub"
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: "Build and push"
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          context: ./manager
+          file: ./manager/deployments/dockerfiles/Dockerfile
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+  messages-build:
+    name: "Build Messages"
+    needs:
+      - version
+    runs-on: ubuntu-latest
+    outputs:
+      tags: ${{ steps.meta.outputs.tags }}
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v2
+
+      - name: "Docker meta"
+        uses: docker/metadata-action@v3
+        id: meta
+        env:
+          RELEASE_VERSION: ${{ needs.version.outputs.version }}
+        with:
+          images: |
+            horuszup/horusec-messages
+          tags: |
+            type=semver,prefix=v,pattern={{version}},value=${{ env.RELEASE_VERSION }}
+            type=semver,prefix=v,pattern={{major}}.{{minor}},value=${{ env.RELEASE_VERSION }}
+            type=semver,prefix=v,pattern={{major}},value=${{ env.RELEASE_VERSION }}
+
+      - name: "Login to DockerHub"
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: "Build and push"
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          context: ./messages
+          file: ./messages/deployments/dockerfiles/Dockerfile
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+  migrations-build:
+    name: "Build Migrations"
+    needs:
+      - version
+    runs-on: ubuntu-latest
+    outputs:
+      tags: ${{ steps.meta.outputs.tags }}
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v2
+
+      - name: "Docker meta"
+        uses: docker/metadata-action@v3
+        id: meta
+        env:
+          RELEASE_VERSION: ${{ needs.version.outputs.version }}
+        with:
+          images: |
+            horuszup/horusec-migrations
+          tags: |
+            type=semver,prefix=v,pattern={{version}},value=${{ env.RELEASE_VERSION }}
+            type=semver,prefix=v,pattern={{major}}.{{minor}},value=${{ env.RELEASE_VERSION }}
+            type=semver,prefix=v,pattern={{major}},value=${{ env.RELEASE_VERSION }}
+
+      - name: "Login to DockerHub"
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: "Build and push"
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          context: ./migrations
+          file: ./migrations/deployments/dockerfiles/Dockerfile
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+  vulnerability-build:
+    name: "Build Vulnerability"
+    needs:
+      - version
+    runs-on: ubuntu-latest
+    outputs:
+      tags: ${{ steps.meta.outputs.tags }}
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v2
+
+      - name: "Docker meta"
+        uses: docker/metadata-action@v3
+        id: meta
+        env:
+          RELEASE_VERSION: ${{ needs.version.outputs.version }}
+        with:
+          images: |
+            horuszup/horusec-vulnerability
+          tags: |
+            type=semver,prefix=v,pattern={{version}},value=${{ env.RELEASE_VERSION }}
+            type=semver,prefix=v,pattern={{major}}.{{minor}},value=${{ env.RELEASE_VERSION }}
+            type=semver,prefix=v,pattern={{major}},value=${{ env.RELEASE_VERSION }}
+
+      - name: "Login to DockerHub"
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: "Build and push"
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          context: ./vulnerability
+          file: ./vulnerability/deployments/dockerfiles/Dockerfile
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+  webhook-build:
+    name: "Build Webhook"
+    needs:
+      - version
+    runs-on: ubuntu-latest
+    outputs:
+      tags: ${{ steps.meta.outputs.tags }}
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v2
+
+      - name: "Docker meta"
+        uses: docker/metadata-action@v3
+        id: meta
+        env:
+          RELEASE_VERSION: ${{ needs.version.outputs.version }}
+        with:
+          images: |
+            horuszup/horusec-webhook
+          tags: |
+            type=semver,prefix=v,pattern={{version}},value=${{ env.RELEASE_VERSION }}
+            type=semver,prefix=v,pattern={{major}}.{{minor}},value=${{ env.RELEASE_VERSION }}
+            type=semver,prefix=v,pattern={{major}},value=${{ env.RELEASE_VERSION }}
+
+      - name: "Login to DockerHub"
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: "Build and push"
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          context: ./webhook
+          file: ./webhook/deployments/dockerfiles/Dockerfile
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+  release:
+    name: "Create release"
+    needs:
+      - version
+      - analytic-build
+      - api-build
+      - auth-build
+      - core-build
+      - manager-build
+      - messages-build
+      - migrations-build
+      - vulnerability-build
+      - webhook-build
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Create release"
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          commitish: ${{ github.event.pull_request.merge_commit_sha }}
+          tag_name: ${{ needs.version.outputs.version }}
+          release_name: ${{ needs.version.outputs.version }}
+          body: |
+            ## Docker images
+            -   `docker pull horuszup/horusec-analytic:${{ needs.version.outputs.version }}`
+            -   `docker pull horuszup/horusec-api:${{ needs.version.outputs.version }}`
+            -   `docker pull horuszup/horusec-auth:${{ needs.version.outputs.version }}`
+            -   `docker pull horuszup/horusec-core:${{ needs.version.outputs.version }}`
+            -   `docker pull horuszup/horusec-manager:${{ needs.version.outputs.version }}`
+            -   `docker pull horuszup/horusec-messages:${{ needs.version.outputs.version }}`
+            -   `docker pull horuszup/horusec-migrations:${{ needs.version.outputs.version }}`
+            -   `docker pull horuszup/horusec-vulnerability:${{ needs.version.outputs.version }}`
+            -   `docker pull horuszup/horusec-webhook:${{ needs.version.outputs.version }}`
+          draft: false
+          prerelease: false
