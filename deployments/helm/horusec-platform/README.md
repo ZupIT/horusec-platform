@@ -18,7 +18,7 @@ A Helm chart for Kubernetes
 | components.analytic.container.image.pullSecrets | list | `[]` | an optional list of references to secrets in the same namespace to use for pulling any of the images used by Horusec Analytic pod |
 | components.analytic.container.image.registry | string | `"docker.io/horuszup"` | the registry where the repository used to store Horusec Analytic container image is |
 | components.analytic.container.image.repository | string | `"horusec-analytic"` | the repository used to store Horusec Analytic container image |
-| components.analytic.container.image.tag | string | `"v2.16.1"` | the reference to the Horusec Analytic container image version |
+| components.analytic.container.image.tag | string | `"v2.16.2"` | the reference to the Horusec Analytic container image version |
 | components.analytic.container.livenessProbe | string | `nil` |  |
 | components.analytic.container.readinessProbe | string | `nil` |  |
 | components.analytic.container.resources | string | `nil` |  |
@@ -54,7 +54,7 @@ A Helm chart for Kubernetes
 | components.api.container.image.pullSecrets | list | `[]` |  |
 | components.api.container.image.registry | string | `"docker.io/horuszup"` |  |
 | components.api.container.image.repository | string | `"horusec-api"` |  |
-| components.api.container.image.tag | string | `"v2.16.1"` |  |
+| components.api.container.image.tag | string | `"v2.16.2"` |  |
 | components.api.container.livenessProbe | string | `nil` |  |
 | components.api.container.readinessProbe | string | `nil` |  |
 | components.api.container.resources | string | `nil` |  |
@@ -80,7 +80,7 @@ A Helm chart for Kubernetes
 | components.auth.container.image.pullSecrets | list | `[]` |  |
 | components.auth.container.image.registry | string | `"docker.io/horuszup"` |  |
 | components.auth.container.image.repository | string | `"horusec-messages"` |  |
-| components.auth.container.image.tag | string | `"v2.16.1"` |  |
+| components.auth.container.image.tag | string | `"v2.16.2"` |  |
 | components.auth.container.livenessProbe | string | `nil` |  |
 | components.auth.container.readinessProbe | string | `nil` |  |
 | components.auth.container.resources | string | `nil` |  |
@@ -108,7 +108,7 @@ A Helm chart for Kubernetes
 | components.core.container.image.pullSecrets | list | `[]` |  |
 | components.core.container.image.registry | string | `"docker.io/horuszup"` |  |
 | components.core.container.image.repository | string | `"horusec-core"` |  |
-| components.core.container.image.tag | string | `"v2.16.1"` |  |
+| components.core.container.image.tag | string | `"v2.16.2"` |  |
 | components.core.container.livenessProbe | string | `nil` |  |
 | components.core.container.readinessProbe | string | `nil` |  |
 | components.core.container.resources | string | `nil` |  |
@@ -134,7 +134,7 @@ A Helm chart for Kubernetes
 | components.manager.container.image.pullSecrets | list | `[]` |  |
 | components.manager.container.image.registry | string | `"docker.io/horuszup"` |  |
 | components.manager.container.image.repository | string | `"horusec-messages"` |  |
-| components.manager.container.image.tag | string | `"v2.16.1"` |  |
+| components.manager.container.image.tag | string | `"v2.16.2"` |  |
 | components.manager.container.livenessProbe | string | `nil` |  |
 | components.manager.container.readinessProbe | string | `nil` |  |
 | components.manager.container.resources | string | `nil` |  |
@@ -160,7 +160,7 @@ A Helm chart for Kubernetes
 | components.messages.container.image.pullSecrets | list | `[]` |  |
 | components.messages.container.image.registry | string | `"docker.io/horuszup"` |  |
 | components.messages.container.image.repository | string | `"horusec-messages"` |  |
-| components.messages.container.image.tag | string | `"v2.16.1"` |  |
+| components.messages.container.image.tag | string | `"v2.16.2"` |  |
 | components.messages.container.livenessProbe | string | `nil` |  |
 | components.messages.container.readinessProbe | string | `nil` |  |
 | components.messages.container.resources | string | `nil` |  |
@@ -193,7 +193,7 @@ A Helm chart for Kubernetes
 | components.vulnerability.container.image.pullSecrets | list | `[]` |  |
 | components.vulnerability.container.image.registry | string | `"docker.io/horuszup"` |  |
 | components.vulnerability.container.image.repository | string | `"horusec-vulnerability"` |  |
-| components.vulnerability.container.image.tag | string | `"v2.16.1"` |  |
+| components.vulnerability.container.image.tag | string | `"v2.16.2"` |  |
 | components.vulnerability.container.livenessProbe | string | `nil` |  |
 | components.vulnerability.container.readinessProbe | string | `nil` |  |
 | components.vulnerability.container.resources | string | `nil` |  |
@@ -219,7 +219,7 @@ A Helm chart for Kubernetes
 | components.webhook.container.image.pullSecrets | list | `[]` |  |
 | components.webhook.container.image.registry | string | `"docker.io/horuszup"` |  |
 | components.webhook.container.image.repository | string | `"horusec-webhook"` |  |
-| components.webhook.container.image.tag | string | `"v2.16.1"` |  |
+| components.webhook.container.image.tag | string | `"v2.16.2"` |  |
 | components.webhook.container.livenessProbe | string | `nil` |  |
 | components.webhook.container.readinessProbe | string | `nil` |  |
 | components.webhook.container.resources | string | `nil` |  |
