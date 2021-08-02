@@ -37,6 +37,8 @@ type IRepository interface {
 	ListAllWorkspaceUsers(workspaceID uuid.UUID) (*[]roleEntities.Response, error)
 	ListWorkspacesApplicationAdmin() (*[]workspaceEntities.Response, error)
 	IsWorkspaceAdmin(accountID, workspaceID uuid.UUID) bool
+	ListWorkspaceUsersNoBelong(workspaceID, repositoryID uuid.UUID) (*[]roleEntities.Response, error)
+	GetWorkspaceLdap(workspaceID uuid.UUID, permissions []string) (*workspaceEntities.Response, error)
 }
 
 type Repository struct {
@@ -134,6 +136,27 @@ func (r *Repository) queryListAllWorkspaceUsers() string {
 	`
 }
 
+func (r *Repository) ListWorkspaceUsersNoBelong(workspaceID, repositoryID uuid.UUID) (*[]roleEntities.Response, error) {
+	users := &[]roleEntities.Response{}
+	return users, r.databaseRead.Raw(r.queryListWorkspaceUsersNoBelong(), users, workspaceID, repositoryID).
+		GetErrorExceptNotFound()
+}
+
+func (r *Repository) queryListWorkspaceUsersNoBelong() string {
+	return `
+			SELECT DISTINCT ac.email, ac.username, aw.role, ac.account_id
+			FROM accounts as ac
+			INNER JOIN account_workspace as aw ON ac.account_id = aw.account_id
+			LEFT JOIN account_repository as ar ON ac.account_id = ar.account_id
+			WHERE aw.workspace_id = ?
+				AND ac.account_id NOT IN (
+					SELECT account_id
+					FROM account_repository as ar
+					WHERE ar.repository_id = ?
+				)
+	`
+}
+
 func (r *Repository) ListWorkspacesApplicationAdmin() (*[]workspaceEntities.Response, error) {
 	workspaces := &[]workspaceEntities.Response{}
 
@@ -154,4 +177,26 @@ func (r *Repository) IsWorkspaceAdmin(accountID, workspaceID uuid.UUID) bool {
 		workspaceEnums.DatabaseAccountWorkspaceTable)
 
 	return response.GetError() == nil && accountWorkspace.Role == accountEnums.Admin
+}
+
+func (r *Repository) GetWorkspaceLdap(
+	workspaceID uuid.UUID, permissions []string) (*workspaceEntities.Response, error) {
+	workspace := &workspaceEntities.Response{}
+
+	return workspace, r.databaseRead.Raw(r.queryGetWorkspaceLdap(), workspace,
+		sql.Named("permissions", pq.StringArray(permissions)),
+		sql.Named("workspaceID", workspaceID)).GetErrorExceptNotFound()
+}
+
+func (r *Repository) queryGetWorkspaceLdap() string {
+	return `
+		SELECT ws.workspace_id, ws.name, ws.description, ws.created_at, ws.updated_at,
+			   ws.authz_admin, ws.authz_member,
+		CASE
+			WHEN @permissions @> ws.authz_admin THEN 'admin'
+			ELSE 'member'
+		END AS role
+		FROM workspaces as ws
+		WHERE workspace_id = @workspaceID
+	`
 }

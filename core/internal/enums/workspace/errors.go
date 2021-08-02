@@ -13,3 +13,9 @@
 // limitations under the License.
 
 package workspace
+
+import "errors"
+
+var ErrorNotFoundUserInWorkspace = errors.New("{CORE_WORKSPACE} not found user in workspace")
+var ErrorErrorNotFoundRecordsGRPC = errors.New(
+	"rpc error: code = Unknown desc = {ERROR_DATABASE} database not found records")

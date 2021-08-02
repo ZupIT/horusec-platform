@@ -224,6 +224,8 @@ func TestGet(t *testing.T) {
 	}
 
 	t.Run("should success get a repository", func(t *testing.T) {
+		databaseMock := &database.Mock{}
+
 		workspaceRepositoryMock := &workspaceRepository.Mock{}
 		workspaceRepositoryMock.On("IsWorkspaceAdmin").Return(false)
 
@@ -231,8 +233,30 @@ func TestGet(t *testing.T) {
 		repositoryMock.On("GetRepository").Return(&repositoryEntities.Repository{}, nil)
 		repositoryMock.On("GetAccountRepository").Return(&repositoryEntities.AccountRepository{}, nil)
 
-		databaseMock := &database.Mock{}
 		appConfig := &app.Mock{}
+		appConfig.On("GetAuthenticationType").Return(auth.Horusec)
+
+		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
+		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
+			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{},
+			workspaceRepositoryMock)
+
+		result, err := controller.Get(data)
+		assert.NoError(t, err)
+		assert.NotNil(t, result)
+	})
+
+	t.Run("should success get a repository auth type ldap", func(t *testing.T) {
+		databaseMock := &database.Mock{}
+
+		workspaceRepositoryMock := &workspaceRepository.Mock{}
+		workspaceRepositoryMock.On("IsWorkspaceAdmin").Return(false)
+
+		repositoryMock := &repositoryRepository.Mock{}
+		repositoryMock.On("GetRepositoryLdap").Return(&repositoryEntities.Response{}, nil)
+
+		appConfig := &app.Mock{}
+		appConfig.On("GetAuthenticationType").Return(auth.Ldap)
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
@@ -245,6 +269,8 @@ func TestGet(t *testing.T) {
 	})
 
 	t.Run("should return error when failed to get repository", func(t *testing.T) {
+		databaseMock := &database.Mock{}
+
 		workspaceRepositoryMock := &workspaceRepository.Mock{}
 		workspaceRepositoryMock.On("IsWorkspaceAdmin").Return(false)
 
@@ -252,8 +278,8 @@ func TestGet(t *testing.T) {
 		repositoryMock.On("GetRepository").Return(&repositoryEntities.Repository{}, errors.New("test"))
 		repositoryMock.On("GetAccountRepository").Return(&repositoryEntities.AccountRepository{}, nil)
 
-		databaseMock := &database.Mock{}
 		appConfig := &app.Mock{}
+		appConfig.On("GetAuthenticationType").Return(auth.Horusec)
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
@@ -265,6 +291,8 @@ func TestGet(t *testing.T) {
 	})
 
 	t.Run("should return error when failed to get account repository", func(t *testing.T) {
+		databaseMock := &database.Mock{}
+
 		workspaceRepositoryMock := &workspaceRepository.Mock{}
 		workspaceRepositoryMock.On("IsWorkspaceAdmin").Return(false)
 
@@ -272,8 +300,8 @@ func TestGet(t *testing.T) {
 		repositoryMock.On("GetAccountRepository").Return(
 			&repositoryEntities.AccountRepository{}, errors.New("test"))
 
-		databaseMock := &database.Mock{}
 		appConfig := &app.Mock{}
+		appConfig.On("GetAuthenticationType").Return(auth.Horusec)
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewRepositoryController(&broker.Mock{}, databaseConnection, appConfig,
@@ -324,7 +352,9 @@ func TestGet(t *testing.T) {
 
 	t.Run("should success get a repository when workspace admin", func(t *testing.T) {
 		databaseMock := &database.Mock{}
+
 		appConfig := &app.Mock{}
+		appConfig.On("GetAuthenticationType").Return(auth.Horusec)
 
 		workspaceRepositoryMock := &workspaceRepository.Mock{}
 		workspaceRepositoryMock.On("IsWorkspaceAdmin").Return(true)
@@ -345,7 +375,9 @@ func TestGet(t *testing.T) {
 
 	t.Run("should return error when failed to get repository and user is workspace admin", func(t *testing.T) {
 		databaseMock := &database.Mock{}
+
 		appConfig := &app.Mock{}
+		appConfig.On("GetAuthenticationType").Return(auth.Horusec)
 
 		workspaceRepositoryMock := &workspaceRepository.Mock{}
 		workspaceRepositoryMock.On("IsWorkspaceAdmin").Return(true)

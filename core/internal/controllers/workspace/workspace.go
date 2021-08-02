@@ -44,7 +44,7 @@ type IController interface {
 	List(data *workspaceEntities.Data) (*[]workspaceEntities.Response, error)
 	UpdateRole(data *roleEntities.Data) (*roleEntities.Response, error)
 	InviteUser(data *roleEntities.UserData) (*roleEntities.Response, error)
-	GetUsers(workspaceID uuid.UUID) (*[]roleEntities.Response, error)
+	GetUsers(workspaceID uuid.UUID, noBelongRepositoryID uuid.UUID) (*[]roleEntities.Response, error)
 	RemoveUser(data *roleEntities.Data) error
 	CreateToken(data *tokenEntities.Data) (string, error)
 	DeleteToken(data *tokenEntities.Data) error
@@ -96,6 +96,10 @@ func (c *Controller) Create(data *workspaceEntities.Data) (*workspaceEntities.Re
 func (c *Controller) Get(data *workspaceEntities.Data) (*workspaceEntities.Response, error) {
 	if data.IsApplicationAdmin {
 		return c.getWorkspaceWhenAppAdmin(data)
+	}
+
+	if c.appConfig.GetAuthenticationType() == auth.Ldap {
+		return c.repository.GetWorkspaceLdap(data.WorkspaceID, data.Permissions)
 	}
 
 	return c.getWorkspace(data)
@@ -189,7 +193,11 @@ func (c *Controller) sendInviteUserEmail(email, username, workspaceName string) 
 		c.useCases.NewOrganizationInviteEmail(email, username, workspaceName))
 }
 
-func (c *Controller) GetUsers(workspaceID uuid.UUID) (*[]roleEntities.Response, error) {
+func (c *Controller) GetUsers(workspaceID, noBelongRepositoryID uuid.UUID) (*[]roleEntities.Response, error) {
+	if noBelongRepositoryID != uuid.Nil {
+		return c.repository.ListWorkspaceUsersNoBelong(workspaceID, noBelongRepositoryID)
+	}
+
 	return c.repository.ListAllWorkspaceUsers(workspaceID)
 }
 

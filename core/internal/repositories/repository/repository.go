@@ -41,6 +41,7 @@ type IRepository interface {
 	ListAllRepositoryUsers(repositoryID uuid.UUID) (*[]roleEntities.Response, error)
 	GetWorkspace(workspaceID uuid.UUID) (*workspaceEntities.Workspace, error)
 	ListRepositoriesWhenApplicationAdmin() (*[]repositoryEntities.Response, error)
+	GetRepositoryLdap(repositoryID uuid.UUID, permissions []string) (*repositoryEntities.Response, error)
 }
 
 type Repository struct {
@@ -215,5 +216,28 @@ func (r *Repository) queryListRepositoriesWhenApplicationAdmin() string {
 			SELECT repo.repository_id, repo.workspace_id, repo.description, repo.name, 'applicationAdmin' AS role, 
 				   repo.created_at, repo.updated_at
 			FROM repositories AS repo
+	`
+}
+
+func (r *Repository) GetRepositoryLdap(
+	repositoryID uuid.UUID, permissions []string) (*repositoryEntities.Response, error) {
+	repository := &repositoryEntities.Response{}
+
+	return repository, r.databaseRead.Raw(r.queryGetRepositoryLdap(), repository,
+		sql.Named("permissions", pq.StringArray(permissions)),
+		sql.Named("repositoryID", repositoryID)).GetErrorExceptNotFound()
+}
+
+func (r *Repository) queryGetRepositoryLdap() string {
+	return `
+		SELECT repo.repository_id, repo.workspace_id, repo.description, repo.name, repo.created_at, repo.updated_at,
+			   repo.authz_admin, repo.authz_supervisor, repo.authz_member,
+		CASE
+			WHEN @permissions @> repo.authz_admin THEN 'admin'
+			WHEN @permissions @> repo.authz_supervisor THEN 'supervisor'
+			ELSE 'member'
+		END AS role
+		FROM repositories AS repo
+		WHERE repository_id = @repositoryID
 	`
 }

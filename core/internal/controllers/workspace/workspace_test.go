@@ -146,13 +146,32 @@ func TestGet(t *testing.T) {
 	}
 
 	t.Run("should success get workspace with role", func(t *testing.T) {
-		repositoryMock := &workspaceRepository.Mock{}
+		databaseMock := &database.Mock{}
 
+		repositoryMock := &workspaceRepository.Mock{}
 		repositoryMock.On("GetAccountWorkspace").Return(accountWorkspace, nil)
 		repositoryMock.On("GetWorkspace").Return(workspace, nil)
 
-		databaseMock := &database.Mock{}
 		appConfig := &app.Mock{}
+		appConfig.On("GetAuthenticationType").Return(auth.Horusec)
+
+		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
+		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection, appConfig,
+			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock, tokenUseCases.NewTokenUseCases())
+
+		result, err := controller.Get(workspaceData)
+		assert.NoError(t, err)
+		assert.NotNil(t, result)
+	})
+
+	t.Run("should success get workspace with auth type ldap", func(t *testing.T) {
+		databaseMock := &database.Mock{}
+
+		repositoryMock := &workspaceRepository.Mock{}
+		repositoryMock.On("GetWorkspaceLdap").Return(&workspaceEntities.Response{}, nil)
+
+		appConfig := &app.Mock{}
+		appConfig.On("GetAuthenticationType").Return(auth.Ldap)
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection, appConfig,
@@ -164,13 +183,14 @@ func TestGet(t *testing.T) {
 	})
 
 	t.Run("should return error when failed to get workspace", func(t *testing.T) {
-		repositoryMock := &workspaceRepository.Mock{}
+		databaseMock := &database.Mock{}
 
+		repositoryMock := &workspaceRepository.Mock{}
 		repositoryMock.On("GetAccountWorkspace").Return(accountWorkspace, nil)
 		repositoryMock.On("GetWorkspace").Return(workspace, errors.New("test"))
 
-		databaseMock := &database.Mock{}
 		appConfig := &app.Mock{}
+		appConfig.On("GetAuthenticationType").Return(auth.Horusec)
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection, appConfig,
@@ -182,12 +202,13 @@ func TestGet(t *testing.T) {
 	})
 
 	t.Run("should return error when failed to get workspace", func(t *testing.T) {
-		repositoryMock := &workspaceRepository.Mock{}
+		databaseMock := &database.Mock{}
 
+		repositoryMock := &workspaceRepository.Mock{}
 		repositoryMock.On("GetAccountWorkspace").Return(accountWorkspace, errors.New("test"))
 
-		databaseMock := &database.Mock{}
 		appConfig := &app.Mock{}
+		appConfig.On("GetAuthenticationType").Return(auth.Horusec)
 
 		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
 		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection, appConfig,
@@ -576,7 +597,23 @@ func TestGetUsers(t *testing.T) {
 		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection, appConfig,
 			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock, tokenUseCases.NewTokenUseCases())
 
-		result, err := controller.GetUsers(uuid.New())
+		result, err := controller.GetUsers(uuid.New(), uuid.Nil)
+		assert.NoError(t, err)
+		assert.NotNil(t, result)
+	})
+
+	t.Run("should success get all users of workspace with a notBelong filter", func(t *testing.T) {
+		repositoryMock := &workspaceRepository.Mock{}
+		repositoryMock.On("ListWorkspaceUsersNoBelong").Return(usersResponse, nil)
+
+		databaseMock := &database.Mock{}
+		appConfig := &app.Mock{}
+
+		databaseConnection := &database.Connection{Read: databaseMock, Write: databaseMock}
+		controller := NewWorkspaceController(&broker.Broker{}, databaseConnection, appConfig,
+			workspaceUseCases.NewWorkspaceUseCases(), repositoryMock, tokenUseCases.NewTokenUseCases())
+
+		result, err := controller.GetUsers(uuid.New(), uuid.New())
 		assert.NoError(t, err)
 		assert.NotNil(t, result)
 	})
