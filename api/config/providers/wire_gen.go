@@ -14,8 +14,7 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth"
 	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth/proto"
 	router2 "github.com/ZupIT/horusec-devkit/pkg/services/http/router"
-	"github.com/google/wire"
-
+	"github.com/ZupIT/horusec-devkit/pkg/services/tracer"
 	"github.com/ZupIT/horusec-platform/api/config/cors"
 	analysis2 "github.com/ZupIT/horusec-platform/api/internal/controllers/analysis"
 	analysis3 "github.com/ZupIT/horusec-platform/api/internal/handlers/analysis"
@@ -25,13 +24,14 @@ import (
 	"github.com/ZupIT/horusec-platform/api/internal/repositories/repository"
 	"github.com/ZupIT/horusec-platform/api/internal/repositories/token"
 	"github.com/ZupIT/horusec-platform/api/internal/router"
+	"github.com/google/wire"
 )
 
 // Injectors from wire.go:
 
-func Initialize(defaultPort string) (router.IRouter, error) {
+func Initialize(defaultPort string, jaeger tracer.Jaeger) (router.IRouter, error) {
 	options := cors.NewCorsConfig()
-	iRouter := router2.NewHTTPRouter(options, defaultPort)
+	iRouter := router2.NewHTTPRouter(options, defaultPort, jaeger)
 	iConfig := config.NewDatabaseConfig()
 	connection, err := database.NewDatabaseReadAndWrite(iConfig)
 	if err != nil {

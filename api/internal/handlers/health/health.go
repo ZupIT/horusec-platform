@@ -15,7 +15,9 @@
 package health
 
 import (
+	"context"
 	"fmt"
+	"github.com/opentracing/opentracing-go"
 	netHTTP "net/http"
 
 	appConfiguration "github.com/ZupIT/horusec-devkit/pkg/services/app"
@@ -80,6 +82,8 @@ func (h *Handler) Get(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
 		httpUtil.StatusInternalServerError(w, fmt.Errorf("%e %s", httpUtilEnums.ErrorGrpcIsNotHealth, state))
 		return
 	}
+	span, _ := opentracing.StartSpanFromContext(context.Background(), "test health")
+	defer span.Finish()
 	httpUtil.StatusOK(w, "service is healthy")
 }
 

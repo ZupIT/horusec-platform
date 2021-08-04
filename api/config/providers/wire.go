@@ -18,6 +18,7 @@ package providers
 
 import (
 	routerHttp "github.com/ZupIT/horusec-devkit/pkg/services/http/router"
+	"github.com/ZupIT/horusec-devkit/pkg/services/tracer"
 	"github.com/google/wire"
 
 	analysisHandler "github.com/ZupIT/horusec-platform/api/internal/handlers/analysis"
@@ -61,7 +62,7 @@ var providers = wire.NewSet(
 	router.NewHTTPRouter,
 )
 
-func Initialize(defaultPort string) (router.IRouter, error) {
+func Initialize(defaultPort string, jaeger tracer.Jaeger) (router.IRouter, error) {
 	wire.Build(providers)
 	return &router.Router{}, nil
 }
