@@ -57,8 +57,16 @@ spec:
           - name: HORUSEC_ENABLE_APPLICATION_ADMIN
             value: {{ .Values.global.administrator.enabled | quote }}
           {{- if .Values.global.administrator.enabled }}
+          - name: HORUSEC_ADMIN_USERNAME
+            valueFrom:
+              secretKeyRef:
+              {{- toYaml .Values.global.administrator.user.secretKeyRef | nindent 16 }}
+          - name: HORUSEC_ADMIN_PASSWORD
+            valueFrom:
+              secretKeyRef:
+              {{- toYaml .Values.global.administrator.password.secretKeyRef | nindent 16 }}
           - name: HORUSEC_APPLICATION_ADMIN_DATA
-            value: '{"username":{{ .Values.global.administrator.username | quote }},"email":{{ .Values.global.administrator.email | quote }},"password":{{ .Values.global.administrator.password | quote }}}'
+            value: '{"username":"$(HORUSEC_ADMIN_USERNAME)","email":{{ .Values.global.administrator.email | quote }},"password":"$(HORUSEC_ADMIN_PASSWORD)"}'
           {{- end }}
           - name: HORUSEC_BROKER_USERNAME
             valueFrom:
