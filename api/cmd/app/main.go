@@ -16,6 +16,7 @@ package main
 
 import (
 	"github.com/ZupIT/horusec-devkit/pkg/services/tracer"
+
 	"github.com/ZupIT/horusec-platform/api/config/providers"
 	"github.com/ZupIT/horusec-platform/api/internal/enums"
 )

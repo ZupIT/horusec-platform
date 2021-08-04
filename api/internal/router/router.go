@@ -17,12 +17,13 @@ package router
 import (
 	"github.com/ZupIT/horusec-devkit/pkg/services/http/router"
 	"github.com/ZupIT/horusec-devkit/pkg/services/swagger"
+	"github.com/go-chi/chi/v5"
+
 	"github.com/ZupIT/horusec-platform/api/docs"
 	"github.com/ZupIT/horusec-platform/api/internal/enums"
 	"github.com/ZupIT/horusec-platform/api/internal/handlers/analysis"
 	"github.com/ZupIT/horusec-platform/api/internal/handlers/health"
 	"github.com/ZupIT/horusec-platform/api/internal/middelwares/token"
-	"github.com/go-chi/chi/v5"
 )
 
 type IRouter interface {

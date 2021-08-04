@@ -15,6 +15,8 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth/proto"
 	router2 "github.com/ZupIT/horusec-devkit/pkg/services/http/router"
 	"github.com/ZupIT/horusec-devkit/pkg/services/tracer"
+	"github.com/google/wire"
+
 	"github.com/ZupIT/horusec-platform/api/config/cors"
 	analysis2 "github.com/ZupIT/horusec-platform/api/internal/controllers/analysis"
 	analysis3 "github.com/ZupIT/horusec-platform/api/internal/handlers/analysis"
@@ -24,7 +26,6 @@ import (
 	"github.com/ZupIT/horusec-platform/api/internal/repositories/repository"
 	"github.com/ZupIT/horusec-platform/api/internal/repositories/token"
 	"github.com/ZupIT/horusec-platform/api/internal/router"
-	"github.com/google/wire"
 )
 
 // Injectors from wire.go:
