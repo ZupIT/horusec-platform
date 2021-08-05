@@ -350,10 +350,7 @@ global:
       secretKeyRef:
         key: password
         name: horusec-administrator
-    user:
-      secretKeyRef:
-        key: username
-        name: horusec-administrator
+    username: ""
   broker:
     host: "rabbitmq"
     password:
