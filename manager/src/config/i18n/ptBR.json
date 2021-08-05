@@ -1,4 +1,25 @@
 {
+  "GENERAL": {
+    "BACK": "Voltar",
+    "SELECT": "Selecione",
+    "SELECT_SEARCH": "Digite uma palavra para filtrar os resultados.",
+    "CANCEL": "Cancelar",
+    "BUTTON_LOADING": "Botão em carregamento",
+    "NOT_EXPIRABLE": "Não expirável",
+    "PASS_VISIBILITY": "Visualizar ou ocultar senha",
+    "PAGINATION": {
+      "ITENS_PAGE": "Itens por página:",
+      "OF": "de",
+      "PAGES": "páginas"
+    },
+    "NO_OPTIONS": "Sem opções",
+    "LOADING": "CARREGANDO",
+    "EXPORT": "Exportar",
+    "DOWNLOAD_AS": "Baixar como",
+    "GITHUB": "Github",
+    "FORUM": "Fórum",
+    "ABOUT_PAGE": "Sobre essa página"
+  },
   "HOME_SCREEN": {
     "WELCOME": "Bem-vindo ao Horusec Manager!",
     "MY_WORKSPACES": "Meus Workspaces",
@@ -305,24 +326,6 @@
     "SUPERVISOR": "Supervisor:",
     "MEMBER": "Membro",
     "GROUP_NAME": "Nome do grupo"
-  },
-  "GENERAL": {
-    "BACK": "Voltar",
-    "SELECT": "Selecione",
-    "SELECT_SEARCH": "Digite uma palavra para filtrar os resultados.",
-    "CANCEL": "Cancelar",
-    "BUTTON_LOADING": "Botão em carregamento",
-    "NOT_EXPIRABLE": "Não expirável",
-    "PASS_VISIBILITY": "Visualizar ou ocultar senha",
-    "PAGINATION": {
-      "ITENS_PAGE": "Itens por página:",
-      "OF": "de",
-      "PAGES": "páginas"
-    },
-    "NO_OPTIONS": "Sem opções",
-    "LOADING": "CARREGANDO",
-    "EXPORT": "Exportar",
-    "DOWNLOAD_AS": "Baixar como"
   },
   "FOOTER": {
     "DEVELOPED": "Desenvolvido",

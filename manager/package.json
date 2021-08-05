@@ -1,5 +1,14 @@
 {
   "name": "horusec-manager",
+  "displayName": "Horusec Manager",
+  "description": "The web interface for Horusec Platform",
+  "homepage": "https://horusec.io",
+  "repository": {
+    "url": "https://github.com/ZupIT/horusec-platform"
+  },
+  "bugs": {
+    "url": "https://forum.zup.com.br/c/en/horusec"
+  },
   "version": "v2.16.2",
   "private": true,
   "dependencies": {
