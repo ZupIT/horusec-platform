@@ -124,8 +124,11 @@ func (c *Config) GetDefaultUserData() (*accountEntities.Account, error) {
 
 func (c *Config) GetApplicationAdminData() (*accountEntities.Account, error) {
 	account := &accountEntities.Account{}
-
-	return account, json.Unmarshal([]byte(c.ApplicationAdminData), &account)
+	if err := json.Unmarshal([]byte(c.ApplicationAdminData), &account); err == nil {
+		return account, nil
+	}
+	logger.LogWarn(fmt.Sprintf("Invalid JSON format of %q value", enums.EnvApplicationAdminData))
+	return account, json.Unmarshal([]byte(enums.ApplicationAdminDefaultData), &account)
 }
 
 func (c *Config) createDefaultUsers() IConfig {
