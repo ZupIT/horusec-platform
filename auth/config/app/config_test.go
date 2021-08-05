@@ -221,4 +221,12 @@ func TestGetApplicationAdminData(t *testing.T) {
 		assert.NoError(t, err)
 		assert.NotNil(t, account)
 	})
+	t.Run("should success get the default application admin data when the env is invalid", func(t *testing.T) {
+		_ = os.Setenv(enums.EnvApplicationAdminData, "{username:horusec-admin,email:horusec-admin@example.com,password:Devpass0*}")
+		appConfig := NewAuthAppConfig(getMockedConnection())
+
+		account, err := appConfig.GetApplicationAdminData()
+		assert.NoError(t, err)
+		assert.NotNil(t, account)
+	})
 }
