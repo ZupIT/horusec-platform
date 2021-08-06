@@ -43,7 +43,8 @@ const Routes = () => (
           component={lazy(() => import('pages/Overview'))}
         />
 
-        <PrivateRoute
+        {/* TODO: Voltar para PrivateRoute */}
+        <Route
           path="/settings"
           exact={true}
           component={lazy(() => import('pages/Settings'))}
