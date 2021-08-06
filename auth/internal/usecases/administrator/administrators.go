@@ -14,12 +14,9 @@ func newAdministrators(newest *entity.Account, all []*entity.Account) *administr
 }
 
 func (a *administrators) Current() *entity.Account {
-	for _, adm := range a.all {
-		if adm.Email == a.newest.Email {
-			adm.Username = a.newest.Username
-			adm.Password = a.newest.Password
-			adm.CreatedAt = a.newest.CreatedAt
-			return adm
+	for _, oldest := range a.all {
+		if oldest.Email == a.newest.Email {
+			return mergeAccounts(oldest, a.newest)
 		}
 	}
 	return nil
@@ -33,4 +30,17 @@ func (a administrators) Oldest() []*entity.Account {
 		}
 	}
 	return accounts
+}
+
+func mergeAccounts(oldest, newest *entity.Account) *entity.Account {
+	return &entity.Account{
+		AccountID:          oldest.AccountID,
+		Email:              oldest.Email,
+		Password:           newest.Password,
+		Username:           newest.Username,
+		IsConfirmed:        newest.IsConfirmed,
+		IsApplicationAdmin: true,
+		CreatedAt:          oldest.CreatedAt,
+		UpdatedAt:          newest.UpdatedAt,
+	}
 }
