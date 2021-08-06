@@ -19,13 +19,14 @@ import (
 	"os"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
-
 	"github.com/ZupIT/horusec-devkit/pkg/enums/auth"
 	"github.com/ZupIT/horusec-devkit/pkg/services/database"
 	"github.com/ZupIT/horusec-devkit/pkg/services/database/response"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 
 	"github.com/ZupIT/horusec-platform/auth/config/app/enums"
+	"github.com/ZupIT/horusec-platform/auth/test/mocks"
 )
 
 func getMockedConnection() *database.Connection {
@@ -54,24 +55,28 @@ func TestNewAuthAppConfig(t *testing.T) {
 	})
 
 	t.Run("should success create a new config with default users", func(t *testing.T) {
-		databaseMock := &database.Mock{}
-		databaseMock.On("Create").Return(&response.Response{})
+		dbMock := &database.Mock{}
+		dbMock.On("Create").Return(&response.Response{})
+		admMock := &mocks.AdminAccount{}
+		admMock.On("CreateOrUpdate", mock.AnythingOfType("*account.Account")).Return(nil)
 
 		_ = os.Setenv(enums.EnvEnableDefaultUser, "true")
 		_ = os.Setenv(enums.EnvEnableApplicationAdmin, "true")
 
-		assert.NotNil(t, NewAuthAppConfig(&database.Connection{Read: databaseMock, Write: databaseMock}, nil))
+		assert.NotNil(t, NewAuthAppConfig(&database.Connection{Read: dbMock, Write: dbMock}, admMock))
 	})
 
 	t.Run("should success create a new config with existing users", func(t *testing.T) {
-		databaseMock := &database.Mock{}
-		databaseMock.On("Create").Return(
+		dbMock := &database.Mock{}
+		dbMock.On("Create").Return(
 			response.NewResponse(0, errors.New(enums.DuplicatedAccount), nil))
+		admMock := &mocks.AdminAccount{}
+		admMock.On("CreateOrUpdate", mock.AnythingOfType("*account.Account")).Return(nil)
 
 		_ = os.Setenv(enums.EnvEnableApplicationAdmin, "true")
 		_ = os.Setenv(enums.EnvEnableDefaultUser, "true")
 
-		assert.NotNil(t, NewAuthAppConfig(&database.Connection{Read: databaseMock, Write: databaseMock}, nil))
+		assert.NotNil(t, NewAuthAppConfig(&database.Connection{Read: dbMock, Write: dbMock}, admMock))
 	})
 
 	t.Run("should panic when failed to create account", func(t *testing.T) {
