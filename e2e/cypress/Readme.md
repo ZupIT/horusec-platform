@@ -1,6 +1,7 @@
 # Horusec Platform e2e tests
 
-    This module will bring together all the **Horusec Platform** e2e tests using the [**cypress**](https://docs.cypress.io) tool.
+This module will bring together all the **Horusec Platform** e2e tests using the [**cypress**](https://docs.cypress.io) tool.
+
 ---
 
 ## Structure
