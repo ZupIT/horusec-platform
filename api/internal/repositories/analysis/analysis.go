@@ -15,7 +15,10 @@
 package analysis
 
 import (
+	"context"
 	"time"
+
+	"github.com/opentracing/opentracing-go"
 
 	"github.com/google/uuid"
 
@@ -30,8 +33,8 @@ import (
 )
 
 type IAnalysis interface {
-	FindAnalysisByID(analysisID uuid.UUID) response.IResponse
-	CreateFullAnalysis(newAnalysis *analysis.Analysis) error
+	FindAnalysisByID(ctx context.Context, analysisID uuid.UUID) response.IResponse
+	CreateFullAnalysis(ctx context.Context, newAnalysis *analysis.Analysis) error
 }
 
 type Analysis struct {
@@ -46,7 +49,9 @@ func NewRepositoriesAnalysis(connection *database.Connection) IAnalysis {
 	}
 }
 
-func (a *Analysis) FindAnalysisByID(analysisID uuid.UUID) response.IResponse {
+func (a *Analysis) FindAnalysisByID(ctx context.Context, analysisID uuid.UUID) response.IResponse {
+	span, _ := opentracing.StartSpanFromContext(ctx, "FindAnalysisByID")
+	defer span.Finish()
 	entity := &analysis.Analysis{}
 	condition := map[string]interface{}{"analysis_id": analysisID}
 	preloads := map[string][]interface{}{
@@ -56,13 +61,15 @@ func (a *Analysis) FindAnalysisByID(analysisID uuid.UUID) response.IResponse {
 	return a.databaseRead.FindPreload(entity, condition, preloads, entity.GetTable())
 }
 
-func (a *Analysis) CreateFullAnalysis(newAnalysis *analysis.Analysis) error {
+func (a *Analysis) CreateFullAnalysis(ctx context.Context, newAnalysis *analysis.Analysis) error {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "CreateFullAnalysis")
+	defer span.Finish()
 	tsx := a.databaseWrite.StartTransaction()
-	if err := a.createAnalysis(newAnalysis, tsx); err != nil {
+	if err := a.createAnalysis(ctx, newAnalysis, tsx); err != nil {
 		logger.LogError(enums.ErrorRollbackCreate, tsx.RollbackTransaction().GetError())
 		return err
 	}
-	if err := a.createManyToManyAnalysisAndVulnerabilities(newAnalysis, tsx); err != nil {
+	if err := a.createManyToManyAnalysisAndVulnerabilities(ctx, newAnalysis, tsx); err != nil {
 		logger.LogError(enums.ErrorRollbackCreate, tsx.RollbackTransaction().GetError())
 		return err
 	}
@@ -71,7 +78,10 @@ func (a *Analysis) CreateFullAnalysis(newAnalysis *analysis.Analysis) error {
 	return err
 }
 
-func (a *Analysis) createAnalysis(newAnalysis *analysis.Analysis, tsx database.IDatabaseWrite) error {
+func (a *Analysis) createAnalysis(ctx context.Context, newAnalysis *analysis.Analysis,
+	tsx database.IDatabaseWrite) error {
+	span, _ := opentracing.StartSpanFromContext(ctx, "createAnalysis")
+	defer span.Finish()
 	analysisToCreate := &analysis.Analysis{
 		ID:             newAnalysis.ID,
 		RepositoryID:   newAnalysis.RepositoryID,
@@ -86,37 +96,44 @@ func (a *Analysis) createAnalysis(newAnalysis *analysis.Analysis, tsx database.I
 	return tsx.Create(analysisToCreate, analysisToCreate.GetTable()).GetError()
 }
 
-func (a *Analysis) createManyToManyAnalysisAndVulnerabilities(newAnalysis *analysis.Analysis,
-	tsx database.IDatabaseWrite) error {
+func (a *Analysis) createManyToManyAnalysisAndVulnerabilities(ctx context.Context,
+	newAnalysis *analysis.Analysis, tsx database.IDatabaseWrite) error {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "createManyToManyAnalysisAndVulnerabilities")
+	defer span.Finish()
 	for index := range newAnalysis.AnalysisVulnerabilities {
 		manyToMany := newAnalysis.AnalysisVulnerabilities[index]
-		vulnerabilityID, err := a.createVulnerabilityIfNotExists(&manyToMany.Vulnerability, newAnalysis.RepositoryID, tsx)
+		vulnerabilityID, err := a.createVulnerabilityIfNotExists(ctx, &manyToMany.Vulnerability,
+			newAnalysis.RepositoryID, tsx)
 		if err != nil {
 			return err
 		}
 		manyToMany.VulnerabilityID = vulnerabilityID
-		if err := a.createManyToMany(&manyToMany, tsx); err != nil {
+		if err := a.createManyToMany(ctx, &manyToMany, tsx); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func (a *Analysis) createVulnerabilityIfNotExists(vuln *vulnerability.Vulnerability, repositoryID uuid.UUID,
-	tsx database.IDatabaseWrite) (uuid.UUID, error) {
-	res := a.findVulnerabilityByHashInRepository(vuln.VulnHash, repositoryID)
+func (a *Analysis) createVulnerabilityIfNotExists(ctx context.Context, vuln *vulnerability.Vulnerability,
+	repositoryID uuid.UUID, tsx database.IDatabaseWrite) (uuid.UUID, error) {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "createVulnerabilityIfNotExists")
+	defer span.Finish()
+	res := a.findVulnerabilityByHashInRepository(ctx, vuln.VulnHash, repositoryID)
 	exists, err := a.checkIfAlreadyExistsVulnerability(res)
 	if err == nil {
 		if !exists {
 			return vuln.VulnerabilityID, tsx.Create(vuln, vuln.GetTable()).GetError()
 		}
-		return a.updateCommitAuthors(vuln, res.GetData(), tsx)
+		return a.updateCommitAuthors(ctx, vuln, res.GetData(), tsx)
 	}
 	return uuid.Nil, err
 }
 
-func (a *Analysis) updateCommitAuthors(vuln *vulnerability.Vulnerability, resFindVuln interface{},
+func (a *Analysis) updateCommitAuthors(ctx context.Context, vuln *vulnerability.Vulnerability, resFindVuln interface{},
 	tsx database.IDatabaseWrite) (uuid.UUID, error) {
+	span, _ := opentracing.StartSpanFromContext(ctx, "updateCommitAuthors")
+	defer span.Finish()
 	vulnID, err := uuid.Parse(resFindVuln.(map[string]interface{})["vulnerability_id"].(string))
 	if err != nil {
 		return uuid.Nil, err
@@ -143,7 +160,10 @@ func (a *Analysis) checkIfAlreadyExistsVulnerability(res response.IResponse) (bo
 	return res.GetData() != nil, nil
 }
 
-func (a *Analysis) createManyToMany(manyToMany *analysis.AnalysisVulnerabilities, tsx database.IDatabaseWrite) error {
+func (a *Analysis) createManyToMany(ctx context.Context, manyToMany *analysis.AnalysisVulnerabilities,
+	tsx database.IDatabaseWrite) error {
+	span, _ := opentracing.StartSpanFromContext(ctx, "createManyToMany")
+	defer span.Finish()
 	manyToManyForCreate := &analysis.AnalysisVulnerabilities{
 		VulnerabilityID: manyToMany.VulnerabilityID,
 		AnalysisID:      manyToMany.AnalysisID,
@@ -152,7 +172,10 @@ func (a *Analysis) createManyToMany(manyToMany *analysis.AnalysisVulnerabilities
 	return tsx.Create(manyToManyForCreate, manyToManyForCreate.GetTable()).GetError()
 }
 
-func (a *Analysis) findVulnerabilityByHashInRepository(vulnHash string, repositoryID uuid.UUID) response.IResponse {
+func (a *Analysis) findVulnerabilityByHashInRepository(ctx context.Context, vulnHash string,
+	repositoryID uuid.UUID) response.IResponse {
+	span, _ := opentracing.StartSpanFromContext(ctx, "createManyToMany")
+	defer span.Finish()
 	query := `
 		SELECT vulnerabilities.vulnerability_id as vulnerability_id
 		FROM vulnerabilities

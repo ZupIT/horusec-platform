@@ -80,6 +80,7 @@ func (h *Handler) Get(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
 		httpUtil.StatusInternalServerError(w, fmt.Errorf("%e %s", httpUtilEnums.ErrorGrpcIsNotHealth, state))
 		return
 	}
+
 	httpUtil.StatusOK(w, "service is healthy")
 }
 

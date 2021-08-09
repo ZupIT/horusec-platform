@@ -9,6 +9,8 @@ IMAGE_NAME ?= horuszup/horusec-api:local
 
 fmt:
 	$(GOFMT) -w $(GO_FILES)
+vet:  ## vet go files
+	go vet `go list ./... | grep -v /vendor/`
 
 lint:
     ifeq ($(wildcard $(GOLANG_CI_LINT)), $(GOLANG_CI_LINT))

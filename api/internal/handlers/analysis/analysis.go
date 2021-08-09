@@ -15,7 +15,10 @@
 package analysis
 
 import (
+	"context"
 	netHTTP "net/http"
+
+	"github.com/opentracing/opentracing-go"
 
 	"github.com/go-chi/chi"
 	"github.com/google/uuid"
@@ -64,22 +67,29 @@ func (h *Handler) Options(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
 // @Failure 500 {object} entities.Response{content=string} "INTERNAL SERVER ERROR"
 // @Router /api/analysis [post]
 func (h *Handler) Post(w netHTTP.ResponseWriter, r *netHTTP.Request) {
+	span, ctx := opentracing.StartSpanFromContext(r.Context(), "POST ANALYSIS")
+	defer span.Finish()
+	r = r.WithContext(ctx)
+
 	analysisData, err := h.useCases.DecodeAnalysisDataFromIoRead(r)
 	if err != nil {
 		httpUtil.StatusBadRequest(w, err)
 		return
 	}
 	analysisEntity := h.decoratorAnalysisFromContext(analysisData.Analysis, r)
-	analysisEntity, err = h.decoratorAnalysisToRepositoryName(analysisEntity, analysisData.RepositoryName)
+	analysisEntity, err = h.decoratorAnalysisToRepositoryName(r.Context(), analysisEntity, analysisData.RepositoryName)
 	if err != nil {
 		httpUtil.StatusBadRequest(w, err)
 		return
 	}
-	h.saveAnalysis(w, analysisEntity)
+	h.saveAnalysis(r.Context(), w, analysisEntity)
 }
 
 func (h *Handler) decoratorAnalysisFromContext(
 	analysisEntity *analysisEntities.Analysis, r *netHTTP.Request) *analysisEntities.Analysis {
+	span, ctx := opentracing.StartSpanFromContext(r.Context(), "decoratorAnalysisFromContext")
+	defer span.Finish()
+	r = r.WithContext(ctx)
 	analysisEntity.WorkspaceID = r.Context().Value(tokenMiddlewareEnum.WorkspaceID).(uuid.UUID)
 	analysisEntity.WorkspaceName = r.Context().Value(tokenMiddlewareEnum.WorkspaceName).(string)
 	analysisEntity.RepositoryID = r.Context().Value(tokenMiddlewareEnum.RepositoryID).(uuid.UUID)
@@ -87,8 +97,10 @@ func (h *Handler) decoratorAnalysisFromContext(
 	return analysisEntity
 }
 
-func (h *Handler) decoratorAnalysisToRepositoryName(
+func (h *Handler) decoratorAnalysisToRepositoryName(ctx context.Context,
 	analysisEntity *analysisEntities.Analysis, repositoryName string) (*analysisEntities.Analysis, error) {
+	span, _ := opentracing.StartSpanFromContext(ctx, "decoratorAnalysisToRepositoryName")
+	defer span.Finish()
 	if h.isInvalidWorkspaceToCreateAnalysis(analysisEntity) {
 		return nil, handlersEnums.ErrorWorkspaceNotSelected
 	}
@@ -114,8 +126,11 @@ func (h *Handler) isToCreateNewRepository(analysisEntity *analysisEntities.Analy
 	return analysisEntity.RepositoryName == "" && analysisEntity.RepositoryID == uuid.Nil
 }
 
-func (h *Handler) saveAnalysis(w netHTTP.ResponseWriter, analysisEntity *analysisEntities.Analysis) {
-	analysisID, err := h.controller.SaveAnalysis(analysisEntity)
+func (h *Handler) saveAnalysis(ctx context.Context, w netHTTP.ResponseWriter,
+	analysisEntity *analysisEntities.Analysis) {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "decoratorAnalysisFromContext")
+	defer span.Finish()
+	analysisID, err := h.controller.SaveAnalysis(ctx, analysisEntity)
 	if err != nil {
 		httpUtil.StatusInternalServerError(w, err)
 		return
@@ -137,12 +152,14 @@ func (h *Handler) saveAnalysis(w netHTTP.ResponseWriter, analysisEntity *analysi
 // @Failure 500 {object} entities.Response{content=string} "INTERNAL SERVER ERROR"
 // @Router /api/analysis/{analysisID} [get]
 func (h *Handler) Get(w netHTTP.ResponseWriter, r *netHTTP.Request) {
+	span, ctx := opentracing.StartSpanFromContext(r.Context(), "GetAnalysis")
+	defer span.Finish()
 	analysisID, err := uuid.Parse(chi.URLParam(r, "analysisID"))
 	if err != nil || analysisID == uuid.Nil {
 		httpUtil.StatusBadRequest(w, err)
 		return
 	}
-	response, err := h.controller.GetAnalysis(analysisID)
+	response, err := h.controller.GetAnalysis(ctx, analysisID)
 	if err != nil {
 		if err == enums.ErrorNotFoundRecords {
 			httpUtil.StatusNotFound(w, err)

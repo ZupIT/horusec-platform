@@ -15,8 +15,11 @@
 package analysis
 
 import (
+	"context"
 	netHTTP "net/http"
 	"strings"
+
+	"github.com/opentracing/opentracing-go"
 
 	analysisv1 "github.com/ZupIT/horusec-platform/api/internal/entities/analysis_v1"
 
@@ -55,6 +58,9 @@ func NewAnalysisUseCases() Interface {
 
 func (au *UseCases) DecodeAnalysisDataFromIoRead(r *netHTTP.Request) (
 	analysisData *cli.AnalysisData, err error) {
+	span, ctx := opentracing.StartSpanFromContext(r.Context(), "DecodeAnalysisDataFromIoRead")
+	defer span.Finish()
+	r = r.WithContext(ctx)
 	if r.Body == nil {
 		return nil, enums.ErrorBodyEmpty
 	}
@@ -62,37 +68,39 @@ func (au *UseCases) DecodeAnalysisDataFromIoRead(r *netHTTP.Request) (
 	if err != nil {
 		return nil, err
 	}
-	return analysisData, au.validateAnalysisData(analysisData)
+	return analysisData, au.validateAnalysisData(r.Context(), analysisData)
 }
 
 func (au *UseCases) parseBodyToAnalysis(r *netHTTP.Request) (analysisData *cli.AnalysisData, err error) {
+	span, _ := opentracing.StartSpanFromContext(r.Context(), "parseBodyToAnalysis")
+	defer span.Finish()
 	if au.isVersion1(r.Header.Get("X-Horusec-CLI-Version")) {
 		analysisDataV1 := &analysisv1.AnalysisCLIDataV1{}
-		err = parser.ParseBodyToEntity(r.Body, analysisDataV1)
-		if err != nil {
+		if err := parser.ParseBodyToEntity(r.Body, analysisDataV1); err != nil {
 			return nil, err
 		}
 		analysisData = analysisDataV1.ParseDataV1ToV2()
-	} else {
-		err = parser.ParseBodyToEntity(r.Body, &analysisData)
-		if err != nil {
-			return nil, err
-		}
+	} else if err := parser.ParseBodyToEntity(r.Body, &analysisData); err != nil {
+		return nil, err
 	}
 	return analysisData, nil
 }
 
-func (au *UseCases) validateAnalysisData(analysisData *cli.AnalysisData) error {
+func (au *UseCases) validateAnalysisData(ctx context.Context, analysisData *cli.AnalysisData) error {
+	span, _ := opentracing.StartSpanFromContext(ctx, "validateAnalysisData")
+	defer span.Finish()
 	err := validation.ValidateStruct(analysisData,
 		validation.Field(&analysisData.Analysis, validation.Required),
 	)
 	if err != nil {
 		return err
 	}
-	return au.validateAnalysisToCLIv2(analysisData.Analysis)
+	return au.validateAnalysisToCLIv2(ctx, analysisData.Analysis)
 }
 
-func (au *UseCases) validateAnalysisToCLIv2(analysis *analysisEntity.Analysis) error {
+func (au *UseCases) validateAnalysisToCLIv2(ctx context.Context, analysis *analysisEntity.Analysis) error {
+	span, _ := opentracing.StartSpanFromContext(ctx, "validateAnalysisToCLIv2")
+	defer span.Finish()
 	return validation.ValidateStruct(analysis,
 		validation.Field(&analysis.ID, validation.Required, is.UUID),
 		validation.Field(&analysis.Status, validation.Required,
@@ -100,12 +108,14 @@ func (au *UseCases) validateAnalysisToCLIv2(analysis *analysisEntity.Analysis) e
 		validation.Field(&analysis.CreatedAt, validation.Required, validation.NilOrNotEmpty),
 		validation.Field(&analysis.FinishedAt, validation.Required, validation.NilOrNotEmpty),
 		validation.Field(&analysis.AnalysisVulnerabilities,
-			validation.By(au.validateVulnerabilities(analysis.AnalysisVulnerabilities))),
+			validation.By(au.validateVulnerabilities(ctx, analysis.AnalysisVulnerabilities))),
 	)
 }
 
-func (au *UseCases) validateVulnerabilities(
+func (au *UseCases) validateVulnerabilities(ctx context.Context,
 	analysisVulnerabilities []analysisEntity.AnalysisVulnerabilities) validation.RuleFunc {
+	span, _ := opentracing.StartSpanFromContext(ctx, "validateVulnerabilities")
+	defer span.Finish()
 	return func(value interface{}) error {
 		for key := range analysisVulnerabilities {
 			if err := au.setupValidationVulnerabilities(&analysisVulnerabilities[key].Vulnerability); err != nil {

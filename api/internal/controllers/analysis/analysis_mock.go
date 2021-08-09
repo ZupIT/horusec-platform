@@ -15,6 +15,8 @@
 package analysis
 
 import (
+	"context"
+
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/mock"
 
@@ -26,12 +28,12 @@ type Mock struct {
 	mock.Mock
 }
 
-func (m *Mock) SaveAnalysis(_ *analysis.Analysis) (uuid.UUID, error) {
+func (m *Mock) SaveAnalysis(_ context.Context, _ *analysis.Analysis) (uuid.UUID, error) {
 	args := m.MethodCalled("SaveAnalysis")
 	return args.Get(0).(uuid.UUID), mockUtils.ReturnNilOrError(args, 1)
 }
 
-func (m *Mock) GetAnalysis(_ uuid.UUID) (*analysis.Analysis, error) {
+func (m *Mock) GetAnalysis(_ context.Context, _ uuid.UUID) (*analysis.Analysis, error) {
 	args := m.MethodCalled("GetAnalysis")
 	return args.Get(0).(*analysis.Analysis), mockUtils.ReturnNilOrError(args, 1)
 }

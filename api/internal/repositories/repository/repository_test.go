@@ -15,6 +15,7 @@
 package repository
 
 import (
+	"context"
 	"errors"
 	"testing"
 
@@ -36,7 +37,7 @@ func TestRepository_CreateRepository(t *testing.T) {
 			Write: mockDatabase,
 			Read:  mockDatabase,
 		}
-		err := NewRepositoriesRepository(connectionMock).CreateRepository(uuid.New(), uuid.New(), uuid.New().String())
+		err := NewRepositoriesRepository(connectionMock).CreateRepository(context.Background(), uuid.New(), uuid.New(), uuid.New().String())
 		assert.NoError(t, err)
 	})
 
@@ -48,7 +49,7 @@ func TestRepository_CreateRepository(t *testing.T) {
 			Write: mockDatabase,
 			Read:  mockDatabase,
 		}
-		err := NewRepositoriesRepository(connectionMock).CreateRepository(uuid.New(), uuid.New(), uuid.New().String())
+		err := NewRepositoriesRepository(connectionMock).CreateRepository(context.Background(), uuid.New(), uuid.New(), uuid.New().String())
 		assert.Error(t, err)
 	})
 
@@ -63,7 +64,7 @@ func TestRepository_CreateRepository(t *testing.T) {
 		}
 
 		repository := NewRepositoriesRepository(connectionMock)
-		assert.Error(t, repository.CreateRepository(uuid.New(), uuid.New(), uuid.New().String()))
+		assert.Error(t, repository.CreateRepository(context.Background(), uuid.New(), uuid.New(), uuid.New().String()))
 	})
 }
 
@@ -76,7 +77,7 @@ func TestRepository_FindRepository(t *testing.T) {
 		connectionMock := &database.Connection{
 			Read: mockRead,
 		}
-		_, err := NewRepositoriesRepository(connectionMock).FindRepository(uuid.New(), uuid.New().String())
+		_, err := NewRepositoriesRepository(connectionMock).FindRepository(context.Background(), uuid.New(), uuid.New().String())
 		assert.NoError(t, err)
 	})
 	t.Run("Should find repository existing and return records not found because not exists data", func(t *testing.T) {
@@ -85,7 +86,7 @@ func TestRepository_FindRepository(t *testing.T) {
 		connectionMock := &database.Connection{
 			Read: mockRead,
 		}
-		_, err := NewRepositoriesRepository(connectionMock).FindRepository(uuid.New(), uuid.New().String())
+		_, err := NewRepositoriesRepository(connectionMock).FindRepository(context.Background(), uuid.New(), uuid.New().String())
 		assert.Equal(t, enums.ErrorNotFoundRecords, err)
 	})
 	t.Run("Should find repository existing and return records not found", func(t *testing.T) {
@@ -94,7 +95,7 @@ func TestRepository_FindRepository(t *testing.T) {
 		connectionMock := &database.Connection{
 			Read: mockRead,
 		}
-		repositoryID, err := NewRepositoriesRepository(connectionMock).FindRepository(uuid.New(), uuid.New().String())
+		repositoryID, err := NewRepositoriesRepository(connectionMock).FindRepository(context.Background(), uuid.New(), uuid.New().String())
 		assert.Equal(t, repositoryID, uuid.Nil)
 		assert.Equal(t, enums.ErrorNotFoundRecords, err)
 	})

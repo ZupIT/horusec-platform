@@ -15,7 +15,10 @@
 package repository
 
 import (
+	"context"
 	"time"
+
+	"github.com/opentracing/opentracing-go"
 
 	"github.com/google/uuid"
 
@@ -26,8 +29,8 @@ import (
 )
 
 type IRepository interface {
-	CreateRepository(ID, workspaceID uuid.UUID, name string) error
-	FindRepository(workspaceID uuid.UUID, name string) (uuid.UUID, error)
+	CreateRepository(ctx context.Context, ID, workspaceID uuid.UUID, name string) error
+	FindRepository(ctx context.Context, workspaceID uuid.UUID, name string) (uuid.UUID, error)
 }
 
 type Repository struct {
@@ -42,7 +45,9 @@ func NewRepositoriesRepository(connection *database.Connection) IRepository {
 	}
 }
 
-func (r *Repository) FindRepository(workspaceID uuid.UUID, name string) (uuid.UUID, error) {
+func (r *Repository) FindRepository(ctx context.Context, workspaceID uuid.UUID, name string) (uuid.UUID, error) {
+	span, _ := opentracing.StartSpanFromContext(ctx, "FindRepository")
+	defer span.Finish()
 	repository := &core.Repository{}
 	condition := map[string]interface{}{
 		"workspace_id": workspaceID,
@@ -53,8 +58,10 @@ func (r *Repository) FindRepository(workspaceID uuid.UUID, name string) (uuid.UU
 		enums.DatabaseRepositoryTable).GetError()
 }
 
-func (r *Repository) CreateRepository(repositoryID, workspaceID uuid.UUID, name string) error {
-	workspace, err := r.GetWorkspace(workspaceID)
+func (r *Repository) CreateRepository(ctx context.Context, repositoryID, workspaceID uuid.UUID, name string) error {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "CreateRepository")
+	defer span.Finish()
+	workspace, err := r.GetWorkspace(ctx, workspaceID)
 	if err != nil {
 		return err
 	}
@@ -71,7 +78,9 @@ func (r *Repository) CreateRepository(repositoryID, workspaceID uuid.UUID, name 
 	return r.databaseWrite.Create(entity, enums.DatabaseRepositoryTable).GetError()
 }
 
-func (r *Repository) GetWorkspace(workspaceID uuid.UUID) (*core.Workspace, error) {
+func (r *Repository) GetWorkspace(ctx context.Context, workspaceID uuid.UUID) (*core.Workspace, error) {
+	span, _ := opentracing.StartSpanFromContext(ctx, "GetWorkspace")
+	defer span.Finish()
 	workspace := &core.Workspace{}
 	condition := map[string]interface{}{
 		"workspace_id": workspaceID,

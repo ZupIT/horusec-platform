@@ -15,6 +15,7 @@
 package analysis
 
 import (
+	"context"
 	"errors"
 	"testing"
 	"time"
@@ -53,7 +54,7 @@ func TestAnalysis_FindAnalysisByID(t *testing.T) {
 		connectionMock := &database.Connection{
 			Read: mockRead,
 		}
-		res := NewRepositoriesAnalysis(connectionMock).FindAnalysisByID(uuid.New())
+		res := NewRepositoriesAnalysis(connectionMock).FindAnalysisByID(context.Background(), uuid.New())
 		assert.NoError(t, res.GetError())
 		assert.NotEmpty(t, res.GetData())
 		assert.NotEqual(t, res.GetData().(*analysis.Analysis).ID, uuid.Nil)
@@ -75,7 +76,7 @@ func TestAnalysis_FindAnalysisByID(t *testing.T) {
 		connectionMock := &database.Connection{
 			Read: mockRead,
 		}
-		res := NewRepositoriesAnalysis(connectionMock).FindAnalysisByID(uuid.New())
+		res := NewRepositoriesAnalysis(connectionMock).FindAnalysisByID(context.Background(), uuid.New())
 		assert.NoError(t, res.GetError())
 		assert.NotEmpty(t, res.GetData())
 		assert.NotEqual(t, res.GetData().(*analysis.Analysis).ID, uuid.Nil)
@@ -102,7 +103,7 @@ func TestAnalysis_CreateFullAnalysis(t *testing.T) {
 			CreatedAt:      time.Now(),
 			FinishedAt:     time.Now(),
 		}
-		err := NewRepositoriesAnalysis(connectionMock).CreateFullAnalysis(data)
+		err := NewRepositoriesAnalysis(connectionMock).CreateFullAnalysis(context.Background(), data)
 		assert.NoError(t, err)
 	})
 	t.Run("Should create analysis and vulnerabilities with success", func(t *testing.T) {
@@ -153,7 +154,7 @@ func TestAnalysis_CreateFullAnalysis(t *testing.T) {
 				},
 			},
 		}
-		err := NewRepositoriesAnalysis(connectionMock).CreateFullAnalysis(data)
+		err := NewRepositoriesAnalysis(connectionMock).CreateFullAnalysis(context.Background(), data)
 		assert.NoError(t, err)
 	})
 	t.Run("Should create analysis and many to many with success but not create vulnerability already exists", func(t *testing.T) {
@@ -205,7 +206,7 @@ func TestAnalysis_CreateFullAnalysis(t *testing.T) {
 				},
 			},
 		}
-		err := NewRepositoriesAnalysis(connectionMock).CreateFullAnalysis(data)
+		err := NewRepositoriesAnalysis(connectionMock).CreateFullAnalysis(context.Background(), data)
 		assert.NoError(t, err)
 	})
 	t.Run("Should create analysis and many to many with success but not update vulnerability if already exists but return invalid vuln_id", func(t *testing.T) {
@@ -257,7 +258,7 @@ func TestAnalysis_CreateFullAnalysis(t *testing.T) {
 				},
 			},
 		}
-		err := NewRepositoriesAnalysis(connectionMock).CreateFullAnalysis(data)
+		err := NewRepositoriesAnalysis(connectionMock).CreateFullAnalysis(context.Background(), data)
 		assert.Error(t, err)
 	})
 	t.Run("Should create analysis and many to many with success but not create vulnerability already exists", func(t *testing.T) {
@@ -308,7 +309,7 @@ func TestAnalysis_CreateFullAnalysis(t *testing.T) {
 				},
 			},
 		}
-		err := NewRepositoriesAnalysis(connectionMock).CreateFullAnalysis(data)
+		err := NewRepositoriesAnalysis(connectionMock).CreateFullAnalysis(context.Background(), data)
 		assert.Error(t, err)
 	})
 	t.Run("Should create analysis with error", func(t *testing.T) {
@@ -330,7 +331,7 @@ func TestAnalysis_CreateFullAnalysis(t *testing.T) {
 			CreatedAt:      time.Now(),
 			FinishedAt:     time.Now(),
 		}
-		err := NewRepositoriesAnalysis(connectionMock).CreateFullAnalysis(data)
+		err := NewRepositoriesAnalysis(connectionMock).CreateFullAnalysis(context.Background(), data)
 		assert.Error(t, err)
 	})
 	t.Run("Should create analysis with success but create vulnerability with error", func(t *testing.T) {
@@ -382,7 +383,7 @@ func TestAnalysis_CreateFullAnalysis(t *testing.T) {
 				},
 			},
 		}
-		err := NewRepositoriesAnalysis(connectionMock).CreateFullAnalysis(data)
+		err := NewRepositoriesAnalysis(connectionMock).CreateFullAnalysis(context.Background(), data)
 		assert.Error(t, err)
 	})
 	t.Run("Should create analysis with success but create many to many with error", func(t *testing.T) {
@@ -435,7 +436,7 @@ func TestAnalysis_CreateFullAnalysis(t *testing.T) {
 				},
 			},
 		}
-		err := NewRepositoriesAnalysis(connectionMock).CreateFullAnalysis(data)
+		err := NewRepositoriesAnalysis(connectionMock).CreateFullAnalysis(context.Background(), data)
 		assert.Error(t, err)
 	})
 }

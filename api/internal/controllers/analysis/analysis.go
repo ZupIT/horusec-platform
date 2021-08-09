@@ -15,7 +15,10 @@
 package analysis
 
 import (
+	"context"
 	"time"
+
+	"github.com/opentracing/opentracing-go"
 
 	"github.com/google/uuid"
 
@@ -30,8 +33,8 @@ import (
 )
 
 type IController interface {
-	GetAnalysis(analysisID uuid.UUID) (*analysis.Analysis, error)
-	SaveAnalysis(analysisEntity *analysis.Analysis) (uuid.UUID, error)
+	GetAnalysis(ctx context.Context, analysisID uuid.UUID) (*analysis.Analysis, error)
+	SaveAnalysis(ctx context.Context, analysisEntity *analysis.Analysis) (uuid.UUID, error)
 }
 
 type Controller struct {
@@ -51,8 +54,10 @@ func NewAnalysisController(broker brokerService.IBroker, appConfig appConfigurat
 	}
 }
 
-func (c *Controller) GetAnalysis(analysisID uuid.UUID) (*analysis.Analysis, error) {
-	response := c.repoAnalysis.FindAnalysisByID(analysisID)
+func (c *Controller) GetAnalysis(ctx context.Context, analysisID uuid.UUID) (*analysis.Analysis, error) {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "GetAnalysis")
+	defer span.Finish()
+	response := c.repoAnalysis.FindAnalysisByID(ctx, analysisID)
 	if response.GetError() != nil {
 		return nil, response.GetError()
 	}
@@ -63,28 +68,32 @@ func (c *Controller) GetAnalysis(analysisID uuid.UUID) (*analysis.Analysis, erro
 	return response.GetData().(*analysis.Analysis), nil
 }
 
-func (c *Controller) SaveAnalysis(analysisEntity *analysis.Analysis) (uuid.UUID, error) {
-	analysisEntity, err := c.createRepositoryIfNotExists(analysisEntity)
+func (c *Controller) SaveAnalysis(ctx context.Context, analysisEntity *analysis.Analysis) (uuid.UUID, error) {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "SaveAnalysis")
+	defer span.Finish()
+	analysisEntity, err := c.createRepositoryIfNotExists(ctx, analysisEntity)
 	if err != nil {
 		return uuid.Nil, err
 	}
-	analysisDecorated, err := c.decorateAnalysisEntityAndSaveOnDatabase(analysisEntity)
+	analysisDecorated, err := c.decorateAnalysisEntityAndSaveOnDatabase(ctx, analysisEntity)
 	if err != nil {
 		return uuid.Nil, err
 	}
-	if err := c.publishInBroker(analysisDecorated.ID); err != nil {
+	if err := c.publishInBroker(ctx, analysisDecorated.ID); err != nil {
 		return uuid.Nil, err
 	}
 	return analysisDecorated.ID, nil
 }
 
-func (c *Controller) createRepositoryIfNotExists(analysisEntity *analysis.Analysis) (*analysis.Analysis, error) {
+func (c *Controller) createRepositoryIfNotExists(ctx context.Context, analysisEntity *analysis.Analysis) (*analysis.Analysis, error) {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "createRepositoryIfNotExists")
+	defer span.Finish()
 	if analysisEntity.RepositoryID == uuid.Nil {
 		analysisEntity.SetRepositoryID(uuid.New())
-		repositoryID, err := c.repoRepository.FindRepository(analysisEntity.WorkspaceID, analysisEntity.RepositoryName)
+		repositoryID, err := c.repoRepository.FindRepository(ctx, analysisEntity.WorkspaceID, analysisEntity.RepositoryName)
 		if err != nil {
 			if err == enums.ErrorNotFoundRecords {
-				return analysisEntity, c.repoRepository.CreateRepository(analysisEntity.RepositoryID,
+				return analysisEntity, c.repoRepository.CreateRepository(ctx, analysisEntity.RepositoryID,
 					analysisEntity.WorkspaceID, analysisEntity.RepositoryName)
 			}
 			return nil, err
@@ -94,10 +103,12 @@ func (c *Controller) createRepositoryIfNotExists(analysisEntity *analysis.Analys
 	return analysisEntity, nil
 }
 
-func (c *Controller) decorateAnalysisEntityAndSaveOnDatabase(
+func (c *Controller) decorateAnalysisEntityAndSaveOnDatabase(ctx context.Context,
 	analysisEntity *analysis.Analysis) (*analysis.Analysis, error) {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "decorateAnalysisEntityAndSaveOnDatabase")
+	defer span.Finish()
 	analysisDecorated := c.decoratorAnalysisToSave(analysisEntity)
-	return analysisDecorated, c.createNewAnalysis(analysisDecorated)
+	return analysisDecorated, c.createNewAnalysis(ctx, analysisDecorated)
 }
 
 func (c *Controller) decoratorAnalysisToSave(analysisEntity *analysis.Analysis) *analysis.Analysis {
@@ -117,8 +128,8 @@ func (c *Controller) decoratorAnalysisToSave(analysisEntity *analysis.Analysis) 
 	return newAnalysis
 }
 
-func (c *Controller) createNewAnalysis(newAnalysis *analysis.Analysis) error {
-	return c.repoAnalysis.CreateFullAnalysis(newAnalysis)
+func (c *Controller) createNewAnalysis(ctx context.Context, newAnalysis *analysis.Analysis) error {
+	return c.repoAnalysis.CreateFullAnalysis(ctx, newAnalysis)
 }
 
 func (c *Controller) extractBaseOfTheAnalysis(analysisEntity *analysis.Analysis) *analysis.Analysis {
@@ -146,8 +157,8 @@ func (c *Controller) hasDuplicatedHash(
 	return false
 }
 
-func (c *Controller) publishInBroker(analysisID uuid.UUID) error {
-	response, err := c.GetAnalysis(analysisID)
+func (c *Controller) publishInBroker(ctx context.Context, analysisID uuid.UUID) error {
+	response, err := c.GetAnalysis(ctx, analysisID)
 	if err != nil {
 		return err
 	}

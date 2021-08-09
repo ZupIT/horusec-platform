@@ -15,6 +15,7 @@
 package analysis
 
 import (
+	"context"
 	"errors"
 	"testing"
 	"time"
@@ -58,7 +59,7 @@ func TestController_GetAnalysis(t *testing.T) {
 			repoRepositoryMock,
 			repoAnalysisMock,
 		)
-		res, err := controller.GetAnalysis(uuid.New())
+		res, err := controller.GetAnalysis(context.Background(), uuid.New())
 		assert.NoError(t, err)
 		assert.NotEmpty(t, res)
 	})
@@ -74,7 +75,7 @@ func TestController_GetAnalysis(t *testing.T) {
 			repoRepositoryMock,
 			repoAnalysisMock,
 		)
-		res, err := controller.GetAnalysis(uuid.New())
+		res, err := controller.GetAnalysis(context.Background(), uuid.New())
 		assert.Error(t, err)
 		assert.Empty(t, res)
 	})
@@ -90,7 +91,7 @@ func TestController_GetAnalysis(t *testing.T) {
 			repoRepositoryMock,
 			repoAnalysisMock,
 		)
-		res, err := controller.GetAnalysis(uuid.New())
+		res, err := controller.GetAnalysis(context.Background(), uuid.New())
 		assert.Error(t, err)
 		assert.Equal(t, err, enums.ErrorNotFoundRecords)
 		assert.Empty(t, res)
@@ -107,7 +108,7 @@ func TestController_GetAnalysis(t *testing.T) {
 			repoRepositoryMock,
 			repoAnalysisMock,
 		)
-		res, err := controller.GetAnalysis(uuid.New())
+		res, err := controller.GetAnalysis(context.Background(), uuid.New())
 		assert.Error(t, err)
 		assert.Equal(t, err, enums.ErrorNotFoundRecords)
 		assert.Empty(t, res)
@@ -136,7 +137,7 @@ func TestController_SaveAnalysis(t *testing.T) {
 			repoRepositoryMock,
 			repoAnalysisMock,
 		)
-		res, err := controller.SaveAnalysis(&analysis.Analysis{
+		res, err := controller.SaveAnalysis(context.Background(), &analysis.Analysis{
 			ID:             uuid.New(),
 			WorkspaceID:    uuid.New(),
 			WorkspaceName:  uuid.NewString(),
@@ -171,7 +172,7 @@ func TestController_SaveAnalysis(t *testing.T) {
 			repoRepositoryMock,
 			repoAnalysisMock,
 		)
-		res, err := controller.SaveAnalysis(&analysis.Analysis{
+		res, err := controller.SaveAnalysis(context.Background(), &analysis.Analysis{
 			ID:             uuid.New(),
 			WorkspaceID:    uuid.New(),
 			WorkspaceName:  uuid.NewString(),
@@ -295,7 +296,7 @@ func TestController_SaveAnalysis(t *testing.T) {
 				},
 			},
 		}
-		res, err := controller.SaveAnalysis(dataToSave)
+		res, err := controller.SaveAnalysis(context.Background(), dataToSave)
 		assert.NoError(t, err)
 		assert.NotEqual(t, res, uuid.Nil)
 	})
@@ -321,7 +322,7 @@ func TestController_SaveAnalysis(t *testing.T) {
 			repoRepositoryMock,
 			repoAnalysisMock,
 		)
-		res, err := controller.SaveAnalysis(&analysis.Analysis{
+		res, err := controller.SaveAnalysis(context.Background(), &analysis.Analysis{
 			ID:             uuid.New(),
 			WorkspaceID:    uuid.New(),
 			WorkspaceName:  uuid.NewString(),
@@ -348,7 +349,7 @@ func TestController_SaveAnalysis(t *testing.T) {
 			repoRepositoryMock,
 			repoAnalysisMock,
 		)
-		res, err := controller.SaveAnalysis(&analysis.Analysis{
+		res, err := controller.SaveAnalysis(context.Background(), &analysis.Analysis{
 			ID:             uuid.New(),
 			WorkspaceID:    uuid.New(),
 			WorkspaceName:  uuid.NewString(),
@@ -375,7 +376,7 @@ func TestController_SaveAnalysis(t *testing.T) {
 			repoRepositoryMock,
 			repoAnalysisMock,
 		)
-		res, err := controller.SaveAnalysis(&analysis.Analysis{
+		res, err := controller.SaveAnalysis(context.Background(), &analysis.Analysis{
 			ID:             uuid.New(),
 			WorkspaceID:    uuid.New(),
 			WorkspaceName:  uuid.NewString(),
@@ -403,7 +404,7 @@ func TestController_SaveAnalysis(t *testing.T) {
 			repoRepositoryMock,
 			repoAnalysisMock,
 		)
-		res, err := controller.SaveAnalysis(&analysis.Analysis{
+		res, err := controller.SaveAnalysis(context.Background(), &analysis.Analysis{
 			ID:             uuid.New(),
 			WorkspaceID:    uuid.New(),
 			WorkspaceName:  uuid.NewString(),
@@ -439,7 +440,7 @@ func TestController_SaveAnalysis(t *testing.T) {
 			repoRepositoryMock,
 			repoAnalysisMock,
 		)
-		res, err := controller.SaveAnalysis(&analysis.Analysis{
+		res, err := controller.SaveAnalysis(context.Background(), &analysis.Analysis{
 			ID:             uuid.New(),
 			WorkspaceID:    uuid.New(),
 			WorkspaceName:  uuid.NewString(),
@@ -474,7 +475,7 @@ func TestController_SaveAnalysis(t *testing.T) {
 			repoRepositoryMock,
 			repoAnalysisMock,
 		)
-		res, err := controller.SaveAnalysis(&analysis.Analysis{
+		res, err := controller.SaveAnalysis(context.Background(), &analysis.Analysis{
 			ID:             uuid.New(),
 			WorkspaceID:    uuid.New(),
 			WorkspaceName:  uuid.NewString(),
@@ -503,7 +504,7 @@ func TestController_SaveAnalysis(t *testing.T) {
 			repoRepositoryMock,
 			repoAnalysisMock,
 		)
-		res, err := controller.SaveAnalysis(&analysis.Analysis{
+		res, err := controller.SaveAnalysis(context.Background(), &analysis.Analysis{
 			ID:             uuid.New(),
 			WorkspaceID:    uuid.New(),
 			WorkspaceName:  uuid.NewString(),
@@ -538,7 +539,7 @@ func TestController_SaveAnalysis(t *testing.T) {
 			repoRepositoryMock,
 			repoAnalysisMock,
 		)
-		res, err := controller.SaveAnalysis(&analysis.Analysis{
+		res, err := controller.SaveAnalysis(context.Background(), &analysis.Analysis{
 			ID:             uuid.New(),
 			WorkspaceID:    uuid.New(),
 			WorkspaceName:  uuid.NewString(),
