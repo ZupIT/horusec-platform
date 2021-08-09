@@ -19,6 +19,8 @@ import (
 	netHTTP "net/http"
 	"strings"
 
+	"github.com/ZupIT/horusec-devkit/pkg/services/tracer"
+
 	"github.com/opentracing/opentracing-go"
 
 	analysisv1 "github.com/ZupIT/horusec-platform/api/internal/entities/analysis_v1"
@@ -60,15 +62,16 @@ func (au *UseCases) DecodeAnalysisDataFromIoRead(r *netHTTP.Request) (
 	analysisData *cli.AnalysisData, err error) {
 	span, ctx := opentracing.StartSpanFromContext(r.Context(), "DecodeAnalysisDataFromIoRead")
 	defer span.Finish()
-	r = r.WithContext(ctx)
 	if r.Body == nil {
+		tracer.SetSpanError(span, enums.ErrorBodyEmpty)
 		return nil, enums.ErrorBodyEmpty
 	}
-	analysisData, err = au.parseBodyToAnalysis(r)
+	analysisData, err = au.parseBodyToAnalysis(r.WithContext(ctx))
 	if err != nil {
+		tracer.SetSpanError(span, err)
 		return nil, err
 	}
-	return analysisData, au.validateAnalysisData(r.Context(), analysisData)
+	return analysisData, au.validateAnalysisData(ctx, analysisData)
 }
 
 func (au *UseCases) parseBodyToAnalysis(r *netHTTP.Request) (analysisData *cli.AnalysisData, err error) {
@@ -76,11 +79,13 @@ func (au *UseCases) parseBodyToAnalysis(r *netHTTP.Request) (analysisData *cli.A
 	defer span.Finish()
 	if au.isVersion1(r.Header.Get("X-Horusec-CLI-Version")) {
 		analysisDataV1 := &analysisv1.AnalysisCLIDataV1{}
-		if err := parser.ParseBodyToEntity(r.Body, analysisDataV1); err != nil {
+		if err = parser.ParseBodyToEntity(r.Body, analysisDataV1); err != nil {
+			tracer.SetSpanError(span, err)
 			return nil, err
 		}
 		analysisData = analysisDataV1.ParseDataV1ToV2()
-	} else if err := parser.ParseBodyToEntity(r.Body, &analysisData); err != nil {
+	} else if err = parser.ParseBodyToEntity(r.Body, &analysisData); err != nil {
+		tracer.SetSpanError(span, err)
 		return nil, err
 	}
 	return analysisData, nil
@@ -93,6 +98,7 @@ func (au *UseCases) validateAnalysisData(ctx context.Context, analysisData *cli.
 		validation.Field(&analysisData.Analysis, validation.Required),
 	)
 	if err != nil {
+		tracer.SetSpanError(span, err)
 		return err
 	}
 	return au.validateAnalysisToCLIv2(ctx, analysisData.Analysis)
@@ -119,6 +125,7 @@ func (au *UseCases) validateVulnerabilities(ctx context.Context,
 	return func(value interface{}) error {
 		for key := range analysisVulnerabilities {
 			if err := au.setupValidationVulnerabilities(&analysisVulnerabilities[key].Vulnerability); err != nil {
+				tracer.SetSpanError(span, err)
 				return err
 			}
 		}

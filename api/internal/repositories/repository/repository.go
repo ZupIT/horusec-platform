@@ -18,6 +18,8 @@ import (
 	"context"
 	"time"
 
+	"github.com/ZupIT/horusec-devkit/pkg/services/tracer"
+
 	"github.com/opentracing/opentracing-go"
 
 	"github.com/google/uuid"
@@ -63,6 +65,7 @@ func (r *Repository) CreateRepository(ctx context.Context, repositoryID, workspa
 	defer span.Finish()
 	workspace, err := r.GetWorkspace(ctx, workspaceID)
 	if err != nil {
+		tracer.SetSpanError(span, err)
 		return err
 	}
 	entity := map[string]interface{}{

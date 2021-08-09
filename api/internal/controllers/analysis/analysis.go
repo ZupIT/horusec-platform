@@ -18,6 +18,8 @@ import (
 	"context"
 	"time"
 
+	"github.com/ZupIT/horusec-devkit/pkg/services/tracer"
+
 	"github.com/opentracing/opentracing-go"
 
 	"github.com/google/uuid"
@@ -58,10 +60,12 @@ func (c *Controller) GetAnalysis(ctx context.Context, analysisID uuid.UUID) (*an
 	span, ctx := opentracing.StartSpanFromContext(ctx, "GetAnalysis")
 	defer span.Finish()
 	response := c.repoAnalysis.FindAnalysisByID(ctx, analysisID)
-	if response.GetError() != nil {
-		return nil, response.GetError()
+	if err := response.GetError(); err != nil {
+		tracer.SetSpanError(span, err)
+		return nil, err
 	}
 	if response.GetData() == nil {
+		tracer.SetSpanError(span, enums.ErrorNotFoundRecords)
 		return nil, enums.ErrorNotFoundRecords
 	}
 

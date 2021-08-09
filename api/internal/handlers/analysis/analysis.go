@@ -18,6 +18,8 @@ import (
 	"context"
 	netHTTP "net/http"
 
+	"github.com/ZupIT/horusec-devkit/pkg/services/tracer"
+
 	"github.com/opentracing/opentracing-go"
 
 	"github.com/go-chi/chi"
@@ -73,12 +75,14 @@ func (h *Handler) Post(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 
 	analysisData, err := h.useCases.DecodeAnalysisDataFromIoRead(r)
 	if err != nil {
+		tracer.SetSpanError(span, err)
 		httpUtil.StatusBadRequest(w, err)
 		return
 	}
 	analysisEntity := h.decoratorAnalysisFromContext(analysisData.Analysis, r)
 	analysisEntity, err = h.decoratorAnalysisToRepositoryName(r.Context(), analysisEntity, analysisData.RepositoryName)
 	if err != nil {
+		tracer.SetSpanError(span, err)
 		httpUtil.StatusBadRequest(w, err)
 		return
 	}
@@ -132,6 +136,7 @@ func (h *Handler) saveAnalysis(ctx context.Context, w netHTTP.ResponseWriter,
 	defer span.Finish()
 	analysisID, err := h.controller.SaveAnalysis(ctx, analysisEntity)
 	if err != nil {
+		tracer.SetSpanError(span, err)
 		httpUtil.StatusInternalServerError(w, err)
 		return
 	}
@@ -156,11 +161,13 @@ func (h *Handler) Get(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	defer span.Finish()
 	analysisID, err := uuid.Parse(chi.URLParam(r, "analysisID"))
 	if err != nil || analysisID == uuid.Nil {
+		tracer.SetSpanError(span, err)
 		httpUtil.StatusBadRequest(w, err)
 		return
 	}
 	response, err := h.controller.GetAnalysis(ctx, analysisID)
 	if err != nil {
+		tracer.SetSpanError(span, err)
 		if err == enums.ErrorNotFoundRecords {
 			httpUtil.StatusNotFound(w, err)
 		} else {

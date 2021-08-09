@@ -18,6 +18,8 @@ import (
 	"context"
 	"time"
 
+	"github.com/ZupIT/horusec-devkit/pkg/services/tracer"
+
 	"github.com/opentracing/opentracing-go"
 
 	"github.com/google/uuid"
@@ -66,10 +68,12 @@ func (a *Analysis) CreateFullAnalysis(ctx context.Context, newAnalysis *analysis
 	defer span.Finish()
 	tsx := a.databaseWrite.StartTransaction()
 	if err := a.createAnalysis(ctx, newAnalysis, tsx); err != nil {
+		tracer.SetSpanError(span, err)
 		logger.LogError(enums.ErrorRollbackCreate, tsx.RollbackTransaction().GetError())
 		return err
 	}
 	if err := a.createManyToManyAnalysisAndVulnerabilities(ctx, newAnalysis, tsx); err != nil {
+		tracer.SetSpanError(span, err)
 		logger.LogError(enums.ErrorRollbackCreate, tsx.RollbackTransaction().GetError())
 		return err
 	}
@@ -105,10 +109,12 @@ func (a *Analysis) createManyToManyAnalysisAndVulnerabilities(ctx context.Contex
 		vulnerabilityID, err := a.createVulnerabilityIfNotExists(ctx, &manyToMany.Vulnerability,
 			newAnalysis.RepositoryID, tsx)
 		if err != nil {
+			tracer.SetSpanError(span, err)
 			return err
 		}
 		manyToMany.VulnerabilityID = vulnerabilityID
-		if err := a.createManyToMany(ctx, &manyToMany, tsx); err != nil {
+		if err = a.createManyToMany(ctx, &manyToMany, tsx); err != nil {
+			tracer.SetSpanError(span, err)
 			return err
 		}
 	}
@@ -122,6 +128,7 @@ func (a *Analysis) createVulnerabilityIfNotExists(ctx context.Context, vuln *vul
 	res := a.findVulnerabilityByHashInRepository(ctx, vuln.VulnHash, repositoryID)
 	exists, err := a.checkIfAlreadyExistsVulnerability(res)
 	if err == nil {
+		tracer.SetSpanError(span, err)
 		if !exists {
 			return vuln.VulnerabilityID, tsx.Create(vuln, vuln.GetTable()).GetError()
 		}
@@ -136,6 +143,7 @@ func (a *Analysis) updateCommitAuthors(ctx context.Context, vuln *vulnerability.
 	defer span.Finish()
 	vulnID, err := uuid.Parse(resFindVuln.(map[string]interface{})["vulnerability_id"].(string))
 	if err != nil {
+		tracer.SetSpanError(span, err)
 		return uuid.Nil, err
 	}
 	tableName := (&vulnerability.Vulnerability{}).GetTable()
