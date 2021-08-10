@@ -55,8 +55,8 @@ func (u *UseCase) CreateOrUpdate(account *entity.Account) error {
 
 func (u *UseCase) findAll() ([]*entity.Account, error) {
 	accounts := make([]*entity.Account, 0)
-	err := u.read.Find(&accounts, where{"is_application_admin": true}, enum.DatabaseTableAccount).GetError()
-	if err != nil {
+	res := u.read.Find(&accounts, where{"is_application_admin": true}, enum.DatabaseTableAccount)
+	if err := res.GetErrorExceptNotFound(); err != nil {
 		return nil, err
 	}
 	return accounts, nil
