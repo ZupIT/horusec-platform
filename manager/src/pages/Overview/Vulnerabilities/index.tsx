@@ -322,6 +322,12 @@ const Vulnerabilities: React.FC = () => {
     return index > -1;
   }
 
+  const isDisabled = !isAuthorizedAction(
+    repositoryId
+      ? ACTIONS.HANDLE_VULNERABILITIES_REPOSITORY
+      : ACTIONS.HANDLE_VULNERABILITIES_WORKSPACE
+  );
+
   return (
     <Styled.Wrapper>
       <Styled.Options>
@@ -423,18 +429,13 @@ const Vulnerabilities: React.FC = () => {
                       row.severity,
                       colors.vulnerabilities.DEFAULT
                     ),
+                    color: isDisabled ? '#F4F4F4' : '',
                   }}
                   variant="filled"
                   width="150px"
                   value={row.severity}
                   options={severities.slice(1)}
-                  disabled={
-                    !isAuthorizedAction(
-                      repositoryId
-                        ? ACTIONS.HANDLE_VULNERABILITIES_REPOSITORY
-                        : ACTIONS.HANDLE_VULNERABILITIES_WORKSPACE
-                    )
-                  }
+                  disabled={isDisabled}
                   onChangeValue={(value) => {
                     updateVulnerability(row, value, row.type);
                   }}
@@ -446,13 +447,8 @@ const Vulnerabilities: React.FC = () => {
                   options={vulnTypes.slice(1)}
                   width="200px"
                   variant="filled"
-                  disabled={
-                    !isAuthorizedAction(
-                      repositoryId
-                        ? ACTIONS.HANDLE_VULNERABILITIES_REPOSITORY
-                        : ACTIONS.HANDLE_VULNERABILITIES_WORKSPACE
-                    )
-                  }
+                  style={{ color: isDisabled ? '#F4F4F4' : '' }}
+                  disabled={isDisabled}
                   onChangeValue={(value) => {
                     updateVulnerability(row, row.severity, value);
                   }}

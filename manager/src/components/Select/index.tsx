@@ -86,4 +86,4 @@ const SelectInput: React.FC<Props> = ({
   );
 };
 
-export default SelectInput;
+export default React.memo(SelectInput);
