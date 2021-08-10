@@ -3,10 +3,9 @@ module github.com/ZupIT/horusec-platform/api
 go 1.16
 
 require (
-	github.com/ZupIT/horusec-devkit v1.0.10-0.20210809185510-e5a4e1a22abd
+	github.com/ZupIT/horusec-devkit v1.0.10-0.20210810165111-687b592502da
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
-	github.com/go-chi/chi v4.1.2+incompatible
-	github.com/go-chi/chi/v5 v5.0.0
+	github.com/go-chi/chi v4.0.2+incompatible
 	github.com/go-chi/cors v1.2.0
 	github.com/go-ozzo/ozzo-validation/v4 v4.3.0
 	github.com/google/uuid v1.3.0

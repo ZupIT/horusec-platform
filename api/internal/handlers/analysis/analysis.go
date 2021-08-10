@@ -71,22 +71,26 @@ func (h *Handler) Options(w netHTTP.ResponseWriter, _ *netHTTP.Request) {
 func (h *Handler) Post(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 	span, ctx := opentracing.StartSpanFromContext(r.Context(), "POST ANALYSIS")
 	defer span.Finish()
-	r = r.WithContext(ctx)
-
-	analysisData, err := h.useCases.DecodeAnalysisDataFromIoRead(r)
-	if err != nil {
-		tracer.SetSpanError(span, err)
-		httpUtil.StatusBadRequest(w, err)
-		return
-	}
-	analysisEntity := h.decoratorAnalysisFromContext(analysisData.Analysis, r)
-	analysisEntity, err = h.decoratorAnalysisToRepositoryName(r.Context(), analysisEntity, analysisData.RepositoryName)
+	analysisEntity, err := h.validateAnalysis(ctx, r)
 	if err != nil {
 		tracer.SetSpanError(span, err)
 		httpUtil.StatusBadRequest(w, err)
 		return
 	}
 	h.saveAnalysis(r.Context(), w, analysisEntity)
+}
+
+func (h *Handler) validateAnalysis(ctx context.Context, r *netHTTP.Request) (*analysisEntities.Analysis, error) {
+	analysisData, err := h.useCases.DecodeAnalysisDataFromIoRead(r.WithContext(ctx))
+	if err != nil {
+		return nil, err
+	}
+	analysisEntity := h.decoratorAnalysisFromContext(analysisData.Analysis, r.WithContext(ctx))
+	analysisEntity, err = h.decoratorAnalysisToRepositoryName(r.Context(), analysisEntity, analysisData.RepositoryName)
+	if err != nil {
+		return nil, err
+	}
+	return analysisEntity, nil
 }
 
 func (h *Handler) decoratorAnalysisFromContext(
@@ -166,6 +170,11 @@ func (h *Handler) Get(w netHTTP.ResponseWriter, r *netHTTP.Request) {
 		return
 	}
 	response, err := h.controller.GetAnalysis(ctx, analysisID)
+	treatGetAnalysisResponse(w, err, span, response)
+}
+
+func treatGetAnalysisResponse(w netHTTP.ResponseWriter, err error, span opentracing.Span,
+	response *analysisEntities.Analysis) {
 	if err != nil {
 		tracer.SetSpanError(span, err)
 		if err == enums.ErrorNotFoundRecords {

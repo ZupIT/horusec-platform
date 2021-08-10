@@ -17,7 +17,7 @@ package router
 import (
 	"github.com/ZupIT/horusec-devkit/pkg/services/http/router"
 	"github.com/ZupIT/horusec-devkit/pkg/services/swagger"
-	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi"
 
 	"github.com/ZupIT/horusec-platform/api/docs"
 	"github.com/ZupIT/horusec-platform/api/internal/enums"

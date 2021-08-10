@@ -75,20 +75,32 @@ func (c *Controller) GetAnalysis(ctx context.Context, analysisID uuid.UUID) (*an
 func (c *Controller) SaveAnalysis(ctx context.Context, analysisEntity *analysis.Analysis) (uuid.UUID, error) {
 	span, ctx := opentracing.StartSpanFromContext(ctx, "SaveAnalysis")
 	defer span.Finish()
-	analysisEntity, err := c.createRepositoryIfNotExists(ctx, analysisEntity)
+	analysisDecorated, u, err := c.saveAnalysis(ctx, analysisEntity)
 	if err != nil {
-		return uuid.Nil, err
-	}
-	analysisDecorated, err := c.decorateAnalysisEntityAndSaveOnDatabase(ctx, analysisEntity)
-	if err != nil {
-		return uuid.Nil, err
+		tracer.SetSpanError(span, err)
+		return u, err
 	}
 	if err := c.publishInBroker(ctx, analysisDecorated.ID); err != nil {
+		tracer.SetSpanError(span, err)
 		return uuid.Nil, err
 	}
 	return analysisDecorated.ID, nil
 }
 
+func (c *Controller) saveAnalysis(ctx context.Context,
+	analysisEntity *analysis.Analysis) (*analysis.Analysis, uuid.UUID, error) {
+	analysisEntity, err := c.createRepositoryIfNotExists(ctx, analysisEntity)
+	if err != nil {
+		return nil, uuid.Nil, err
+	}
+	analysisDecorated, err := c.decorateAnalysisEntityAndSaveOnDatabase(ctx, analysisEntity)
+	if err != nil {
+		return nil, uuid.Nil, err
+	}
+	return analysisDecorated, uuid.UUID{}, nil
+}
+
+// nolint
 func (c *Controller) createRepositoryIfNotExists(ctx context.Context, analysisEntity *analysis.Analysis) (*analysis.Analysis, error) {
 	span, ctx := opentracing.StartSpanFromContext(ctx, "createRepositoryIfNotExists")
 	defer span.Finish()
@@ -100,6 +112,7 @@ func (c *Controller) createRepositoryIfNotExists(ctx context.Context, analysisEn
 				return analysisEntity, c.repoRepository.CreateRepository(ctx, analysisEntity.RepositoryID,
 					analysisEntity.WorkspaceID, analysisEntity.RepositoryName)
 			}
+			tracer.SetSpanError(span, err)
 			return nil, err
 		}
 		analysisEntity.SetRepositoryID(repositoryID)
@@ -162,8 +175,11 @@ func (c *Controller) hasDuplicatedHash(
 }
 
 func (c *Controller) publishInBroker(ctx context.Context, analysisID uuid.UUID) error {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "publishInBroker")
+	defer span.Finish()
 	response, err := c.GetAnalysis(ctx, analysisID)
 	if err != nil {
+		tracer.SetSpanError(span, err)
 		return err
 	}
 

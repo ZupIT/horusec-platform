@@ -68,17 +68,19 @@ func (a *Analysis) CreateFullAnalysis(ctx context.Context, newAnalysis *analysis
 	defer span.Finish()
 	tsx := a.databaseWrite.StartTransaction()
 	if err := a.createAnalysis(ctx, newAnalysis, tsx); err != nil {
-		tracer.SetSpanError(span, err)
-		logger.LogError(enums.ErrorRollbackCreate, tsx.RollbackTransaction().GetError())
-		return err
+		return setAnalysisRollbackCreateError(span, err, tsx)
 	}
 	if err := a.createManyToManyAnalysisAndVulnerabilities(ctx, newAnalysis, tsx); err != nil {
-		tracer.SetSpanError(span, err)
-		logger.LogError(enums.ErrorRollbackCreate, tsx.RollbackTransaction().GetError())
-		return err
+		return setAnalysisRollbackCreateError(span, err, tsx)
 	}
 	err := tsx.CommitTransaction().GetError()
 	logger.LogError(enums.ErrorCommitCreate, err)
+	return err
+}
+
+func setAnalysisRollbackCreateError(span opentracing.Span, err error, tsx database.IDatabaseWrite) error {
+	tracer.SetSpanError(span, err)
+	logger.LogError(enums.ErrorRollbackCreate, tsx.RollbackTransaction().GetError())
 	return err
 }
 
@@ -106,17 +108,26 @@ func (a *Analysis) createManyToManyAnalysisAndVulnerabilities(ctx context.Contex
 	defer span.Finish()
 	for index := range newAnalysis.AnalysisVulnerabilities {
 		manyToMany := newAnalysis.AnalysisVulnerabilities[index]
-		vulnerabilityID, err := a.createVulnerabilityIfNotExists(ctx, &manyToMany.Vulnerability,
-			newAnalysis.RepositoryID, tsx)
+		err := a.createManyToManyAndVulnerabilities(ctx, newAnalysis, tsx, &manyToMany, span)
 		if err != nil {
-			tracer.SetSpanError(span, err)
 			return err
 		}
-		manyToMany.VulnerabilityID = vulnerabilityID
-		if err = a.createManyToMany(ctx, &manyToMany, tsx); err != nil {
-			tracer.SetSpanError(span, err)
-			return err
-		}
+	}
+	return nil
+}
+
+func (a *Analysis) createManyToManyAndVulnerabilities(ctx context.Context, newAnalysis *analysis.Analysis,
+	tsx database.IDatabaseWrite, manyToMany *analysis.AnalysisVulnerabilities, span opentracing.Span) error {
+	vulnerabilityID, err := a.createVulnerabilityIfNotExists(ctx, &manyToMany.Vulnerability,
+		newAnalysis.RepositoryID, tsx)
+	if err != nil {
+		tracer.SetSpanError(span, err)
+		return err
+	}
+	manyToMany.VulnerabilityID = vulnerabilityID
+	if err = a.createManyToMany(ctx, manyToMany, tsx); err != nil {
+		tracer.SetSpanError(span, err)
+		return err
 	}
 	return nil
 }
@@ -128,7 +139,6 @@ func (a *Analysis) createVulnerabilityIfNotExists(ctx context.Context, vuln *vul
 	res := a.findVulnerabilityByHashInRepository(ctx, vuln.VulnHash, repositoryID)
 	exists, err := a.checkIfAlreadyExistsVulnerability(res)
 	if err == nil {
-		tracer.SetSpanError(span, err)
 		if !exists {
 			return vuln.VulnerabilityID, tsx.Create(vuln, vuln.GetTable()).GetError()
 		}
@@ -137,6 +147,7 @@ func (a *Analysis) createVulnerabilityIfNotExists(ctx context.Context, vuln *vul
 	return uuid.Nil, err
 }
 
+// nolint
 func (a *Analysis) updateCommitAuthors(ctx context.Context, vuln *vulnerability.Vulnerability, resFindVuln interface{},
 	tsx database.IDatabaseWrite) (uuid.UUID, error) {
 	span, _ := opentracing.StartSpanFromContext(ctx, "updateCommitAuthors")

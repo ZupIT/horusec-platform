@@ -36,7 +36,7 @@ import (
 func main() {
 	j, err := tracer.NewJaeger()
 	if err != nil {
-		logger.LogWarn(err.Error())
+		logger.LogDebugWithLevel(err.Error())
 	}
 	router, err := providers.Initialize(enums.DefaultPort, *j)
 	if err != nil {

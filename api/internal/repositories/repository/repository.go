@@ -60,6 +60,7 @@ func (r *Repository) FindRepository(ctx context.Context, workspaceID uuid.UUID, 
 		enums.DatabaseRepositoryTable).GetError()
 }
 
+// nolint
 func (r *Repository) CreateRepository(ctx context.Context, repositoryID, workspaceID uuid.UUID, name string) error {
 	span, ctx := opentracing.StartSpanFromContext(ctx, "CreateRepository")
 	defer span.Finish()

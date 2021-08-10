@@ -78,7 +78,9 @@ func TestHandler_Get(t *testing.T) {
 		handler := NewAnalysisHandler(controllerMock)
 		r, _ := http.NewRequest(http.MethodGet, "/test", nil)
 		w := httptest.NewRecorder()
-
+		ctx := chi.NewRouteContext()
+		ctx.URLParams.Add("analysisID", "")
+		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
 		handler.Get(w, r)
 
 		assert.Equal(t, http.StatusBadRequest, w.Code)
