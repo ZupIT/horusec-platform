@@ -1,4 +1,25 @@
 {
+  "GENERAL": {
+    "BACK": "Atrás",
+    "SELECT": "Seleccionar",
+    "SELECT_SEARCH": "Escriba una palabra para filtrar los resultados.",
+    "CANCEL": "Cancelar",
+    "BUTTON_LOADING": "El botón se está cargando",
+    "NOT_EXPIRABLE": "No caduca",
+    "PASS_VISIBILITY": "Ver u ocultar contraseña",
+    "PAGINATION": {
+      "ITENS_PAGE": "Elementos por página:",
+      "OF": "de",
+      "PAGES": "páginas"
+    },
+    "NO_OPTIONS": "Sin opciones",
+    "LOADING": "CARGANDO",
+    "EXPORT": "Exportar",
+    "DOWNLOAD_AS": "Descargar como",
+    "GITHUB": "Github",
+    "FORUM": "Foro",
+    "ABOUT_PAGE": "Acerca de esta página"
+  },
   "HOME_SCREEN": {
     "WELCOME": "¡Bienvenido a Horusec Manager!",
     "MY_WORKSPACES": "Mis espacios de trabajo",
@@ -149,7 +170,7 @@
     "INVALID_DESCRIPTION": "Descripción inválida",
     "REFERENCE_GROUP": "Identifique su grupo de usuarios para los siguientes grupos de Horusec:",
     "ADMIN": "administrador:",
-    "MEMBER": "Miembro:", 
+    "MEMBER": "Miembro:",
     "GROUP_NAME": "Nombre del grupo",
     "EMAIL": "Correo electrónico",
     "INVALID_EMAIL_ADMIN": "¡Email inválido!",
@@ -331,24 +352,6 @@
     "GROUP_NAME": "Nombre del grupo",
     "IS_EXPIRABLE": "Caducable",
     "EXPIRES_AT": "Caduca el"
-  },
-  "GENERAL": {
-    "BACK": "Atrás",
-    "SELECT": "Seleccionar",
-    "SELECT_SEARCH": "Escriba una palabra para filtrar los resultados.",
-    "CANCEL": "Cancelar",
-    "BUTTON_LOADING": "El botón se está cargando",
-    "NOT_EXPIRABLE": "No caduca",
-    "PASS_VISIBILITY": "Ver u ocultar contraseña",
-    "PAGINATION": {
-      "ITENS_PAGE": "Elementos por página:",
-      "OF": "de",
-      "PAGES": "páginas"
-    },
-    "NO_OPTIONS": "Sin opciones",
-    "LOADING": "CARGANDO",
-    "EXPORT": "Exportar",
-    "DOWNLOAD_AS": "Descargar como"
   },
   "FOOTER": {
     "DEVELOPED": "Desarrollado",

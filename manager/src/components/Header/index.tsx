@@ -162,7 +162,7 @@ const Header: React.FC = () => {
           </Styled.Item>
 
           <Styled.Item>
-            <Helper url={getTitleByURL().helper} />
+            <Helper pageHelperUrl={getTitleByURL().helper} />
           </Styled.Item>
 
           <Styled.Item>

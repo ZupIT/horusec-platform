@@ -56,28 +56,42 @@ const Logo = styled.img`
 `;
 
 const Footer = styled.footer`
-  position: relative;
   display: flex;
-  flex-direction: row-reverse;
+  flex-direction: row;
   align-items: center;
-  justify-content: center;
+  justify-content: space-around;
   width: 100%;
+  margin-right: 70px;
 
   @media (max-width: 768px) {
     flex-direction: column-reverse;
     margin-top: 30px;
+    margin-right: 0;
   }
 `;
 
-const LanguageWrapper = styled.div`
-  position: absolute;
-  left: 10%;
+const ContactWrapper = styled.div``;
 
-  @media (max-width: 768px) {
-    position: relative;
-    left: 0;
-    margin-bottom: 40px;
+const ContactItem = styled.a`
+  display: flex;
+  flex-direction: row;
+  margin-top: 15px;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+
+  :hover {
+    span,
+    i {
+      color: ${({ theme }) => theme.colors.active};
+    }
   }
+`;
+
+const ContactText = styled.span`
+  display: block;
+  color: ${({ theme }) => theme.colors.text.primary};
+  margin-left: 5px;
 `;
 
 export default {
@@ -85,6 +99,8 @@ export default {
   Logo,
   Content,
   Footer,
-  LanguageWrapper,
   LogoContent,
+  ContactWrapper,
+  ContactItem,
+  ContactText,
 };
