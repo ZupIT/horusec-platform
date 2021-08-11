@@ -30,6 +30,10 @@ import (
 	accountEnums "github.com/ZupIT/horusec-platform/auth/internal/enums/account"
 )
 
+type AdminAccount interface {
+	CreateOrUpdate(account *accountEntities.Account) error
+}
+
 type IConfig interface {
 	GetAuthenticationType() auth.AuthenticationType
 	ToConfigResponse() map[string]interface{}
@@ -54,9 +58,10 @@ type Config struct {
 	DefaultUserData        string
 	HorusecManagerURL      string
 	databaseWrite          database.IDatabaseWrite
+	adminAccount           AdminAccount
 }
 
-func NewAuthAppConfig(connection *database.Connection) IConfig {
+func NewAuthAppConfig(connection *database.Connection, adminAccount AdminAccount) IConfig {
 	config := &Config{
 		HorusecAuthURL:         env.GetEnvOrDefault(enums.EnvAuthURL, "http://localhost:8006"),
 		AuthType:               auth.AuthenticationType(env.GetEnvOrDefault(enums.EnvAuthType, auth.Horusec.ToString())),
@@ -67,6 +72,7 @@ func NewAuthAppConfig(connection *database.Connection) IConfig {
 		DefaultUserData:        env.GetEnvOrDefault(enums.EnvDefaultUserData, enums.DefaultUserData),
 		HorusecManagerURL:      env.GetEnvOrDefault(enums.EnvHorusecManager, "http://localhost:8043"),
 		databaseWrite:          connection.Write,
+		adminAccount:           adminAccount,
 	}
 
 	return config.createDefaultUsers()
@@ -124,8 +130,11 @@ func (c *Config) GetDefaultUserData() (*accountEntities.Account, error) {
 
 func (c *Config) GetApplicationAdminData() (*accountEntities.Account, error) {
 	account := &accountEntities.Account{}
-
-	return account, json.Unmarshal([]byte(c.ApplicationAdminData), &account)
+	if err := json.Unmarshal([]byte(c.ApplicationAdminData), &account); err == nil {
+		return account, nil
+	}
+	logger.LogWarn(fmt.Sprintf("Invalid JSON format of %q value", enums.EnvApplicationAdminData))
+	return account, json.Unmarshal([]byte(enums.ApplicationAdminDefaultData), &account)
 }
 
 func (c *Config) createDefaultUsers() IConfig {
@@ -180,7 +189,11 @@ func (c *Config) createApplicationAdminUser() {
 		return
 	}
 
-	c.createAccount(account.SetApplicationAdminTrue())
+	if err = c.adminAccount.CreateOrUpdate(account.SetApplicationAdminTrue()); err != nil {
+		logger.LogPanic(enums.MessageFailedToCreateAccount, err)
+	}
+
+	logger.LogInfo(fmt.Sprintf(enums.MessageUserCreateWithSuccess, account.Username, account.Email))
 }
 
 func (c *Config) createAccount(account *accountEntities.Account) {
