@@ -14,4 +14,5 @@
  * limitations under the License.
  */
 
-import '@cypress/code-coverage/support';
+/* eslint-disable no-unused-vars */
+import './commands.ts';

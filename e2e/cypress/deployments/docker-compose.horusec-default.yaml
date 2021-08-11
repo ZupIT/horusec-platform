@@ -38,7 +38,7 @@ services:
         max-size: 10m
   horusec-messages:
     build:
-      context: ../../messages
+      context: ../../../messages
       dockerfile: ./deployments/dockerfiles/Dockerfile.dev
     depends_on:
       - "rabbit"
@@ -61,7 +61,7 @@ services:
       HORUSEC_EMAIL_FROM: "horusec@zup.com.br"
   horusec-auth:
     build:
-      context: ../../auth
+      context: ../../../auth
       dockerfile: ./deployments/dockerfiles/Dockerfile.dev
     depends_on:
       - "rabbit"
@@ -103,7 +103,7 @@ services:
       HORUSEC_DISABLE_EMAILS: "true"
   horusec-core:
     build:
-      context: ../../core
+      context: ../../../core
       dockerfile: ./deployments/dockerfiles/Dockerfile.dev
     depends_on:
       - "rabbit"
@@ -126,7 +126,7 @@ services:
       HORUSEC_GRPC_AUTH_URL: "127.0.0.1:8007"
   horusec-analytic:
     build:
-      context: ../../analytic
+      context: ../../../analytic
       dockerfile: ./deployments/dockerfiles/Dockerfile.dev
     depends_on:
       - "rabbit"
@@ -148,7 +148,7 @@ services:
       HORUSEC_BROKER_PASSWORD: "guest"
   horusec-api:
     build:
-      context: ../../api
+      context: ../../../api
       dockerfile: ./deployments/dockerfiles/Dockerfile.dev
     depends_on:
       - "rabbit"
@@ -170,7 +170,7 @@ services:
       HORUSEC_BROKER_PASSWORD: "guest"
   horusec-vulnerability:
     build:
-      context: ../../vulnerability
+      context: ../../../vulnerability
       dockerfile: ./deployments/dockerfiles/Dockerfile.dev
     depends_on:
       - "rabbit"
@@ -192,7 +192,7 @@ services:
       HORUSEC_BROKER_PASSWORD: "guest"
   horusec-webhook:
     build:
-      context: ../../webhook
+      context: ../../../webhook
       dockerfile: ./deployments/dockerfiles/Dockerfile.dev
     depends_on:
       - "rabbit"
@@ -213,7 +213,7 @@ services:
       HORUSEC_BROKER_PASSWORD: "guest"
   horusec-manager:
     build:
-      context: ../../manager
+      context: ../../../manager
       dockerfile: ./deployments/dockerfiles/Dockerfile
     restart: always
     container_name: horusec-manager
@@ -222,20 +222,9 @@ services:
     volumes:
       - ../:/usr/app
     environment:
-      HORUSEC_ENDPOINT_API: ${HORUSEC_ENDPOINT_API}
-      HORUSEC_ENDPOINT_ANALYTIC: ${HORUSEC_ENDPOINT_ANALYTIC}
-      HORUSEC_ENDPOINT_CORE: ${HORUSEC_ENDPOINT_CORE}
-      HORUSEC_ENDPOINT_WEBHOOK: ${HORUSEC_ENDPOINT_WEBHOOK}
-      HORUSEC_ENDPOINT_AUTH: ${HORUSEC_ENDPOINT_AUTH}
-      HORUSEC_ENDPOINT_VULNERABILITY: ${HORUSEC_ENDPOINT_VULNERABILITY}
-      REACT_APP_HORUSEC_ENDPOINT_API: ${HORUSEC_ENDPOINT_API}
-      REACT_APP_HORUSEC_ENDPOINT_ANALYTIC: ${HORUSEC_ENDPOINT_ANALYTIC}
-      REACT_APP_HORUSEC_ENDPOINT_CORE: ${HORUSEC_ENDPOINT_CORE}
-      REACT_APP_HORUSEC_ENDPOINT_WEBHOOK: ${HORUSEC_ENDPOINT_WEBHOOK}
-      REACT_APP_HORUSEC_ENDPOINT_AUTH: ${HORUSEC_ENDPOINT_AUTH}
-      REACT_APP_HORUSEC_ENDPOINT_VULNERABILITY: ${HORUSEC_ENDPOINT_VULNERABILITY}
-      REACT_APP_KEYCLOAK_BASE_PATH: ${REACT_APP_KEYCLOAK_BASE_PATH}
-      REACT_APP_KEYCLOAK_CLIENT_ID: ${REACT_APP_KEYCLOAK_CLIENT_ID}
-      REACT_APP_KEYCLOAK_REALM: ${REACT_APP_KEYCLOAK_REALM}
-      REACT_APP_MICROFRONTEND_PUBLIC_PATH: ${REACT_APP_MICROFRONTEND_PUBLIC_PATH}
-      REACT_APP_HORUSEC_MANAGER_THEME: ${REACT_APP_HORUSEC_MANAGER_THEME}
+      HORUSEC_ENDPOINT_API: "http://127.0.0.1:8000"
+      HORUSEC_ENDPOINT_ANALYTIC: "http://127.0.0.1:8005"
+      HORUSEC_ENDPOINT_CORE: "http://127.0.0.1:8003"
+      HORUSEC_ENDPOINT_WEBHOOK: "http://127.0.0.1:8004"
+      HORUSEC_ENDPOINT_AUTH: "http://127.0.0.1:8007"
+      HORUSEC_ENDPOINT_VULNERABILITY: "http://127.0.0.1:8001"

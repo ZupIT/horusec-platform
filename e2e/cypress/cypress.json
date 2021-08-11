@@ -1,0 +1,13 @@
+{
+  "viewportHeight": 1000,
+  "viewportWidth": 1200,
+  "chromeWebSecurity": false,
+  "videoUploadOnPasses": false,
+  "integrationFolder": "./integration",
+  "fixturesFolder": "./fixtures",
+  "pluginsFile": "./plugins",
+  "supportFile": "./support",
+  "videosFolder": "./videos",
+  "screenshotsFolder": "./screenshots",
+  "downloadsFolder": "./downloads"
+}

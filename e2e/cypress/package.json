@@ -5,17 +5,29 @@
   "main": "index.js",
   "repository": "https://github.com/ZupIT/horusec-platform",
   "author": "Horusec Team",
-  "dependencies": {
-    "@cypress/code-coverage": "^3.9.10"
-  },
   "devDependencies": {
     "@types/node": "^16.4.13",
     "@typescript-eslint/eslint-plugin": "^4.29.0",
     "@typescript-eslint/parser": "^4.29.0",
+    "cypress": "^8.2.0",
     "eslint": "^7.32.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-plugin-cypress": "^2.11.3",
     "eslint-plugin-import": "^2.24.0",
     "typescript": "^4.3.5"
+  },
+  "scripts": {
+    "cypress": "cypress run --browser chrome",
+    "cypress:open": "cypress open",
+    "lint": "eslint '**/*.{ts,tsx}'",
+    "lint:fix": "eslint '**/*.{ts,tsx}' --fix"
+  },
+  "prettier": {
+    "trailingComma": "es5",
+    "endOfLine": "lf",
+    "singleQuote": true,
+    "tabWidth": 2,
+    "bracketSpacing": true,
+    "semi": true
   }
 }
