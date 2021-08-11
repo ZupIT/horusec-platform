@@ -50,35 +50,6 @@ Just remember to change the default environment variables values to the new and 
 In some types of installation we use a `make` command to simplify the process.
 If you want to know everything that will be executed, take a look at the `Makefile` located at the root of the project.
 
-### Quick Run:
-
-If you just want to try the web interface, we made an image that will automatically configure a ready to use environment.
-This image is not recommended for production environments, and will not persist any data after being interrupted.
-
-```cmd
-make run-web
-```
-
-After executing the command, the Horusec [image](https://hub.docker.com/r/horuszup/horusec-all-in-one) 
-will start to install all dependencies and services. After finished, the container logs will present the following message
-`HORUSEC WEB IS UP AND CAN BE ACCESSED IN -> http://localhost:8043/auth`.
-
-After that, the application will be running, with all default values, the latest versions, and
-the following user for tests:
-
-```
-Username: dev@example.com
-Password: Devpass0*
-```
-
-To stop the running container just execute:
-
-```cmd
-make stop-web
-```
-
-[comment]: <> (Click [here]&#40;@todo&#41; to check full quick run docs.)
-
 ### Install with docker compose:
 
 ```cmd
@@ -99,6 +70,8 @@ Password: Devpass0*
 By default, the docker compose file is configured to perform a standard installation. 
 In the case of production environments, be sure to change the values of the environment variables to new and secure ones.
 
+> :warning: We **do not recommend** using docker-compose installation in a productive environment.
+
 Click [here](https://horusec.io/docs/web/installation/install-with-docker-compose) 
 to check full docker compose installation docs.
 
@@ -110,9 +83,11 @@ In both cases they will be separated by each service of the architecture.
 
 Click [here](https://horusec.io/docs/web/installation/install-with-helm) to check the complete helm installation docs.
 
-[comment]: <> (### Install with horusec admin:)
+### Install with horusec-operator:
 
-[comment]: <> (@todo improve example add link to documentation)
+Horusec-operator performs management between Horusec web services and its Kubernetes cluster. It was created based on a community’s idea to have a simpler way to install the services in an environment using Kubernetes. You can see more about kubernetes operators [here](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/)
+Click [here](https://horusec.io/docs/web/installation/install-with-operator/) to check full horusec-operator installation docs.
+
 
 ## Features
 
