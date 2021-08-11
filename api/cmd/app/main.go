@@ -36,7 +36,8 @@ import (
 func main() {
 	j, err := tracer.NewJaeger()
 	if err != nil {
-		logger.LogDebugWithLevel(err.Error())
+		logger.LogDebugWithLevel(err.Error() + ` JAEGER_SERVICE_NAME set to "api" as default`)
+		j = &tracer.Jaeger{Name: "api"}
 	}
 	router, err := providers.Initialize(enums.DefaultPort, *j)
 	if err != nil {
