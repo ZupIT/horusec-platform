@@ -1,4 +1,25 @@
 {
+  "GENERAL": {
+    "BACK": "Back",
+    "SELECT": "Select",
+    "SELECT_SEARCH": "Type a word to filter the results.",
+    "CANCEL": "Cancel",
+    "BUTTON_LOADING": "Button in loading",
+    "PASS_VISIBILITY": "View or hidden password",
+    "NOT_EXPIRABLE": "Not expirable",
+    "PAGINATION": {
+      "ITENS_PAGE": "Items per page:",
+      "OF": "of",
+      "PAGES": "pages"
+    },
+    "NO_OPTIONS": "No options",
+    "LOADING": "LOADING",
+    "EXPORT": "Export",
+    "DOWNLOAD_AS": "Download as",
+    "GITHUB": "Github",
+    "FORUM": "Forum",
+    "ABOUT_PAGE": "About this page"
+  },
   "HOME_SCREEN": {
     "WELCOME": "Welcome to Horusec Manager!",
     "MY_WORKSPACES": "My Workspaces",
@@ -230,7 +251,7 @@
     "SAVE": "To save",
     "DESCRIPTION": "Description",
     "NO_TOKENS": "You have not registered any token yet.",
-    "EXPIRES": "Expires in:", 
+    "EXPIRES": "Expires in:",
     "CONFIRM_DELETE_TOKEN": "Do you really want to delete this token? This action can not be undone.",
     "CREATE_NEW_TOKEN": "Add New Token",
     "INVALID_DESCRIPTION": "Invalid description",
@@ -329,24 +350,6 @@
     "GROUP_NAME": "Group Name",
     "IS_EXPIRABLE": "It expires",
     "EXPIRES_AT": "Expires at"
-  },
-  "GENERAL": {
-    "BACK": "Back",
-    "SELECT": "Select",
-    "SELECT_SEARCH": "Type a word to filter the results.",
-    "CANCEL": "Cancel",
-    "BUTTON_LOADING": "Button in loading",
-    "PASS_VISIBILITY": "View or hidden password",
-    "NOT_EXPIRABLE": "Not expirable",
-    "PAGINATION": {
-      "ITENS_PAGE": "Items per page:",
-      "OF": "of",
-      "PAGES": "pages"
-    },
-    "NO_OPTIONS": "No options",
-    "LOADING": "LOADING",
-    "EXPORT": "Export",
-    "DOWNLOAD_AS": "Download as"
   },
   "FOOTER": {
     "DEVELOPED": "Developed",
