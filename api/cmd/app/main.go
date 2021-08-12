@@ -16,7 +16,6 @@ package main
 
 import (
 	"github.com/ZupIT/horusec-devkit/pkg/services/tracer"
-	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 
 	"github.com/ZupIT/horusec-platform/api/config/providers"
 	"github.com/ZupIT/horusec-platform/api/internal/enums"
@@ -34,11 +33,7 @@ import (
 // @in header
 // @name X-Horusec-Authorization
 func main() {
-	j, err := tracer.NewJaeger()
-	if err != nil {
-		logger.LogDebugWithLevel(err.Error() + ` JAEGER_SERVICE_NAME set to "api" as default`)
-		j = &tracer.Jaeger{Name: "api"}
-	}
+	j, _ := tracer.NewJaeger("api")
 	router, err := providers.Initialize(enums.DefaultPort, *j)
 	if err != nil {
 		panic(err)

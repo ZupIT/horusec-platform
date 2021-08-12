@@ -67,21 +67,28 @@ func (a *Analysis) CreateFullAnalysis(ctx context.Context, newAnalysis *analysis
 	span, ctx := opentracing.StartSpanFromContext(ctx, "CreateFullAnalysis")
 	defer span.Finish()
 	tsx := a.databaseWrite.StartTransaction()
-	if err := a.createAnalysis(ctx, newAnalysis, tsx); err != nil {
-		return setAnalysisRollbackCreateError(span, err, tsx)
+	err := a.createAnalysisAndManyToManyAnalysisVulnerabilites(ctx, newAnalysis, tsx)
+	if err != nil {
+		return err
 	}
-	if err := a.createManyToManyAnalysisAndVulnerabilities(ctx, newAnalysis, tsx); err != nil {
-		return setAnalysisRollbackCreateError(span, err, tsx)
-	}
-	err := tsx.CommitTransaction().GetError()
+	err = tsx.CommitTransaction().GetError()
 	logger.LogError(enums.ErrorCommitCreate, err)
 	return err
 }
 
-func setAnalysisRollbackCreateError(span opentracing.Span, err error, tsx database.IDatabaseWrite) error {
-	tracer.SetSpanError(span, err)
-	logger.LogError(enums.ErrorRollbackCreate, tsx.RollbackTransaction().GetError())
-	return err
+func (a *Analysis) createAnalysisAndManyToManyAnalysisVulnerabilites(ctx context.Context,
+	newAnalysis *analysis.Analysis, tsx database.IDatabaseWrite) error {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "createAnalysisAndManyToManyAnalysisVulnerabilites")
+	defer span.Finish()
+	if err := a.createAnalysis(ctx, newAnalysis, tsx); err != nil {
+		logger.LogError(enums.ErrorRollbackCreate, tsx.RollbackTransaction().GetError())
+		return tracer.SpanError(span, err)
+	}
+	if err := a.createManyToManyAnalysisAndVulnerabilities(ctx, newAnalysis, tsx); err != nil {
+		logger.LogError(enums.ErrorRollbackCreate, tsx.RollbackTransaction().GetError())
+		return tracer.SpanError(span, err)
+	}
+	return nil
 }
 
 func (a *Analysis) createAnalysis(ctx context.Context, newAnalysis *analysis.Analysis,
