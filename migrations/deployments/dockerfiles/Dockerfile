@@ -14,9 +14,9 @@
 
 FROM migrate/migrate:v4.13.0
 
-ADD ./source /horusec-migrations
+COPY ./source /horusec-migrations
 
-ADD ./scripts/migrate.sh /usr/local/bin
+COPY ./scripts/migrate.sh /usr/local/bin
 RUN chmod +x /usr/local/bin/migrate.sh
 
 ENTRYPOINT [ "migrate.sh" ]
