@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import * as user from '../../fixtures/user.json';
 
 describe('Create account flow', () => {
   before(() => {
@@ -29,8 +30,33 @@ describe('Create account flow', () => {
   });
 
   it('Fill username and email', () => {
-    cy.get('#username').click().type('Horusec e2e');
-    cy.get('#email').click().type('e2e@horusec.com');
+    cy.intercept({
+      method: 'POST',
+      url: 'auth/account/verify-already-used',
+    }).as('verifyAlreadyUsed');
+
+    cy.get('#username').click().type(user.username);
+    cy.get('#email').click().type(user.email);
+
     cy.get('#next-step').click();
+
+    cy.wait('@verifyAlreadyUsed').should((xhr) => {
+      expect(xhr.response.statusCode).to.equal(204);
+    });
+
+    cy.location().should((location) => {
+      expect(location.pathname).to.eq('/auth/create-account');
+    });
+  });
+
+  it('Go to create account screen', () => {
+    cy.intercept({
+      method: 'POST',
+      url: 'auth/account/verify-already-used',
+    }).as('c');
+
+    cy.get('#password').click().type(user.password);
+    cy.get('#confirm-pass').click().type(user.password);
+    cy.get('#register').click();
   });
 });

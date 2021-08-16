@@ -34,8 +34,18 @@ function dockerComposeUpHorusecDefaultAuth(): Cypress.Chainable<Cypress.Exec> {
 }
 
 function visitHorusecManager(): void {
+  cy.intercept({
+    method: 'GET',
+    url: 'auth/authenticate/config',
+  }).as('config');
+
   cy.visit('http://127.0.0.1:8043');
-  cy.wait(5000);
+
+  cy.wait('@config').should((xhr) => {
+    expect(xhr.response.statusCode).to.equal(200);
+  });
+
+  cy.wait(4000);
 }
 
 Cypress.Commands.add('dockerComposeUpHorusecDefaultAuth', dockerComposeUpHorusecDefaultAuth);
