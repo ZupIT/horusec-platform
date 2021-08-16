@@ -150,6 +150,8 @@ func (au *UseCases) sliceTools() []interface{} {
 		tools.OwaspDependencyCheck,
 		tools.DotnetCli,
 		tools.Nancy,
+		tools.Checkov,
+		tools.Trivy,
 	}
 }
 
@@ -175,6 +177,7 @@ func (au *UseCases) sliceLanguages() []interface{} {
 		languages.Shell,
 		languages.Elixir,
 		languages.Nginx,
+		languages.Swift,
 		languages.Swift,
 	}
 }
