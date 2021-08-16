@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+import { localStorageKeys } from 'helpers/enums/localStorageKeys';
+import { content } from '../fixtures/login/horusec/success.json';
+
 const LOCAL_STORAGE_MEMORY = {};
 
 Cypress.Commands.add('saveLocalStorage', () => {
@@ -26,6 +29,20 @@ Cypress.Commands.add('restoreLocalStorage', () => {
   Object.keys(LOCAL_STORAGE_MEMORY).forEach((key) => {
     localStorage.setItem(key, LOCAL_STORAGE_MEMORY[key]);
   });
+});
+
+Cypress.Commands.add('authenticated', () => {
+  localStorage.setItem(localStorageKeys.ACCESS_TOKEN, content.accessToken);
+  localStorage.setItem(localStorageKeys.REFRESH_TOKEN, content.refreshToken);
+  localStorage.setItem(localStorageKeys.TOKEN_EXPIRES, content.expiresAt);
+  localStorage.setItem(
+    localStorageKeys.USER,
+    JSON.stringify({
+      username: content.username,
+      email: content.email,
+      isApplicationAdmin: content.isApplicationAdmin,
+    })
+  );
 });
 
 Cypress.Commands.add('setHorusecAuthConfig', () => {

@@ -172,7 +172,7 @@ const HandleWorkspace: React.FC<Props> = ({
             width={600}
             hasCancel
           >
-            <Styled.Form>
+            <Styled.Form id="submit-workspace">
               <Styled.Field
                 name="name"
                 label={t('WORKSPACES_SCREEN.TABLE.NAME')}

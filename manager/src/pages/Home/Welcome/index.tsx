@@ -88,6 +88,7 @@ const Welcome: React.FC = () => {
           text={t('HOME_SCREEN.ADD_WORKSPACE')}
           icon="add"
           rounded
+          id="addWorkspace"
           width="180px"
           pulsing={!isLoading && allWorkspaces.length <= 0}
           onClick={() => setOpenAddWorkspaceModal(true)}
