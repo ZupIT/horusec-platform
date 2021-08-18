@@ -18,11 +18,10 @@ import React, { Suspense, lazy } from 'react';
 import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom';
 import { isLogged } from 'helpers/localStorage/tokens';
 import { PrivateRoute } from 'components';
-
-const MANAGER_PATH = (window as any).REACT_APP_HORUSEC_MANAGER_PATH || '/';
+import { MANAGER_BASE_PATH } from 'config/basePath';
 
 const Routes = () => (
-  <BrowserRouter basename={MANAGER_PATH}>
+  <BrowserRouter basename={MANAGER_BASE_PATH}>
     <Suspense fallback="">
       <Switch>
         <Route exact path="/">

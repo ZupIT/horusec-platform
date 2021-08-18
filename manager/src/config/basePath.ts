@@ -14,23 +14,16 @@
  * limitations under the License.
  */
 
-import { keycloakInstance } from 'config/keycloak';
-import { clearCurrentUser } from 'helpers/localStorage/currentUser';
-import { clearTokens } from 'helpers/localStorage/tokens';
-import { MANAGER_BASE_PATH } from 'config/basePath';
+let MANAGER_BASE_PATH = window.REACT_APP_HORUSEC_MANAGER_PATH;
 
-const redirectUri = `${window.location.origin}${MANAGER_BASE_PATH}auth`;
+if (MANAGER_BASE_PATH) {
+  if (!MANAGER_BASE_PATH.startsWith('/'))
+    MANAGER_BASE_PATH = `/${MANAGER_BASE_PATH}`;
 
-const login = () => keycloakInstance.login({ redirectUri });
+  if (!MANAGER_BASE_PATH.endsWith('/'))
+    MANAGER_BASE_PATH = `${MANAGER_BASE_PATH}/`;
+} else {
+  MANAGER_BASE_PATH = '/';
+}
 
-const logout = () => {
-  clearCurrentUser();
-  clearTokens();
-
-  return keycloakInstance.logout({ redirectUri });
-};
-
-export default {
-  login,
-  logout,
-};
+export { MANAGER_BASE_PATH };
