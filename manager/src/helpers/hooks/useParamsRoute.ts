@@ -14,89 +14,15 @@
  * limitations under the License.
  */
 
-import { Repository } from 'helpers/interfaces/Repository';
-import { RouteParams } from 'helpers/interfaces/RouteParams';
-import { Workspace } from 'helpers/interfaces/Workspace';
-import { isEmpty } from 'lodash';
-import { useEffect, useState } from 'react';
-import {
-  matchPath,
-  useHistory,
-  useParams,
-  useRouteMatch,
-} from 'react-router-dom';
-import core from 'services/core';
+import { useContext } from 'react';
+import { WorkspaceContext } from 'contexts/Workspace';
+import { RepositoryContext } from 'contexts/Repository';
 
 const useParamsRoute = () => {
-  const history = useHistory();
-  const { path } = useRouteMatch();
+  const workspaceCtx = useContext(WorkspaceContext);
+  const repositoryCtx = useContext(RepositoryContext);
 
-  const [workspace, setWorkspace] = useState<Workspace>({} as Workspace);
-  const [repository, setRepository] = useState<Repository>({} as Repository);
-
-  const params = useParams<RouteParams>();
-
-  const { workspaceId = '' } = matchPath<{ workspaceId: string }>(
-    history.location.pathname,
-    {
-      path: `${path}/workspace/:workspaceId`,
-    }
-  )?.params || { workspaceId: params.workspaceId } || { workspaceId: '' };
-
-  const { repositoryId = '' } = matchPath<{ repositoryId: string }>(
-    history.location.pathname,
-    {
-      path: `${path}/workspace/:workspaceId/repository/:repositoryId`,
-    }
-  )?.params || { repositoryId: params.repositoryId } || { repositoryId: '' };
-
-  async function getWorkspace(workspace = workspaceId) {
-    try {
-      const { data } = await core.getOneWorkspace(workspace);
-      setWorkspace(data.content);
-      return data.content;
-    } catch (error) {
-      history.push('/home');
-    }
-  }
-
-  async function getRepository(
-    workspace = workspaceId,
-    repository = repositoryId
-  ) {
-    try {
-      const { data } = await core.getOneRepository(workspace, repository);
-      setRepository(data.content);
-      return data.content;
-    } catch (error) {
-      history.push('/home');
-    }
-  }
-
-  useEffect(() => {
-    let isCancelled = false;
-    if (!isCancelled) {
-      if (workspaceId) {
-        if (isEmpty(workspace)) getWorkspace();
-      }
-      if (workspaceId && repositoryId) {
-        if (isEmpty(repository)) getRepository();
-      }
-    }
-    return () => {
-      isCancelled = true;
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  return {
-    workspaceId,
-    repositoryId,
-    workspace,
-    repository,
-    getWorkspace,
-    getRepository,
-  };
+  return { ...workspaceCtx, ...repositoryCtx };
 };
 
 export default useParamsRoute;

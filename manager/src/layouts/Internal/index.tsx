@@ -20,6 +20,8 @@ import Styled from './styled';
 import { keycloakInstance } from 'config/keycloak';
 import { clearTokens } from 'helpers/localStorage/tokens';
 import { clearCurrentUser } from 'helpers/localStorage/currentUser';
+import { WorkspaceProvider } from 'contexts/Workspace';
+import { RepositoryProvider } from 'contexts/Repository';
 
 function InternalLayout({ children }: { children: JSX.Element }) {
   keycloakInstance.onAuthRefreshError = () => {
@@ -29,20 +31,24 @@ function InternalLayout({ children }: { children: JSX.Element }) {
   };
 
   return (
-    <>
-      <Styled.Wrapper>
-        <SideMenu />
+    <WorkspaceProvider>
+      <RepositoryProvider>
+        <>
+          <Styled.Wrapper>
+            <SideMenu />
 
-        <Styled.Content>
-          <Styled.HeaderWrapper>
-            <Header />
-          </Styled.HeaderWrapper>
-          {children}
-        </Styled.Content>
-      </Styled.Wrapper>
+            <Styled.Content>
+              <Styled.HeaderWrapper>
+                <Header />
+              </Styled.HeaderWrapper>
+              {children}
+            </Styled.Content>
+          </Styled.Wrapper>
 
-      <Footer />
-    </>
+          <Footer />
+        </>
+      </RepositoryProvider>
+    </WorkspaceProvider>
   );
 }
 

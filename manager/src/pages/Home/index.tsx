@@ -21,26 +21,29 @@ import { Switch, useRouteMatch } from 'react-router-dom';
 import { PrivateRoute } from 'components';
 import Workspaces from './Welcome';
 import Repositories from './Workspace';
+import { WorkspaceProvider } from 'contexts/Workspace';
 
 const Home: React.FC = () => {
   const { path } = useRouteMatch();
 
   return (
-    <Styled.Wrapper>
-      <Header />
+    <WorkspaceProvider>
+      <Styled.Wrapper>
+        <Header />
 
-      <Styled.Content>
-        <Switch>
-          <PrivateRoute exact path={path} component={() => <Workspaces />} />
+        <Styled.Content>
+          <Switch>
+            <PrivateRoute exact path={path} component={() => <Workspaces />} />
 
-          <PrivateRoute
-            exact
-            path={`${path}/workspace/:workspaceId`}
-            component={() => <Repositories />}
-          />
-        </Switch>
-      </Styled.Content>
-    </Styled.Wrapper>
+            <PrivateRoute
+              exact
+              path={`${path}/workspace/:workspaceId`}
+              component={() => <Repositories />}
+            />
+          </Switch>
+        </Styled.Content>
+      </Styled.Wrapper>
+    </WorkspaceProvider>
   );
 };
 
