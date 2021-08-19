@@ -1,10 +1,18 @@
 import enUS from '../../../src/config/i18n/enUS.json';
 
-/* eslint-disable cypress/no-unnecessary-waiting */
-describe('On the home screen, create a new repository', () => {
+describe('On the home screen, create a new workspace', () => {
   beforeEach(() => {
     cy.setHorusecAuthConfig();
     cy.restoreLocalStorage();
+    cy.authenticated();
+
+    cy.intercept(
+      {
+        method: 'GET',
+        url: 'core/workspaces',
+      },
+      { fixture: 'workspaces/empty', statusCode: 200 }
+    ).as('getWorkspaces');
 
     cy.intercept(
       {
@@ -16,7 +24,7 @@ describe('On the home screen, create a new repository', () => {
   });
 
   it('Go to home screen and check if add workspace', () => {
-    cy.visit('/home').wait(3000);
+    cy.visit('/home');
     cy.get('#addWorkspace').click();
   });
 
@@ -39,5 +47,6 @@ describe('On the home screen, create a new repository', () => {
     cy.get('#submit-workspace').submit();
 
     cy.wait('@createWorkspace');
+    cy.wait('@getWorkspaces');
   });
 });

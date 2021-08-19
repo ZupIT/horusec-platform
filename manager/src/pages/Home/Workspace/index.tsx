@@ -104,6 +104,7 @@ const Home: React.FC = () => {
               width="150px"
               outline
               rounded
+              id="handler"
               icon="tool"
               style={{ marginLeft: '30px' }}
               onClick={() => setOpenWorkspaceEditModal(true)}
@@ -116,6 +117,7 @@ const Home: React.FC = () => {
               width="150px"
               outline
               rounded
+              id="overview"
               icon="goto"
               style={{ marginLeft: '10px' }}
               onClick={() =>

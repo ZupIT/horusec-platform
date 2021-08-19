@@ -1,0 +1,583 @@
+{
+    "content": {
+        "totalAuthors": 1,
+        "totalRepositories": 2,
+        "vulnerabilityBySeverity": {
+            "critical": {
+                "count": 1,
+                "types": {
+                    "vulnerability": 1,
+                    "riskAccepted": 0,
+                    "falsePositive": 0,
+                    "corrected": 0
+                }
+            },
+            "high": {
+                "count": 16,
+                "types": {
+                    "vulnerability": 14,
+                    "riskAccepted": 2,
+                    "falsePositive": 0,
+                    "corrected": 0
+                }
+            },
+            "medium": {
+                "count": 8,
+                "types": {
+                    "vulnerability": 7,
+                    "riskAccepted": 0,
+                    "falsePositive": 1,
+                    "corrected": 0
+                }
+            },
+            "low": {
+                "count": 8,
+                "types": {
+                    "vulnerability": 7,
+                    "riskAccepted": 0,
+                    "falsePositive": 0,
+                    "corrected": 1
+                }
+            },
+            "info": {
+                "count": 2,
+                "types": {
+                    "vulnerability": 2,
+                    "riskAccepted": 0,
+                    "falsePositive": 0,
+                    "corrected": 0
+                }
+            },
+            "unknown": {
+                "count": 1,
+                "types": {
+                    "vulnerability": 1,
+                    "riskAccepted": 0,
+                    "falsePositive": 0,
+                    "corrected": 0
+                }
+            }
+        },
+        "vulnerabilitiesByAuthor": [
+            {
+                "author": "-",
+                "critical": {
+                    "count": 1,
+                    "types": {
+                        "vulnerability": 1,
+                        "riskAccepted": 0,
+                        "falsePositive": 0,
+                        "corrected": 0
+                    }
+                },
+                "high": {
+                    "count": 16,
+                    "types": {
+                        "vulnerability": 14,
+                        "riskAccepted": 2,
+                        "falsePositive": 0,
+                        "corrected": 0
+                    }
+                },
+                "medium": {
+                    "count": 8,
+                    "types": {
+                        "vulnerability": 7,
+                        "riskAccepted": 0,
+                        "falsePositive": 1,
+                        "corrected": 0
+                    }
+                },
+                "low": {
+                    "count": 8,
+                    "types": {
+                        "vulnerability": 7,
+                        "riskAccepted": 0,
+                        "falsePositive": 0,
+                        "corrected": 1
+                    }
+                },
+                "info": {
+                    "count": 2,
+                    "types": {
+                        "vulnerability": 2,
+                        "riskAccepted": 0,
+                        "falsePositive": 0,
+                        "corrected": 0
+                    }
+                },
+                "unknown": {
+                    "count": 1,
+                    "types": {
+                        "vulnerability": 1,
+                        "riskAccepted": 0,
+                        "falsePositive": 0,
+                        "corrected": 0
+                    }
+                }
+            }
+        ],
+        "vulnerabilitiesByRepository": [
+            {
+                "repositoryName": "NOVO",
+                "critical": {
+                    "count": 1,
+                    "types": {
+                        "vulnerability": 1,
+                        "riskAccepted": 0,
+                        "falsePositive": 0,
+                        "corrected": 0
+                    }
+                },
+                "high": {
+                    "count": 15,
+                    "types": {
+                        "vulnerability": 13,
+                        "riskAccepted": 2,
+                        "falsePositive": 0,
+                        "corrected": 0
+                    }
+                },
+                "medium": {
+                    "count": 8,
+                    "types": {
+                        "vulnerability": 7,
+                        "riskAccepted": 0,
+                        "falsePositive": 1,
+                        "corrected": 0
+                    }
+                },
+                "low": {
+                    "count": 8,
+                    "types": {
+                        "vulnerability": 7,
+                        "riskAccepted": 0,
+                        "falsePositive": 0,
+                        "corrected": 1
+                    }
+                },
+                "info": {
+                    "count": 2,
+                    "types": {
+                        "vulnerability": 2,
+                        "riskAccepted": 0,
+                        "falsePositive": 0,
+                        "corrected": 0
+                    }
+                },
+                "unknown": {
+                    "count": 1,
+                    "types": {
+                        "vulnerability": 1,
+                        "riskAccepted": 0,
+                        "falsePositive": 0,
+                        "corrected": 0
+                    }
+                }
+            },
+            {
+                "repositoryName": "Example",
+                "critical": {
+                    "count": 0,
+                    "types": {
+                        "vulnerability": 0,
+                        "riskAccepted": 0,
+                        "falsePositive": 0,
+                        "corrected": 0
+                    }
+                },
+                "high": {
+                    "count": 1,
+                    "types": {
+                        "vulnerability": 1,
+                        "riskAccepted": 0,
+                        "falsePositive": 0,
+                        "corrected": 0
+                    }
+                },
+                "medium": {
+                    "count": 0,
+                    "types": {
+                        "vulnerability": 0,
+                        "riskAccepted": 0,
+                        "falsePositive": 0,
+                        "corrected": 0
+                    }
+                },
+                "low": {
+                    "count": 0,
+                    "types": {
+                        "vulnerability": 0,
+                        "riskAccepted": 0,
+                        "falsePositive": 0,
+                        "corrected": 0
+                    }
+                },
+                "info": {
+                    "count": 0,
+                    "types": {
+                        "vulnerability": 0,
+                        "riskAccepted": 0,
+                        "falsePositive": 0,
+                        "corrected": 0
+                    }
+                },
+                "unknown": {
+                    "count": 0,
+                    "types": {
+                        "vulnerability": 0,
+                        "riskAccepted": 0,
+                        "falsePositive": 0,
+                        "corrected": 0
+                    }
+                }
+            }
+        ],
+        "vulnerabilitiesByLanguage": [
+            {
+                "language": "Java",
+                "critical": {
+                    "count": 0,
+                    "types": {
+                        "vulnerability": 0,
+                        "riskAccepted": 0,
+                        "falsePositive": 0,
+                        "corrected": 0
+                    }
+                },
+                "high": {
+                    "count": 1,
+                    "types": {
+                        "vulnerability": 1,
+                        "riskAccepted": 0,
+                        "falsePositive": 0,
+                        "corrected": 0
+                    }
+                },
+                "medium": {
+                    "count": 0,
+                    "types": {
+                        "vulnerability": 0,
+                        "riskAccepted": 0,
+                        "falsePositive": 0,
+                        "corrected": 0
+                    }
+                },
+                "low": {
+                    "count": 0,
+                    "types": {
+                        "vulnerability": 0,
+                        "riskAccepted": 0,
+                        "falsePositive": 0,
+                        "corrected": 0
+                    }
+                },
+                "info": {
+                    "count": 0,
+                    "types": {
+                        "vulnerability": 0,
+                        "riskAccepted": 0,
+                        "falsePositive": 0,
+                        "corrected": 0
+                    }
+                },
+                "unknown": {
+                    "count": 0,
+                    "types": {
+                        "vulnerability": 0,
+                        "riskAccepted": 0,
+                        "falsePositive": 0,
+                        "corrected": 0
+                    }
+                }
+            },
+            {
+                "language": "JavaScript",
+                "critical": {
+                    "count": 0,
+                    "types": {
+                        "vulnerability": 0,
+                        "riskAccepted": 0,
+                        "falsePositive": 0,
+                        "corrected": 0
+                    }
+                },
+                "high": {
+                    "count": 14,
+                    "types": {
+                        "vulnerability": 13,
+                        "riskAccepted": 1,
+                        "falsePositive": 0,
+                        "corrected": 0
+                    }
+                },
+                "medium": {
+                    "count": 8,
+                    "types": {
+                        "vulnerability": 7,
+                        "riskAccepted": 0,
+                        "falsePositive": 1,
+                        "corrected": 0
+                    }
+                },
+                "low": {
+                    "count": 7,
+                    "types": {
+                        "vulnerability": 6,
+                        "riskAccepted": 0,
+                        "falsePositive": 0,
+                        "corrected": 1
+                    }
+                },
+                "info": {
+                    "count": 2,
+                    "types": {
+                        "vulnerability": 2,
+                        "riskAccepted": 0,
+                        "falsePositive": 0,
+                        "corrected": 0
+                    }
+                },
+                "unknown": {
+                    "count": 1,
+                    "types": {
+                        "vulnerability": 1,
+                        "riskAccepted": 0,
+                        "falsePositive": 0,
+                        "corrected": 0
+                    }
+                }
+            },
+            {
+                "language": "Leaks",
+                "critical": {
+                    "count": 1,
+                    "types": {
+                        "vulnerability": 1,
+                        "riskAccepted": 0,
+                        "falsePositive": 0,
+                        "corrected": 0
+                    }
+                },
+                "high": {
+                    "count": 1,
+                    "types": {
+                        "vulnerability": 0,
+                        "riskAccepted": 1,
+                        "falsePositive": 0,
+                        "corrected": 0
+                    }
+                },
+                "medium": {
+                    "count": 0,
+                    "types": {
+                        "vulnerability": 0,
+                        "riskAccepted": 0,
+                        "falsePositive": 0,
+                        "corrected": 0
+                    }
+                },
+                "low": {
+                    "count": 1,
+                    "types": {
+                        "vulnerability": 1,
+                        "riskAccepted": 0,
+                        "falsePositive": 0,
+                        "corrected": 0
+                    }
+                },
+                "info": {
+                    "count": 0,
+                    "types": {
+                        "vulnerability": 0,
+                        "riskAccepted": 0,
+                        "falsePositive": 0,
+                        "corrected": 0
+                    }
+                },
+                "unknown": {
+                    "count": 0,
+                    "types": {
+                        "vulnerability": 0,
+                        "riskAccepted": 0,
+                        "falsePositive": 0,
+                        "corrected": 0
+                    }
+                }
+            }
+        ],
+        "vulnerabilityByTime": [
+            {
+                "time": "2021-06-10T00:00:00Z",
+                "critical": {
+                    "count": 3,
+                    "types": {
+                        "vulnerability": 3,
+                        "riskAccepted": 0,
+                        "falsePositive": 0,
+                        "corrected": 0
+                    }
+                },
+                "high": {
+                    "count": 18,
+                    "types": {
+                        "vulnerability": 18,
+                        "riskAccepted": 0,
+                        "falsePositive": 0,
+                        "corrected": 0
+                    }
+                },
+                "medium": {
+                    "count": 6,
+                    "types": {
+                        "vulnerability": 6,
+                        "riskAccepted": 0,
+                        "falsePositive": 0,
+                        "corrected": 0
+                    }
+                },
+                "low": {
+                    "count": 9,
+                    "types": {
+                        "vulnerability": 9,
+                        "riskAccepted": 0,
+                        "falsePositive": 0,
+                        "corrected": 0
+                    }
+                },
+                "info": {
+                    "count": 0,
+                    "types": {
+                        "vulnerability": 0,
+                        "riskAccepted": 0,
+                        "falsePositive": 0,
+                        "corrected": 0
+                    }
+                },
+                "unknown": {
+                    "count": 0,
+                    "types": {
+                        "vulnerability": 0,
+                        "riskAccepted": 0,
+                        "falsePositive": 0,
+                        "corrected": 0
+                    }
+                }
+            },
+            {
+                "time": "2021-07-12T00:00:00Z",
+                "critical": {
+                    "count": 0,
+                    "types": {
+                        "vulnerability": 0,
+                        "riskAccepted": 0,
+                        "falsePositive": 0,
+                        "corrected": 0
+                    }
+                },
+                "high": {
+                    "count": 18,
+                    "types": {
+                        "vulnerability": 17,
+                        "riskAccepted": 1,
+                        "falsePositive": 0,
+                        "corrected": 0
+                    }
+                },
+                "medium": {
+                    "count": 6,
+                    "types": {
+                        "vulnerability": 6,
+                        "riskAccepted": 0,
+                        "falsePositive": 0,
+                        "corrected": 0
+                    }
+                },
+                "low": {
+                    "count": 11,
+                    "types": {
+                        "vulnerability": 11,
+                        "riskAccepted": 0,
+                        "falsePositive": 0,
+                        "corrected": 0
+                    }
+                },
+                "info": {
+                    "count": 0,
+                    "types": {
+                        "vulnerability": 0,
+                        "riskAccepted": 0,
+                        "falsePositive": 0,
+                        "corrected": 0
+                    }
+                },
+                "unknown": {
+                    "count": 0,
+                    "types": {
+                        "vulnerability": 0,
+                        "riskAccepted": 0,
+                        "falsePositive": 0,
+                        "corrected": 0
+                    }
+                }
+            },
+            {
+                "time": "2021-07-21T00:00:00Z",
+                "critical": {
+                    "count": 1,
+                    "types": {
+                        "vulnerability": 1,
+                        "riskAccepted": 0,
+                        "falsePositive": 0,
+                        "corrected": 0
+                    }
+                },
+                "high": {
+                    "count": 15,
+                    "types": {
+                        "vulnerability": 13,
+                        "riskAccepted": 2,
+                        "falsePositive": 0,
+                        "corrected": 0
+                    }
+                },
+                "medium": {
+                    "count": 8,
+                    "types": {
+                        "vulnerability": 7,
+                        "riskAccepted": 0,
+                        "falsePositive": 1,
+                        "corrected": 0
+                    }
+                },
+                "low": {
+                    "count": 8,
+                    "types": {
+                        "vulnerability": 7,
+                        "riskAccepted": 0,
+                        "falsePositive": 0,
+                        "corrected": 1
+                    }
+                },
+                "info": {
+                    "count": 2,
+                    "types": {
+                        "vulnerability": 2,
+                        "riskAccepted": 0,
+                        "falsePositive": 0,
+                        "corrected": 0
+                    }
+                },
+                "unknown": {
+                    "count": 1,
+                    "types": {
+                        "vulnerability": 1,
+                        "riskAccepted": 0,
+                        "falsePositive": 0,
+                        "corrected": 0
+                    }
+                }
+            }
+        ]
+    }
+}
