@@ -50,6 +50,13 @@ const TitleWrapper = styled.div`
   align-items: center;
 `;
 
+const LoadingMessage = styled(Message)`
+  background-color: ${({ theme }) => theme.colors.background.overlap};
+  width: 100%;
+  border-radius: 5px;
+  margin-right: 5px;
+`;
+
 export default {
   Title,
   TitleWrapper,
@@ -62,4 +69,5 @@ export default {
   MessageText,
   Icon,
   Description,
+  LoadingMessage,
 };
