@@ -104,7 +104,7 @@ const usePermissions = () => {
 
     if (!isLogged()) return false;
 
-    if (isOverviewOfWorkspace && workspace.role === ROLES.MEMBER) {
+    if (isOverviewOfWorkspace && workspace?.role === ROLES.MEMBER) {
       return false;
     }
 
