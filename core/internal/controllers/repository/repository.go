@@ -41,7 +41,8 @@ type IController interface {
 	Get(data *repositoryEntities.Data) (*repositoryEntities.Response, error)
 	Update(data *repositoryEntities.Data) (*repositoryEntities.Response, error)
 	Delete(repositoryID uuid.UUID) error
-	List(data *repositoryEntities.Data) (*[]repositoryEntities.Response, error)
+	List(repositoryData *repositoryEntities.Data,
+		paginatedData *repositoryEntities.PaginatedContent) (*[]repositoryEntities.Response, error)
 	UpdateRole(data *roleEntities.Data) (*roleEntities.Response, error)
 	InviteUser(data *roleEntities.UserData) (*roleEntities.Response, error)
 	GetUsers(repositoryID uuid.UUID) (*[]roleEntities.Response, error)
@@ -159,10 +160,10 @@ func (c *Controller) Update(data *repositoryEntities.Data) (*repositoryEntities.
 	if repository.Name != data.Name && !c.useCases.IsNotFoundError(err) {
 		return nil, repositoryEnums.ErrorRepositoryNameAlreadyInUse
 	}
-
-	repository.Update(data)
-	return repository.ToRepositoryResponse(accountEnums.Admin), c.databaseWrite.Update(repository,
-		c.useCases.FilterRepositoryByID(data.RepositoryID), repositoryEnums.DatabaseRepositoryTable).GetError()
+	nr := repository.Update(data)
+	filterToUpdate := c.useCases.FilterRepositoryByID(data.RepositoryID)
+	err = c.databaseWrite.Update(nr, filterToUpdate, repositoryEnums.DatabaseRepositoryTable).GetError()
+	return nr.ToRepositoryResponse(accountEnums.Admin), err
 }
 
 func (c *Controller) Delete(repositoryID uuid.UUID) error {
@@ -170,16 +171,19 @@ func (c *Controller) Delete(repositoryID uuid.UUID) error {
 		repositoryEnums.DatabaseRepositoryTable).GetError()
 }
 
-func (c *Controller) List(data *repositoryEntities.Data) (*[]repositoryEntities.Response, error) {
-	if data.IsApplicationAdmin {
-		return c.repository.ListRepositoriesWhenApplicationAdmin()
+func (c *Controller) List(repositoryData *repositoryEntities.Data,
+	paginatedData *repositoryEntities.PaginatedContent) (*[]repositoryEntities.Response, error) {
+	if repositoryData.IsApplicationAdmin {
+		return c.repository.ListRepositoriesWhenApplicationAdmin(paginatedData)
 	}
 
 	if c.appConfig.GetAuthenticationType() == auth.Ldap {
-		return c.repository.ListRepositoriesAuthTypeLdap(data.WorkspaceID, data.Permissions)
+		return c.repository.ListRepositoriesAuthTypeLdap(
+			repositoryData.WorkspaceID, repositoryData.Permissions, paginatedData)
 	}
 
-	return c.repository.ListRepositoriesAuthTypeHorusec(data.AccountID, data.WorkspaceID)
+	return c.repository.ListRepositoriesAuthTypeHorusec(
+		repositoryData.AccountID, repositoryData.WorkspaceID, paginatedData)
 }
 
 func (c *Controller) UpdateRole(data *roleEntities.Data) (*roleEntities.Response, error) {

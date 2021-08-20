@@ -61,13 +61,14 @@ func (r *Repository) ToRepositoryResponse(role account.Role) *Response {
 	}
 }
 
-func (r *Repository) Update(data *Data) {
+func (r *Repository) Update(data *Data) *Repository {
 	r.Name = data.Name
 	r.Description = data.Description
 	r.AuthzMember = data.AuthzMember
 	r.AuthzSupervisor = data.AuthzSupervisor
 	r.AuthzAdmin = data.AuthzAdmin
 	r.UpdatedAt = time.Now()
+	return r
 }
 
 func (r *Repository) ContainsAllAuthzGroups() bool {

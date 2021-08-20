@@ -44,12 +44,12 @@ func (m *Mock) GetAccountRepository(_, _ uuid.UUID) (*repositoryEntities.Account
 	return args.Get(0).(*repositoryEntities.AccountRepository), mockUtils.ReturnNilOrError(args, 1)
 }
 
-func (m *Mock) ListRepositoriesAuthTypeHorusec(_, _ uuid.UUID) (*[]repositoryEntities.Response, error) {
+func (m *Mock) ListRepositoriesAuthTypeHorusec(_, _ uuid.UUID, _ *repositoryEntities.PaginatedContent) (*[]repositoryEntities.Response, error) {
 	args := m.MethodCalled("ListRepositoriesAuthTypeHorusec")
 	return args.Get(0).(*[]repositoryEntities.Response), mockUtils.ReturnNilOrError(args, 1)
 }
 
-func (m *Mock) ListRepositoriesAuthTypeLdap(_ uuid.UUID, _ []string) (*[]repositoryEntities.Response, error) {
+func (m *Mock) ListRepositoriesAuthTypeLdap(_ uuid.UUID, _ []string, _ *repositoryEntities.PaginatedContent) (*[]repositoryEntities.Response, error) {
 	args := m.MethodCalled("ListRepositoriesAuthTypeLdap")
 	return args.Get(0).(*[]repositoryEntities.Response), mockUtils.ReturnNilOrError(args, 1)
 }
@@ -69,7 +69,7 @@ func (m *Mock) GetWorkspace(_ uuid.UUID) (*workspaceEntities.Workspace, error) {
 	return args.Get(0).(*workspaceEntities.Workspace), mockUtils.ReturnNilOrError(args, 1)
 }
 
-func (m *Mock) ListRepositoriesWhenApplicationAdmin() (*[]repositoryEntities.Response, error) {
+func (m *Mock) ListRepositoriesWhenApplicationAdmin(_ *repositoryEntities.PaginatedContent) (*[]repositoryEntities.Response, error) {
 	args := m.MethodCalled("ListRepositoriesWhenApplicationAdmin")
 	return args.Get(0).(*[]repositoryEntities.Response), mockUtils.ReturnNilOrError(args, 1)
 }

@@ -488,6 +488,24 @@ func TestList(t *testing.T) {
 		assert.Equal(t, http.StatusInternalServerError, w.Code)
 	})
 
+	t.Run("should return 401 when failed to get account data", func(t *testing.T) {
+		controllerMock := &workspaceController.Mock{}
+		appConfigMock := &app.Mock{}
+
+		authGRPCMock := &proto.Mock{}
+		authGRPCMock.On("GetAccountInfo").Return(accountData, errors.New("{KEYCLOAK AUTH} failed to get user info"))
+
+		handler := NewWorkspaceHandler(controllerMock, workspaceUseCases.NewWorkspaceUseCases(),
+			authGRPCMock, appConfigMock, roleUseCases.NewRoleUseCases(), tokenUseCases.NewTokenUseCases())
+
+		r, _ := http.NewRequest(http.MethodGet, "test", nil)
+		w := httptest.NewRecorder()
+
+		handler.List(w, r)
+
+		assert.Equal(t, http.StatusUnauthorized, w.Code)
+	})
+
 	t.Run("should return 400 when failed to get account data", func(t *testing.T) {
 		controllerMock := &workspaceController.Mock{}
 		appConfigMock := &app.Mock{}

@@ -56,10 +56,11 @@ func (w *Workspace) ToWorkspaceResponse(role account.Role) *Response {
 	}
 }
 
-func (w *Workspace) Update(data *Data) {
+func (w *Workspace) Update(data *Data) *Workspace {
 	w.Name = data.Name
 	w.Description = data.Description
 	w.AuthzMember = data.AuthzMember
 	w.AuthzAdmin = data.AuthzAdmin
 	w.UpdatedAt = time.Now()
+	return w
 }
