@@ -28,8 +28,13 @@ jobs:
           node-version: "12"
         id: node
       - uses: actions/checkout@v2
-      - name: Security
-        run: make security
+      - name: security
+        env:
+          HORUSEC_CLI_REPOSITORY_AUTHORIZATION: ${{ secrets.HORUSEC_CLI_REPOSITORY_AUTHORIZATION }}
+          HORUSEC_CLI_HORUSEC_API_URI: ${{ secrets.HORUSEC_CLI_HORUSEC_API_URI }}
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec/master/deployments/scripts/install.sh | bash -s latest
+          horusec start -p . -e true -n="Horusec/Platform-Manager" -G true
       - name: Install dependencies
         run: npm install
       - name: Lint

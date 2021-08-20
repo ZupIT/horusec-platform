@@ -26,4 +26,9 @@ jobs:
       - name: build
         run: make build
       - name: security
-        run: IMAGE_NAME="horuszup/horusec-migrations:local" make security
+        env:
+          HORUSEC_CLI_REPOSITORY_AUTHORIZATION: ${{ secrets.HORUSEC_CLI_REPOSITORY_AUTHORIZATION }}
+          HORUSEC_CLI_HORUSEC_API_URI: ${{ secrets.HORUSEC_CLI_HORUSEC_API_URI }}
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec/master/deployments/scripts/install.sh | bash -s latest
+          horusec start -p . -e true -n="Horusec/Platform-Migrations" -G true
