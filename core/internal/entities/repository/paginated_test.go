@@ -29,6 +29,10 @@ func TestPaginatedContent(t *testing.T) {
 		p := &PaginatedContent{}
 		assert.Equal(t, "%%", p.GetSearch())
 	})
+	t.Run("Should return offset correctly 0 with size empty", func(t *testing.T) {
+		p := (&PaginatedContent{}).SetSearch("").SetPage("").SetSize("").SetEnable(true)
+		assert.Equal(t, 0, p.GetOffset())
+	})
 	t.Run("Should return offset correctly 0 with page 0", func(t *testing.T) {
 		p := (&PaginatedContent{}).SetSearch("").SetPage("0").SetSize("10").SetEnable(true)
 		assert.Equal(t, 0, p.GetOffset())
