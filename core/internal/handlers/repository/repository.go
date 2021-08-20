@@ -293,10 +293,10 @@ func (h *Handler) getListData(r *http.Request) (*repositoryEntities.Data, *repos
 
 	repositoryData := h.useCases.NewRepositoryData(uuid.Nil, parser.ParseStringToUUID(
 		chi.URLParam(r, workspaceEnums.ID)), accountData)
-	paginatedData = paginatedData.SetEnable(chi.URLParam(r, repositoryEnums.Page) != "").
-		SetPage(chi.URLParam(r, repositoryEnums.Page)).
-		SetSize(chi.URLParam(r, repositoryEnums.Size)).
-		SetSearch(chi.URLParam(r, repositoryEnums.Search))
+	paginatedData = paginatedData.SetEnable(r.URL.Query().Get(repositoryEnums.Page) != "").
+		SetPage(r.URL.Query().Get(repositoryEnums.Page)).
+		SetSize(r.URL.Query().Get(repositoryEnums.Size)).
+		SetSearch(r.URL.Query().Get(repositoryEnums.Search))
 	return repositoryData, paginatedData, nil
 }
 
