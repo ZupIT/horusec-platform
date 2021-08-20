@@ -20,7 +20,7 @@ import HorusecLogo from 'assets/logos/horusec.svg';
 import HorusecLogoMin from 'assets/logos/horusec_minimized.svg';
 import { useTranslation } from 'react-i18next';
 import { Icon } from 'components';
-import { useHistory, useRouteMatch, Link } from 'react-router-dom';
+import { useHistory, Link } from 'react-router-dom';
 import { InternalRoute } from 'helpers/interfaces/InternalRoute';
 import ReactTooltip from 'react-tooltip';
 import useParamsRoute from 'helpers/hooks/useParamsRoute';
@@ -127,7 +127,7 @@ const SideMenu: React.FC = () => {
                 {isRepositoryOverview ? 'Repository:' : 'Workspace:'}
               </Styled.NameTitle>
               <Styled.NameText>
-                {repository?.name || workspace?.name}
+                {isRepositoryOverview ? repository?.name : workspace?.name}
               </Styled.NameText>
             </Styled.NameWrapper>
           )}

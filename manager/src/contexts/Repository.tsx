@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Repository } from 'helpers/interfaces/Repository';
 import { RouteParams } from 'helpers/interfaces/RouteParams';
 import {
@@ -69,6 +69,11 @@ const RepositoryProvider = ({ children }: { children: JSX.Element }) => {
       history.push('/home');
     }
   }
+
+  useEffect(() => {
+    if (repositoryId) getRepository();
+    // eslint-disable-next-line
+  }, [repositoryId]);
 
   return (
     <RepositoryContext.Provider

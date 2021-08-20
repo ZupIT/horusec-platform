@@ -54,6 +54,7 @@ function App() {
       authClient={keycloakInstance}
       autoRefreshToken={true}
       initOptions={keycloakInitOptions}
+      onEvent={(keycloakEvent, err) => console.info({ keycloakEvent, err })}
       onTokens={({ token, refreshToken, idToken }) =>
         handleSetKeyclockData(token, refreshToken, idToken)
       }

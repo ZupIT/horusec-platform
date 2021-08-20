@@ -22,6 +22,7 @@ import Styled from './styled';
 import usePermissions from 'helpers/hooks/usePermissions';
 import { getCurrentConfig } from 'helpers/localStorage/horusecConfig';
 import { authTypes } from 'helpers/enums/authTypes';
+import Tooltip from '@material-ui/core/Tooltip';
 
 interface Props {
   workspace?: Workspace;
@@ -48,10 +49,12 @@ const HomeCard: React.FC<Props> = ({
 
   return (
     <Styled.Card>
-      <Styled.Title>
-        <Styled.Icon name={isWorkspace ? 'grid' : 'columns'} size="24px" />
-        {context.name}
-      </Styled.Title>
+      <Tooltip arrow title={context.name}>
+        <Styled.Title>
+          <Styled.Icon name={isWorkspace ? 'grid' : 'columns'} size="24px" />
+          {context.name}
+        </Styled.Title>
+      </Tooltip>
 
       {context?.description ? (
         <Styled.Description>{context?.description}</Styled.Description>
