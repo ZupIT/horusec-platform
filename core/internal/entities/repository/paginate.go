@@ -34,6 +34,9 @@ const (
 )
 
 func (p *PaginatedContent) SetSize(sizeString string) *PaginatedContent {
+	if sizeString == "" {
+		sizeString = "0"
+	}
 	sizeNumber, err := strconv.Atoi(sizeString)
 	if err != nil {
 		logger.LogWarn("{WARN} Can not get size from query string: ", err)
@@ -57,6 +60,9 @@ func (p *PaginatedContent) SetEnable(enable bool) *PaginatedContent {
 }
 
 func (p *PaginatedContent) SetPage(pageString string) *PaginatedContent {
+	if pageString == "" {
+		return p
+	}
 	pageNumber, err := strconv.Atoi(pageString)
 	if err != nil {
 		logger.LogWarn("{WARN} Can not get page from query string: ", err)
