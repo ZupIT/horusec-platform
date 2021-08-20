@@ -514,7 +514,7 @@ func TestList(t *testing.T) {
 			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{},
 			workspaceRepositoryMock)
 
-		result, err := controller.List(data)
+		result, err := controller.List(data, &repositoryEntities.PaginatedContent{})
 		assert.NoError(t, err)
 		assert.NotNil(t, result)
 	})
@@ -534,7 +534,7 @@ func TestList(t *testing.T) {
 			repositoryUseCases.NewRepositoryUseCases(), repositoryMock, &tokenUseCases.UseCases{},
 			workspaceRepositoryMock)
 
-		result, err := controller.List(data)
+		result, err := controller.List(data, &repositoryEntities.PaginatedContent{})
 		assert.NoError(t, err)
 		assert.NotNil(t, result)
 	})
@@ -556,7 +556,7 @@ func TestList(t *testing.T) {
 			workspaceRepositoryMock)
 
 		data.IsApplicationAdmin = true
-		result, err := controller.List(data)
+		result, err := controller.List(data, &repositoryEntities.PaginatedContent{})
 		assert.NoError(t, err)
 		assert.NotNil(t, result)
 	})

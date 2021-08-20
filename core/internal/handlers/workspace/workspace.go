@@ -17,6 +17,7 @@ package workspace
 import (
 	"context"
 	"net/http"
+	"strings"
 
 	"github.com/go-chi/chi"
 	"github.com/google/uuid"
@@ -233,6 +234,7 @@ func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
 	httpUtil.StatusNoContent(w)
 }
 
+//nolint:funlen // method is necessary 16 lines
 // @Tags Workspace
 // @Description List all workspaces of an account
 // @ID list-workspace
@@ -247,14 +249,17 @@ func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) List(w http.ResponseWriter, r *http.Request) {
 	data, err := h.getListData(r)
 	if err != nil {
-		httpUtil.StatusBadRequest(w, err)
+		if strings.Contains(err.Error(), "{KEYCLOAK AUTH} failed to get user info") {
+			httpUtil.StatusUnauthorized(w, err)
+		} else {
+			httpUtil.StatusBadRequest(w, err)
+		}
 		return
 	}
 
 	workspaces, err := h.controller.List(data)
 	if err != nil {
 		httpUtil.StatusInternalServerError(w, err)
-		return
 	}
 
 	httpUtil.StatusOK(w, workspaces)
