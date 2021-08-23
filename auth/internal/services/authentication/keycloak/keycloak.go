@@ -23,7 +23,6 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/enums/auth"
 	"github.com/ZupIT/horusec-devkit/pkg/services/database/enums"
 	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth/proto"
-	"github.com/ZupIT/horusec-devkit/pkg/utils/jwt"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/parser"
 
 	"github.com/ZupIT/horusec-platform/auth/config/app"
@@ -135,7 +134,7 @@ func (s *Service) checkForApplicationAdmin(accountID uuid.UUID) (bool, error) {
 }
 
 func (s *Service) isWorkspaceMember(data *authEntities.AuthorizationData) (bool, error) {
-	accountID, err := jwt.GetAccountIDByJWTToken(data.Token)
+	accountID, err := s.keycloak.GetAccountIDByJWTToken(data.Token)
 	if err != nil {
 		return false, errors.Wrap(err, horusecAuthEnums.ErrorFailedToGetAccountIDFromToken)
 	}
@@ -149,7 +148,7 @@ func (s *Service) isWorkspaceMember(data *authEntities.AuthorizationData) (bool,
 }
 
 func (s *Service) isWorkspaceAdmin(data *authEntities.AuthorizationData) (bool, error) {
-	accountID, err := jwt.GetAccountIDByJWTToken(data.Token)
+	accountID, err := s.keycloak.GetAccountIDByJWTToken(data.Token)
 	if err != nil {
 		return false, errors.Wrap(err, horusecAuthEnums.ErrorFailedToGetAccountIDFromToken)
 	}
@@ -163,7 +162,7 @@ func (s *Service) isWorkspaceAdmin(data *authEntities.AuthorizationData) (bool, 
 }
 
 func (s *Service) isRepositoryMember(data *authEntities.AuthorizationData) (bool, error) {
-	accountID, err := jwt.GetAccountIDByJWTToken(data.Token)
+	accountID, err := s.keycloak.GetAccountIDByJWTToken(data.Token)
 	if err != nil {
 		return false, errors.Wrap(err, horusecAuthEnums.ErrorFailedToGetAccountIDFromToken)
 	}
@@ -177,7 +176,7 @@ func (s *Service) isRepositoryMember(data *authEntities.AuthorizationData) (bool
 }
 
 func (s *Service) isRepositorySupervisor(data *authEntities.AuthorizationData) (bool, error) {
-	accountID, err := jwt.GetAccountIDByJWTToken(data.Token)
+	accountID, err := s.keycloak.GetAccountIDByJWTToken(data.Token)
 	if err != nil {
 		return false, errors.Wrap(err, horusecAuthEnums.ErrorFailedToGetAccountIDFromToken)
 	}
@@ -191,7 +190,7 @@ func (s *Service) isRepositorySupervisor(data *authEntities.AuthorizationData) (
 }
 
 func (s *Service) isRepositoryAdmin(data *authEntities.AuthorizationData) (bool, error) {
-	accountID, err := jwt.GetAccountIDByJWTToken(data.Token)
+	accountID, err := s.keycloak.GetAccountIDByJWTToken(data.Token)
 	if err != nil {
 		return false, errors.Wrap(err, horusecAuthEnums.ErrorFailedToGetAccountIDFromToken)
 	}
@@ -219,7 +218,7 @@ func (s *Service) checkRepositoryRequestForWorkspaceAdmin(data *authEntities.Aut
 }
 
 func (s *Service) isApplicationAdmin(data *authEntities.AuthorizationData) (bool, error) {
-	accountID, err := jwt.GetAccountIDByJWTToken(data.Token)
+	accountID, err := s.keycloak.GetAccountIDByJWTToken(data.Token)
 	if err != nil {
 		return false, errors.Wrap(err, horusecAuthEnums.ErrorFailedToGetAccountIDFromToken)
 	}

@@ -75,6 +75,7 @@ const List = styled.ul`
   flex-wrap: wrap;
   max-height: 320px;
   overflow-y: auto;
+  position: relative;
 
   ::-webkit-scrollbar {
     width: 6px;

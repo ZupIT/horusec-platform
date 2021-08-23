@@ -17,8 +17,9 @@ package workspace
 import (
 	"encoding/json"
 	"errors"
-	workspaceEnums "github.com/ZupIT/horusec-platform/core/internal/enums/workspace"
 	"testing"
+
+	workspaceEnums "github.com/ZupIT/horusec-platform/core/internal/enums/workspace"
 
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"

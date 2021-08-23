@@ -16,6 +16,7 @@ package repository
 
 import (
 	"database/sql"
+	"fmt"
 
 	"github.com/google/uuid"
 	"github.com/lib/pq"
@@ -35,12 +36,15 @@ type IRepository interface {
 	GetRepositoryByName(workspaceID uuid.UUID, name string) (*repositoryEntities.Repository, error)
 	GetRepository(repositoryID uuid.UUID) (*repositoryEntities.Repository, error)
 	GetAccountRepository(accountID, repositoryID uuid.UUID) (*repositoryEntities.AccountRepository, error)
-	ListRepositoriesAuthTypeHorusec(accountID, workspaceID uuid.UUID) (*[]repositoryEntities.Response, error)
-	ListRepositoriesAuthTypeLdap(workspaceID uuid.UUID, permissions []string) (*[]repositoryEntities.Response, error)
+	ListRepositoriesAuthTypeHorusec(accountID, workspaceID uuid.UUID,
+		paginated *repositoryEntities.PaginatedContent) (*[]repositoryEntities.Response, error)
+	ListRepositoriesAuthTypeLdap(workspaceID uuid.UUID, permissions []string,
+		paginated *repositoryEntities.PaginatedContent) (*[]repositoryEntities.Response, error)
 	IsNotMemberOfWorkspace(accountID, workspaceID uuid.UUID) bool
 	ListAllRepositoryUsers(repositoryID uuid.UUID) (*[]roleEntities.Response, error)
 	GetWorkspace(workspaceID uuid.UUID) (*workspaceEntities.Workspace, error)
-	ListRepositoriesWhenApplicationAdmin() (*[]repositoryEntities.Response, error)
+	ListRepositoriesWhenApplicationAdmin(
+		paginated *repositoryEntities.PaginatedContent) (*[]repositoryEntities.Response, error)
 	GetRepositoryLdap(repositoryID uuid.UUID, permissions []string) (*repositoryEntities.Response, error)
 }
 
@@ -84,73 +88,90 @@ func (r *Repository) GetAccountRepository(accountID,
 }
 
 func (r *Repository) ListRepositoriesAuthTypeHorusec(accountID,
-	workspaceID uuid.UUID) (*[]repositoryEntities.Response, error) {
+	workspaceID uuid.UUID, paginated *repositoryEntities.PaginatedContent) (*[]repositoryEntities.Response, error) {
 	accountWorkspace, err := r.workspaceRepository.GetAccountWorkspace(accountID, workspaceID)
 	if err != nil {
 		return nil, err
 	}
 
 	if accountWorkspace.Role == account.Admin {
-		return r.listRepositoriesWhenWorkspaceAdmin(accountID, workspaceID)
+		return r.listRepositoriesWhenWorkspaceAdmin(accountID, workspaceID, paginated)
 	}
 
-	return r.listRepositoriesByRoles(accountID, workspaceID)
+	return r.listRepositoriesByRoles(accountID, workspaceID, paginated)
 }
 
 func (r *Repository) listRepositoriesWhenWorkspaceAdmin(accountID,
-	workspaceID uuid.UUID) (*[]repositoryEntities.Response, error) {
+	workspaceID uuid.UUID, paginated *repositoryEntities.PaginatedContent) (*[]repositoryEntities.Response, error) {
 	repositories := &[]repositoryEntities.Response{}
 
-	return repositories, r.databaseRead.Raw(
-		r.queryListRepositoriesWhenWorkspaceAdmin(), repositories, accountID, workspaceID).GetErrorExceptNotFound()
+	return repositories, r.databaseRead.Raw(r.queryListRepositoriesWhenWorkspaceAdmin(paginated),
+		repositories, accountID, workspaceID, paginated.GetSearch()).GetErrorExceptNotFound()
 }
 
-func (r *Repository) queryListRepositoriesWhenWorkspaceAdmin() string {
-	return `
+func (r *Repository) queryListRepositoriesWhenWorkspaceAdmin(paginated *repositoryEntities.PaginatedContent) string {
+	var queryPaginated = ""
+	if paginated.Enable {
+		queryPaginated = fmt.Sprintf(`AND repo.name ILIKE ? LIMIT %v OFFSET %v`,
+			paginated.Size, paginated.GetOffset())
+	}
+	return fmt.Sprintf(`
 			SELECT repo.repository_id, repo.workspace_id, repo.description, repo.name, 'admin' AS role, 
 				   repo.created_at, repo.updated_at
 			FROM repositories AS repo
 		    INNER JOIN account_workspace AS aw ON aw.workspace_id = repo.workspace_id AND aw.account_id = ?
 			WHERE repo.workspace_id = ?
-	`
+            %s`, queryPaginated)
 }
 
 func (r *Repository) listRepositoriesByRoles(accountID,
-	workspaceID uuid.UUID) (*[]repositoryEntities.Response, error) {
+	workspaceID uuid.UUID, paginated *repositoryEntities.PaginatedContent) (*[]repositoryEntities.Response, error) {
 	repositories := &[]repositoryEntities.Response{}
 
-	return repositories, r.databaseRead.Raw(r.queryListRepositoriesByRoles(), repositories,
-		sql.Named("accountID", accountID), sql.Named("workspaceID", workspaceID)).GetErrorExceptNotFound()
+	return repositories, r.databaseRead.Raw(r.queryListRepositoriesByRoles(paginated), repositories,
+		sql.Named("accountID", accountID), sql.Named("workspaceID", workspaceID),
+		sql.Named("search", paginated.GetSearch())).GetErrorExceptNotFound()
 }
 
-func (r *Repository) queryListRepositoriesByRoles() string {
-	return `
+func (r *Repository) queryListRepositoriesByRoles(paginated *repositoryEntities.PaginatedContent) string {
+	var queryPaginated = ""
+	if paginated.Enable {
+		queryPaginated = fmt.Sprintf(`AND repo.name ILIKE @search LIMIT %v OFFSET %v`, paginated.Size,
+			paginated.GetOffset())
+	}
+	return fmt.Sprintf(`
 			SELECT repo.repository_id, repo.workspace_id, repo.description, repo.name, ar.role,
 			  	   repo.created_at, repo.updated_at
 		    FROM repositories AS repo
 			INNER JOIN account_repository AS ar ON ar.repository_id = repo.repository_id AND ar.account_id = @accountID
 			WHERE ar.workspace_id = @workspaceID AND ar.account_id = @accountID
-	`
+	        %s`, queryPaginated)
 }
 
 func (r *Repository) ListRepositoriesAuthTypeLdap(workspaceID uuid.UUID,
-	permissions []string) (*[]repositoryEntities.Response, error) {
+	permissions []string, paginated *repositoryEntities.PaginatedContent) (*[]repositoryEntities.Response, error) {
 	repositories := &[]repositoryEntities.Response{}
 
-	return repositories, r.databaseRead.Raw(r.queryListRepositoriesAuthTypeLdap(), repositories,
-		sql.Named("workspaceID", workspaceID),
-		sql.Named("permissions", pq.StringArray(permissions))).GetErrorExceptNotFound()
+	return repositories, r.databaseRead.Raw(r.queryListRepositoriesAuthTypeLdap(paginated), repositories,
+		sql.Named("workspaceID", workspaceID), sql.Named("permissions", pq.StringArray(permissions)),
+		sql.Named("search", paginated.GetSearch())).GetErrorExceptNotFound()
 }
 
 //nolint:funlen // query needs more than 15 lines
-func (r *Repository) queryListRepositoriesAuthTypeLdap() string {
-	return `
+func (r *Repository) queryListRepositoriesAuthTypeLdap(paginated *repositoryEntities.PaginatedContent) string {
+	var queryPaginated = ""
+	if paginated.Enable {
+		queryPaginated = fmt.Sprintf(`AND repo.name ILIKE @search LIMIT %v OFFSET %v`, paginated.Size,
+			paginated.GetOffset())
+	}
+	return fmt.Sprintf(`
 			SELECT * 
 			FROM (
 				SELECT repo.repository_id, repo.workspace_id, repo.description, repo.name, 'admin' AS role,
 					   repo.authz_admin, repo.authz_member, repo.authz_supervisor, repo.created_at, repo.updated_at
 				FROM repositories AS repo
 				WHERE repo.workspace_id = @workspaceID AND @permissions && repo.authz_admin
+				%s
 			) AS admin
 
 			UNION ALL (
@@ -160,6 +181,7 @@ func (r *Repository) queryListRepositoriesAuthTypeLdap() string {
 					FROM repositories AS repo
 					WHERE repo.workspace_id = @workspaceID AND @permissions && repo.authz_supervisor
 					AND NOT @permissions && repo.authz_admin
+					%s
 				) AS supervisor
 
 				UNION ALL
@@ -171,9 +193,10 @@ func (r *Repository) queryListRepositoriesAuthTypeLdap() string {
 					WHERE repo.workspace_id = @workspaceID AND @permissions && repo.authz_member	
 					AND NOT @permissions && repo.authz_admin 
 					AND NOT @permissions && repo.authz_supervisor
+					%s
 				) AS member
 			)
-	`
+	`, queryPaginated, queryPaginated, queryPaginated)
 }
 
 func (r *Repository) IsNotMemberOfWorkspace(accountID, workspaceID uuid.UUID) bool {
@@ -204,19 +227,24 @@ func (r *Repository) GetWorkspace(workspaceID uuid.UUID) (*workspaceEntities.Wor
 	return r.workspaceRepository.GetWorkspace(workspaceID)
 }
 
-func (r *Repository) ListRepositoriesWhenApplicationAdmin() (*[]repositoryEntities.Response, error) {
+func (r *Repository) ListRepositoriesWhenApplicationAdmin(
+	paginated *repositoryEntities.PaginatedContent) (*[]repositoryEntities.Response, error) {
 	repositories := &[]repositoryEntities.Response{}
 
 	return repositories, r.databaseRead.Raw(
-		r.queryListRepositoriesWhenApplicationAdmin(), repositories).GetErrorExceptNotFound()
+		r.queryListRepositoriesWhenApplicationAdmin(paginated), repositories).GetErrorExceptNotFound()
 }
 
-func (r *Repository) queryListRepositoriesWhenApplicationAdmin() string {
-	return `
+func (r *Repository) queryListRepositoriesWhenApplicationAdmin(paginated *repositoryEntities.PaginatedContent) string {
+	var queryPaginated = ""
+	if paginated.Enable {
+		queryPaginated = fmt.Sprintf(`LIMIT %v OFFSET %v`, paginated.Size,
+			paginated.GetOffset())
+	}
+	return fmt.Sprintf(`
 			SELECT repo.repository_id, repo.workspace_id, repo.description, repo.name, 'applicationAdmin' AS role, 
 				   repo.created_at, repo.updated_at
-			FROM repositories AS repo
-	`
+			FROM repositories AS repo %s`, queryPaginated)
 }
 
 func (r *Repository) GetRepositoryLdap(

@@ -268,13 +268,13 @@ func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
 // @Router /core/workspaces/{workspaceID}/repositories [get]
 // @Security ApiKeyAuth
 func (h *Handler) List(w http.ResponseWriter, r *http.Request) {
-	data, err := h.getListData(r)
+	repositoryData, paginatedData, err := h.getListData(r)
 	if err != nil {
 		httpUtil.StatusBadRequest(w, err)
 		return
 	}
 
-	repositories, err := h.controller.List(data)
+	repositories, err := h.controller.List(repositoryData, paginatedData)
 	if err != nil {
 		httpUtil.StatusInternalServerError(w, err)
 		return
@@ -283,14 +283,21 @@ func (h *Handler) List(w http.ResponseWriter, r *http.Request) {
 	httpUtil.StatusOK(w, repositories)
 }
 
-func (h *Handler) getListData(r *http.Request) (*repositoryEntities.Data, error) {
+func (h *Handler) getListData(r *http.Request) (*repositoryEntities.Data, *repositoryEntities.PaginatedContent, error) {
 	accountData, err := h.getAccountData(r)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
-	return h.useCases.NewRepositoryData(uuid.Nil, parser.ParseStringToUUID(
-		chi.URLParam(r, workspaceEnums.ID)), accountData), nil
+	paginatedData := &repositoryEntities.PaginatedContent{}
+
+	repositoryData := h.useCases.NewRepositoryData(uuid.Nil, parser.ParseStringToUUID(
+		chi.URLParam(r, workspaceEnums.ID)), accountData)
+	paginatedData = paginatedData.SetEnable(r.URL.Query().Get(repositoryEnums.Page) != "").
+		SetPage(r.URL.Query().Get(repositoryEnums.Page)).
+		SetSize(r.URL.Query().Get(repositoryEnums.Size)).
+		SetSearch(r.URL.Query().Get(repositoryEnums.Search))
+	return repositoryData, paginatedData, nil
 }
 
 // @Tags Repository

@@ -42,10 +42,12 @@ const Card = styled.li`
 const Title = styled.span`
   color: ${({ theme }) => theme.colors.text.primary};
   font-size: ${({ theme }) => theme.metrics.fontSize.xxlarge};
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
+  display: block;
   margin-bottom: 8px;
+  max-width: 250px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 const Icon = styled(IconComponent)`
