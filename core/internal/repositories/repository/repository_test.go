@@ -95,7 +95,27 @@ func TestListRepositoriesAuthTypeHorusec(t *testing.T) {
 		repository := NewRepositoryRepository(&database.Connection{Read: databaseMock, Write: databaseMock},
 			repositoryUseCases.NewRepositoryUseCases(), workspaceRepositoryMock)
 
-		result, err := repository.ListRepositoriesAuthTypeHorusec(uuid.New(), uuid.New())
+		result, err := repository.ListRepositoriesAuthTypeHorusec(uuid.New(), uuid.New(), &repositoryEntities.PaginatedContent{})
+		assert.NoError(t, err)
+		assert.NotNil(t, result)
+	})
+	t.Run("should success list repositories when admin and paginated", func(t *testing.T) {
+		databaseMock := &database.Mock{}
+		databaseMock.On("Raw").Return(&response.Response{})
+
+		workspaceRepositoryMock := &workspaceRepository.Mock{}
+		workspaceRepositoryMock.On("GetAccountWorkspace").Return(
+			&workspaceEntities.AccountWorkspace{Role: account.Admin}, nil)
+
+		repository := NewRepositoryRepository(&database.Connection{Read: databaseMock, Write: databaseMock},
+			repositoryUseCases.NewRepositoryUseCases(), workspaceRepositoryMock)
+
+		paginated := &repositoryEntities.PaginatedContent{
+			Enable: true,
+			Page:   1,
+			Size:   15,
+		}
+		result, err := repository.ListRepositoriesAuthTypeHorusec(uuid.New(), uuid.New(), paginated)
 		assert.NoError(t, err)
 		assert.NotNil(t, result)
 	})
@@ -111,7 +131,28 @@ func TestListRepositoriesAuthTypeHorusec(t *testing.T) {
 		repository := NewRepositoryRepository(&database.Connection{Read: databaseMock, Write: databaseMock},
 			repositoryUseCases.NewRepositoryUseCases(), workspaceRepositoryMock)
 
-		result, err := repository.ListRepositoriesAuthTypeHorusec(uuid.New(), uuid.New())
+		result, err := repository.ListRepositoriesAuthTypeHorusec(uuid.New(), uuid.New(), &repositoryEntities.PaginatedContent{})
+		assert.NoError(t, err)
+		assert.NotNil(t, result)
+	})
+
+	t.Run("should success list repositories by role paginated", func(t *testing.T) {
+		databaseMock := &database.Mock{}
+		databaseMock.On("Raw").Return(&response.Response{})
+
+		workspaceRepositoryMock := &workspaceRepository.Mock{}
+		workspaceRepositoryMock.On("GetAccountWorkspace").Return(
+			&workspaceEntities.AccountWorkspace{Role: account.Member}, nil)
+
+		repository := NewRepositoryRepository(&database.Connection{Read: databaseMock, Write: databaseMock},
+			repositoryUseCases.NewRepositoryUseCases(), workspaceRepositoryMock)
+
+		paginated := &repositoryEntities.PaginatedContent{
+			Enable: true,
+			Page:   1,
+			Size:   15,
+		}
+		result, err := repository.ListRepositoriesAuthTypeHorusec(uuid.New(), uuid.New(), paginated)
 		assert.NoError(t, err)
 		assert.NotNil(t, result)
 	})
@@ -126,7 +167,7 @@ func TestListRepositoriesAuthTypeHorusec(t *testing.T) {
 		repository := NewRepositoryRepository(&database.Connection{Read: databaseMock, Write: databaseMock},
 			repositoryUseCases.NewRepositoryUseCases(), workspaceRepositoryMock)
 
-		result, err := repository.ListRepositoriesAuthTypeHorusec(uuid.New(), uuid.New())
+		result, err := repository.ListRepositoriesAuthTypeHorusec(uuid.New(), uuid.New(), &repositoryEntities.PaginatedContent{})
 		assert.Error(t, err)
 		assert.Nil(t, result)
 	})
@@ -140,7 +181,23 @@ func TestListRepositoriesAuthTypeLdap(t *testing.T) {
 		repository := NewRepositoryRepository(&database.Connection{Read: databaseMock, Write: databaseMock},
 			repositoryUseCases.NewRepositoryUseCases(), &workspaceRepository.Mock{})
 
-		result, err := repository.ListRepositoriesAuthTypeLdap(uuid.New(), []string{"test"})
+		result, err := repository.ListRepositoriesAuthTypeLdap(uuid.New(), []string{"test"}, &repositoryEntities.PaginatedContent{})
+		assert.NoError(t, err)
+		assert.NotNil(t, result)
+	})
+	t.Run("should success list repositories paginated", func(t *testing.T) {
+		databaseMock := &database.Mock{}
+		databaseMock.On("Raw").Return(&response.Response{})
+
+		repository := NewRepositoryRepository(&database.Connection{Read: databaseMock, Write: databaseMock},
+			repositoryUseCases.NewRepositoryUseCases(), &workspaceRepository.Mock{})
+
+		paginated := &repositoryEntities.PaginatedContent{
+			Enable: true,
+			Page:   1,
+			Size:   15,
+		}
+		result, err := repository.ListRepositoriesAuthTypeLdap(uuid.New(), []string{"test"}, paginated)
 		assert.NoError(t, err)
 		assert.NotNil(t, result)
 	})
@@ -215,7 +272,25 @@ func TestListRepositoriesWhenApplicationAdmin(t *testing.T) {
 		repository := NewRepositoryRepository(&database.Connection{Read: databaseMock, Write: databaseMock},
 			repositoryUseCases.NewRepositoryUseCases(), workspaceRepositoryMock)
 
-		result, err := repository.ListRepositoriesWhenApplicationAdmin()
+		result, err := repository.ListRepositoriesWhenApplicationAdmin(&repositoryEntities.PaginatedContent{})
+		assert.NoError(t, err)
+		assert.NotNil(t, result)
+	})
+	t.Run("should success list repositories paginated", func(t *testing.T) {
+		workspaceRepositoryMock := &workspaceRepository.Mock{}
+
+		databaseMock := &database.Mock{}
+		databaseMock.On("Raw").Return(&response.Response{})
+
+		repository := NewRepositoryRepository(&database.Connection{Read: databaseMock, Write: databaseMock},
+			repositoryUseCases.NewRepositoryUseCases(), workspaceRepositoryMock)
+
+		paginated := &repositoryEntities.PaginatedContent{
+			Enable: true,
+			Page:   1,
+			Size:   15,
+		}
+		result, err := repository.ListRepositoriesWhenApplicationAdmin(paginated)
 		assert.NoError(t, err)
 		assert.NotNil(t, result)
 	})

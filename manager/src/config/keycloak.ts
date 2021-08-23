@@ -18,9 +18,9 @@ import { localStorageKeys } from 'helpers/enums/localStorageKeys';
 import Keycloak from 'keycloak-js';
 
 const keycloakConfig: Keycloak.KeycloakConfig = {
-  clientId: (window as any).REACT_APP_KEYCLOAK_CLIENT_ID,
-  realm: (window as any).REACT_APP_KEYCLOAK_REALM,
-  url: (window as any).REACT_APP_KEYCLOAK_BASE_PATH,
+  clientId: window.REACT_APP_KEYCLOAK_CLIENT_ID,
+  realm: window.REACT_APP_KEYCLOAK_REALM,
+  url: window.REACT_APP_KEYCLOAK_BASE_PATH,
 };
 
 const idToken = window.localStorage.getItem(localStorageKeys.ID_TOKEN);

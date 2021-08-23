@@ -89,20 +89,27 @@ func getHorusecDatabaseConnection() *database.Connection {
 	return dbConnectionHorusec
 }
 
-func (a *AnalyticMigration) getAllAnalysisWithVulnerabilities() []*analysisEntities.Analysis {
-	analysis := &[]*analysisEntities.Analysis{}
-
+// nolint:funlen // recursive method is not necessary broken
+func (a *AnalyticMigration) getAllAnalysisWithVulnerabilities(limit, page int,
+	analysis []*analysisEntities.Analysis) []*analysisEntities.Analysis {
+	logger.LogInfo(fmt.Sprintf("Getting vulnerabilities with limit: %v and page %v", limit, page))
+	currentAnalysis := []*analysisEntities.Analysis{}
 	preloads := map[string][]interface{}{
 		"AnalysisVulnerabilities":               {},
 		"AnalysisVulnerabilities.Vulnerability": {},
 	}
-
-	if err := a.dbConnectionHorusec.Read.FindPreload(analysis, map[string]interface{}{},
-		preloads, "analysis").GetErrorExceptNotFound(); err != nil {
+	if err := a.dbConnectionHorusec.Read.FindPreloadWitLimitAndPage(&currentAnalysis, map[string]interface{}{},
+		preloads, "analysis", limit, page).GetErrorExceptNotFound(); err != nil {
 		logger.LogPanic(enums.MessageFailedToGetAllAnalysis, err)
 	}
 
-	return *analysis
+	if len(currentAnalysis) > 0 {
+		analysis = append(analysis, currentAnalysis...)
+		return a.getAllAnalysisWithVulnerabilities(limit, page+1, analysis)
+	}
+
+	logger.LogInfo(fmt.Sprintf("Total analysis found: %v", len(analysis)))
+	return analysis
 }
 
 func (a *AnalyticMigration) loggingRegisterBeingMigrated(analysis *analysisEntities.Analysis) {
@@ -230,8 +237,10 @@ func main() {
 		return
 	}
 
-	allPastAnalysis := analyticMigration.getAllAnalysisWithVulnerabilities()
-	for _, analysis := range allPastAnalysis {
+	// nolint:gomnd // is not necessary create magic number
+	allPastAnalysis := analyticMigration.getAllAnalysisWithVulnerabilities(100, 0, []*analysisEntities.Analysis{})
+	for key, analysis := range allPastAnalysis {
+		logger.LogInfo(fmt.Sprintf("Migrating analysis: [%v/%v]", key, len(allPastAnalysis)-1))
 		analyticMigration.loggingRegisterBeingMigrated(analysis)
 		analyticMigration.migrateAnalysis(analysis)
 	}

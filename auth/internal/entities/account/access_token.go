@@ -26,10 +26,12 @@ type AccessToken struct {
 	AccessToken string `json:"accessToken"`
 }
 
+const maxAccessTokenLength = 2500
+
 func (a *AccessToken) Validate() error {
 	return validation.ValidateStruct(a,
 		validation.Field(&a.AccessToken, validation.Required,
-			validation.Length(ozzovalidation.Length0, ozzovalidation.Length500)),
+			validation.Length(ozzovalidation.Length0, maxAccessTokenLength)),
 	)
 }
 

@@ -1,8 +1,8 @@
 FROM golang
 
-ADD . /auth
+ADD . /analytic
 
-WORKDIR /auth
+WORKDIR /analytic
 
 RUN go get -d ./...
 RUN go get github.com/cosmtrek/air

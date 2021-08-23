@@ -136,9 +136,16 @@ const removeToken = (
   );
 };
 
-const getAllRepositories = (workspaceID: string) => {
+const getAllRepositories = (
+  workspaceID: string,
+  page?: number,
+  search?: string
+) => {
   return http.get(
-    `${SERVICE_CORE}/core/workspaces/${workspaceID}/repositories`
+    `${SERVICE_CORE}/core/workspaces/${workspaceID}/repositories`,
+    {
+      params: { page, size: 15, search },
+    }
   );
 };
 

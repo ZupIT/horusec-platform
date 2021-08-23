@@ -28,6 +28,8 @@ import useFlashMessage from 'helpers/hooks/useFlashMessage';
 import { clearTokens } from 'helpers/localStorage/tokens';
 import { useHistory } from 'react-router-dom';
 import useLanguage from 'helpers/hooks/useLanguage';
+import { getCurrentConfig } from 'helpers/localStorage/horusecConfig';
+import { authTypes } from 'helpers/enums/authTypes';
 
 const Settings: React.FC = () => {
   const { t } = useTranslation();
@@ -35,6 +37,7 @@ const Settings: React.FC = () => {
   const { showSuccessFlash } = useFlashMessage();
   const { allLanguages, currentLanguage, setUserLanguage } = useLanguage();
   const history = useHistory();
+  const { authType } = getCurrentConfig();
 
   const [deleteDialogIsOpen, setOpenDeleteDialog] = useState(false);
   const [deleteInProgress, setDeleteInProgress] = useState(false);
@@ -63,30 +66,6 @@ const Settings: React.FC = () => {
 
       <Styled.Wrapper>
         <Styled.Content>
-          <Styled.Title>{t('SETTINGS_SCREEN.TITLE')}</Styled.Title>
-
-          <Styled.Subtitle>
-            {t('SETTINGS_SCREEN.ACCOUNT_SUBTITLE')}
-          </Styled.Subtitle>
-
-          <Styled.BtnsWrapper>
-            <Button
-              text={t('SETTINGS_SCREEN.CHANGE_USER_DATA')}
-              icon="edit"
-              onClick={() => setOpenEditDialog(true)}
-              outline
-            />
-
-            <Button
-              text={t('SETTINGS_SCREEN.CHANGE_PASS')}
-              icon="lock"
-              onClick={() => setOpenChangePassDialog(true)}
-              outline
-            />
-          </Styled.BtnsWrapper>
-        </Styled.Content>
-
-        <Styled.Content>
           <Styled.Title>{t('SETTINGS_SCREEN.LANGUAGE')}</Styled.Title>
 
           <Styled.Subtitle>
@@ -111,19 +90,49 @@ const Settings: React.FC = () => {
           </Styled.LanguageList>
         </Styled.Content>
 
-        <Styled.Content>
-          <Styled.Title isDanger>
-            {t('SETTINGS_SCREEN.DELETE_ACCOUNT')}
-          </Styled.Title>
+        {authType !== authTypes.KEYCLOAK ? (
+          <>
+            <Styled.Content>
+              <Styled.Title>{t('SETTINGS_SCREEN.TITLE')}</Styled.Title>
 
-          <Styled.Subtitle>{t('SETTINGS_SCREEN.SURE_DELETE')}</Styled.Subtitle>
+              <Styled.Subtitle>
+                {t('SETTINGS_SCREEN.ACCOUNT_SUBTITLE')}
+              </Styled.Subtitle>
 
-          <Button
-            text={t('SETTINGS_SCREEN.DELETE')}
-            onClick={() => setOpenDeleteDialog(true)}
-            outline
-          />
-        </Styled.Content>
+              <Styled.BtnsWrapper>
+                <Button
+                  text={t('SETTINGS_SCREEN.CHANGE_USER_DATA')}
+                  icon="edit"
+                  onClick={() => setOpenEditDialog(true)}
+                  outline
+                />
+
+                <Button
+                  text={t('SETTINGS_SCREEN.CHANGE_PASS')}
+                  icon="lock"
+                  onClick={() => setOpenChangePassDialog(true)}
+                  outline
+                />
+              </Styled.BtnsWrapper>
+            </Styled.Content>
+
+            <Styled.Content>
+              <Styled.Title isDanger>
+                {t('SETTINGS_SCREEN.DELETE_ACCOUNT')}
+              </Styled.Title>
+
+              <Styled.Subtitle>
+                {t('SETTINGS_SCREEN.SURE_DELETE')}
+              </Styled.Subtitle>
+
+              <Button
+                text={t('SETTINGS_SCREEN.DELETE')}
+                onClick={() => setOpenDeleteDialog(true)}
+                outline
+              />
+            </Styled.Content>
+          </>
+        ) : null}
 
         <Dialog
           message={t('SETTINGS_SCREEN.CONFIRM_DELETE')}

@@ -19,4 +19,7 @@ const (
 	DatabaseWorkspaceTable         = "workspaces"
 	DatabaseAccountRepositoryTable = "account_repository"
 	ID                             = "repositoryID"
+	Page                           = "page"
+	Size                           = "size"
+	Search                         = "search"
 )

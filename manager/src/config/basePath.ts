@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-import { useContext } from 'react';
-import { WorkspaceContext } from 'contexts/Workspace';
-import { RepositoryContext } from 'contexts/Repository';
+let MANAGER_BASE_PATH = window.REACT_APP_HORUSEC_MANAGER_PATH;
 
-const useParamsRoute = () => {
-  const workspaceCtx = useContext(WorkspaceContext);
-  const repositoryCtx = useContext(RepositoryContext);
+if (MANAGER_BASE_PATH) {
+  if (!MANAGER_BASE_PATH.startsWith('/'))
+    MANAGER_BASE_PATH = `/${MANAGER_BASE_PATH}`;
 
-  return { ...workspaceCtx, ...repositoryCtx };
-};
+  if (!MANAGER_BASE_PATH.endsWith('/'))
+    MANAGER_BASE_PATH = `${MANAGER_BASE_PATH}/`;
+} else {
+  MANAGER_BASE_PATH = '/';
+}
 
-export default useParamsRoute;
+export { MANAGER_BASE_PATH };

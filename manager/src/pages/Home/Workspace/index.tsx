@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Styled from './styled';
 import { useTranslation } from 'react-i18next';
 import { Button, HomeCard, Icon } from 'components';
 import { SearchBar } from 'components';
-import { Workspace } from 'helpers/interfaces/Workspace';
 import coreService from 'services/core';
 import useResponseMessage from 'helpers/hooks/useResponseMessage';
 import HandleWorkspace from './HandleWorkspace';
@@ -28,8 +27,11 @@ import { Repository } from 'helpers/interfaces/Repository';
 import { useHistory } from 'react-router-dom';
 import usePermissions from 'helpers/hooks/usePermissions';
 import useParamsRoute from 'helpers/hooks/useParamsRoute';
+import { debounce } from 'lodash';
 
 const Home: React.FC = () => {
+  const loadMoreRef = useRef(null);
+
   const { dispatchMessage } = useResponseMessage();
   const { t } = useTranslation();
   const history = useHistory();
@@ -37,55 +39,83 @@ const Home: React.FC = () => {
   const { workspaceId, workspace, getWorkspace } = useParamsRoute();
 
   const [repositories, setRepositories] = useState<Repository[]>([]);
-  const [filteredRepositories, setFilteredRepositories] =
-    useState<Repository[]>(repositories);
 
   const [repositoryToEdit, setRepositoryToEdit] = useState<Repository>();
 
-  const [isLoading, setLoading] = useState<boolean>(false);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [isFinishedItens, setFinishedItens] = useState(false);
+  const [isSearch, setIsSearch] = useState(false);
 
   const [isOpenWorkspaceEditModal, setOpenWorkspaceEditModal] =
     useState<boolean>(false);
   const [isOpenRepositoryModal, setOpenRepositoryModal] =
     useState<boolean>(false);
 
-  const fetchWorkspaceData = async () => {
-    setLoading(true);
-    await getWorkspace();
-    fetchAllRepositoriesByWorkspace();
-  };
+  const fetchAllRepositoriesByWorkspace = (page?: number, search?: string) => {
+    if (!page) page = currentPage;
 
-  const fetchAllRepositoriesByWorkspace = () => {
+    setCurrentPage(page);
+
     coreService
-      .getAllRepositories(workspaceId)
+      .getAllRepositories(workspaceId, page, search)
       .then((result) => {
         const listOfRepositories = result.data.content as Repository[];
-        setRepositories(listOfRepositories);
-        setFilteredRepositories(listOfRepositories);
+
+        if (!listOfRepositories.length) {
+          setFinishedItens(true);
+          return;
+        }
+
+        if (search) {
+          setRepositories(listOfRepositories);
+        } else {
+          setRepositories([...repositories, ...listOfRepositories]);
+        }
       })
       .catch((err) => {
         dispatchMessage(err?.response?.data);
         setRepositories([]);
-      })
-      .finally(() => {
-        setLoading(false);
       });
   };
 
-  const onSearch = (search: string) => {
-    if (search) {
-      const filtered = repositories.filter((repo) =>
-        repo.name.toLocaleLowerCase().includes(search.toLocaleLowerCase())
-      );
+  const onSearch = debounce((search: string) => {
+    setFinishedItens(false);
 
-      setFilteredRepositories(filtered);
+    if (search) {
+      setIsSearch(true);
+      setRepositories([]);
+      fetchAllRepositoriesByWorkspace(1, search);
     } else {
-      setFilteredRepositories(repositories);
+      setIsSearch(false);
+      setRepositories([]);
+      fetchAllRepositoriesByWorkspace(1);
     }
-  };
+  }, 800);
 
   useEffect(() => {
-    fetchWorkspaceData();
+    if (!isSearch) fetchAllRepositoriesByWorkspace();
+    // eslint-disable-next-line
+  }, [currentPage])
+
+  useEffect(() => {
+    const options: any = {
+      root: null,
+      rootMargin: '20px',
+      threshold: 1.0,
+    };
+
+    const observer = new IntersectionObserver((entities) => {
+      const target = entities[0];
+
+      if (target.isIntersecting) {
+        setCurrentPage((old) => old + 1);
+      }
+    }, options);
+
+    if (loadMoreRef.current) {
+      observer.observe(loadMoreRef.current);
+    }
+
     // eslint-disable-next-line
   }, []);
 
@@ -148,7 +178,7 @@ const Home: React.FC = () => {
               setOpenRepositoryModal(true);
             }}
             text={t('HOME_SCREEN.ADD_REPO')}
-            pulsing={!isLoading && repositories.length <= 0}
+            pulsing={repositories.length <= 0}
             width="180px"
             icon="add"
             rounded
@@ -159,16 +189,7 @@ const Home: React.FC = () => {
       <Styled.ListWrapper>
         <Styled.Phrase>{t('HOME_SCREEN.CHOOSE_REPO')}</Styled.Phrase>
 
-        {isLoading ? (
-          <Styled.Message>
-            <Icon name="loading" size="50px" />
-            <Styled.MessageText>
-              {t('HOME_SCREEN.LOADING_REPOSITORIES')}
-            </Styled.MessageText>
-          </Styled.Message>
-        ) : null}
-
-        {!isLoading && filteredRepositories.length <= 0 ? (
+        {repositories.length <= 0 ? (
           <Styled.Message>
             <Styled.MessageText>
               {t('HOME_SCREEN.EMPTY_REPOSITORIES')}
@@ -177,7 +198,7 @@ const Home: React.FC = () => {
         ) : null}
 
         <Styled.List>
-          {filteredRepositories.map((repo) => (
+          {repositories.map((repo) => (
             <HomeCard
               repository={repo}
               key={repo.repositoryID}
@@ -192,6 +213,15 @@ const Home: React.FC = () => {
               }
             />
           ))}
+
+          {!isFinishedItens && repositories.length >= 0 ? (
+            <Styled.LoadingMessage ref={loadMoreRef}>
+              <Icon name="loading" size="50px" />
+              <Styled.MessageText>
+                {t('HOME_SCREEN.LOADING_REPOSITORIES')}
+              </Styled.MessageText>
+            </Styled.LoadingMessage>
+          ) : null}
         </Styled.List>
       </Styled.ListWrapper>
 
@@ -200,7 +230,7 @@ const Home: React.FC = () => {
         workspaceToEdit={workspace}
         onConfirm={() => {
           setOpenWorkspaceEditModal(false);
-          fetchWorkspaceData();
+          getWorkspace();
         }}
         onCancel={() => setOpenWorkspaceEditModal(false)}
       />

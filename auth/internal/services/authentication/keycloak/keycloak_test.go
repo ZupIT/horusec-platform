@@ -112,6 +112,8 @@ func TestLogin(t *testing.T) {
 		authRepositoryMock := &authRepository.Mock{}
 		keycloakMock := &keycloak.Mock{}
 
+		keycloakMock.On("GetAccountIDByJWTToken").Return(uuid.New(), nil)
+
 		account := &accountEntities.Account{
 			IsConfirmed:        true,
 			Email:              "test@test.com",
@@ -141,6 +143,7 @@ func TestIsAuthorizedApplicationAdmin(t *testing.T) {
 	t.Run("should return true and no error when application admin", func(t *testing.T) {
 		authRepositoryMock := &authRepository.Mock{}
 		keycloakMock := &keycloak.Mock{}
+		keycloakMock.On("GetAccountIDByJWTToken").Return(uuid.New(), nil)
 
 		account := &accountEntities.Account{
 			IsConfirmed:        false,
@@ -179,6 +182,7 @@ func TestIsAuthorizedApplicationAdmin(t *testing.T) {
 	t.Run("should return error when failed to get account", func(t *testing.T) {
 		authRepositoryMock := &authRepository.Mock{}
 		keycloakMock := &keycloak.Mock{}
+		keycloakMock.On("GetAccountIDByJWTToken").Return(uuid.New(), nil)
 
 		account := &accountEntities.Account{
 			IsConfirmed:        false,
@@ -217,6 +221,7 @@ func TestIsAuthorizedApplicationAdmin(t *testing.T) {
 	t.Run("should return error when application admin not enabled", func(t *testing.T) {
 		authRepositoryMock := &authRepository.Mock{}
 		keycloakMock := &keycloak.Mock{}
+		keycloakMock.On("GetAccountIDByJWTToken").Return(uuid.New(), nil)
 
 		account := &accountEntities.Account{
 			IsConfirmed:        false,
@@ -256,6 +261,7 @@ func TestIsAuthorizedApplicationAdmin(t *testing.T) {
 		authRepositoryMock := &authRepository.Mock{}
 		accountRepositoryMock := &accountRepository.Mock{}
 		keycloakMock := &keycloak.Mock{}
+		keycloakMock.On("GetAccountIDByJWTToken").Return(uuid.Nil, errors.New("error"))
 
 		appConfig := &app.Config{EnableApplicationAdmin: true}
 
@@ -285,6 +291,7 @@ func TestIsAuthorizedWorkspaceAdmin(t *testing.T) {
 		accountRepositoryMock := &accountRepository.Mock{}
 		appConfig := &app.Config{}
 		keycloakMock := &keycloak.Mock{}
+		keycloakMock.On("GetAccountIDByJWTToken").Return(uuid.New(), nil)
 
 		account := &accountEntities.Account{
 			IsConfirmed:        false,
@@ -322,6 +329,7 @@ func TestIsAuthorizedWorkspaceAdmin(t *testing.T) {
 		accountRepositoryMock := &accountRepository.Mock{}
 		appConfig := &app.Config{}
 		keycloakMock := &keycloak.Mock{}
+		keycloakMock.On("GetAccountIDByJWTToken").Return(uuid.New(), nil)
 
 		account := &accountEntities.Account{
 			IsConfirmed:        false,
@@ -360,6 +368,7 @@ func TestIsAuthorizedWorkspaceAdmin(t *testing.T) {
 		appConfig := &app.Config{}
 		authRepositoryMock := &authRepository.Mock{}
 		keycloakMock := &keycloak.Mock{}
+		keycloakMock.On("GetAccountIDByJWTToken").Return(uuid.Nil, errors.New("errornil"))
 
 		service := Service{
 			accountRepository: accountRepositoryMock,
@@ -387,6 +396,8 @@ func TestIsAuthorizedWorkspaceMember(t *testing.T) {
 		accountRepositoryMock := &accountRepository.Mock{}
 		appConfig := &app.Config{}
 		keycloakMock := &keycloak.Mock{}
+
+		keycloakMock.On("GetAccountIDByJWTToken").Return(uuid.New(), nil)
 
 		account := &accountEntities.Account{
 			IsConfirmed:        false,
@@ -425,6 +436,8 @@ func TestIsAuthorizedWorkspaceMember(t *testing.T) {
 		appConfig := &app.Config{}
 		keycloakMock := &keycloak.Mock{}
 
+		keycloakMock.On("GetAccountIDByJWTToken").Return(uuid.New(), nil)
+
 		account := &accountEntities.Account{
 			IsConfirmed:        false,
 			Email:              "test",
@@ -462,6 +475,7 @@ func TestIsAuthorizedWorkspaceMember(t *testing.T) {
 		appConfig := &app.Config{}
 		authRepositoryMock := &authRepository.Mock{}
 		keycloakMock := &keycloak.Mock{}
+		keycloakMock.On("GetAccountIDByJWTToken").Return(uuid.Nil, errors.New("error"))
 
 		service := Service{
 			accountRepository: accountRepositoryMock,
@@ -489,6 +503,8 @@ func TestIsAuthorizedRepositoryMember(t *testing.T) {
 		accountRepositoryMock := &accountRepository.Mock{}
 		appConfig := &app.Config{}
 		keycloakMock := &keycloak.Mock{}
+
+		keycloakMock.On("GetAccountIDByJWTToken").Return(uuid.New(), nil)
 
 		account := &accountEntities.Account{
 			IsConfirmed:        false,
@@ -528,6 +544,8 @@ func TestIsAuthorizedRepositoryMember(t *testing.T) {
 		appConfig := &app.Config{}
 		keycloakMock := &keycloak.Mock{}
 
+		keycloakMock.On("GetAccountIDByJWTToken").Return(uuid.New(), nil)
+
 		account := &accountEntities.Account{
 			IsConfirmed:        false,
 			Email:              "test",
@@ -566,6 +584,7 @@ func TestIsAuthorizedRepositoryMember(t *testing.T) {
 		appConfig := &app.Config{}
 		authRepositoryMock := &authRepository.Mock{}
 		keycloakMock := &keycloak.Mock{}
+		keycloakMock.On("GetAccountIDByJWTToken").Return(uuid.Nil, errors.New("error"))
 
 		service := Service{
 			accountRepository: accountRepositoryMock,
@@ -593,6 +612,8 @@ func TestIsAuthorizedRepositorySupervisor(t *testing.T) {
 		accountRepositoryMock := &accountRepository.Mock{}
 		appConfig := &app.Config{}
 		keycloakMock := &keycloak.Mock{}
+
+		keycloakMock.On("GetAccountIDByJWTToken").Return(uuid.New(), nil)
 
 		account := &accountEntities.Account{
 			IsConfirmed:        false,
@@ -631,6 +652,8 @@ func TestIsAuthorizedRepositorySupervisor(t *testing.T) {
 		accountRepositoryMock := &accountRepository.Mock{}
 		appConfig := &app.Config{}
 		keycloakMock := &keycloak.Mock{}
+
+		keycloakMock.On("GetAccountIDByJWTToken").Return(uuid.New(), nil)
 
 		account := &accountEntities.Account{
 			IsConfirmed:        false,
@@ -671,6 +694,8 @@ func TestIsAuthorizedRepositorySupervisor(t *testing.T) {
 		authRepositoryMock := &authRepository.Mock{}
 		keycloakMock := &keycloak.Mock{}
 
+		keycloakMock.On("GetAccountIDByJWTToken").Return(uuid.Nil, errors.New("error"))
+
 		service := Service{
 			accountRepository: accountRepositoryMock,
 			authUseCases:      authentication.NewAuthenticationUseCases(),
@@ -697,6 +722,8 @@ func TestIsAuthorizedRepositoryAdmin(t *testing.T) {
 		accountRepositoryMock := &accountRepository.Mock{}
 		appConfig := &app.Config{}
 		keycloakMock := &keycloak.Mock{}
+
+		keycloakMock.On("GetAccountIDByJWTToken").Return(uuid.New(), nil)
 
 		account := &accountEntities.Account{
 			IsConfirmed:        false,
@@ -736,6 +763,8 @@ func TestIsAuthorizedRepositoryAdmin(t *testing.T) {
 		appConfig := &app.Config{}
 		keycloakMock := &keycloak.Mock{}
 
+		keycloakMock.On("GetAccountIDByJWTToken").Return(uuid.New(), nil)
+
 		account := &accountEntities.Account{
 			IsConfirmed:        false,
 			Email:              "test",
@@ -774,6 +803,8 @@ func TestIsAuthorizedRepositoryAdmin(t *testing.T) {
 		appConfig := &app.Config{}
 		authRepositoryMock := &authRepository.Mock{}
 		keycloakMock := &keycloak.Mock{}
+
+		keycloakMock.On("GetAccountIDByJWTToken").Return(uuid.Nil, errors.New("error"))
 
 		service := Service{
 			accountRepository: accountRepositoryMock,
@@ -969,6 +1000,8 @@ func TestCheckRepositoryRequestForWorkspaceAdmin(t *testing.T) {
 	t.Run("should return true for workspace admin", func(t *testing.T) {
 		accountRepositoryMock := &accountRepository.Mock{}
 		appConfig := &app.Config{}
+		keycloakMock := &keycloak.Mock{}
+		keycloakMock.On("GetAccountIDByJWTToken").Return(uuid.New(), nil)
 
 		account := &accountEntities.Account{
 			AccountID:          uuid.New(),
@@ -986,6 +1019,7 @@ func TestCheckRepositoryRequestForWorkspaceAdmin(t *testing.T) {
 			authUseCases:      authentication.NewAuthenticationUseCases(),
 			authRepository:    authRepositoryMock,
 			appConfig:         appConfig,
+			keycloak:          keycloakMock,
 		}
 
 		token, _, _ := jwt.CreateToken(account.ToTokenData(), []string{"test"})
@@ -1001,6 +1035,8 @@ func TestCheckRepositoryRequestForWorkspaceAdmin(t *testing.T) {
 	t.Run("should return false for workspace admin", func(t *testing.T) {
 		accountRepositoryMock := &accountRepository.Mock{}
 		appConfig := &app.Config{}
+		keycloakMock := &keycloak.Mock{}
+		keycloakMock.On("GetAccountIDByJWTToken").Return(uuid.New(), nil)
 
 		account := &accountEntities.Account{
 			AccountID:          uuid.New(),
@@ -1018,6 +1054,7 @@ func TestCheckRepositoryRequestForWorkspaceAdmin(t *testing.T) {
 			authUseCases:      authentication.NewAuthenticationUseCases(),
 			authRepository:    authRepositoryMock,
 			appConfig:         appConfig,
+			keycloak:          keycloakMock,
 		}
 
 		token, _, _ := jwt.CreateToken(account.ToTokenData(), []string{"test"})
@@ -1033,6 +1070,8 @@ func TestCheckRepositoryRequestForWorkspaceAdmin(t *testing.T) {
 	t.Run("should return false and error when failed to check for workspace admin", func(t *testing.T) {
 		accountRepositoryMock := &accountRepository.Mock{}
 		appConfig := &app.Config{}
+		keycloakMock := &keycloak.Mock{}
+		keycloakMock.On("GetAccountIDByJWTToken").Return(uuid.New(), nil)
 
 		account := &accountEntities.Account{
 			AccountID:          uuid.New(),
@@ -1050,6 +1089,7 @@ func TestCheckRepositoryRequestForWorkspaceAdmin(t *testing.T) {
 			authUseCases:      authentication.NewAuthenticationUseCases(),
 			authRepository:    authRepositoryMock,
 			appConfig:         appConfig,
+			keycloak:          keycloakMock,
 		}
 
 		token, _, _ := jwt.CreateToken(account.ToTokenData(), []string{"test"})
@@ -1066,6 +1106,8 @@ func TestCheckRepositoryRequestForWorkspaceAdmin(t *testing.T) {
 		accountRepositoryMock := &accountRepository.Mock{}
 		authRepositoryMock := &authRepository.Mock{}
 		appConfig := &app.Config{}
+		keycloakMock := &keycloak.Mock{}
+		keycloakMock.On("GetAccountIDByJWTToken").Return(uuid.New(), nil)
 
 		account := &accountEntities.Account{
 			AccountID:          uuid.New(),
@@ -1080,6 +1122,7 @@ func TestCheckRepositoryRequestForWorkspaceAdmin(t *testing.T) {
 			authUseCases:      authentication.NewAuthenticationUseCases(),
 			authRepository:    authRepositoryMock,
 			appConfig:         appConfig,
+			keycloak:          keycloakMock,
 		}
 
 		token, _, _ := jwt.CreateToken(account.ToTokenData(), []string{"test"})

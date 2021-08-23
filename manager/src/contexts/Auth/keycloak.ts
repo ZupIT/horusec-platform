@@ -17,17 +17,17 @@
 import { keycloakInstance } from 'config/keycloak';
 import { clearCurrentUser } from 'helpers/localStorage/currentUser';
 import { clearTokens } from 'helpers/localStorage/tokens';
+import { MANAGER_BASE_PATH } from 'config/basePath';
 
-const login = () =>
-  keycloakInstance.login({ redirectUri: `${window.location.origin}/auth` });
+const redirectUri = `${window.location.origin}${MANAGER_BASE_PATH}auth`;
+
+const login = () => keycloakInstance.login({ redirectUri });
 
 const logout = () => {
   clearCurrentUser();
   clearTokens();
 
-  return keycloakInstance.logout({
-    redirectUri: `${window.location.origin}/auth`,
-  });
+  return keycloakInstance.logout({ redirectUri });
 };
 
 export default {
