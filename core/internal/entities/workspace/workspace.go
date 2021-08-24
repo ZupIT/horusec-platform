@@ -64,3 +64,13 @@ func (w *Workspace) Update(data *Data) *Workspace {
 	w.UpdatedAt = time.Now()
 	return w
 }
+
+func (w *Workspace) ToUpdateMap(data *Data) *map[string]interface{} {
+	return &map[string]interface{}{
+		"name":         data.Name,
+		"description":  data.Description,
+		"authz_member": pq.Array(data.AuthzMember),
+		"authz_admin":  pq.Array(data.AuthzAdmin),
+		"updated_at":   time.Now(),
+	}
+}

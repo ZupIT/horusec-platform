@@ -160,10 +160,10 @@ func (c *Controller) Update(data *repositoryEntities.Data) (*repositoryEntities.
 	if repository.Name != data.Name && !c.useCases.IsNotFoundError(err) {
 		return nil, repositoryEnums.ErrorRepositoryNameAlreadyInUse
 	}
-	nr := repository.Update(data)
-	filterToUpdate := c.useCases.FilterRepositoryByID(data.RepositoryID)
-	err = c.databaseWrite.Update(nr, filterToUpdate, repositoryEnums.DatabaseRepositoryTable).GetError()
-	return nr.ToRepositoryResponse(accountEnums.Admin), err
+
+	return repository.Update(data).ToRepositoryResponse(accountEnums.Admin),
+		c.databaseWrite.Update(repository.ToUpdateMap(data), c.useCases.FilterRepositoryByID(data.RepositoryID),
+			repositoryEnums.DatabaseRepositoryTable).GetError()
 }
 
 func (c *Controller) Delete(repositoryID uuid.UUID) error {

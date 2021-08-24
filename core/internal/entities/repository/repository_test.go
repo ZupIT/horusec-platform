@@ -141,3 +141,40 @@ func TestContainsAllAuthzGroups(t *testing.T) {
 		assert.False(t, repository.ContainsAllAuthzGroups())
 	})
 }
+
+func TestToUpdateMap(t *testing.T) {
+	t.Run("should success parse to update map", func(t *testing.T) {
+		repository := &Repository{
+			RepositoryID:    uuid.New(),
+			WorkspaceID:     uuid.New(),
+			Name:            "test1",
+			Description:     "test1",
+			AuthzMember:     []string{"test1"},
+			AuthzAdmin:      []string{"test1"},
+			AuthzSupervisor: []string{"test1"},
+			CreatedAt:       time.Now(),
+			UpdatedAt:       time.Now(),
+		}
+
+		data := &Data{
+			AccountID:       uuid.Nil,
+			WorkspaceID:     uuid.Nil,
+			Name:            "test2",
+			Description:     "test2",
+			AuthzMember:     []string{"test2"},
+			AuthzAdmin:      []string{"test2"},
+			AuthzSupervisor: []string{"test2"},
+			Permissions:     nil,
+		}
+
+		assert.NotPanics(t, func() {
+			result := *repository.ToUpdateMap(data)
+			assert.Equal(t, "test2", result["name"])
+			assert.Equal(t, "test2", result["description"])
+			assert.Equal(t, pq.Array([]string{"test2"}), result["authz_member"])
+			assert.Equal(t, pq.Array([]string{"test2"}), result["authz_supervisor"])
+			assert.Equal(t, pq.Array([]string{"test2"}), result["authz_admin"])
+			assert.NotEqual(t, repository.UpdatedAt, result["updated_at"])
+		})
+	})
+}
