@@ -101,3 +101,33 @@ func TestUpdateWorkspace(t *testing.T) {
 		assert.NotEqual(t, expectedTime, workspace.UpdatedAt)
 	})
 }
+
+func TestToUpdateMap(t *testing.T) {
+	t.Run("should success parse to update map", func(t *testing.T) {
+		workspace := &Workspace{
+			WorkspaceID: uuid.New(),
+			Name:        "test1",
+			Description: "test1",
+			AuthzMember: []string{"test1"},
+			AuthzAdmin:  []string{"test1"},
+			CreatedAt:   time.Now(),
+			UpdatedAt:   time.Now(),
+		}
+
+		data := &Data{
+			Name:        "test2",
+			Description: "test2",
+			AuthzMember: []string{"test2"},
+			AuthzAdmin:  []string{"test2"},
+		}
+
+		assert.NotPanics(t, func() {
+			result := workspace.ToUpdateMap(data)
+			assert.Equal(t, "test2", result["name"])
+			assert.Equal(t, "test2", result["description"])
+			assert.Equal(t, pq.Array([]string{"test2"}), result["authz_member"])
+			assert.Equal(t, pq.Array([]string{"test2"}), result["authz_admin"])
+			assert.NotEqual(t, workspace.UpdatedAt, result["updated_at"])
+		})
+	})
+}

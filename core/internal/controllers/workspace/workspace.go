@@ -134,10 +134,9 @@ func (c *Controller) Update(data *workspaceEntities.Data) (*workspaceEntities.Re
 		return nil, err
 	}
 
-	nw := workspace.Update(data)
-	filterToUpdate := c.useCases.FilterWorkspaceByID(data.WorkspaceID)
-	err = c.databaseWrite.Update(nw, filterToUpdate, workspaceEnums.DatabaseWorkspaceTable).GetError()
-	return nw.ToWorkspaceResponse(accountEnums.Admin), err
+	return workspace.Update(data).ToWorkspaceResponse(accountEnums.Admin), c.databaseWrite.Update(
+		workspace.ToUpdateMap(data), c.useCases.FilterWorkspaceByID(data.WorkspaceID),
+		workspaceEnums.DatabaseWorkspaceTable).GetError()
 }
 
 func (c *Controller) Delete(workspaceID uuid.UUID) error {

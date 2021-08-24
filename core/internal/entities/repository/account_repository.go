@@ -24,6 +24,7 @@ import (
 	roleEntities "github.com/ZupIT/horusec-platform/core/internal/entities/role"
 )
 
+// TODO add unity tests
 type AccountRepository struct {
 	RepositoryID uuid.UUID         `json:"repositoryID"`
 	AccountID    uuid.UUID         `json:"accountID"`
