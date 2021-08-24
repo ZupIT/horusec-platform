@@ -24,14 +24,12 @@ import {
   useRouteMatch,
 } from 'react-router-dom';
 import coreService from 'services/core';
+import useParamsRoute from 'helpers/hooks/useParamsRoute';
 
 interface RepositoryCtx {
   repositoryId: string;
   repository: Repository;
-  getRepository: (
-    workspaceId?: string,
-    repositoryId?: string
-  ) => Promise<Repository>;
+  getRepository: () => Promise<Repository>;
 }
 
 const RepositoryContext = React.createContext<RepositoryCtx>({
@@ -43,6 +41,7 @@ const RepositoryContext = React.createContext<RepositoryCtx>({
 const RepositoryProvider = ({ children }: { children: JSX.Element }) => {
   const history = useHistory();
   const { path } = useRouteMatch();
+  const { workspaceId } = useParamsRoute();
   const params = useParams<RouteParams>();
 
   const { repositoryId = '' } = matchPath<{ repositoryId: string }>(
@@ -54,14 +53,12 @@ const RepositoryProvider = ({ children }: { children: JSX.Element }) => {
 
   const [repository, setRepository] = useState();
 
-  async function getRepository(
-    workspace = params.workspaceId,
-    repository = repositoryId
-  ) {
+  async function getRepository() {
     try {
+      console.log(repositoryId, workspaceId);
       const { data } = await coreService.getOneRepository(
-        workspace,
-        repository
+        workspaceId,
+        repositoryId
       );
       setRepository(data.content);
       return data.content;
