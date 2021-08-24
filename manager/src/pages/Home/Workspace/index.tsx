@@ -30,6 +30,7 @@ import useParamsRoute from 'helpers/hooks/useParamsRoute';
 import { debounce } from 'lodash';
 
 const Home: React.FC = () => {
+  const PAGE_SIZE = 15;
   const loadMoreRef = useRef(null);
 
   const { dispatchMessage } = useResponseMessage();
@@ -51,51 +52,53 @@ const Home: React.FC = () => {
   const [isOpenRepositoryModal, setOpenRepositoryModal] =
     useState<boolean>(false);
 
-  const fetchAllRepositoriesByWorkspace = (page?: number, search?: string) => {
+  const fetchAllRepositoriesByWorkspace = (
+    page?: number,
+    clear?: boolean,
+    search?: string
+  ) => {
     if (!page) page = currentPage;
 
     setCurrentPage(page);
 
-    coreService
-      .getAllRepositories(workspaceId, page, search)
-      .then((result) => {
-        const listOfRepositories = result.data.content as Repository[];
+    if (page > 0) {
+      if (clear) setRepositories([]);
 
-        if (!listOfRepositories.length) {
-          setFinishedItens(true);
-          return;
-        }
+      setIsSearch(!!search);
 
-        if (search) {
-          setRepositories(listOfRepositories);
-        } else {
-          setRepositories([...repositories, ...listOfRepositories]);
-        }
-      })
-      .catch((err) => {
-        dispatchMessage(err?.response?.data);
-        setRepositories([]);
-      });
+      coreService
+        .getAllRepositories(workspaceId, page, search)
+        .then((result) => {
+          const listOfRepositories = result.data.content as Repository[];
+
+          if (listOfRepositories.length < PAGE_SIZE) {
+            setFinishedItens(true);
+
+            if (!listOfRepositories.length) return;
+          }
+
+          if (search || clear) {
+            setRepositories(listOfRepositories);
+          } else {
+            setRepositories([...repositories, ...listOfRepositories]);
+          }
+        })
+        .catch((err) => {
+          dispatchMessage(err?.response?.data);
+          setRepositories([]);
+        });
+    }
   };
 
   const onSearch = debounce((search: string) => {
     setFinishedItens(false);
-
-    if (search) {
-      setIsSearch(true);
-      setRepositories([]);
-      fetchAllRepositoriesByWorkspace(1, search);
-    } else {
-      setIsSearch(false);
-      setRepositories([]);
-      fetchAllRepositoriesByWorkspace(1);
-    }
-  }, 800);
+    fetchAllRepositoriesByWorkspace(1, true, search);
+  }, 1000);
 
   useEffect(() => {
     if (!isSearch) fetchAllRepositoriesByWorkspace();
     // eslint-disable-next-line
-  }, [currentPage])
+  }, [currentPage]);
 
   useEffect(() => {
     const options: any = {
@@ -208,7 +211,7 @@ const Home: React.FC = () => {
               }}
               onOverview={() =>
                 history.push(
-                  `/overview/workspace/${workspaceId}/repository/${repo.repositoryID}/dashboard`
+                  `/overview/workspace/${repo.workspaceID}/repository/${repo.repositoryID}/dashboard`
                 )
               }
             />
@@ -242,7 +245,7 @@ const Home: React.FC = () => {
         onConfirm={() => {
           setOpenRepositoryModal(false);
           setRepositoryToEdit(null);
-          fetchAllRepositoriesByWorkspace();
+          fetchAllRepositoriesByWorkspace(1, true);
         }}
         onCancel={() => {
           setRepositoryToEdit(null);
