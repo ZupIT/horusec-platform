@@ -79,8 +79,8 @@ func (r *Repository) ContainsAllAuthzGroups() bool {
 	return true
 }
 
-func (r *Repository) ToUpdateMap(data *Data) *map[string]interface{} {
-	return &map[string]interface{}{
+func (r *Repository) ToUpdateMap(data *Data) map[string]interface{} {
+	return map[string]interface{}{
 		"name":             data.Name,
 		"description":      data.Description,
 		"authz_member":     pq.Array(data.AuthzMember),

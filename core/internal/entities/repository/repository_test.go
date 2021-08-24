@@ -168,7 +168,7 @@ func TestToUpdateMap(t *testing.T) {
 		}
 
 		assert.NotPanics(t, func() {
-			result := *repository.ToUpdateMap(data)
+			result := repository.ToUpdateMap(data)
 			assert.Equal(t, "test2", result["name"])
 			assert.Equal(t, "test2", result["description"])
 			assert.Equal(t, pq.Array([]string{"test2"}), result["authz_member"])

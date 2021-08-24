@@ -65,8 +65,8 @@ func (w *Workspace) Update(data *Data) *Workspace {
 	return w
 }
 
-func (w *Workspace) ToUpdateMap(data *Data) *map[string]interface{} {
-	return &map[string]interface{}{
+func (w *Workspace) ToUpdateMap(data *Data) map[string]interface{} {
+	return map[string]interface{}{
 		"name":         data.Name,
 		"description":  data.Description,
 		"authz_member": pq.Array(data.AuthzMember),
