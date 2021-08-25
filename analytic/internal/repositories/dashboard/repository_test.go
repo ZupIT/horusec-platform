@@ -20,6 +20,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/ZupIT/horusec-devkit/pkg/services/database"
+	databaseEnums "github.com/ZupIT/horusec-devkit/pkg/services/database/enums"
 	"github.com/ZupIT/horusec-devkit/pkg/services/database/response"
 
 	"github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard"
@@ -59,6 +60,23 @@ func TestGetDashboardVulnBySeverity(t *testing.T) {
 		result, err := repository.GetDashboardVulnBySeverity(&dashboard.Filter{})
 		assert.NoError(t, err)
 		assert.NotNil(t, result)
+	})
+
+	t.Run("should return database not found error", func(t *testing.T) {
+		databaseReadMock := &database.Mock{}
+		databaseReadMock.On("Raw").Return(
+			response.NewResponse(0, databaseEnums.ErrorNotFoundRecords, &dashboard.Vulnerability{}))
+
+		connection := &database.Connection{
+			Read:  databaseReadMock,
+			Write: &database.Mock{},
+		}
+
+		repository := NewRepoDashboard(connection)
+
+		result, err := repository.GetDashboardVulnBySeverity(&dashboard.Filter{})
+		assert.NoError(t, err)
+		assert.Nil(t, result)
 	})
 }
 
