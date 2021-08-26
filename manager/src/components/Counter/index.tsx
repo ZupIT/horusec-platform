@@ -28,14 +28,6 @@ interface CounterProps {
 const Counter: React.FC<CounterProps> = ({ title, value, isLoading }) => {
   const { t } = useTranslation();
 
-  const renderContent = () => {
-    return value ? (
-      <Styled.Count>{value}</Styled.Count>
-    ) : (
-      <Styled.EmptyText>{t('DASHBOARD_SCREEN.CHART_NO_DATA')}</Styled.EmptyText>
-    );
-  };
-
   return (
     <Styled.Wrapper
       tabIndex={0}
@@ -45,7 +37,11 @@ const Counter: React.FC<CounterProps> = ({ title, value, isLoading }) => {
       <Styled.Title tabIndex={-1}>{title}</Styled.Title>
 
       <Styled.Container>
-        {isLoading ? <Icon name="loading" size="100px" /> : renderContent()}
+        {isLoading ? (
+          <Icon name="loading" size="100px" />
+        ) : (
+          <Styled.Count>{value || 0}</Styled.Count>
+        )}
       </Styled.Container>
     </Styled.Wrapper>
   );
