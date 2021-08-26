@@ -50,7 +50,7 @@ const VulnerabilitiesByDeveloper: React.FC<Props> = ({ isLoading, data }) => {
         });
 
         // eslint-disable-next-line array-callback-return
-        if (item.language === '-' && value === 0 && data.length > 1) return;
+        if (item.language === '' && value === 0 && data.length > 1) return;
 
         const color = get(
           colors.languages,
