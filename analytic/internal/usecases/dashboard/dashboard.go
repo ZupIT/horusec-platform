@@ -70,7 +70,7 @@ func (u *UseCases) emptyAnalysisResponseByAuthor(
 	analysis *analysisEntities.Analysis) []*dashboard.VulnerabilitiesByAuthor {
 	return []*dashboard.VulnerabilitiesByAuthor{
 		{
-			Author:        "-",
+			Author:        "",
 			Vulnerability: u.newVulnerabilityFromAnalysis(analysis),
 		},
 	}
@@ -211,7 +211,7 @@ func (u *UseCases) emptyAnalysisResponseByLanguage(
 	analysis *analysisEntities.Analysis) []*dashboard.VulnerabilitiesByLanguage {
 	return []*dashboard.VulnerabilitiesByLanguage{
 		{
-			Language:      "-",
+			Language:      "",
 			Vulnerability: u.newVulnerabilityFromAnalysis(analysis),
 		},
 	}

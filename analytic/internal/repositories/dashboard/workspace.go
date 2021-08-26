@@ -65,7 +65,7 @@ func (r *WorkspaceRepository) queryGetDashboardTotalDevelopers() string {
 		) AS last_analysis
 		ON vulns.created_at = last_analysis.max_time 
 		AND vulns.repository_id = last_analysis.repository_id
-		WHERE workspace_id = @workspaceID
+		WHERE workspace_id = @workspaceID AND vulns.author != ''
 	`
 }
 

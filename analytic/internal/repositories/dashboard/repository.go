@@ -55,7 +55,8 @@ func (r *RepoRepository) queryGetDashboardTotalDevelopers() string {
 			SELECT COUNT(DISTINCT(author)) 
 			FROM %[1]s
 			WHERE repository_id = @repositoryID
-			AND created_at = (SELECT MAX(created_at) FROM %[1]s WHERE repository_id = @repositoryID)  
+			AND created_at = (SELECT MAX(created_at) FROM %[1]s WHERE repository_id = @repositoryID)
+			AND author != ''
 	`
 }
 
