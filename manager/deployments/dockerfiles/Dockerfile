@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM node:14.5.0-alpine AS builder
+FROM node:16.7.0-alpine3.14 AS builder
 
 COPY . /manager
 
@@ -21,7 +21,7 @@ WORKDIR /manager
 RUN npm install
 RUN npm run build
 
-FROM nginx:1.18.0-alpine
+FROM nginx:1.21.1-alpine
 
 COPY --from=builder /manager/build /var/www
 COPY ./deployments/nginx.conf /etc/nginx/conf.d/default.conf
