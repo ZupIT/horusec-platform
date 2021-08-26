@@ -18,8 +18,6 @@ import (
 	"fmt"
 
 	"github.com/ZupIT/horusec-devkit/pkg/services/database"
-	databaseEnums "github.com/ZupIT/horusec-devkit/pkg/services/database/enums"
-
 	"github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard"
 	dashboardEnums "github.com/ZupIT/horusec-platform/analytic/internal/enums/dashboard"
 )
@@ -89,19 +87,7 @@ func (r *WorkspaceRepository) GetDashboardVulnBySeverity(filter *dashboard.Filte
 	query := fmt.Sprintf(r.queryGetDashboardVulnBySeverity(), r.queryDefaultFields(),
 		dashboardEnums.TableVulnerabilitiesByTime)
 
-	if r.isEmptyVulnBySeverity(filter) {
-		return nil, nil
-	}
-
 	return vulns, r.databaseRead.Raw(query, vulns, filter.GetWorkspaceFilter()).GetErrorExceptNotFound()
-}
-
-func (r *WorkspaceRepository) isEmptyVulnBySeverity(filter *dashboard.Filter) bool {
-	vulns := &dashboard.Vulnerability{}
-
-	query := fmt.Sprintf(r.subQueryGetDashboardVulnBySeverity(), dashboardEnums.TableVulnerabilitiesByTime)
-
-	return r.databaseRead.Raw(query, vulns, filter.GetWorkspaceFilter()).GetError() == databaseEnums.ErrorNotFoundRecords
 }
 
 //nolint:funlen // need to be bigger than 15
@@ -123,23 +109,6 @@ func (r *WorkspaceRepository) queryGetDashboardVulnBySeverity() string {
 			AND vulns.repository_id = last_analysis.repository_id
 			WHERE workspace_id = @workspaceID
 		) AS result
-	`
-}
-
-func (r *WorkspaceRepository) subQueryGetDashboardVulnBySeverity() string {
-	return `
-			SELECT vulns.*
-			FROM %[1]s AS vulns
-			INNER JOIN 
-			(
-				SELECT MAX(created_at) max_time, repository_id
-				FROM %[1]s
-				WHERE workspace_id = @workspaceID
-				GROUP BY(repository_id)
-			) AS last_analysis
-			ON vulns.created_at = last_analysis.max_time 
-			AND vulns.repository_id = last_analysis.repository_id
-			WHERE workspace_id = @workspaceID
 	`
 }
 

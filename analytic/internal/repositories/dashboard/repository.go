@@ -18,8 +18,6 @@ import (
 	"fmt"
 
 	"github.com/ZupIT/horusec-devkit/pkg/services/database"
-	databaseEnums "github.com/ZupIT/horusec-devkit/pkg/services/database/enums"
-
 	"github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard"
 	dashboardEnums "github.com/ZupIT/horusec-platform/analytic/internal/enums/dashboard"
 )
@@ -65,12 +63,7 @@ func (r *RepoRepository) GetDashboardVulnBySeverity(filter *dashboard.Filter) (*
 
 	query := fmt.Sprintf(r.queryGetDashboardVulnBySeverity(), dashboardEnums.TableVulnerabilitiesByTime)
 
-	err := r.databaseRead.Raw(query, vulns, filter.GetRepositoryFilter()).GetError()
-	if err == databaseEnums.ErrorNotFoundRecords {
-		return nil, nil
-	}
-
-	return vulns, err
+	return vulns, r.databaseRead.Raw(query, vulns, filter.GetRepositoryFilter()).GetErrorExceptNotFound()
 }
 
 func (r *RepoRepository) queryGetDashboardVulnBySeverity() string {
