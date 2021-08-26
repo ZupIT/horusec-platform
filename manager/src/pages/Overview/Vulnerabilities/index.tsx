@@ -29,9 +29,6 @@ import useFlashMessage from 'helpers/hooks/useFlashMessage';
 import { useTheme } from 'styled-components';
 import { AxiosError, AxiosResponse } from 'axios';
 import useParamsRoute from 'helpers/hooks/useParamsRoute';
-import { Repository } from 'helpers/interfaces/Repository';
-import { useHistory, useParams } from 'react-router-dom';
-import { RouteParams } from 'helpers/interfaces/RouteParams';
 import usePermissions from 'helpers/hooks/usePermissions';
 
 const INITIAL_PAGE = 1;
@@ -47,14 +44,9 @@ interface KeyValueVuln {
 }
 
 const Vulnerabilities: React.FC = () => {
-  const { workspaceId, repositoryId } = useParams<RouteParams>();
+  const { workspaceId, repositoryId } = useParamsRoute();
 
   const overviewType = repositoryId ? 'repository' : 'workspace';
-
-  const { getRepository } = useParamsRoute();
-  const [currentRepository, setCurrentRepository] = useState<Repository>(null);
-
-  const history = useHistory();
 
   const { t } = useTranslation();
   const { colors } = useTheme();
@@ -140,23 +132,6 @@ const Vulnerabilities: React.FC = () => {
       value: 'UNKNOWN',
     },
   ];
-
-  useEffect(() => {
-    let isCancelled = false;
-    if (workspaceId && repositoryId) {
-      getRepository(workspaceId, repositoryId)
-        .then((result) => {
-          if (!isCancelled) setCurrentRepository(result);
-        })
-        .catch((error) => {
-          if (!isCancelled) history.push('/home');
-        });
-    }
-    return () => {
-      isCancelled = true;
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [workspaceId, repositoryId]);
 
   const handleSearch = debounce((searchString: string) => {
     setRefresh((state) => ({
@@ -257,7 +232,7 @@ const Vulnerabilities: React.FC = () => {
       isCancelled = true;
     };
     // eslint-disable-next-line
-  }, [refresh, currentRepository, pagination.pageSize]);
+  }, [refresh, pagination.pageSize]);
 
   function resetUpdateVuln() {
     setUpdateVulnIds([]);
