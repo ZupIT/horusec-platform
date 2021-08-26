@@ -55,7 +55,6 @@ const RepositoryProvider = ({ children }: { children: JSX.Element }) => {
 
   async function getRepository() {
     try {
-      console.log(repositoryId, workspaceId);
       const { data } = await coreService.getOneRepository(
         workspaceId,
         repositoryId
