@@ -40,20 +40,31 @@ const VulnerabilitiesByDeveloper: React.FC<Props> = ({ isLoading, data }) => {
   const [chatData, setChartData] = useState<BarCharRow[]>([]);
 
   const formatFirstLayer = (data: VulnerabilitiesByAuthor[]) => {
-    const formatted = (data || []).map((item) => {
-      let value = 0;
+    const formatted = (data || [])
+      .map((item) => {
+        let value = 0;
 
-      Object.values(item).forEach((i) => {
-        if (i?.count) {
-          value = value + i.count;
+        Object.values(item).forEach((i) => {
+          if (i?.count) {
+            value = value + i.count;
+          }
+        });
+
+        if (item.author === '' && value === 0) {
+          if (data.length > 1) {
+            // eslint-disable-next-line array-callback-return
+            return;
+          }
+
+          item.author = ' ';
         }
-      });
 
-      return {
-        value,
-        legend: item.author,
-      };
-    });
+        return {
+          value,
+          legend: item.author,
+        };
+      })
+      .filter((value) => value);
 
     setLayeredDeveloper(null);
     setLastLayer(false);
