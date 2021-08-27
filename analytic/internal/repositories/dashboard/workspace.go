@@ -18,6 +18,7 @@ import (
 	"fmt"
 
 	"github.com/ZupIT/horusec-devkit/pkg/services/database"
+
 	"github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard"
 	dashboardEnums "github.com/ZupIT/horusec-platform/analytic/internal/enums/dashboard"
 )

@@ -15,6 +15,7 @@
 package dashboard
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -66,7 +67,7 @@ func TestGetDashboardVulnByAuthor(t *testing.T) {
 	t.Run("should return get vulns by author without errors", func(t *testing.T) {
 		databaseReadMock := &database.Mock{}
 		databaseReadMock.On("Raw").Return(
-			response.NewResponse(0, nil, &[]*dashboard.VulnerabilitiesByAuthor{}))
+			response.NewResponse(0, nil, &[]*dashboard.VulnerabilitiesByAuthor{{}}))
 
 		connection := &database.Connection{
 			Read:  databaseReadMock,
@@ -78,10 +79,59 @@ func TestGetDashboardVulnByAuthor(t *testing.T) {
 		_, err := repository.GetDashboardVulnByAuthor(&dashboard.Filter{})
 		assert.NoError(t, err)
 	})
+
+	t.Run("should return empty response when no data was found", func(t *testing.T) {
+		databaseReadMock := &database.Mock{}
+		databaseReadMock.On("Raw").Return(
+			response.NewResponse(0, nil, &[]*dashboard.VulnerabilitiesByAuthor{}))
+
+		connection := &database.Connection{
+			Read:  databaseReadMock,
+			Write: &database.Mock{},
+		}
+
+		repository := NewRepoDashboard(connection)
+
+		resp, err := repository.GetDashboardVulnByAuthor(&dashboard.Filter{})
+		assert.NoError(t, err)
+		assert.Len(t, resp, 1)
+	})
+
+	t.Run("should return error when something went wrong", func(t *testing.T) {
+		databaseReadMock := &database.Mock{}
+		databaseReadMock.On("Raw").Return(
+			response.NewResponse(0, errors.New("test"), &[]*dashboard.VulnerabilitiesByAuthor{{}}))
+
+		connection := &database.Connection{
+			Read:  databaseReadMock,
+			Write: &database.Mock{},
+		}
+
+		repository := NewRepoDashboard(connection)
+
+		_, err := repository.GetDashboardVulnByAuthor(&dashboard.Filter{})
+		assert.Error(t, err)
+	})
 }
 
 func TestGetDashboardVulnByLanguage(t *testing.T) {
-	t.Run("should return get vulns by language without errors", func(t *testing.T) {
+	t.Run("should return response without errors", func(t *testing.T) {
+		databaseReadMock := &database.Mock{}
+		databaseReadMock.On("Raw").Return(
+			response.NewResponse(0, nil, []*dashboard.VulnerabilitiesByLanguage{{}}))
+
+		connection := &database.Connection{
+			Read:  databaseReadMock,
+			Write: &database.Mock{},
+		}
+
+		repository := NewRepoDashboard(connection)
+
+		_, err := repository.GetDashboardVulnByLanguage(&dashboard.Filter{})
+		assert.NoError(t, err)
+	})
+
+	t.Run("should return empty response when no data was found", func(t *testing.T) {
 		databaseReadMock := &database.Mock{}
 		databaseReadMock.On("Raw").Return(
 			response.NewResponse(0, nil, []*dashboard.VulnerabilitiesByLanguage{}))
@@ -93,8 +143,25 @@ func TestGetDashboardVulnByLanguage(t *testing.T) {
 
 		repository := NewRepoDashboard(connection)
 
-		_, err := repository.GetDashboardVulnByLanguage(&dashboard.Filter{})
+		resp, err := repository.GetDashboardVulnByLanguage(&dashboard.Filter{})
 		assert.NoError(t, err)
+		assert.Len(t, resp, 1)
+	})
+
+	t.Run("should return error when something went wrong", func(t *testing.T) {
+		databaseReadMock := &database.Mock{}
+		databaseReadMock.On("Raw").Return(
+			response.NewResponse(0, errors.New("test"), []*dashboard.VulnerabilitiesByLanguage{{}}))
+
+		connection := &database.Connection{
+			Read:  databaseReadMock,
+			Write: &database.Mock{},
+		}
+
+		repository := NewRepoDashboard(connection)
+
+		_, err := repository.GetDashboardVulnByLanguage(&dashboard.Filter{})
+		assert.Error(t, err)
 	})
 }
 
