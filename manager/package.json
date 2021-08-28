@@ -31,7 +31,7 @@
     "react-hook-form": "^6.4.1",
     "react-i18next": "^11.7.0",
     "react-linkify": "^1.0.0-alpha",
-    "react-router-dom": "^5.2.0",
+    "react-router-dom": "5.2.0",
     "react-scripts": "^4.0.3",
     "react-svg": "^11.0.35",
     "react-tooltip": "^4.2.10",
