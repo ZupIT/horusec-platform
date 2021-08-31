@@ -125,7 +125,7 @@ const Home: React.FC = () => {
   return (
     <>
       <Styled.Head>
-        <Styled.TitleWrapper>
+        <Styled.TitleWrapper id="title-workspace-wrapper">
           <Styled.Title>
             <Styled.Icon name="grid" size="22px" />
             {workspace?.name}

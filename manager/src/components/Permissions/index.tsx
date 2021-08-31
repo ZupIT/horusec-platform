@@ -70,7 +70,7 @@ const Permissions: React.FC<Props> = ({ isOpen, onClose, rolesType }) => {
     <Styled.Background>
       <Styled.Wrapper>
         <Styled.Header>
-          <Styled.TitleWrapper>
+          <Styled.TitleWrapper id="title-permissions-wrapper">
             <Styled.Close name="lock" size="22px" onClick={onClose} />
             <Styled.Title>{t('PERMISSIONS.TITLE')}</Styled.Title>
           </Styled.TitleWrapper>
