@@ -28,4 +28,4 @@ jobs:
       - name: Run e2e tests
         run: |
           cd ./e2e/cypress
-          make test-e2e-auth-horusec-without-application-admin
+          DEBUG=cypress:* make test-e2e-auth-horusec-without-application-admin
