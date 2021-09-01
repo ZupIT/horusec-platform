@@ -52,7 +52,7 @@
     "yup": "0.32.9"
   },
   "devDependencies": {
-    "@axe-core/react": "4.2.1",
+    "@axe-core/react": "4.2.2",
     "@testing-library/jest-dom": "4.2.4",
     "@testing-library/react": "9.5.0",
     "@testing-library/react-hooks": "3.7.0",
