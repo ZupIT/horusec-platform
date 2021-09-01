@@ -78,7 +78,7 @@
     "video": true,
     "videoCompression": 32,
     "videosFolder": "./src/videos",
-    "videoUploadOnPasses": true,
+    "videoUploadOnPasses": false,
     "viewportHeight": 768,
     "viewportWidth": 1366,
     "waitForAnimations": true,
