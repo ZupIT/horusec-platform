@@ -3,7 +3,7 @@ module github.com/ZupIT/horusec-platform/analytic
 go 1.16
 
 require (
-	github.com/ZupIT/horusec-devkit v1.0.13
+	github.com/ZupIT/horusec-devkit v1.0.15
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
 	github.com/go-chi/chi v4.1.2+incompatible
 	github.com/go-chi/cors v1.2.0
@@ -13,5 +13,6 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/streadway/amqp v1.0.0
 	github.com/stretchr/testify v1.7.0
-	github.com/swaggo/swag v1.7.0
+	github.com/swaggo/swag v1.7.1
+	gorm.io/gorm v1.21.14 // indirect
 )

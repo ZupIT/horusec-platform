@@ -41,12 +41,18 @@ const themeMatUi = createMuiTheme({
       },
       icon: {
         color: theme.colors.button.text,
+        '&$disabled': {
+          color: 'transparent',
+        },
       },
     },
     MuiFilledInput: {
       root: {
         backgroundColor: 'transparent',
         borderRadius: '10px !important',
+        '&$disabled': {
+          backgroundColor: 'transparent',
+        },
       },
       input: {
         padding: '6px 0px',

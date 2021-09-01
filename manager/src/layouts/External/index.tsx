@@ -17,9 +17,13 @@
 import React from 'react';
 import Styled from './styled';
 import HorusecLogo from 'assets/logos/horusec.svg';
-import { Signature, Language } from 'components';
+import { Signature, Language, Icon } from 'components';
+import { useTranslation } from 'react-i18next';
+import { bugs, repository } from '../../../package.json';
 
 function ExternalLayout({ children }: { children: JSX.Element }) {
+  const { t } = useTranslation();
+
   return (
     <Styled.Wrapper>
       <Styled.LogoContent>
@@ -31,11 +35,21 @@ function ExternalLayout({ children }: { children: JSX.Element }) {
       </Styled.LogoContent>
 
       <Styled.Footer>
+        <Language />
+
         <Signature />
 
-        <Styled.LanguageWrapper>
-          <Language />
-        </Styled.LanguageWrapper>
+        <Styled.ContactWrapper>
+          <Styled.ContactItem href={repository.url} target="_blank">
+            <Icon size="18px" name="github" />
+            <Styled.ContactText>{t('GENERAL.GITHUB')}</Styled.ContactText>
+          </Styled.ContactItem>
+
+          <Styled.ContactItem href={bugs.url} target="_blank">
+            <Icon size="18px" name="forum" />
+            <Styled.ContactText>{t('GENERAL.FORUM')}</Styled.ContactText>
+          </Styled.ContactItem>
+        </Styled.ContactWrapper>
       </Styled.Footer>
     </Styled.Wrapper>
   );

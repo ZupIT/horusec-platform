@@ -52,13 +52,6 @@ const VulnerabilitiesTimeLine: React.FC<Props> = ({ data, isLoading }) => {
       curve: 'smooth',
     },
     colors: Object.values(colors.vulnerabilities),
-    noData: {
-      text: t('DASHBOARD_SCREEN.CHART_NO_DATA'),
-      style: {
-        color: colors.chart.legend,
-        fontSize: metrics.fontSize.large,
-      },
-    },
     legend: {
       position: 'top',
       horizontalAlign: 'left',

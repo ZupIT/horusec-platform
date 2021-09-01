@@ -39,27 +39,32 @@ const VulnerabilitiesByDeveloper: React.FC<Props> = ({ isLoading, data }) => {
   const [chatData, setChartData] = useState<BarCharRow[]>([]);
 
   const formatFirstLayer = (data: VulnerabilitiesByLanguageData[]) => {
-    const formatted = (data || []).map((item) => {
-      let value = 0;
+    const formatted = (data || [])
+      .map((item) => {
+        let value = 0;
 
-      Object.values(item).forEach((i) => {
-        if (i?.count) {
-          value = value + i.count;
-        }
-      });
+        Object.values(item).forEach((i) => {
+          if (i?.count) {
+            value = value + i.count;
+          }
+        });
 
-      const color = get(
-        colors.languages,
-        item.language.toUpperCase(),
-        colors.languages.UNKNOWN
-      );
+        // eslint-disable-next-line array-callback-return
+        if (item.language === '' && value === 0 && data.length > 1) return;
 
-      return {
-        value,
-        color,
-        legend: item.language,
-      };
-    });
+        const color = get(
+          colors.languages,
+          item.language.toUpperCase(),
+          colors.languages.UNKNOWN
+        );
+
+        return {
+          value,
+          color,
+          legend: item.language,
+        };
+      })
+      .filter((value) => value);
 
     setLayeredLanguage(null);
     setLastLayer(false);

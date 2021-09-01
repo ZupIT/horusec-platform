@@ -39,8 +39,6 @@ const VulnerabilitiesByRepository: React.FC<Props> = ({ isLoading, data }) => {
   const [chatData, setChartData] = useState<BarCharRow[]>([]);
 
   const formatFirstLayer = (data: VulnerabilityBySeverity) => {
-    let isEmpty = true;
-
     const formatted = Object.entries(data).map((item) => {
       const value = item[1].count;
       const legend = item[0].toUpperCase();
@@ -50,8 +48,6 @@ const VulnerabilitiesByRepository: React.FC<Props> = ({ isLoading, data }) => {
         colors.vulnerabilities.DEFAULT
       );
 
-      if (value > 0) isEmpty = false;
-
       return {
         value,
         legend,
@@ -59,7 +55,7 @@ const VulnerabilitiesByRepository: React.FC<Props> = ({ isLoading, data }) => {
       };
     });
 
-    setChartData(isEmpty ? [] : formatted);
+    setChartData(formatted || []);
     setLastLayer(false);
     setLayeredVuln(null);
   };

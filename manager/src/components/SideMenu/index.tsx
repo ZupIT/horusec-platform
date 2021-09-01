@@ -85,7 +85,7 @@ const SideMenu: React.FC = () => {
           onClick={() => handleSelectedRoute(route)}
           onKeyPress={() => handleSelectedRoute(route)}
         >
-          <Icon name={route.icon} size="15" />
+          <Icon name={route.icon} size="15px" />
 
           <Styled.RouteName isMinimized={isMinimized}>
             {route.name}

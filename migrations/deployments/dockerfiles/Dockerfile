@@ -12,11 +12,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM migrate/migrate:v4.13.0
+FROM golang:alpine as builder
+
+RUN go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
+
+FROM alpine:3.14.1
+
+COPY --from=builder /go/bin/migrate /usr/local/bin/migrate
 
 COPY ./source /horusec-migrations
 
 COPY ./scripts/migrate.sh /usr/local/bin
+
 RUN chmod +x /usr/local/bin/migrate.sh
+RUN chmod +x /usr/local/bin/migrate
 
 ENTRYPOINT [ "migrate.sh" ]

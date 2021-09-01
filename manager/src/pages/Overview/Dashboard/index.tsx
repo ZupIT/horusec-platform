@@ -30,7 +30,6 @@ import VulnerabilitiesByDeveloper from './VulnerabilitiesByDeveloper';
 import VulnerabilitiesByLanguage from './VulnerabilitiesByLanguage';
 import VulnerabilitiesByRepository from './VulnerabilitiesByRepository';
 import VulnerabilitiesTimeLine from './VulnerabilitiesTimeLine';
-import VulnerabilitiesDetails from './VulnerabilitiesDetails';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
 import { createReportWorkSheet } from 'helpers/formatters/xlsx';
 
@@ -239,8 +238,6 @@ const Dashboard: React.FC<Props> = ({ type }) => {
         isLoading={isLoading}
         data={dashboardData?.vulnerabilityByTime}
       />
-
-      <VulnerabilitiesDetails filters={filters} />
     </Styled.Wrapper>
   );
 };
