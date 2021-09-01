@@ -12,7 +12,7 @@ restart-services:
 	docker restart horusec-api
 	docker restart horusec-messages
 	docker restart horusec-analytic
-    sleep 10
+	sleep 10
 
 migrate-horusec-postgresql:
 	$(CD) ../.. && $(MAKE) migrate-drop && $(MAKE) migrate-up && $(CD) ./e2e/cypress
