@@ -10,7 +10,6 @@ restart-services:
 	docker restart horusec-webhook
 	docker restart horusec-core
 	docker restart horusec-api
-	docker restart horusec-messages
 	docker restart horusec-analytic
 	sleep 10
 
