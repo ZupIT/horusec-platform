@@ -16,7 +16,7 @@ FROM golang:alpine as builder
 
 RUN go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
 
-FROM alpine:3.14.1
+FROM alpine:3.14.2
 
 COPY --from=builder /go/bin/migrate /usr/local/bin/migrate
 
