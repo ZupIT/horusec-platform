@@ -28,4 +28,11 @@ jobs:
       - name: Run e2e tests
         run: |
           cd ./e2e/cypress
-          DEBUG=cypress:* make test-e2e-auth-horusec-without-application-admin
+          make test-e2e-auth-horusec-without-application-admin
+      - name: Upload cypress videos
+        uses: actions/upload-artifact@v1
+        if: failure()
+        with:
+          name: cypress-videos
+          path: e2e/cypress/videos
+
