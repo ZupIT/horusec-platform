@@ -18,9 +18,6 @@ on: ["push"]
 jobs:
   e2e-cypress:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: e2e/cypress
     steps:
       - name: Set up nodejs
         uses: actions/setup-node@v1
@@ -29,4 +26,6 @@ jobs:
         id: node
       - uses: actions/checkout@v2
       - name: Run e2e tests
-        run: make test-e2e-auth-horusec-without-application-admin
+        run: |
+          cd ./e2e/cypress
+          make test-e2e-auth-horusec-without-application-admin
