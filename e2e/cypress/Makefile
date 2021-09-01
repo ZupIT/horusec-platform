@@ -1,6 +1,10 @@
 DOCKER_COMPOSE ?= docker-compose
 NPM ?= npm
 CD ?= cd
+MAKE ?= make
+
+migrate-horusec-postgresql:
+	$(CD) ../.. && $(MAKE) migrate-drop && $(MAKE) migrate-up && $(CD) ./e2e/cypress
 
 test-e2e-install:
 	$(NPM) install
