@@ -57,6 +57,7 @@ const BarChart: React.FC<BarChartProps> = ({
       isVertical={isVertical}
       key={legend}
       onClick={() => onClickRow({ value, legend })}
+      id={`${title}_${legend}`.replaceAll(' ', '_')}
     >
       <Styled.Value isVertical={isVertical}>{value}</Styled.Value>
 
