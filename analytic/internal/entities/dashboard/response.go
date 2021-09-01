@@ -41,7 +41,7 @@ func (r *Response) SetTotalRepositories(totalRepositories int, err error) error 
 }
 
 func (r *Response) SetChartBySeverity(vulnerability *Vulnerability, err error) error {
-	if err == nil {
+	if err == nil && vulnerability != nil {
 		r.VulnerabilityBySeverity = vulnerability.ToResponseBySeverities()
 	}
 
