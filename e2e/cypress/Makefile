@@ -9,10 +9,10 @@ migrate-horusec-postgresql:
 test-e2e-install:
 	$(NPM) install
 
-test-e2e-auth-horusec-without-application-admin: compose-e2e-auth-horusec-without-application-admin test-e2e-install
+test-e2e-auth-horusec-without-application-admin: test-e2e-install compose-e2e-auth-horusec-without-application-admin
 	$(NPM) run test::auth-horusec::without-application-admin
 
-test-e2e-auth-keycloak-without-application-admin: compose-e2e-auth-keycloak-without-application-admin test-e2e-install
+test-e2e-auth-keycloak-without-application-admin: test-e2e-install compose-e2e-auth-keycloak-without-application-admin
 	$(NPM) run test::auth-keycloak::without-application-admin
 
 compose-e2e-auth-horusec-without-application-admin:

@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 describe("Horusec tests", () => {
     before(() => {
         cy.exec("make migrate-horusec-postgresql", {log: true}).its("code").should("eq", 0);
-    })
+    });
     it("Should test all operations horusec", () => {
         // cy.visit("http://localhost:8043")
         // cy.wait(4000);
@@ -30,8 +30,8 @@ describe("Horusec tests", () => {
         CheckIfExistsVulnerabilitiesAndCanUpdateSeverityAndStatus();
         CreateUserAndInviteToExistingWorkspace();
         CheckIfPermissionsIsEnableToWorkspaceMember();
-        // InviteUserToRepositoryAndCheckPermissions("Core-API");
-        // LoginAndUpdateDeleteAccount();
+        InviteUserToRepositoryAndCheckPermissions();
+        LoginAndUpdateDeleteAccount();
     });
 });
 
@@ -420,151 +420,128 @@ function CheckIfPermissionsIsEnableToWorkspaceMember(): void {
     cy.get("button").contains("Sign in").click();
     cy.wait(1500);
 
-    // Check if not exists repositories for user
+    // Check if exists company and user can create workspace
+    cy.get("button").contains("Add Workspace").should("exist");
     cy.get("li").contains("Company e2e").parent().get("button").contains("Select").click({ force: true });
     cy.wait(1000);
+
+    // Check if not exists button for edit workspace and view dashboard
     cy.contains("Add a new repository to proceed ...").should("exist");
-    cy.contains("Overview ...").should("exist");
-
-    // Go to manage workspace
-    // cy.get("div").contains("Manage Workspaces").parent().parent().click();
-    // cy.get("div").contains("Manage Workspaces").click();
-
-    // // Check if created workpspace will exists actions buttons
-    // cy.get("button").contains("Add Workspace").click();
-    // cy.wait(500);
-    // cy.get("#name").type("Other company");
-    // cy.get("button").contains("Save").click();
-    // cy.contains("Other company").should("exist");
-    // cy.get("tr").contains("Other company").parent().contains("Edit").should("exist");
-    // cy.get("tr").contains("Other company").parent().contains("Delete").should("exist");
-    // cy.get("tr").contains("Other company").parent().contains("Workspace users").should("exist");
-    // cy.get("tr").contains("Other company").parent().contains("Tokens").should("exist");
-
-    // // Check if is not possible see actions of workspace was invited
-    // cy.get("tr").contains("Company e2e").parent().contains("Edit").should("not.exist");
-    // cy.get("tr").contains("Company e2e").parent().contains("Delete").should("not.exist");
-    // cy.get("tr").contains("Company e2e").parent().contains("Workspace users").should("not.exist");
-    // cy.get("tr").contains("Company e2e").parent().contains("Tokens").should("not.exist");
-
-    // // Delete workspace created
-    // cy.get("tr").contains("Other company").parent().contains("Delete").click();
-    // cy.wait(500);
-    // cy.get("button").contains("Yes").click();
-    // cy.contains("Other company").should("not.exist");
+    cy.get("#title-workspace-wrapper").contains("Overview").should("not.exist");
+    cy.get("#title-workspace-wrapper").contains("Handler").should("not.exist");
+    cy.get("button").contains("Add Repository").should("not.exist");
 }
 
-function InviteUserToRepositoryAndCheckPermissions(repositoryName: string): void {
+function InviteUserToRepositoryAndCheckPermissions(): void {
     // Go to home page
-    cy.visit("http://localhost:8043/");
-    cy.wait(4000);
-
-    // Logout user
-    cy.get("[data-testid=\"icon-logout\"").click();
+    cy.get("li").contains("Logout").click();
     cy.wait(4000);
 
     // Login with default user
     cy.get("#email").type("dev@example.com");
     cy.get("#password").type("Devpass0*");
-    cy.get("button").first().click();
+    cy.get("button").contains("Sign in").click();
     cy.wait(1500);
 
     // Go to repositories page
-    cy.get("span").contains("Repositories").parent().click();
-    cy.wait(1500);
+    cy.get("li").contains("Company e2e").parent().get("button").contains("Select").click({ force: true });
+    cy.wait(1000);
+    cy.contains("Core-API").parent().contains("Overview").click({ force: true });
+    cy.wait(2000);
 
     // Invite user to repository
-    cy.get("tr").contains(repositoryName).parent().contains("Invite").click();
+    cy.get("li").contains("Users").click();
+    cy.get("button").contains("Invite").click();
     cy.wait(500);
-    cy.get("tr").contains("e2e_user").parent().children().children().children().first().click();
+    cy.get("#select-user").click();
+    cy.get("#select-user-option-0").click();
+    cy.get("#select-role").click();
+    cy.get("#select-role-option-1").click();
+    cy.get("button").contains("Save").click();
     cy.wait(500);
-    cy.get("span").contains("Success in adding user to the repository!");
+    cy.contains("e2e_user@example.com").should("exist");
 
     // Logout user
-    cy.visit("http://localhost:8043/");
-    cy.wait(4000);
-    cy.get("[data-testid=\"icon-logout\"").click();
+    cy.get("li").contains("Logout").click();
     cy.wait(4000);
 
     // Login with new user
     cy.get("#email").type("e2e_user@example.com");
     cy.get("#password").type("Ch@ng3m3");
-    cy.get("button").first().click();
+    cy.get("button").contains("Sign in").click();
     cy.wait(1500);
 
     // Check if dashboard show data to repository
-    cy.contains(repositoryName).should("exist");
-    cy.get("h4").contains("Total developers").parent().contains("1").should("exist");
+    cy.get("li").contains("Company e2e").parent().get("button").contains("Select").click({ force: true });
+    cy.wait(1000);
+    cy.contains("Core-API").parent().contains("Overview").click({ force: true });
+    cy.wait(2000);
+    cy.get("#total-developers").contains("No results were found").should("not.exist");
+    cy.get("li").contains("Repositories").click();
 
-    // Go to repositories page
-    cy.get("span").contains("Repositories").parent().click();
-    cy.wait(1500);
     // Check if user not contains permissions
-    cy.get("tr").contains(repositoryName).parent().contains("Edit").should("not.exist");
-    cy.get("tr").contains(repositoryName).parent().contains("Delete").should("not.exist");
-    cy.get("tr").contains(repositoryName).parent().contains("Invite").should("not.exist");
-    cy.get("tr").contains(repositoryName).parent().contains("Tokens").should("not.exist");
-
-    // Logout user
-    cy.get("[data-testid=\"icon-logout\"").click();
-    cy.wait(4000);
+    cy.contains("Core-API").parent().contains("Handler").should("not.exist");
 }
 
 function LoginAndUpdateDeleteAccount(): void {
-    // Login with new account
+    // Logout user
+    cy.get("li").contains("Logout").click();
+    cy.wait(4000);
+
+    // Login with new account and go to settings page
     cy.get("#email").type("e2e_user@example.com");
     cy.get("#password").type("Ch@ng3m3");
-    cy.get("button").first().click();
+    cy.get("button").contains("Sign in").click();
     cy.wait(1500);
-
-    cy.get("[data-testid=\"icon-config\"").click();
+    cy.get("li").contains("Settings").click();
+    cy.wait(1000);
 
     // Open modal and edit user
-    cy.get("button").contains("Edit").click();
-    cy.get("#nome").clear().type("user_updated");
+    cy.get("button").contains("Edit information").click();
+    cy.get("#username").clear().type("user_updated");
     cy.get("#email").clear().type("user_updated@example.com");
     cy.get("button").contains("Save").click();
 
-    // Check if user was edited with success
-    cy.contains("user_updated").should("exist");
-    cy.contains("user_updated@example.com").should("exist");
-
     // Logout user
-    cy.get("[data-testid=\"icon-logout\"").click();
+    cy.get("li").contains("Logout").click();
     cy.wait(4000);
 
     // Check if is enable login with new email
     cy.get("#email").type("user_updated@example.com");
     cy.get("#password").type("Ch@ng3m3");
-    cy.get("button").first().click();
+    cy.get("button").contains("Sign in").click();
     cy.wait(1500);
 
     // Go to config page
-    cy.get("[data-testid=\"icon-config\"").click();
-    cy.wait(1500);
+    cy.get("li").contains("Settings").click();
+    cy.wait(1000);
 
     // Change password of user
-    cy.get("button").contains("Password").click();
+    cy.get("button").contains("Change Password").click();
     cy.get("#password").clear().type("Ch@ng3m3N0w");
-    cy.get("#confirm-pass").clear().type("Ch@ng3m3N0w");
+    cy.get("#confirmPass").clear().type("Ch@ng3m3N0w");
     cy.get("button").contains("Save").click();
 
     // Logout user
-    cy.get("[data-testid=\"icon-logout\"").click();
+    cy.get("li").contains("Logout").click();
     cy.wait(4000);
 
     // Check if is enable login with new password
     cy.get("#email").type("user_updated@example.com");
     cy.get("#password").type("Ch@ng3m3N0w");
-    cy.get("button").first().click();
+    cy.get("button").contains("Sign in").click();
     cy.wait(1500);
 
     // When login in page check if exist "Version" o system
-    cy.contains("Version").should("exist");
+    cy.get("li").contains("Company e2e").parent().get("button").contains("Select").click({ force: true });
+    cy.wait(1000);
+    cy.contains("Core-API").parent().contains("Overview").click({ force: true });
+    cy.wait(2000);
+    cy.contains("Version v").should("exist");
 
     // Go to config page
-    cy.get("[data-testid=\"icon-config\"").click();
-    cy.wait(1500);
+    cy.get("li").contains("Settings").click();
+    cy.wait(1000);
 
     // Delete account
     cy.get("button").contains("Delete").click();
@@ -574,9 +551,9 @@ function LoginAndUpdateDeleteAccount(): void {
     // Check if account not exists
     cy.get("#email").type("user_updated@example.com");
     cy.get("#password").type("Ch@ng3m3N0w");
-    cy.get("button").first().click();
+    cy.get("button").contains("Sign in").click();
+    cy.wait(1500);
 
     // Check if login is not authorized
-    cy.get("span").contains("Check your e-mail and password and try again.");
-    cy.contains("Version").should("not.exist");
+    cy.url().should("eq", "http://localhost:8043/auth");
 }
