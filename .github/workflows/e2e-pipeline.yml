@@ -34,5 +34,5 @@ jobs:
         if: failure()
         with:
           name: cypress-videos
-          path: e2e/cypress/videos
+          path: e2e/cypress/src/videos
 
