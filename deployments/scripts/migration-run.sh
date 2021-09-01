@@ -32,16 +32,16 @@ fi
 
 cd ..
 
-exists_horusec_db=$(docker exec -it horusec_postgresql psql -U $POSTGRES_USER -W $POSTGRES_PASSWORD --no-password -d postgres -c "select datname from pg_database WHERE datname = '$HORUSEC_PLATFORM_DB_NAME'")
+exists_horusec_db=$(docker exec -i horusec_postgresql psql -U $POSTGRES_USER -W $POSTGRES_PASSWORD --no-password -d postgres -c "select datname from pg_database WHERE datname = '$HORUSEC_PLATFORM_DB_NAME'")
 if [[ $exists_horusec_db == *"0 rows"* ]]; then
     echo "Creating database $HORUSEC_PLATFORM_DB_NAME..."
-    docker exec -it horusec_postgresql createdb $HORUSEC_PLATFORM_DB_NAME -U $POSTGRES_USER -W $POSTGRES_PASSWORD --no-password
+    docker exec -i horusec_postgresql createdb $HORUSEC_PLATFORM_DB_NAME -U $POSTGRES_USER -W $POSTGRES_PASSWORD --no-password
 fi
 
-exists_horusec_analytic_db=$(docker exec -it horusec_postgresql psql -U $POSTGRES_USER -W $POSTGRES_PASSWORD --no-password -d postgres -c "select datname from pg_database WHERE datname = '$HORUSEC_ANALYTIC_DB_NAME'")
+exists_horusec_analytic_db=$(docker exec -i horusec_postgresql psql -U $POSTGRES_USER -W $POSTGRES_PASSWORD --no-password -d postgres -c "select datname from pg_database WHERE datname = '$HORUSEC_ANALYTIC_DB_NAME'")
 if [[ $exists_horusec_analytic_db == *"0 rows"* ]]; then
     echo "Creating database $HORUSEC_ANALYTIC_DB_NAME..."
-    docker exec -it horusec_postgresql createdb $HORUSEC_ANALYTIC_DB_NAME -U $POSTGRES_USER -W $POSTGRES_PASSWORD --no-password
+    docker exec -i horusec_postgresql createdb $HORUSEC_ANALYTIC_DB_NAME -U $POSTGRES_USER -W $POSTGRES_PASSWORD --no-password
 fi
 
 echo ""
