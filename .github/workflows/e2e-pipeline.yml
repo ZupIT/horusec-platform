@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: E2E
+name: Tests e2e
 on: ["push"]
 
 jobs:
