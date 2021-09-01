@@ -109,7 +109,7 @@ function CreateWorkspaceCheckIfDashboardIsEmpty(): void {
     cy.wait(1000);
     cy.get("button").contains("Apply").click();
     cy.wait(2000);
-    cy.get("#total-developers").contains("No results were found").should("exist");
+    cy.get("#total-developers").contains("0").should("exist");
 }
 
 function CreateDeleteWorkspaceTokenAndSendFirstAnalysisMock(): void {
@@ -184,7 +184,7 @@ function CheckIfDashboardNotIsEmpty(): void {
 
 function checkDashboardInitialContent(isWorkspace: boolean) {
     // Check if chart of total developers exist 1 user in selected repository
-    cy.get("#total-developers").contains("No results were found").should("not.exist");
+    cy.get("#total-developers").contains("0").should("not.exist");
 
     // Check if chart with all vulnerabilities of exists all vulnerabilities
     cy.get("#All_vulnerabilities_CRITICAL").contains("20").should("exist");
@@ -209,7 +209,7 @@ function checkDashboardInitialContent(isWorkspace: boolean) {
         cy.get("#Vulnerabilities_by_repository_Register-API").contains("140").should("exist");
 
         // Check if chart of total developers exist 1 user
-        cy.get("#total-repositories").contains("No results were found").should("not.exist");
+        cy.get("#total-repositories").contains("0").should("not.exist");
     }
 }
 
@@ -481,7 +481,7 @@ function InviteUserToRepositoryAndCheckPermissions(): void {
     cy.wait(1000);
     cy.contains("Core-API").parent().contains("Overview").click({ force: true });
     cy.wait(2000);
-    cy.get("#total-developers").contains("No results were found").should("not.exist");
+    cy.get("#total-developers").contains("0").should("not.exist");
     cy.get("li").contains("Repositories").click();
 
     // Check if user not contains permissions
