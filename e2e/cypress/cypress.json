@@ -75,7 +75,7 @@
     "testFiles": "**/*_spec.ts",
     "trashAssetsBeforeRuns": true,
     "userAgent": null,
-    "video": false,
+    "video": true,
     "videoCompression": 32,
     "videosFolder": "./src/videos",
     "videoUploadOnPasses": true,

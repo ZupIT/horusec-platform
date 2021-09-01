@@ -23,17 +23,6 @@ describe("Horusec tests", () => {
         cy.exec("make migrate-horusec-postgresql", {log: true}).its("code").should("eq", 0);
     });
     it("Should test all operations horusec", () => {
-        // cy.visit("http://localhost:8043")
-        // cy.wait(4000);
-        // cy.get("#email").type("dev@example.com");
-        // cy.get("#password").type("Devpass0*");
-        // cy.get("button").contains("Sign in").click();
-        // cy.wait(2000);
-        // cy.get("li").contains("Company e2e").parent().get("button").contains("Select").click({ force: true });
-        // cy.wait(2000);
-        // cy.get("li").contains("Core-API").parent().get("button").contains("Overview").click({ force: true });
-        // cy.wait(2000);
-
         LoginWithDefaultAccountAndCheckIfNotExistWorkspace();
         CreateEditDeleteAnWorkspace();
         CreateWorkspaceCheckIfDashboardIsEmpty();
@@ -53,7 +42,7 @@ describe("Horusec tests", () => {
 
 function LoginWithDefaultAccountAndCheckIfNotExistWorkspace(): void {
     cy.visit("http://localhost:8043/auth");
-    cy.wait(4000);
+    cy.wait(10000);
 
     // Login with default account
     cy.get("#email").type("dev@example.com");
