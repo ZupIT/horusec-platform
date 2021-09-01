@@ -29,9 +29,9 @@ test-e2e-auth-keycloak-without-application-admin: test-e2e-install compose-e2e-a
 compose-e2e-auth-horusec-without-application-admin:
 	$(DOCKER_COMPOSE) -f ./deployments/docker-compose.auth-horusec.without-application-admin.yaml down -v
 	$(DOCKER_COMPOSE) -f ./deployments/docker-compose.auth-horusec.without-application-admin.yaml up -d --build --force-recreate
-    make restart-services
+	make restart-services
 
 compose-e2e-auth-keycloak-without-application-admin:
 	$(DOCKER_COMPOSE) -f ./deployments/docker-compose.auth-keycloak.without-application-admin.yaml down -v
 	$(DOCKER_COMPOSE) -f ./deployments/docker-compose.auth-keycloak.without-application-admin.yaml up -d --build --force-recreate
-    make restart-services
+	make restart-services
