@@ -4,7 +4,7 @@ go 1.16
 
 require (
 	github.com/Nerzal/gocloak/v7 v7.11.0
-	github.com/ZupIT/horusec-devkit v1.0.11
+	github.com/ZupIT/horusec-devkit v1.0.16
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
 	github.com/codegangsta/inject v0.0.0-20150114235600-33e0aa1cb7c0 // indirect
 	github.com/go-asn1-ber/asn1-ber v1.5.3 // indirect
@@ -20,5 +20,5 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/stretchr/testify v1.7.0
 	github.com/swaggo/swag v1.7.1
-	google.golang.org/grpc v1.39.0
+	google.golang.org/grpc v1.40.0
 )
