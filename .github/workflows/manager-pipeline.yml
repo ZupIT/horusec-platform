@@ -48,7 +48,7 @@ jobs:
           start: npx serve -s build -l 3000
           wait-on: 'http://localhost:3000'
       - name: Upload cypress videos
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v2
         if: failure()
         with:
           name: cypress-videos

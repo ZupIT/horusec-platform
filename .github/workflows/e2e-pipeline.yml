@@ -30,7 +30,7 @@ jobs:
           cd ./e2e/cypress
           make test-e2e-auth-horusec-without-application-admin
       - name: Upload cypress videos
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v2
         if: failure()
         with:
           name: cypress-videos
