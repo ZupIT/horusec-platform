@@ -23,18 +23,11 @@ jobs:
         working-directory: manager
     steps:
       - name: Set up nodejs
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v2
         with:
           node-version: "12"
         id: node
       - uses: actions/checkout@v2
-      - name: security
-        env:
-          HORUSEC_CLI_REPOSITORY_AUTHORIZATION: ${{ secrets.HORUSEC_CLI_REPOSITORY_AUTHORIZATION }}
-          HORUSEC_CLI_HORUSEC_API_URI: ${{ secrets.HORUSEC_CLI_HORUSEC_API_URI }}
-        run: |
-          curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec/master/deployments/scripts/install.sh | bash -s latest
-          horusec start -p . -e true -n="Horusec/Platform-Manager" -G true
       - name: Install dependencies
         run: npm install
       - name: Lint
@@ -48,9 +41,15 @@ jobs:
           start: npx serve -s build -l 3000
           wait-on: 'http://localhost:3000'
       - name: Upload cypress videos
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v2
         if: failure()
         with:
           name: cypress-videos
           path: manager/cypress/videos
-
+      - name: security
+        env:
+          HORUSEC_CLI_REPOSITORY_AUTHORIZATION: ${{ secrets.HORUSEC_CLI_REPOSITORY_AUTHORIZATION }}
+          HORUSEC_CLI_HORUSEC_API_URI: ${{ secrets.HORUSEC_CLI_HORUSEC_API_URI }}
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec/master/deployments/scripts/install.sh | bash -s latest
+          horusec start -p . -e true -n="Horusec/Platform-Manager" -G true
