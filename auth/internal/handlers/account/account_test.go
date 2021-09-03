@@ -41,7 +41,7 @@ func getAppConfig() app.IConfig {
 	databaseMock := &database.Mock{}
 	databaseMock.On("Create").Return(&response.Response{})
 
-	return app.NewAuthAppConfig(&database.Connection{Read: databaseMock, Write: databaseMock}, nil)
+	return app.NewAuthAppConfig(&database.Connection{Read: databaseMock, Write: databaseMock})
 }
 
 func TestNewAccountHandler(t *testing.T) {

@@ -15,6 +15,8 @@
 package enums
 
 const (
+	HorusecAuthLocalhost        = "http://localhost:8006"
+	HorusecManagerLocalhost     = "http://localhost:8043"
 	EnvAuthURL                  = "HORUSEC_AUTH_URL"
 	EnvAuthType                 = "HORUSEC_AUTH_TYPE"
 	EnvDisableEmails            = "HORUSEC_DISABLE_EMAILS"
@@ -25,6 +27,6 @@ const (
 	EnvHorusecManager           = "HORUSEC_MANAGER_URL"
 	DuplicatedAccount           = "duplicate key value violates unique constraint"
 	DefaultUserData             = "{\"username\": \"dev\", \"email\":\"dev@example.com\", \"password\":\"Devpass0*\"}"
-	ApplicationAdminDefaultData = "{\"username\": \"horusec-admin\", \"email\":\"horusec-admin@example.com\"," +
+	ApplicationAdminDefaultData = "{\"username\": \"test1\", \"email\":\"test@example.com\"," +
 		" \"password\":\"Devpass0*\"}"
 )
