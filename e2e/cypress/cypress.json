@@ -38,7 +38,6 @@
     "downloadsFolder": "./src/downloads",
     "env": null,
     "execTimeout": 60000,
-    "experimentalComponentTesting": false,
     "experimentalFetchPolyfill": false,
     "experimentalRunEvents": false,
     "experimentalSourceRewriting": false,

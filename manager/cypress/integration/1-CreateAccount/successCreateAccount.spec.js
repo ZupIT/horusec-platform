@@ -31,7 +31,7 @@ describe('Validation the field of login create account form.', () => {
     cy.intercept(
       {
         method: 'POST',
-        url: 'auth/account/create-account',
+        url: 'auth/account/create-account-horusec',
       },
       { fixture: 'createAccount/success', statusCode: 201 }
     ).as('createAccount');
