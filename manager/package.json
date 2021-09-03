@@ -74,6 +74,7 @@
     "@types/styled-components": "5.1.13",
     "@typescript-eslint/eslint-plugin": "4.26.0",
     "@typescript-eslint/parser": "4.26.0",
+    "chokidar": "^3.5.2",
     "cypress": "8.3.1",
     "cypress-react-unit-test": "4.17.2",
     "eslint": "7.27.0",
@@ -91,8 +92,8 @@
     "typescript": "3.9.10"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build ---production",
+    "start": "npx react-scripts start",
+    "build": "npx react-scripts build ---production",
     "lint:fix": "eslint './src/**/*.{ts,tsx}' --fix",
     "lint": "eslint './src/**/*.{ts,tsx}'",
     "eject": "react-scripts eject",

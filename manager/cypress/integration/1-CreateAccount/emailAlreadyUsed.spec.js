@@ -16,6 +16,12 @@
 
 import { API_ERRORS } from '../../../src/config/i18n/enUS.json';
 
+Cypress.on('uncaught:exception', (err, runnable) => {
+  // returning false here prevents Cypress from
+  // failing the test
+  return false
+})
+
 /* eslint-disable cypress/no-unnecessary-waiting */
 describe('Validation the field of login create account form.', () => {
   beforeEach(() => {
