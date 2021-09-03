@@ -16,7 +16,7 @@ version: '3'
 services:
   horusec_postgresql_keycloak:
     container_name: horusec_postgresql_keycloak
-    image: postgres:12
+    image: postgres:13
     ports:
       - "5433:5433"
     expose:
@@ -51,7 +51,7 @@ services:
       - "15672:15672"
   horusec_postgresql:
     container_name: horusec_postgresql
-    image: postgres:12
+    image: postgres:13
     ports:
       - "5432:5432"
     environment:
