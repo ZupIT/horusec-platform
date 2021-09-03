@@ -20,7 +20,7 @@
     "@react-keycloak/web": "3.4.0",
     "apexcharts": "3.28.1",
     "axios": "0.21.1",
-    "date-fns": "2.22.1",
+    "date-fns": "2.23.0",
     "downloadjs": "1.4.7",
     "eslint": "7.27.0",
     "export-from-json": "1.3.9",
