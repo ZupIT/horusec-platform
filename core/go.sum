@@ -58,6 +58,8 @@ github.com/ZupIT/horusec-devkit v1.0.11 h1:wO8erj2lmcWPJpRjA8RiIy5ewU3HHd29IA7fQ
 github.com/ZupIT/horusec-devkit v1.0.11/go.mod h1:e1o33un3uYm2RlfkKA+4vDTR3Z8w+zdGbnZ826IVdBA=
 github.com/ZupIT/horusec-devkit v1.0.14 h1:BuaSYyeE4He9WcWE2CKcK0LgHal6l0cm/iex1GzmN3o=
 github.com/ZupIT/horusec-devkit v1.0.14/go.mod h1:e1o33un3uYm2RlfkKA+4vDTR3Z8w+zdGbnZ826IVdBA=
+github.com/ZupIT/horusec-devkit v1.0.16 h1:MBO1RjochmJfrWYm0Jr6qC9c5x6t/5LwjVDhZvdzOnE=
+github.com/ZupIT/horusec-devkit v1.0.16/go.mod h1:SEzhqEWkXrJ5/N+tGfQVvIsBsuWaU0x0g7wVl6fqlmc=
 github.com/afex/hystrix-go v0.0.0-20180502004556-fa1af6a1f4f5/go.mod h1:SkGFH1ia65gfNATL8TAiHDNxPzPdmEL5uirI2Uyuz6c=
 github.com/alecthomas/template v0.0.0-20160405071501-a0175ee3bccc/go.mod h1:LOuyumcjzFXgccqObfd/Ljyb9UuFJ6TxHnclSeseNhc=
 github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751 h1:JYp7IbQjafoB+tBA3gMyHYHrpOtNuDiK/uB5uXxq5wM=
@@ -591,6 +593,7 @@ github.com/spf13/afero v1.1.2/go.mod h1:j4pytiNVoe2o6bmDsKpLACNPDBIoEAkihy7loJ1B
 github.com/spf13/afero v1.6.0/go.mod h1:Ai8FlHk4v/PARR026UzYexafAt9roJ7LcLMAmO6Z93I=
 github.com/spf13/cast v1.3.0/go.mod h1:Qx5cxh0v+4UWYiBimWS+eyWzqEqokIECu5etghLkUJE=
 github.com/spf13/cast v1.3.1/go.mod h1:Qx5cxh0v+4UWYiBimWS+eyWzqEqokIECu5etghLkUJE=
+github.com/spf13/cast v1.4.1/go.mod h1:Qx5cxh0v+4UWYiBimWS+eyWzqEqokIECu5etghLkUJE=
 github.com/spf13/cobra v0.0.3/go.mod h1:1l0Ry5zgKvJasoi3XT1TypsSe7PqH0Sj9dhYf7v3XqQ=
 github.com/spf13/cobra v1.1.3/go.mod h1:pGADOWyqRD/YMrPZigI/zbliZ2wVD/23d+is3pSWzOo=
 github.com/spf13/cobra v1.2.1/go.mod h1:ExllRjgxM/piMAM+3tAZvg8fsklGAf3tPfi+i8t68Nk=
