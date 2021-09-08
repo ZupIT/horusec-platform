@@ -15,6 +15,8 @@
 package enums
 
 const (
+	HorusecAuthLocalhost        = "http://localhost:8006"
+	HorusecManagerLocalhost     = "http://localhost:8043"
 	EnvAuthURL                  = "HORUSEC_AUTH_URL"
 	EnvAuthType                 = "HORUSEC_AUTH_TYPE"
 	EnvDisableEmails            = "HORUSEC_DISABLE_EMAILS"
