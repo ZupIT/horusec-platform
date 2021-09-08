@@ -27,6 +27,6 @@ const (
 	EnvHorusecManager           = "HORUSEC_MANAGER_URL"
 	DuplicatedAccount           = "duplicate key value violates unique constraint"
 	DefaultUserData             = "{\"username\": \"dev\", \"email\":\"dev@example.com\", \"password\":\"Devpass0*\"}"
-	ApplicationAdminDefaultData = "{\"username\": \"test1\", \"email\":\"test@example.com\"," +
+	ApplicationAdminDefaultData = "{\"username\": \"horusec-admin\", \"email\":\"horusec-admin@example.com\"," +
 		" \"password\":\"Devpass0*\"}"
 )
