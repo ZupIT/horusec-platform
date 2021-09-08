@@ -6,12 +6,10 @@ require (
 	github.com/Nerzal/gocloak/v7 v7.11.0
 	github.com/ZupIT/horusec-devkit v1.0.11
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
-	github.com/codegangsta/inject v0.0.0-20150114235600-33e0aa1cb7c0 // indirect
 	github.com/go-asn1-ber/asn1-ber v1.5.3 // indirect
 	github.com/go-chi/chi v4.1.2+incompatible
 	github.com/go-chi/cors v1.2.0
 	github.com/go-ldap/ldap/v3 v3.4.1
-	github.com/go-martini/martini v0.0.0-20170121215854-22fa46961aab // indirect
 	github.com/go-ozzo/ozzo-validation/v4 v4.3.0
 	github.com/go-resty/resty/v2 v2.6.0 // indirect
 	github.com/google/uuid v1.3.0
