@@ -16,7 +16,7 @@ require (
 	github.com/go-resty/resty/v2 v2.6.0 // indirect
 	github.com/google/uuid v1.3.0
 	github.com/google/wire v0.5.0
-	github.com/lib/pq v1.10.2
+	github.com/lib/pq v1.10.3
 	github.com/pkg/errors v0.9.1
 	github.com/stretchr/testify v1.7.0
 	github.com/swaggo/swag v1.7.1
