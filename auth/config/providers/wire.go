@@ -17,7 +17,6 @@
 package providers
 
 import (
-	httpRouter "github.com/ZupIT/horusec-devkit/pkg/services/http/router"
 	"github.com/google/wire"
 
 	"github.com/ZupIT/horusec-devkit/pkg/services/broker"
@@ -25,6 +24,7 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/services/cache"
 	"github.com/ZupIT/horusec-devkit/pkg/services/database"
 	databaseConfig "github.com/ZupIT/horusec-devkit/pkg/services/database/config"
+	httpRouter "github.com/ZupIT/horusec-devkit/pkg/services/http/router"
 
 	"github.com/ZupIT/horusec-platform/auth/config/app"
 	"github.com/ZupIT/horusec-platform/auth/config/cors"
@@ -41,7 +41,6 @@ import (
 	"github.com/ZupIT/horusec-platform/auth/internal/services/authentication/keycloak"
 	"github.com/ZupIT/horusec-platform/auth/internal/services/authentication/ldap"
 	accountUseCases "github.com/ZupIT/horusec-platform/auth/internal/usecases/account"
-	"github.com/ZupIT/horusec-platform/auth/internal/usecases/administrator"
 	authUseCases "github.com/ZupIT/horusec-platform/auth/internal/usecases/authentication"
 )
 
@@ -75,7 +74,6 @@ var handleProviders = wire.NewSet(
 var useCasesProviders = wire.NewSet(
 	authUseCases.NewAuthenticationUseCases,
 	accountUseCases.NewAccountUseCases,
-	administrator.NewUseCase,
 )
 
 var repositoriesProviders = wire.NewSet(
@@ -91,9 +89,7 @@ var serviceProviders = wire.NewSet(
 
 func Initialize(_ string) (router.IRouter, error) {
 	wire.Build(devKitProviders, configProviders, controllerProviders, handleProviders,
-		useCasesProviders, repositoriesProviders, serviceProviders,
-		wire.Bind(new(app.AdminAccount), new(*administrator.UseCase)),
-	)
+		useCasesProviders, repositoriesProviders, serviceProviders)
 
 	return &router.Router{}, nil
 }

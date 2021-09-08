@@ -29,7 +29,6 @@ import (
 	"github.com/ZupIT/horusec-platform/auth/internal/services/authentication/keycloak"
 	"github.com/ZupIT/horusec-platform/auth/internal/services/authentication/ldap"
 	"github.com/ZupIT/horusec-platform/auth/internal/usecases/account"
-	"github.com/ZupIT/horusec-platform/auth/internal/usecases/administrator"
 	"github.com/ZupIT/horusec-platform/auth/internal/usecases/authentication"
 )
 
@@ -43,8 +42,7 @@ func Initialize(string2 string) (router.IRouter, error) {
 	if err != nil {
 		return nil, err
 	}
-	useCase := administrator.NewUseCase(connection)
-	appIConfig := app.NewAuthAppConfig(connection, useCase)
+	appIConfig := app.NewAuthAppConfig(connection)
 	iUseCases := authentication.NewAuthenticationUseCases()
 	accountIUseCases := account.NewAccountUseCases(appIConfig)
 	iRepository := account2.NewAccountRepository(connection, accountIUseCases)
@@ -78,7 +76,7 @@ var controllerProviders = wire.NewSet(authentication3.NewAuthenticationControlle
 
 var handleProviders = wire.NewSet(authentication4.NewAuthenticationHandler, account4.NewAccountHandler, health.NewHealthHandler)
 
-var useCasesProviders = wire.NewSet(authentication.NewAuthenticationUseCases, account.NewAccountUseCases, administrator.NewUseCase)
+var useCasesProviders = wire.NewSet(authentication.NewAuthenticationUseCases, account.NewAccountUseCases)
 
 var repositoriesProviders = wire.NewSet(account2.NewAccountRepository, authentication2.NewAuthenticationRepository)
 

@@ -3,7 +3,7 @@ module github.com/ZupIT/horusec-platform/core
 go 1.16
 
 require (
-	github.com/ZupIT/horusec-devkit v1.0.14
+	github.com/ZupIT/horusec-devkit v1.0.16
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/form3tech-oss/jwt-go v3.2.5+incompatible // indirect
