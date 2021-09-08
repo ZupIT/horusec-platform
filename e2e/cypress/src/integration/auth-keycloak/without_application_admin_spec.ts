@@ -16,76 +16,50 @@
 
 import { Requests } from "../../utils/request";
 import AnalysisMock from "../../mocks/analysis.json";
-import { IUserCredentialsRepresentation, IUserRepresentation, KeycloakRequests } from "./keycloak_requests_spec";
-
-/*
-Command to extract backup from keycloak database:
-
-    CONTAINER=$(docker ps | grep postgresql_keycloak | awk '{print $1}'); \
-    OUTPUT_PATH="$(pwd)/e2e/cypress/deployments/static/backup-auth-keycloak-without-application-admin/init.sql"; \
-    DB_USER="root"; \
-    docker exec $CONTAINER pg_dumpall -c -U $DB_USER -p 5433 > $OUTPUT_PATH
-*/
-
-/*
-Command to restore backup to keycloak database:
-    CONTAINER=$(docker ps | grep postgresql_keycloak | awk '{print $1}'); \
-    OUTPUT_PATH="$(pwd)/e2e/cypress/deployments/static/backup-auth-keycloak-without-application-admin/init.sql"; \
-    DB_USER="root"; \
-    DB_NAME="keycloak"; \
-    cat $OUTPUT_PATH | docker exec -i $CONTAINER psql -U $DB_USER -d $DB_NAME -p 5433
-*/
+import { v4 as uuidv4 } from "uuid";
 
 describe("Horusec tests", () => {
     before(() => {
-        cy.exec("cd ../../ && make e2e-migrate", {log: true}).its("code").should("eq", 0);
-        cy.exec(
-            `echo "DELETE FROM accounts where email='dev@example.com'" | docker exec -i postgresql psql -U root -d horusec_db -p 5432`,
-            {log: true},
-        ).its("code").should("eq", 0);
+        cy.exec("make migrate-horusec-postgresql", {log: true}).its("code").should("eq", 0);
     });
-
     it("Should test all operations horusec", () => {
         LoginWithDefaultAccountAndCheckIfNotExistWorkspace();
         CreateEditDeleteAnWorkspace();
-        CreateWorkspace("Company e2e");
-        CheckIfDashboardIsEmpty();
+        CreateWorkspaceCheckIfDashboardIsEmpty();
         CreateDeleteWorkspaceTokenAndSendFirstAnalysisMock();
         CheckIfDashboardNotIsEmpty();
         CreateEditDeleteAnRepository();
-        CreateRepository("Core-API");
-        CreateDeleteRepositoryTokenAndSendFirstAnalysisMock("Core-API");
-        CheckIfDashboardNotIsEmptyWithTwoRepositories("Core-API");
+        CreateRepository();
+        CreateDeleteRepositoryTokenAndSendFirstAnalysisMock();
+        CheckIfDashboardNotIsEmptyWithTwoRepositories();
         CheckIfExistsVulnerabilitiesAndCanUpdateSeverityAndStatus();
-        CreateUserAndInviteToExistingWorkspace();
-        CheckIfPermissionsIsEnableToWorkspaceMember();
-        InviteUserToRepositoryAndCheckPermissions("Core-API");
+        // CreateUserAndInviteToExistingWorkspace();
+        // CheckIfPermissionsIsEnableToWorkspaceMember();
+        // InviteUserToRepositoryAndCheckPermissions();
         // LoginAndUpdateDeleteAccount();
     });
 });
 
 function LoginWithDefaultAccountAndCheckIfNotExistWorkspace(): void {
     cy.visit("http://127.0.0.1:8043/auth");
-    cy.wait(4000);
+    cy.wait(10000);
+    cy.get("button").contains("Sign in with Keycloak").click();
+    cy.wait(2000);
 
-    // // Login with default account
-    cy.get("button").contains("Sign in keycloak").click();
-    cy.wait(4000);
-
-    cy.get("#username").type("dev@example.com");
-    cy.get("#password").type("Devpass0*");
+    // Login with default account
+    cy.get("#username").type("e2e_user@example.com");
+    cy.get("#password").type("Ch@ng3m3");
     cy.get("#kc-login").click();
-    cy.wait(4000);
+    cy.wait(5000);
 
-    // // Check if not exists workspace
-    cy.contains("Add a new Workspace to start using Horusec.").should("exist");
+    // Check if not exists workspace
+    cy.contains("Add your first workspace to start ...").should("exist");
 }
 
 function CreateEditDeleteAnWorkspace(): void {
     cy.wait(1500);
+
     // Create an workspace
-    cy.get("button").contains("Add workspace").click();
-    cy.wait(500);
     cy.get("button").contains("Add Workspace").click();
     cy.wait(500);
     cy.get("#name").type("first_workspace");
@@ -96,47 +70,54 @@ function CreateEditDeleteAnWorkspace(): void {
     cy.wait(500);
 
     // Edit existing workspace
-    cy.get("button").contains("Edit").click();
+    cy.get("li").contains("first_workspace").parent().get("button").contains("Select").click({ force: true });
+    cy.wait(1000);
+    cy.get("button").contains("Handler").click();
     cy.wait(500);
     cy.get("#name").type("_edited");
     cy.get("button").contains("Save").click();
+    cy.contains("first_workspace_edited").should("exist");
+    cy.get("li").contains("Home").click();
 
     // Check if was updated on list
     cy.contains("first_workspace_edited").should("exist");
     cy.wait(500);
 
     // Delete existing workspace
+    cy.get("li").contains("first_workspace_edited").parent().get("button").contains("Select").click({ force: true });
+    cy.get("button").contains("Handler").click();
+    cy.wait(500);
     cy.get("button").contains("Delete").click();
     cy.wait(500);
     cy.get("button").contains("Yes").click();
+    cy.wait(1000);
 
     // Check if was removed on list
     cy.contains("first_workspace_edited").should("not.exist");
 }
 
-function CreateWorkspace(workspaceName: string): void {
+function CreateWorkspaceCheckIfDashboardIsEmpty(): void {
     cy.get("button").contains("Add Workspace").click();
     cy.wait(500);
-    cy.get("#name").type(workspaceName);
+    cy.get("#name").type("Company e2e");
     cy.get("button").contains("Save").click();
+    cy.wait(1500);
 
-    // Check if exist new workspace on list
-    cy.contains(workspaceName).should("exist");
-}
+    // Check if exist new workspace on list and select workspace
+    cy.get("li").contains("Company e2e").parent().get("button").contains("Select").click({ force: true });
+    cy.wait(1000);
 
-function CheckIfDashboardIsEmpty(): void {
-    // Go to workspace repositories and check if repositories data is empty
-    cy.visit("http://127.0.0.1:8043/home/dashboard/repositories");
-    cy.wait(4000);
+    cy.get("button").contains("Overview").click();
+    cy.wait(1000);
     cy.get("button").contains("Apply").click();
-    cy.wait(5000);
-    cy.get("h4").contains("Total developers").parent().contains("1").should("not.exist");
+    cy.wait(2000);
+    cy.get("#total-developers").contains("0").should("exist");
 }
 
 function CreateDeleteWorkspaceTokenAndSendFirstAnalysisMock(): void {
-    // Go to manage workspace page
-    cy.get("div").contains("Manage Workspaces").parent().parent().click();
-    cy.get("div").contains("Manage Workspaces").click();
+    // Go to manage tokens of workspace page
+    cy.get("li").contains("Tokens").click();
+    cy.wait(500);
 
     // Disable alert when copy data to clipboard
     cy.window().then(win => {
@@ -144,12 +125,10 @@ function CreateDeleteWorkspaceTokenAndSendFirstAnalysisMock(): void {
     });
 
     // Create access token
-    cy.get("button").contains("Tokens").click();
-    cy.wait(500);
-    cy.get("button").contains("Add Token").click();
+    cy.get("button").contains("Add token").click();
     cy.wait(500);
     cy.get("#description").type("Access Token");
-    cy.get("button").contains("Save").click();
+    cy.get("button").contains("To save").click();
 
     // Copy acceess token to clipboard and create first analysis with this token
     cy.get("[data-testid=\"icon-copy\"").click();
@@ -175,9 +154,11 @@ function CreateDeleteWorkspaceTokenAndSendFirstAnalysisMock(): void {
     cy.wait(1000);
 
     // Remove access token created
-    cy.get("button").contains("Add Token").parent().parent().contains("Delete").click();
+    cy.get("[class=\"MuiButtonBase-root MuiIconButton-root\"]").click();
+    cy.get("button").contains("Delete").click();
     cy.wait(500);
     cy.get("button").contains("Yes").click();
+    cy.wait(1000);
 
     // Check if not exists access token on list of token
     cy.contains("Access Token").should("not.exist");
@@ -185,44 +166,62 @@ function CreateDeleteWorkspaceTokenAndSendFirstAnalysisMock(): void {
 
 function CheckIfDashboardNotIsEmpty(): void {
     // Go to dashboard page
-    cy.visit("http://127.0.0.1:8043/home/dashboard/repositories");
-    cy.wait(4000);
+    cy.get("li").contains("Dashboard").click();
+    cy.wait(2000);
 
     // Search from begging data
     cy.get("button").contains("Apply").click();
+    cy.wait(2000);
 
+    checkDashboardInitialContent(true)
+
+    // Go to Repositories page
+    cy.get("li").contains("Repositories").click();
+    cy.wait(2000);
+    cy.get("li").contains("Register-API").parent().get("button").contains("Overview").click({ force: true });
+    cy.wait(2000);
+
+    checkDashboardInitialContent(false)
+}
+
+function checkDashboardInitialContent(isWorkspace: boolean) {
     // Check if chart of total developers exist 1 user in selected repository
-    cy.get("h4").contains("Total developers").parent().contains("1").should("exist");
+    cy.get("#total-developers").contains("0").should("not.exist");
+
     // Check if chart with all vulnerabilities of exists all vulnerabilities
-    cy.get("h4").contains("All vulnerabilities").parent().contains("CRITICAL").should("exist");
-    cy.get("h4").contains("All vulnerabilities").parent().contains("HIGH").should("exist");
-    cy.get("h4").contains("All vulnerabilities").parent().contains("INFO").should("exist");
-    cy.get("h4").contains("All vulnerabilities").parent().contains("LOW").should("exist");
-    cy.get("h4").contains("All vulnerabilities").parent().contains("MEDIUM").should("exist");
-    cy.get("h4").contains("All vulnerabilities").parent().contains("UNKNOWN").should("exist");
+    cy.get("#All_vulnerabilities_CRITICAL").contains("20").should("exist");
+    cy.get("#All_vulnerabilities_HIGH").contains("39").should("exist");
+    cy.get("#All_vulnerabilities_MEDIUM").contains("48").should("exist");
+    cy.get("#All_vulnerabilities_LOW").contains("28").should("exist");
+    cy.get("#All_vulnerabilities_INFO").contains("0").should("exist");
+    cy.get("#All_vulnerabilities_UNKNOWN").contains("5").should("exist");
 
-    // Go to dashboard by workspace visualization
-    cy.get("span").contains("Dashboard").parent().click();
-    cy.get("[data-testid=\"icon-grid\"").parent().click();
-    cy.wait(5000);
+    // Check if chart exists total vulnerabilities in chart of vulnerabilities by developer
+    cy.get("#Vulnerabilities_by_developer_-").contains("140").should("exist");
 
-    // Check if exists total vulnerabilities in chart of vulnerabilities by repository
-    cy.get("h4").contains("Vulnerabilities by repository").parent().contains("17").should("exist");
-    cy.get("h4").contains("Vulnerabilities by repository").parent().contains("57").should("exist");
-    cy.get("h4").contains("Vulnerabilities by repository").parent().contains("29").should("exist");
-    cy.get("h4").contains("Vulnerabilities by repository").parent().contains("45").should("exist");
-    cy.get("h4").contains("Vulnerabilities by repository").parent().contains("16").should("exist");
-    cy.get("h4").contains("Vulnerabilities by repository").parent().contains("13").should("exist");
+    // Check if chart of languages contains vulnerabilities
+    cy.get("[id=\"Language_vulnerabilities_C#\"]").contains("13").should("exist");
+    cy.get("#Language_vulnerabilities_C").contains("7").should("exist");
+    cy.get("#Language_vulnerabilities_Go").contains("5").should("exist");
+    cy.get("#Language_vulnerabilities_Dart").contains("3").should("exist");
+    cy.get("#Language_vulnerabilities_Elixir").contains("3").should("exist");
+
+    if (isWorkspace) {
+        // Check if chart exists total vulnerabilities in chart of vulnerabilities by repository
+        cy.get("#Vulnerabilities_by_repository_Register-API").contains("140").should("exist");
+
+        // Check if chart of total developers exist 1 user
+        cy.get("#total-repositories").contains("0").should("not.exist");
+    }
 }
 
 function CreateEditDeleteAnRepository(): void {
     // Go to repositories page
-    cy.get("span").contains("Repositories").parent().click();
-    cy.wait(1500);
+    cy.get("li").contains("Repositories").click();
+    cy.wait(1000);
 
     // Create an repository
-    cy.get("button").contains("Create repository").click();
-    cy.wait(500);
+    cy.get("button").contains("Add Repository").click();
     cy.get("#name").type("first_repository");
     cy.get("button").contains("Save").click();
 
@@ -231,7 +230,7 @@ function CreateEditDeleteAnRepository(): void {
     cy.wait(1500);
 
     // Edit the new repository
-    cy.get(":nth-child(2) > :nth-child(3) > .row > :nth-child(1)").click();
+    cy.contains("first_repository").parent().contains("Handler").click({ force: true });
     cy.wait(500);
     cy.get("#name").type("_edited");
     cy.get("button").contains("Save").click();
@@ -241,7 +240,9 @@ function CreateEditDeleteAnRepository(): void {
     cy.wait(1500);
 
     // Delete the repository
-    cy.get(":nth-child(2) > :nth-child(3) > .row > :nth-child(2)").click();
+    cy.contains("first_repository_edited").parent().contains("Handler").click({ force: true });
+    cy.wait(500);
+    cy.get("button").contains("Delete").click();
     cy.wait(500);
     cy.get("button").contains("Yes").click();
     cy.wait(1000);
@@ -250,41 +251,45 @@ function CreateEditDeleteAnRepository(): void {
     cy.contains("first_repository_edited").should("not.exist");
 }
 
-function CreateRepository(repositoryName: string): void {
-    cy.get("button").contains("Create repository").click();
-    cy.wait(500);
-    cy.get("#name").type(repositoryName);
+function CreateRepository(): void {
+    cy.get("button").contains("Add Repository").click();
+    cy.get("#name").type("Core-API");
     cy.get("button").contains("Save").click();
-    cy.contains(repositoryName).should("exist");
+    cy.contains("Core-API").should("exist");
+
+    cy.contains("Core-API").parent().contains("Overview").click({ force: true });
+    cy.wait(3000);
 }
 
-function CreateDeleteRepositoryTokenAndSendFirstAnalysisMock(repositoryName: string): void {
-    cy.wait(1500);
-    // Disable alert when copy data to clipboard
-    cy.window().then(win => {
-        cy.stub(win, "prompt").returns("DISABLED WINDOW PROMPT");
-    });
-
+function CreateDeleteRepositoryTokenAndSendFirstAnalysisMock(): void {
     // Get repository created and create new access token
-    cy.get(":nth-child(2) > :nth-child(3) > .row > :nth-child(4)").click();
+    cy.get("li").contains("Tokens").click();
     cy.wait(500);
-    cy.contains("Add Token").should("exist");
-    cy.get("button").contains("Add Token").click();
+
+    cy.contains("Add token").should("exist");
+    cy.get("button").contains("Add token").click();
     cy.wait(500);
     cy.get("#description").type("Access Token");
-    cy.get("button").contains("Save").click();
+    cy.get("button").contains("To save").click();
 
     // Copy acceess token to clipboard and create first analysis with this token into repository
     cy.get("[data-testid=\"icon-copy\"").click();
     cy.get("h3").first().then((content) => {
         const _requests: Requests = new Requests();
         const body: any = AnalysisMock;
-        body.repositoryName = repositoryName;
-        body.analysis.id = "802e0032-e173-4eb6-87b1-8a6a3d674503";
+        body.repositoryName = "Core-API";
+        body.analysis.id = uuidv4();
+        body.analysis.repositoryID = "00000000-0000-0000-0000-000000000000"
+        body.analysis.repositoryName = ""
+        body.analysis.workspaceID = "00000000-0000-0000-0000-000000000000"
+        body.analysis.workspaceName = ""
+        body.analysis.analysisVulnerabilities = body.analysis.analysisVulnerabilities.map((i) => {
+            i.analysisID = body.analysis.id
+            i.vulnerabilityID = uuidv4();
+            i.vulnerabilities.vulnerabilityID = i.vulnerabilityID;
+            return i
+        })
         const url: any = `${_requests.baseURL}${_requests.services.Api}/api/analysis`;
-        _requests.setHeadersAllRequests(content[0].innerText).post(url, body).then((response) => {
-            expect(response.status).eq(201, "");
-        });
         _requests
             .setHeadersAllRequests({"X-Horusec-Authorization": content[0].innerText})
             .post(url, body)
@@ -303,7 +308,8 @@ function CreateDeleteRepositoryTokenAndSendFirstAnalysisMock(repositoryName: str
     cy.wait(1000);
 
     // Delete access token
-    cy.get("button").contains("Add Token").parent().parent().contains("Delete").click();
+    cy.get("[class=\"MuiButtonBase-root MuiIconButton-root\"]").click();
+    cy.get("button").contains("Delete").click();
     cy.wait(500);
     cy.get("button").contains("Yes").click();
 
@@ -311,217 +317,250 @@ function CreateDeleteRepositoryTokenAndSendFirstAnalysisMock(repositoryName: str
     cy.contains("Access Token").should("not.exist");
 }
 
-function CheckIfDashboardNotIsEmptyWithTwoRepositories(repositoryName: string): void {
+function CheckIfDashboardNotIsEmptyWithTwoRepositories(): void {
     // Go to dasboard page
-    cy.visit("http://127.0.0.1:8043/home/dashboard/repositories");
-    cy.wait(4000);
-    // Select dashboard by repository created and search
-    cy.get("div").contains(repositoryName).parent().parent().click();
-    cy.get("div").contains(repositoryName).click();
+    cy.get("li").contains("Dashboard").click();
+    cy.wait(1000);
+
     cy.get("button").contains("Apply").click();
     cy.wait(1500);
 
-    // Check if chart of total developers exist 1 user in selected repository
-    cy.get("h4").contains("Total developers").parent().contains("1").should("exist");
-    // Check if chart with all vulnerabilities of exists all vulnerabilities
-    cy.get("h4").contains("All vulnerabilities").parent().contains("CRITICAL").should("exist");
-    cy.get("h4").contains("All vulnerabilities").parent().contains("HIGH").should("exist");
-    cy.get("h4").contains("All vulnerabilities").parent().contains("INFO").should("exist");
-    cy.get("h4").contains("All vulnerabilities").parent().contains("LOW").should("exist");
-    cy.get("h4").contains("All vulnerabilities").parent().contains("MEDIUM").should("exist");
-    cy.get("h4").contains("All vulnerabilities").parent().contains("UNKNOWN").should("exist");
-    // Check if exists total vulnerabilities in chart of vulnerability by developer
-    cy.get("h4").contains("Vulnerabilities by developer").parent().contains("17").should("exist");
-    cy.get("h4").contains("Vulnerabilities by developer").parent().contains("57").should("exist");
-    cy.get("h4").contains("Vulnerabilities by developer").parent().contains("29").should("exist");
-    cy.get("h4").contains("Vulnerabilities by developer").parent().contains("45").should("exist");
-    cy.get("h4").contains("Vulnerabilities by developer").parent().contains("16").should("exist");
-    cy.get("h4").contains("Vulnerabilities by developer").parent().contains("13").should("exist");
+    checkDashboardInitialContent(false)
 }
 
 function CheckIfExistsVulnerabilitiesAndCanUpdateSeverityAndStatus(): void {
     // Go to vulnerabilities page
-    cy.get("[data-testid=\"icon-shield\"").parent().click();
+    cy.get("li").contains("Vulnerabilities").click();
     cy.wait(1500);
 
-    // Select first vulnerability and open Severity dropdown
-    cy.get("tr>td").eq(2).children().children().click();
-    cy.wait(500);
+    cy.get('.MuiTableBody-root > :nth-child(1) > :nth-child(3)').invoke('text')
+    .then((firstHash)=>{ 
+        console.log(firstHash)
+        expect(firstHash).not.to.equal("");
+        expect(firstHash).not.to.equal(undefined);
+        expect(firstHash).not.to.equal(null);
 
-    // Change severity to HIGH
-    cy.get("tr>td").eq(2).contains("HIGH").click();
+        // Select first vulnerability and open Severity dropdown
+        cy.get(":nth-child(1) > .center > .MuiFormControl-root > .MuiInputBase-root > #select").click();
+        cy.wait(500);
 
-    // Check if severity was updated with success
-    cy.contains("Vulnerability status successfully changed!").should("exist");
-    cy.wait(4000);
+        // Change severity to HIGH
+        cy.get('[data-value="HIGH"]').click();
 
-    // Select first vulnerability and open status dropdown
-    cy.get("tr>td").eq(3).children().children().click();
+        // Select first vulnerability and open status dropdown
+        cy.get(":nth-child(1) > :nth-child(2) > .MuiFormControl-root > .MuiInputBase-root > #select").click();
 
-    // Change status to Risk Accepted
-    cy.get("tr>td").eq(3).contains("Risk Accepted").click();
+        // Change status to Risk Accepted
+        cy.get('[data-value="Risk Accepted"]').click();
+        cy.get("button").contains("Update Vulnerabilities").click();
+        cy.wait(1500);
 
-    // Check if status was updated with success
-    cy.contains("Vulnerability status successfully changed!").should("exist");
+        // Open modal of vulnerability and check if details exists
+        cy.get("[data-testid=\"icon-info\"]").first().click();
+        cy.contains("Vulnerability Details").should("exist")
+        cy.wait(1500);
 
-    // Open modal of vulnerability and check if details exists
-    cy.get("tr>td").eq(4).children().children().click();
-    cy.wait(500);
-    cy.contains("Vulnerability Details").should("exist");
+        cy.get("[data-testid=\"icon-close\"]").first().click();
+
+        cy.contains(firstHash).should("not.exist");
+    })
 }
 
 function CreateUserAndInviteToExistingWorkspace(): void {
     // Go to home page
-    cy.visit("http://127.0.0.1:8043/");
-    cy.wait(4000);
     // Logout user
-    cy.get("[data-testid=\"icon-logout\"").click();
+    cy.get("li").contains("Logout").click();
     cy.wait(3000);
 
+    // Create new account
+    cy.get("button").contains("Don't have an account? Sign up").click();
+    cy.get("#username").clear().type("e2e_user");
+    cy.get("#email").clear().type("e2e_user@example.com");
+    cy.get("button").contains("Next").click();
+    cy.get("#password").clear().type("Ch@ng3m3");
+    cy.get("#confirm-pass").clear().type("Ch@ng3m3");
+    cy.get("button").contains("Register").click();
+
+    // Check if account was created
+    cy.contains("Your Horusec account has been created successfully!");
+    cy.get("button").contains("Ok, I got it.").click();
+
     // Login with new account and check if not exists company and logout user
-    cy.get("button").contains("Sign in keycloak").click();
-    cy.wait(4000);
     cy.get("#username").type("e2e_user@example.com");
     cy.get("#password").type("Ch@ng3m3");
-    cy.get("#kc-login").click();
-    cy.wait(4000);
+    cy.get("button").contains("Sign in").click();
+    cy.wait(1500);
 
     // Check if not exists company to this account and logout user
-    cy.contains("Add a new Workspace to start using Horusec.").should("exist");
-    cy.get("[data-testid=\"icon-logout\"").click();
+    cy.contains("Add your first workspace to start ...").should("exist");
+    cy.get("li").contains("Logout").click();
     cy.wait(3000);
 
     // Login with default account
-    cy.get("button").contains("Sign in keycloak").click();
-    cy.wait(4000);
     cy.get("#username").type("dev@example.com");
     cy.get("#password").type("Devpass0*");
-    cy.get("#kc-login").click();
+    cy.get("button").contains("Sign in").click();
     cy.wait(1500);
 
-    // Go to manage workspace page
-    cy.get("div").contains("Manage Workspaces").parent().parent().click();
-    cy.get("div").contains("Manage Workspaces").click();
+    // Go to manage users workspace page
+    cy.get("li").contains("Company e2e").parent().get("button").contains("Select").click({ force: true });
     cy.wait(1500);
-
-    // Open modal to invite user
-    cy.get("button").contains("Workspace users").click();
-    cy.wait(500);
+    cy.get("button").contains("Overview").first().click();
 
     // Invite user
-    cy.get("button").contains("Invite User").click();
+    cy.get("li").contains("Users").click();
+    cy.get("button").contains("Invite").click();
     cy.get("#email").clear().type("e2e_user@example.com");
-    cy.get("h3").contains("Invite a new user below:").parent().contains("Member").parent().parent().click();
-    cy.get("h3").contains("Invite a new user below:").parent().contains("Member").click();
+    cy.get("#select-role").click();
+    cy.get("#select-role-option-1").click();
     cy.get("button").contains("Save").click();
 }
 
 function CheckIfPermissionsIsEnableToWorkspaceMember(): void {
     // Go to home page
-    cy.visit("http://127.0.0.1:8043/");
+    cy.get("li").contains("Logout").click();
     cy.wait(4000);
-
-    // Logout user
-    cy.get("[data-testid=\"icon-logout\"").click();
-    cy.wait(3000);
 
     // Login with new account
-    cy.get("button").contains("Sign in keycloak").click();
-    cy.wait(4000);
     cy.get("#username").type("e2e_user@example.com");
     cy.get("#password").type("Ch@ng3m3");
-    cy.get("#kc-login").click();
-    cy.wait(4000);
+    cy.get("button").contains("Sign in").click();
+    cy.wait(1500);
 
-    // Check if not exists dashboard by workspace page
-    cy.get("span").contains("Dashboard").parent().click();
-    cy.wait(500);
-    cy.get(":nth-child(2) > ul").contains("Dashboard").should("not.exist");
+    // Check if exists company and user can create workspace
+    cy.get("button").contains("Add Workspace").should("exist");
+    cy.get("li").contains("Company e2e").parent().get("button").contains("Select").click({ force: true });
+    cy.wait(1000);
 
-    // Go to manage workspace
-    cy.get("div").contains("Manage Workspaces").parent().parent().click();
-    cy.get("div").contains("Manage Workspaces").click();
-
-    // Check if created workpspace will exists actions buttons
-    cy.get("button").contains("Add Workspace").click();
-    cy.wait(500);
-    cy.get("#name").type("Other company");
-    cy.get("button").contains("Save").click();
-    cy.contains("Other company").should("exist");
-    cy.get("tr").contains("Other company").parent().contains("Edit").should("exist");
-    cy.get("tr").contains("Other company").parent().contains("Delete").should("exist");
-    cy.get("tr").contains("Other company").parent().contains("Workspace users").should("exist");
-    cy.get("tr").contains("Other company").parent().contains("Tokens").should("exist");
-
-    // Check if is not possible see actions of workspace was invited
-    cy.get("tr").contains("Company e2e").parent().contains("Edit").should("not.exist");
-    cy.get("tr").contains("Company e2e").parent().contains("Delete").should("not.exist");
-    cy.get("tr").contains("Company e2e").parent().contains("Workspace users").should("not.exist");
-    cy.get("tr").contains("Company e2e").parent().contains("Tokens").should("not.exist");
-
-    // Delete workspace created
-    cy.get("tr").contains("Other company").parent().contains("Delete").click();
-    cy.wait(500);
-    cy.get("button").contains("Yes").click();
-    cy.contains("Other company").should("not.exist");
+    // Check if not exists button for edit workspace and view dashboard
+    cy.contains("Add a new repository to proceed ...").should("exist");
+    cy.get("#title-workspace-wrapper").contains("Overview").should("not.exist");
+    cy.get("#title-workspace-wrapper").contains("Handler").should("not.exist");
+    cy.get("button").contains("Add Repository").should("not.exist");
 }
 
-function InviteUserToRepositoryAndCheckPermissions(repositoryName: string): void {
+function InviteUserToRepositoryAndCheckPermissions(): void {
     // Go to home page
-    cy.visit("http://127.0.0.1:8043/");
-    cy.wait(4000);
-
-    // Logout user
-    cy.get("[data-testid=\"icon-logout\"").click();
+    cy.get("li").contains("Logout").click();
     cy.wait(4000);
 
     // Login with default user
-    cy.get("button").contains("Sign in keycloak").click();
-    cy.wait(4000);
     cy.get("#username").type("dev@example.com");
     cy.get("#password").type("Devpass0*");
-    cy.get("#kc-login").click();
+    cy.get("button").contains("Sign in").click();
     cy.wait(1500);
 
     // Go to repositories page
-    cy.get("span").contains("Repositories").parent().click();
-    cy.wait(1500);
+    cy.get("li").contains("Company e2e").parent().get("button").contains("Select").click({ force: true });
+    cy.wait(1000);
+    cy.contains("Core-API").parent().contains("Overview").click({ force: true });
+    cy.wait(2000);
 
     // Invite user to repository
-    cy.get("tr").contains(repositoryName).parent().contains("Invite").click();
+    cy.get("li").contains("Users").click();
+    cy.get("button").contains("Invite").click();
     cy.wait(500);
-    cy.get("tr").contains("e2e_user").parent().children().children().children().first().click();
+    cy.get("#select-user").click();
+    cy.get("#select-user-option-0").click();
+    cy.get("#select-role").click();
+    cy.get("#select-role-option-1").click();
+    cy.get("button").contains("Save").click();
     cy.wait(500);
-    cy.get("span").contains("Success in adding user to the repository!");
+    cy.contains("e2e_user@example.com").should("exist");
 
     // Logout user
-    cy.visit("http://127.0.0.1:8043/");
-    cy.wait(4000);
-    cy.get("[data-testid=\"icon-logout\"").click();
+    cy.get("li").contains("Logout").click();
     cy.wait(4000);
 
     // Login with new user
-    cy.get("button").contains("Sign in keycloak").click();
-    cy.wait(4000);
     cy.get("#username").type("e2e_user@example.com");
     cy.get("#password").type("Ch@ng3m3");
-    cy.get("#kc-login").click();
-    cy.wait(4000);
+    cy.get("button").contains("Sign in").click();
+    cy.wait(1500);
 
     // Check if dashboard show data to repository
-    cy.contains(repositoryName).should("exist");
-    cy.get("h4").contains("Total developers").parent().contains("1").should("exist");
+    cy.get("li").contains("Company e2e").parent().get("button").contains("Select").click({ force: true });
+    cy.wait(1000);
+    cy.contains("Core-API").parent().contains("Overview").click({ force: true });
+    cy.wait(2000);
+    cy.get("#total-developers").contains("0").should("not.exist");
+    cy.get("li").contains("Repositories").click();
 
-    // Go to repositories page
-    cy.get("span").contains("Repositories").parent().click();
-    cy.wait(1500);
     // Check if user not contains permissions
-    cy.get("tr").contains(repositoryName).parent().contains("Edit").should("not.exist");
-    cy.get("tr").contains(repositoryName).parent().contains("Delete").should("not.exist");
-    cy.get("tr").contains(repositoryName).parent().contains("Invite").should("not.exist");
-    cy.get("tr").contains(repositoryName).parent().contains("Tokens").should("not.exist");
+    cy.contains("Core-API").parent().contains("Handler").should("not.exist");
+}
+
+function LoginAndUpdateDeleteAccount(): void {
+    // Logout user
+    cy.get("li").contains("Logout").click();
+    cy.wait(4000);
+
+    // Login with new account and go to settings page
+    cy.get("#username").type("e2e_user@example.com");
+    cy.get("#password").type("Ch@ng3m3");
+    cy.get("button").contains("Sign in").click();
+    cy.wait(1500);
+    cy.get("li").contains("Settings").click();
+    cy.wait(1000);
+
+    // Open modal and edit user
+    cy.get("button").contains("Edit information").click();
+    cy.get("#username").clear().type("user_updated");
+    cy.get("#email").clear().type("user_updated@example.com");
+    cy.get("button").contains("Save").click();
 
     // Logout user
-    cy.get("[data-testid=\"icon-logout\"").click();
+    cy.get("li").contains("Logout").click();
     cy.wait(4000);
+
+    // Check if is enable login with new email
+    cy.get("#username").type("user_updated@example.com");
+    cy.get("#password").type("Ch@ng3m3");
+    cy.get("button").contains("Sign in").click();
+    cy.wait(1500);
+
+    // Go to config page
+    cy.get("li").contains("Settings").click();
+    cy.wait(1000);
+
+    // Change password of user
+    cy.get("button").contains("Change Password").click();
+    cy.get("#password").clear().type("Ch@ng3m3N0w");
+    cy.get("#confirmPass").clear().type("Ch@ng3m3N0w");
+    cy.get("button").contains("Save").click();
+
+    // Logout user
+    cy.get("li").contains("Logout").click();
+    cy.wait(4000);
+
+    // Check if is enable login with new password
+    cy.get("#username").type("user_updated@example.com");
+    cy.get("#password").type("Ch@ng3m3N0w");
+    cy.get("button").contains("Sign in").click();
+    cy.wait(1500);
+
+    // When login in page check if exist "Version" o system
+    cy.get("li").contains("Company e2e").parent().get("button").contains("Select").click({ force: true });
+    cy.wait(1000);
+    cy.contains("Core-API").parent().contains("Overview").click({ force: true });
+    cy.wait(2000);
+    cy.contains("Version v").should("exist");
+
+    // Go to config page
+    cy.get("li").contains("Settings").click();
+    cy.wait(1000);
+
+    // Delete account
+    cy.get("button").contains("Delete").click();
+    cy.get("button").contains("Yes").click();
+    cy.wait(5000);
+
+    // Check if account not exists
+    cy.get("#username").type("user_updated@example.com");
+    cy.get("#password").type("Ch@ng3m3N0w");
+    cy.get("button").contains("Sign in").click();
+    cy.wait(1500);
+
+    // Check if login is not authorized
+    cy.url().should("eq", "http://127.0.0.1:8043/auth");
 }

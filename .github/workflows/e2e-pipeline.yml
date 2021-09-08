@@ -16,7 +16,7 @@ name: Tests e2e
 on: ["push"]
 
 jobs:
-  e2e-cypress:
+  e2e-auth-horusec:
     runs-on: ubuntu-latest
     steps:
       - name: Set up nodejs
@@ -35,4 +35,22 @@ jobs:
         with:
           name: cypress-videos
           path: e2e/cypress/src/videos
-
+  e2e-auth-keycloak:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up nodejs
+        uses: actions/setup-node@v2
+        with:
+          node-version: "12"
+        id: node
+      - uses: actions/checkout@v2
+      - name: Run e2e tests
+        run: |
+          cd ./e2e/cypress
+          make test-e2e-auth-keycloak-without-application-admin
+      - name: Upload cypress videos
+        uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: cypress-videos
+          path: e2e/cypress/src/videos

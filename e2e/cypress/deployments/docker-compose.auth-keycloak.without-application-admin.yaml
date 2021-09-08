@@ -28,16 +28,15 @@ services:
     volumes:
         - ./static/auth-keycloak-without-application-admin:/docker-entrypoint-initdb.d
   horusec_keycloak:
+    network_mode: "host"
     container_name: horusec_keycloak
     depends_on:
       - "horusec_postgresql_keycloak"
     image: jboss/keycloak:15.0.2
     restart: always
-    ports:
-      - "8080:8080"
     environment:
       DB_VENDOR: "postgres"
-      DB_ADDR: "127.0.0.1" # TODO: verificar se é hostname ou ip
+      DB_ADDR: "127.0.0.1"
       DB_PORT: "5433"
       DB_USER: "root"
       DB_PASSWORD: "root"
@@ -66,16 +65,15 @@ services:
       options:
         max-size: 10m
   horusec-auth:
+    network_mode: "host"
     build:
-      context: ../../../auth
-      dockerfile: ./deployments/dockerfiles/Dockerfile
-    ports:
-      - "8006:8006"
-      - "8007:8007"
+        context: ../../../auth
+        dockerfile: ./deployments/dockerfiles/Dockerfile
     depends_on:
       - "horusec_rabbit"
       - "horusec_postgresql"
       - "horusec_keycloak"
+      - "horusec_postgresql_keycloak"
     restart: always
     container_name: horusec-auth
     volumes:
@@ -102,143 +100,129 @@ services:
       HORUSEC_LDAP_ADMIN_GROUP: "admin"
       HORUSEC_ENABLE_APPLICATION_ADMIN: "false"
       HORUSEC_APPLICATION_ADMIN_DATA: "{}"
-      HORUSEC_ENABLE_DEFAULT_USER: "true"
+      HORUSEC_ENABLE_DEFAULT_USER: "false"
+      HORUSEC_DEFAULT_USER_DATA: "{}"
       HORUSEC_AUTH_TYPE: "keycloak"
       HORUSEC_BROKER_HOST: "127.0.0.1"
       HORUSEC_BROKER_PORT: "5672"
       HORUSEC_BROKER_USERNAME: "guest"
       HORUSEC_BROKER_PASSWORD: "guest"
       HORUSEC_DISABLE_EMAILS: "true"
-  horusec-messages:
-    build:
-      context: ../../../messages
-      dockerfile: ./deployments/dockerfiles/Dockerfile
-    ports:
-      - "8002:8002"
-    depends_on:
-      - "rabbit"
-    restart: always
-    container_name: horusec-messages
-    environment:
-      HORUSEC_PORT: "8002"
-      HORUSEC_BROKER_HOST: "rabbit"
-      HORUSEC_BROKER_PORT: "5672"
-      HORUSEC_BROKER_USERNAME: "guest"
-      HORUSEC_BROKER_PASSWORD: "guest"
-      HORUSEC_SMTP_ADDRESS: "smtp.mailtrap.io"
-      HORUSEC_SMTP_USERNAME: ${HORUSEC_SMTP_USERNAME}
-      HORUSEC_SMTP_PASSWORD: ${HORUSEC_SMTP_PASSWORD}
-      HORUSEC_SMTP_HOST: "smtp.mailtrap.io"
-      HORUSEC_SMTP_PORT: "2525"
-      HORUSEC_EMAIL_FROM: "horusec@zup.com.br"
   horusec-core:
+    network_mode: "host"
     build:
-      context: ../../../core
-      dockerfile: ./deployments/dockerfiles/Dockerfile
-    ports:
-      - "8003:8003"
+        context: ../../../core
+        dockerfile: ./deployments/dockerfiles/Dockerfile
     depends_on:
-      - "rabbit"
+      - "horusec_rabbit"
       - "horusec_postgresql"
       - "horusec-auth"
+      - "horusec_keycloak"
+      - "horusec_postgresql_keycloak"
     restart: always
     container_name: horusec-core
     environment:
       HORUSEC_PORT: "8003"
       HORUSEC_DISABLED_BROKER: "true"
-      HORUSEC_BROKER_HOST: "rabbit"
+      HORUSEC_BROKER_HOST: "127.0.0.1"
       HORUSEC_BROKER_PORT: "5672"
       HORUSEC_BROKER_USERNAME: "guest"
       HORUSEC_BROKER_PASSWORD: "guest"
-      HORUSEC_DATABASE_SQL_URI: "postgresql://root:root@horusec_postgresql:5432/horusec_db?sslmode=disable"
+      HORUSEC_DATABASE_SQL_URI: "postgresql://root:root@127.0.0.1:5432/horusec_db?sslmode=disable"
       HORUSEC_DATABASE_SQL_LOG_MODE: "false"
-      HORUSEC_GRPC_AUTH_URL: "horusec-auth:8007"
+      HORUSEC_GRPC_AUTH_URL: "127.0.0.1:8007"
   horusec-analytic:
+    network_mode: "host"
     build:
-      context: ../../../analytic
-      dockerfile: ./deployments/dockerfiles/Dockerfile
-    ports:
-      - "8005:8005"
+        context: ../../../analytic
+        dockerfile: ./deployments/dockerfiles/Dockerfile
     depends_on:
-      - "rabbit"
+      - "horusec_rabbit"
       - "horusec_postgresql"
       - "horusec-auth"
+      - "horusec_keycloak"
+      - "horusec_postgresql_keycloak"
     restart: always
     container_name: horusec-analytic
     environment:
       HORUSEC_PORT: "8005"
-      HORUSEC_DATABASE_SQL_URI: "postgresql://root:root@horusec_postgresql:5432/horusec_analytic_db?sslmode=disable"
+      HORUSEC_DATABASE_SQL_URI: "postgresql://root:root@127.0.0.1:5432/horusec_analytic_db?sslmode=disable"
       HORUSEC_DATABASE_SQL_LOG_MODE: "false"
-      HORUSEC_GRPC_AUTH_URL: "horusec-auth:8007"
-      HORUSEC_BROKER_HOST: "rabbit"
+      HORUSEC_GRPC_AUTH_URL: "127.0.0.1:8007"
+      HORUSEC_BROKER_HOST: "127.0.0.1"
       HORUSEC_BROKER_PORT: "5672"
       HORUSEC_BROKER_USERNAME: "guest"
       HORUSEC_BROKER_PASSWORD: "guest"
   horusec-api:
+    network_mode: "host"
     build:
-      context: ../../../api
-      dockerfile: ./deployments/dockerfiles/Dockerfile
+        context: ../../../api
+        dockerfile: ./deployments/dockerfiles/Dockerfile
     ports:
       - "8000:8000"
     depends_on:
-      - "rabbit"
+      - "horusec_rabbit"
       - "horusec_postgresql"
       - "horusec-auth"
+      - "horusec_keycloak"
+      - "horusec_postgresql_keycloak"
     restart: always
     container_name: horusec-api
     environment:
       HORUSEC_PORT: "8000"
-      HORUSEC_DATABASE_SQL_URI: "postgresql://root:root@horusec_postgresql:5432/horusec_db?sslmode=disable"
+      HORUSEC_DATABASE_SQL_URI: "postgresql://root:root@127.0.0.1:5432/horusec_db?sslmode=disable"
       HORUSEC_DATABASE_SQL_LOG_MODE: "false"
-      HORUSEC_GRPC_AUTH_URL: "horusec-auth:8007"
-      HORUSEC_BROKER_HOST: "rabbit"
+      HORUSEC_GRPC_AUTH_URL: "127.0.0.1:8007"
+      HORUSEC_BROKER_HOST: "127.0.0.1"
       HORUSEC_BROKER_PORT: "5672"
       HORUSEC_BROKER_USERNAME: "guest"
       HORUSEC_BROKER_PASSWORD: "guest"
   horusec-vulnerability:
+    network_mode: "host"
     build:
-      context: ../../../vulnerability
-      dockerfile: ./deployments/dockerfiles/Dockerfile
-    ports:
-      - "8001:8001"
+        context: ../../../vulnerability
+        dockerfile: ./deployments/dockerfiles/Dockerfile
     depends_on:
-      - "rabbit"
+      - "horusec_rabbit"
       - "horusec_postgresql"
+      - "horusec_keycloak"
+      - "horusec_postgresql_keycloak"
     restart: always
     container_name: horusec-vulnerability
     environment:
       HORUSEC_PORT: "8001"
-      HORUSEC_DATABASE_SQL_URI: "postgresql://root:root@horusec_postgresql:5432/horusec_db?sslmode=disable"
+      HORUSEC_DATABASE_SQL_URI: "postgresql://root:root@127.0.0.1:5432/horusec_db?sslmode=disable"
       HORUSEC_DATABASE_SQL_LOG_MODE: "false"
-      HORUSEC_GRPC_AUTH_URL: "horusec-auth:8007"
-      HORUSEC_BROKER_HOST: "rabbit"
+      HORUSEC_GRPC_AUTH_URL: "127.0.0.1:8007"
+      HORUSEC_BROKER_HOST: "127.0.0.1"
       HORUSEC_BROKER_PORT: "5672"
       HORUSEC_BROKER_USERNAME: "guest"
       HORUSEC_BROKER_PASSWORD: "guest"
   horusec-webhook:
+    network_mode: "host"
     build:
-      context: ../../../webhook
-      dockerfile: ./deployments/dockerfiles/Dockerfile
-    ports:
-      - "8004:8004"
+        context: ../../../webhook
+        dockerfile: ./deployments/dockerfiles/Dockerfile
     depends_on:
-      - "rabbit"
+      - "horusec_rabbit"
       - "horusec_postgresql"
+      - "horusec_keycloak"
+      - "horusec_postgresql_keycloak"
     restart: always
     container_name: horusec-webhook
     environment:
      HORUSEC_PORT: "8004"
-     HORUSEC_DATABASE_SQL_URI: "postgresql://root:root@horusec_postgresql:5432/horusec_db?sslmode=disable"
+     HORUSEC_DATABASE_SQL_URI: "postgresql://root:root@127.0.0.1:5432/horusec_db?sslmode=disable"
      HORUSEC_DATABASE_SQL_LOG_MODE: "false"
-     HORUSEC_GRPC_AUTH_URL: "horusec-auth:8007"
-     HORUSEC_BROKER_HOST: "rabbit"
+     HORUSEC_GRPC_AUTH_URL: "127.0.0.1:8007"
+     HORUSEC_BROKER_HOST: "127.0.0.1"
      HORUSEC_BROKER_PORT: "5672"
      HORUSEC_BROKER_USERNAME: "guest"
      HORUSEC_BROKER_PASSWORD: "guest"
   horusec-manager:
     build:
-      context: ../../../manager
-      dockerfile: ./deployments/dockerfiles/Dockerfile
+        context: ../../../manager
+        dockerfile: ./deployments/dockerfiles/Dockerfile
     ports:
       - "8043:8080"
     restart: always

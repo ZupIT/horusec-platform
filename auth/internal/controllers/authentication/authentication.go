@@ -93,6 +93,9 @@ func (c *Controller) GetAccountInfo(token string) (*proto.GetAccountDataResponse
 }
 
 func (c *Controller) GetAccountInfoByEmail(email string) (*proto.GetAccountDataResponse, error) {
+	if email == "" {
+		return nil, authEnums.ErrorEmailEmpty
+	}
 	account, err := c.accountRepository.GetAccountByEmail(email)
 	if err != nil {
 		return nil, err
