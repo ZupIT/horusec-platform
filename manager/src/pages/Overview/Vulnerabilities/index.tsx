@@ -146,7 +146,8 @@ const Vulnerabilities: React.FC = () => {
         filters.workspaceID,
         filters.repositoryID,
         vulnerabilities[0].analysisID,
-        updateVulnIds
+        updateVulnIds,
+        overviewType
       )
       .then(() => {
         resetUpdateVuln();
