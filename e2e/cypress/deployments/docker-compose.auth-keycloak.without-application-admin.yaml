@@ -18,8 +18,6 @@ services:
     network_mode: "host"
     container_name: horusec_postgresql_keycloak
     image: postgres:12
-    ports:
-      - "5433:5433"
     expose:
       - "5433"
     command: -p 5433
@@ -47,15 +45,10 @@ services:
     network_mode: "host"
     container_name: horusec_rabbit
     image: rabbitmq:3-management
-    ports:
-      - "5672:5672"
-      - "15672:15672"
   horusec_postgresql:
     network_mode: "host"
     container_name: horusec_postgresql
     image: postgres:12
-    ports:
-      - "5432:5432"
     environment:
       POSTGRES_PASSWORD: root
       POSTGRES_USER: root
@@ -161,8 +154,6 @@ services:
     build:
         context: ../../../api
         dockerfile: ./deployments/dockerfiles/Dockerfile
-    ports:
-      - "8000:8000"
     depends_on:
       - "horusec_rabbit"
       - "horusec_postgresql"
