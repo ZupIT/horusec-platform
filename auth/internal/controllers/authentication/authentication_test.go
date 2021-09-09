@@ -265,4 +265,18 @@ func TestGetAccountInfoByEmail(t *testing.T) {
 		_, err := controller.GetAccountInfoByEmail("test@test.com")
 		assert.Error(t, err)
 	})
+
+	t.Run("should return error when failed to get account with email empty", func(t *testing.T) {
+		authenticationMock := &authentication.Mock{}
+
+		appConfig := &app.Config{AuthType: auth.Horusec}
+
+		accountRepositoryMock := &accountRepository.Mock{}
+
+		controller := NewAuthenticationController(appConfig, authenticationMock, authenticationMock,
+			authenticationMock, accountRepositoryMock)
+
+		_, err := controller.GetAccountInfoByEmail("")
+		assert.Equal(t, authEnums.ErrorEmailEmpty, err)
+	})
 }

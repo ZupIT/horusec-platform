@@ -39,14 +39,9 @@
     "env": null,
     "execTimeout": 60000,
     "experimentalFetchPolyfill": false,
-    "experimentalRunEvents": false,
     "experimentalSourceRewriting": false,
     "experimentalStudio": false,
     "fileServerFolder": "",
-    "firefoxGcInterval": {
-        "runMode": 1,
-        "openMode": null
-    },
     "fixturesFolder": "./src/fixtures",
     "hosts": null,
     "ignoreTestFiles": "*.hot-update.js",
