@@ -44,7 +44,7 @@ type IRepository interface {
 	ListAllRepositoryUsers(repositoryID uuid.UUID) (*[]roleEntities.Response, error)
 	GetWorkspace(workspaceID uuid.UUID) (*workspaceEntities.Workspace, error)
 	ListRepositoriesWhenApplicationAdmin(
-		paginated *repositoryEntities.PaginatedContent) (*[]repositoryEntities.Response, error)
+		paginated *repositoryEntities.PaginatedContent, workspaceID uuid.UUID) (*[]repositoryEntities.Response, error)
 	GetRepositoryLdap(repositoryID uuid.UUID, permissions []string) (*repositoryEntities.Response, error)
 }
 
@@ -228,11 +228,12 @@ func (r *Repository) GetWorkspace(workspaceID uuid.UUID) (*workspaceEntities.Wor
 }
 
 func (r *Repository) ListRepositoriesWhenApplicationAdmin(
-	paginated *repositoryEntities.PaginatedContent) (*[]repositoryEntities.Response, error) {
+	paginated *repositoryEntities.PaginatedContent, workspaceID uuid.UUID) (*[]repositoryEntities.Response, error) {
 	repositories := &[]repositoryEntities.Response{}
 
 	return repositories, r.databaseRead.Raw(
-		r.queryListRepositoriesWhenApplicationAdmin(paginated), repositories).GetErrorExceptNotFound()
+		r.queryListRepositoriesWhenApplicationAdmin(paginated),
+			repositories, sql.Named("workspaceID", workspaceID)).GetErrorExceptNotFound()
 }
 
 func (r *Repository) queryListRepositoriesWhenApplicationAdmin(paginated *repositoryEntities.PaginatedContent) string {
@@ -242,9 +243,11 @@ func (r *Repository) queryListRepositoriesWhenApplicationAdmin(paginated *reposi
 			paginated.GetOffset())
 	}
 	return fmt.Sprintf(`
-			SELECT repo.repository_id, repo.workspace_id, repo.description, repo.name, 'applicationAdmin' AS role, 
-				   repo.created_at, repo.updated_at
-			FROM repositories AS repo %s`, queryPaginated)
+			SELECT repo.repository_id, repo.workspace_id, repo.description, repo.name, 'applicationAdmin' AS role,
+				repo.created_at, repo.updated_at
+			FROM repositories AS repo
+			INNER JOIN account_repository AS ar ON ar.repository_id = repo.repository_id
+			WHERE ar.workspace_id = @workspaceID %s`, queryPaginated)
 }
 
 func (r *Repository) GetRepositoryLdap(

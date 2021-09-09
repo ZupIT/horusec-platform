@@ -174,7 +174,7 @@ func (c *Controller) Delete(repositoryID uuid.UUID) error {
 func (c *Controller) List(repositoryData *repositoryEntities.Data,
 	paginatedData *repositoryEntities.PaginatedContent) (*[]repositoryEntities.Response, error) {
 	if repositoryData.IsApplicationAdmin {
-		return c.repository.ListRepositoriesWhenApplicationAdmin(paginatedData)
+		return c.repository.ListRepositoriesWhenApplicationAdmin(paginatedData, repositoryData.WorkspaceID)
 	}
 
 	if c.appConfig.GetAuthenticationType() == auth.Ldap {
