@@ -30,6 +30,7 @@ const usePermissions = () => {
   };
 
   enum ROLES {
+    APP_ADMIN = 'applicationAdmin',
     ADMIN = 'admin',
     MEMBER = 'member',
     SUPERVISOR = 'supervisor',
@@ -48,14 +49,15 @@ const usePermissions = () => {
 
   const actionsPermissions = {
     [ACTIONS.CREATE_WORKSPACE]: Object.values(ROLES),
-    [ACTIONS.VIEW_WORKSPACE]: [ROLES.ADMIN],
-    [ACTIONS.HANDLE_WORKSPACE]: [ROLES.ADMIN],
-    [ACTIONS.HANDLE_VULNERABILITIES_WORKSPACE]: [ROLES.ADMIN],
-    [ACTIONS.CREATE_REPOSITORY]: [ROLES.ADMIN],
+    [ACTIONS.VIEW_WORKSPACE]: [ROLES.ADMIN, ROLES.APP_ADMIN],
+    [ACTIONS.HANDLE_WORKSPACE]: [ROLES.ADMIN, ROLES.APP_ADMIN],
+    [ACTIONS.HANDLE_VULNERABILITIES_WORKSPACE]: [ROLES.ADMIN, ROLES.APP_ADMIN],
+    [ACTIONS.CREATE_REPOSITORY]: [ROLES.ADMIN, ROLES.APP_ADMIN],
     [ACTIONS.VIEW_REPOSITORY]: Object.values(ROLES),
-    [ACTIONS.HANDLE_REPOSITORY]: [ROLES.ADMIN],
+    [ACTIONS.HANDLE_REPOSITORY]: [ROLES.ADMIN, ROLES.APP_ADMIN],
     [ACTIONS.HANDLE_VULNERABILITIES_REPOSITORY]: [
       ROLES.ADMIN,
+      ROLES.APP_ADMIN,
       ROLES.SUPERVISOR,
     ],
   };
@@ -66,9 +68,9 @@ const usePermissions = () => {
     const routesPermissions = {
       dashboard: Object.values(ROLES),
       vulnerabilities: Object.values(ROLES),
-      tokens: [ROLES.ADMIN],
-      users: [ROLES.ADMIN],
-      webhooks: [ROLES.ADMIN],
+      tokens: [ROLES.ADMIN, ROLES.APP_ADMIN],
+      users: [ROLES.ADMIN, ROLES.APP_ADMIN],
+      webhooks: [ROLES.ADMIN, ROLES.APP_ADMIN],
     };
 
     const routeMatched = Object.entries(routesPermissions).find((item) =>
