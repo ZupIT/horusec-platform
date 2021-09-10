@@ -21,7 +21,7 @@ WORKDIR /manager
 RUN npm install
 RUN npm run build
 
-FROM nginx:1.21.1-alpine
+FROM nginx:1.21.3-alpine
 
 COPY --from=builder /manager/build /var/www
 COPY ./deployments/nginx.conf /etc/nginx/conf.d/default.conf
