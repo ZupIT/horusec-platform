@@ -10,7 +10,7 @@
     "@material-ui/pickers": "^3.3.10",
     "@react-keycloak/web": "^3.0.0",
     "apexcharts": "^3.20.2",
-    "axios": "^0.21.1",
+    "axios": "^0.21.2",
     "date-fns": "^2.16.1",
     "downloadjs": "^1.4.7",
     "eslint": "^7.24.0",
