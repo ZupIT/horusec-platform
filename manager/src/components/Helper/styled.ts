@@ -1,5 +1,5 @@
 /**
- * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * Copyright 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,10 +25,10 @@ const HelpIcon = styled(Icon)`
   }
 `;
 
-const Link = styled.a`
+const Button = styled.button`
   background: none;
   border: none;
-  cursor: help;
+  cursor: pointer;
   display: flex;
   align-items: center;
 
@@ -40,7 +40,7 @@ const Link = styled.a`
     span,
     svg,
     * {
-      color: ${({ theme }) => theme.colors.button.secundary};
+      color: ${({ theme }) => theme.colors.active};
     }
   }
 `;
@@ -52,4 +52,8 @@ const Text = styled.span`
   margin-left: 5px;
 `;
 
-export default { HelpIcon, Link, Text };
+const IconItemMenu = styled(Icon)`
+  margin-right: 5px;
+`;
+
+export default { HelpIcon, Button, Text, IconItemMenu };

@@ -54,7 +54,8 @@ func (r *RepoRepository) queryGetDashboardTotalDevelopers() string {
 			SELECT COUNT(DISTINCT(author)) 
 			FROM %[1]s
 			WHERE repository_id = @repositoryID
-			AND created_at = (SELECT MAX(created_at) FROM %[1]s WHERE repository_id = @repositoryID)  
+			AND created_at = (SELECT MAX(created_at) FROM %[1]s WHERE repository_id = @repositoryID)
+			AND author != ''
 	`
 }
 
@@ -84,7 +85,12 @@ func (r *RepoRepository) GetDashboardVulnByAuthor(
 	filter *dashboard.Filter) (vulns []*dashboard.VulnerabilitiesByAuthor, err error) {
 	query := fmt.Sprintf(r.queryGetDashboardVulnByAuthor(), dashboardEnums.TableVulnerabilitiesByAuthor)
 
-	return vulns, r.databaseRead.Raw(query, &vulns, filter.GetRepositoryFilter()).GetErrorExceptNotFound()
+	err = r.databaseRead.Raw(query, &vulns, filter.GetRepositoryFilter()).GetErrorExceptNotFound()
+	if err != nil || len(vulns) == 0 {
+		return []*dashboard.VulnerabilitiesByAuthor{{}}, err
+	}
+
+	return vulns, nil
 }
 
 //nolint:funlen // need to be bigger than 15
@@ -123,7 +129,12 @@ func (r *RepoRepository) GetDashboardVulnByLanguage(
 	filter *dashboard.Filter) (vulns []*dashboard.VulnerabilitiesByLanguage, err error) {
 	query := fmt.Sprintf(r.queryGetDashboardVulnByLanguage(), dashboardEnums.TableVulnerabilitiesByLanguage)
 
-	return vulns, r.databaseRead.Raw(query, &vulns, filter.GetRepositoryFilter()).GetErrorExceptNotFound()
+	err = r.databaseRead.Raw(query, &vulns, filter.GetRepositoryFilter()).GetErrorExceptNotFound()
+	if err != nil || len(vulns) == 0 {
+		return []*dashboard.VulnerabilitiesByLanguage{{}}, err
+	}
+
+	return vulns, nil
 }
 
 func (r *RepoRepository) queryGetDashboardVulnByLanguage() string {

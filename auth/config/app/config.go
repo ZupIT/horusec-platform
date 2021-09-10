@@ -19,8 +19,11 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/pkg/errors"
+
 	"github.com/ZupIT/horusec-devkit/pkg/enums/auth"
 	"github.com/ZupIT/horusec-devkit/pkg/services/database"
+	databaseEnums "github.com/ZupIT/horusec-devkit/pkg/services/database/enums"
 	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth/proto"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/env"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
@@ -58,21 +61,21 @@ type Config struct {
 	DefaultUserData        string
 	HorusecManagerURL      string
 	databaseWrite          database.IDatabaseWrite
-	adminAccount           AdminAccount
+	databaseRead           database.IDatabaseRead
 }
 
-func NewAuthAppConfig(connection *database.Connection, adminAccount AdminAccount) IConfig {
+func NewAuthAppConfig(connection *database.Connection) IConfig {
 	config := &Config{
-		HorusecAuthURL:         env.GetEnvOrDefault(enums.EnvAuthURL, "http://localhost:8006"),
+		HorusecAuthURL:         env.GetEnvOrDefault(enums.EnvAuthURL, enums.HorusecAuthLocalhost),
 		AuthType:               auth.AuthenticationType(env.GetEnvOrDefault(enums.EnvAuthType, auth.Horusec.ToString())),
 		DisableEmails:          env.GetEnvOrDefaultBool(enums.EnvDisableEmails, false),
 		EnableApplicationAdmin: env.GetEnvOrDefaultBool(enums.EnvEnableApplicationAdmin, false),
 		ApplicationAdminData:   env.GetEnvOrDefault(enums.EnvApplicationAdminData, enums.ApplicationAdminDefaultData),
 		EnableDefaultUser:      env.GetEnvOrDefaultBool(enums.EnvEnableDefaultUser, false),
 		DefaultUserData:        env.GetEnvOrDefault(enums.EnvDefaultUserData, enums.DefaultUserData),
-		HorusecManagerURL:      env.GetEnvOrDefault(enums.EnvHorusecManager, "http://localhost:8043"),
+		HorusecManagerURL:      env.GetEnvOrDefault(enums.EnvHorusecManager, enums.HorusecManagerLocalhost),
 		databaseWrite:          connection.Write,
-		adminAccount:           adminAccount,
+		databaseRead:           connection.Read,
 	}
 
 	return config.createDefaultUsers()
@@ -130,11 +133,9 @@ func (c *Config) GetDefaultUserData() (*accountEntities.Account, error) {
 
 func (c *Config) GetApplicationAdminData() (*accountEntities.Account, error) {
 	account := &accountEntities.Account{}
-	if err := json.Unmarshal([]byte(c.ApplicationAdminData), &account); err == nil {
-		return account, nil
-	}
-	logger.LogWarn(fmt.Sprintf("Invalid JSON format of %q value", enums.EnvApplicationAdminData))
-	return account, json.Unmarshal([]byte(enums.ApplicationAdminDefaultData), &account)
+
+	logger.LogWarn(fmt.Sprintf(enums.MessageFailedToFormatAppAdminValue, enums.EnvApplicationAdminData))
+	return account.SetApplicationAdminTrue(), json.Unmarshal([]byte(c.ApplicationAdminData), account)
 }
 
 func (c *Config) createDefaultUsers() IConfig {
@@ -189,7 +190,7 @@ func (c *Config) createApplicationAdminUser() {
 		return
 	}
 
-	if err = c.adminAccount.CreateOrUpdate(account.SetApplicationAdminTrue()); err != nil {
+	if err = c.createOrUpdate(account); err != nil {
 		logger.LogPanic(enums.MessageFailedToCreateAccount, err)
 	}
 
@@ -213,4 +214,84 @@ func (c *Config) checkCreateAccountErrors(err error, account *accountEntities.Ac
 	}
 
 	logger.LogPanic(enums.MessageFailedToCreateAccount, err)
+}
+
+func (c *Config) createOrUpdate(newest *accountEntities.Account) error {
+	oldest, err := c.getAccountByEmail(newest.Email)
+	if err != nil {
+		if err == databaseEnums.ErrorNotFoundRecords {
+			return c.deleteAllAndCreateApplicationAdmin(newest)
+		}
+
+		return err
+	}
+
+	return c.deleteAllAndUpdateApplicationAdmin(oldest, newest)
+}
+
+func (c *Config) deleteAllAndUpdateApplicationAdmin(oldest, newest *accountEntities.Account) error {
+	transaction := c.databaseWrite.StartTransaction()
+
+	if err := transaction.Delete(c.filterApplicationAdminTrue(),
+		accountEnums.DatabaseTableAccount).GetError(); err != nil {
+		return errors.Wrap(err, c.checkForNilError(transaction.RollbackTransaction().GetError()))
+	}
+
+	if err := transaction.Create(c.mergeApplicationAdminAccounts(oldest, newest),
+		accountEnums.DatabaseTableAccount).GetError(); err != nil {
+		return errors.Wrap(err, c.checkForNilError(transaction.RollbackTransaction().GetError()))
+	}
+
+	return transaction.CommitTransaction().GetError()
+}
+
+func (c *Config) mergeApplicationAdminAccounts(oldest, newest *accountEntities.Account) *accountEntities.Account {
+	return &accountEntities.Account{
+		AccountID:          oldest.AccountID,
+		Email:              oldest.Email,
+		Password:           newest.Password,
+		Username:           newest.Username,
+		IsConfirmed:        newest.IsConfirmed,
+		IsApplicationAdmin: true,
+		CreatedAt:          oldest.CreatedAt,
+		UpdatedAt:          newest.UpdatedAt,
+	}
+}
+
+func (c *Config) deleteAllAndCreateApplicationAdmin(newest *accountEntities.Account) error {
+	transaction := c.databaseWrite.StartTransaction()
+
+	if err := transaction.Delete(c.filterApplicationAdminTrue(),
+		accountEnums.DatabaseTableAccount).GetError(); err != nil {
+		return errors.Wrap(transaction.RollbackTransaction().GetError(), err.Error())
+	}
+
+	if err := transaction.Create(newest, accountEnums.DatabaseTableAccount).GetError(); err != nil {
+		return errors.Wrap(transaction.RollbackTransaction().GetError(), err.Error())
+	}
+
+	return transaction.CommitTransaction().GetError()
+}
+
+func (c *Config) filterApplicationAdminTrue() map[string]interface{} {
+	return map[string]interface{}{"is_application_admin": true}
+}
+
+func (c *Config) getAccountByEmail(email string) (*accountEntities.Account, error) {
+	account := &accountEntities.Account{}
+
+	return account, c.databaseRead.Find(account, c.filterAccountByEmail(email),
+		accountEnums.DatabaseTableAccount).GetError()
+}
+
+func (c *Config) filterAccountByEmail(email string) map[string]interface{} {
+	return map[string]interface{}{"email": email}
+}
+
+func (c *Config) checkForNilError(err error) string {
+	if err != nil {
+		return err.Error()
+	}
+
+	return ""
 }

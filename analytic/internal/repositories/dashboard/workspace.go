@@ -64,7 +64,7 @@ func (r *WorkspaceRepository) queryGetDashboardTotalDevelopers() string {
 		) AS last_analysis
 		ON vulns.created_at = last_analysis.max_time 
 		AND vulns.repository_id = last_analysis.repository_id
-		WHERE workspace_id = @workspaceID
+		WHERE workspace_id = @workspaceID AND vulns.author != ''
 	`
 }
 
@@ -118,7 +118,12 @@ func (r *WorkspaceRepository) GetDashboardVulnByAuthor(
 	query := fmt.Sprintf(r.queryGetDashboardVulnByAuthor(), r.queryDefaultFields(),
 		dashboardEnums.TableVulnerabilitiesByAuthor)
 
-	return vulns, r.databaseRead.Raw(query, &vulns, filter.GetWorkspaceFilter()).GetErrorExceptNotFound()
+	err = r.databaseRead.Raw(query, &vulns, filter.GetWorkspaceFilter()).GetErrorExceptNotFound()
+	if err != nil || len(vulns) == 0 {
+		return []*dashboard.VulnerabilitiesByAuthor{{}}, err
+	}
+
+	return vulns, nil
 }
 
 //nolint:funlen // need to be bigger than 15
@@ -150,7 +155,12 @@ func (r *WorkspaceRepository) GetDashboardVulnByRepository(
 	query := fmt.Sprintf(r.queryGetDashboardVulnByRepository(), r.queryDefaultFields(),
 		dashboardEnums.TableVulnerabilitiesByRepository)
 
-	return vulns, r.databaseRead.Raw(query, &vulns, filter.GetWorkspaceFilter()).GetErrorExceptNotFound()
+	err = r.databaseRead.Raw(query, &vulns, filter.GetWorkspaceFilter()).GetErrorExceptNotFound()
+	if err != nil || len(vulns) == 0 {
+		return []*dashboard.VulnerabilitiesByRepository{{}}, err
+	}
+
+	return vulns, nil
 }
 
 //nolint:funlen // need to be bigger than 15
@@ -182,7 +192,12 @@ func (r *WorkspaceRepository) GetDashboardVulnByLanguage(
 	query := fmt.Sprintf(r.queryGetDashboardVulnByLanguage(), r.queryDefaultFields(),
 		dashboardEnums.TableVulnerabilitiesByLanguage)
 
-	return vulns, r.databaseRead.Raw(query, &vulns, filter.GetWorkspaceFilter()).GetErrorExceptNotFound()
+	err = r.databaseRead.Raw(query, &vulns, filter.GetWorkspaceFilter()).GetErrorExceptNotFound()
+	if err != nil || len(vulns) == 0 {
+		return []*dashboard.VulnerabilitiesByLanguage{{}}, err
+	}
+
+	return vulns, nil
 }
 
 //nolint:funlen // need to be bigger than 15

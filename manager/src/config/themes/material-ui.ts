@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { createMuiTheme } from '@material-ui/core';
+import { createTheme } from '@material-ui/core';
 import { getCurrentTheme } from 'helpers/localStorage/currentTheme';
 
 const theme = getCurrentTheme();
 
-const themeMatUi = createMuiTheme({
+const themeMatUi = createTheme({
   palette: {
     primary: {
       // primary color
@@ -41,12 +41,18 @@ const themeMatUi = createMuiTheme({
       },
       icon: {
         color: theme.colors.button.text,
+        '&$disabled': {
+          color: 'transparent',
+        },
       },
     },
     MuiFilledInput: {
       root: {
         backgroundColor: 'transparent',
         borderRadius: '10px !important',
+        '&$disabled': {
+          backgroundColor: 'transparent',
+        },
       },
       input: {
         padding: '6px 0px',

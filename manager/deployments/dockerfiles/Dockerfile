@@ -1,4 +1,4 @@
-# Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+# Copyright 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM node:14.5.0-alpine AS builder
+FROM node:16.9.0-alpine3.14 AS builder
 
 COPY . /manager
 
@@ -21,7 +21,7 @@ WORKDIR /manager
 RUN npm install
 RUN npm run build
 
-FROM nginx:1.18.0-alpine
+FROM nginx:1.21.3-alpine
 
 COPY --from=builder /manager/build /var/www
 COPY ./deployments/nginx.conf /etc/nginx/conf.d/default.conf
