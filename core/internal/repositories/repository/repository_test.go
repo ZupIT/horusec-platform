@@ -272,7 +272,7 @@ func TestListRepositoriesWhenApplicationAdmin(t *testing.T) {
 		repository := NewRepositoryRepository(&database.Connection{Read: databaseMock, Write: databaseMock},
 			repositoryUseCases.NewRepositoryUseCases(), workspaceRepositoryMock)
 
-		result, err := repository.ListRepositoriesWhenApplicationAdmin(&repositoryEntities.PaginatedContent{})
+		result, err := repository.ListRepositoriesWhenApplicationAdmin(&repositoryEntities.PaginatedContent{}, uuid.New())
 		assert.NoError(t, err)
 		assert.NotNil(t, result)
 	})
@@ -290,7 +290,7 @@ func TestListRepositoriesWhenApplicationAdmin(t *testing.T) {
 			Page:   1,
 			Size:   15,
 		}
-		result, err := repository.ListRepositoriesWhenApplicationAdmin(paginated)
+		result, err := repository.ListRepositoriesWhenApplicationAdmin(paginated, uuid.New())
 		assert.NoError(t, err)
 		assert.NotNil(t, result)
 	})
