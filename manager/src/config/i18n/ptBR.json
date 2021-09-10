@@ -29,6 +29,7 @@
     "REPOSITORIES": "Repositórios",
     "ADMIN": "Administrador",
     "MEMBER": "Membro",
+    "APPLICATIONADMIN": "Administrador geral",
     "SUPERVISOR": "Supervisor",
     "SELECT": "Selecionar",
     "HANDLER": "Gerenciar",
