@@ -10,4 +10,4 @@ security:
     endif
 
 build:
-	docker build --no-cache -t "$(IMAGE_NAME)" -f ./deployments/dockerfiles/Dockerfile .
+	docker build -t "$(IMAGE_NAME)" -f ./deployments/dockerfiles/Dockerfile .

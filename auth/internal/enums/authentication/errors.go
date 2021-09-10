@@ -17,3 +17,4 @@ package authentication
 import "errors"
 
 var ErrorAuthTypeInvalid = errors.New("{AUTHENTICATION} horusec auth service has a invalid authentication type")
+var ErrorEmailEmpty = errors.New("{AUTHENTICATION} is not possible get user without email")

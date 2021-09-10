@@ -1,5 +1,5 @@
 /**
- * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * Copyright 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ const VulnerabilityDetails: React.FC<Props> = ({
     <Styled.Background>
       <Styled.Wrapper>
         <Styled.Header>
-          <Styled.TitleWrapper>
+          <Styled.TitleWrapper id="title-vulnerability-wrapper">
             <Styled.Close name="info" size="22px" onClick={onClose} />
             <Styled.Title>
               {t('VULNERABILITIES_SCREEN.DETAILS.TITLE')}

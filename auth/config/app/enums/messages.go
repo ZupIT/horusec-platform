@@ -21,4 +21,5 @@ const (
 	MessageUserAlreadyExists               = "{CONFIG} default user %s with email %s already exists"
 	MessageFailedToCreateAccount           = "{CONFIG} failed to create account user %s with email %s"
 	MessageFailedToGetApplicationAdminData = "{CONFIG} failed to get application admin user data"
+	MessageFailedToFormatAppAdminValue     = "{CONFIG} Invalid JSON format of %q value"
 )

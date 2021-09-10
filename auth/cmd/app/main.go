@@ -14,7 +14,9 @@
 
 package main
 
-import "github.com/ZupIT/horusec-platform/auth/config/providers"
+import (
+	"github.com/ZupIT/horusec-platform/auth/config/providers"
+)
 
 // @title Horusec-Auth
 // @description Service responsible for authentication and account operations.

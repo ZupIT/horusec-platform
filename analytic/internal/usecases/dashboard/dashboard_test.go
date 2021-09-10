@@ -103,11 +103,31 @@ func getAnalysisMock() *analysisEntities.Analysis {
 	}
 }
 
+func getEmptyAnalysisMock() *analysisEntities.Analysis {
+	return &analysisEntities.Analysis{
+		ID:             uuid.New(),
+		RepositoryID:   uuid.New(),
+		RepositoryName: "my-repository",
+		WorkspaceID:    uuid.New(),
+		WorkspaceName:  "my-workspace",
+		Status:         analysisEnum.Success,
+		Errors:         "",
+		CreatedAt:      time.Now(),
+		FinishedAt:     time.Now(),
+	}
+}
+
 func TestParseAnalysisToVulnerabilitiesByAuthor(t *testing.T) {
 	t.Run("should success parse without errors", func(t *testing.T) {
 		useCases := NewUseCaseDashboard()
 
 		assert.Len(t, useCases.ParseAnalysisToVulnerabilitiesByAuthor(getAnalysisMock()), 1)
+	})
+
+	t.Run("should return empty analysis response", func(t *testing.T) {
+		useCases := NewUseCaseDashboard()
+
+		assert.Len(t, useCases.ParseAnalysisToVulnerabilitiesByAuthor(getEmptyAnalysisMock()), 1)
 	})
 }
 
@@ -117,6 +137,12 @@ func TestParseAnalysisToVulnerabilitiesByRepository(t *testing.T) {
 
 		assert.Len(t, useCases.ParseAnalysisToVulnerabilitiesByRepository(getAnalysisMock()), 1)
 	})
+
+	t.Run("should return empty analysis response", func(t *testing.T) {
+		useCases := NewUseCaseDashboard()
+
+		assert.Len(t, useCases.ParseAnalysisToVulnerabilitiesByRepository(getEmptyAnalysisMock()), 1)
+	})
 }
 
 func TestParseAnalysisToVulnerabilitiesByLanguage(t *testing.T) {
@@ -124,6 +150,12 @@ func TestParseAnalysisToVulnerabilitiesByLanguage(t *testing.T) {
 		useCases := NewUseCaseDashboard()
 
 		assert.Len(t, useCases.ParseAnalysisToVulnerabilitiesByLanguage(getAnalysisMock()), 1)
+	})
+
+	t.Run("should return empty analysis response", func(t *testing.T) {
+		useCases := NewUseCaseDashboard()
+
+		assert.Len(t, useCases.ParseAnalysisToVulnerabilitiesByLanguage(getEmptyAnalysisMock()), 1)
 	})
 }
 

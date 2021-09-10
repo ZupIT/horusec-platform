@@ -127,7 +127,7 @@ func TestListWorkspacesApplicationAdmin(t *testing.T) {
 
 func TestIsWorkspaceAdmin(t *testing.T) {
 	t.Run("should return false for admin", func(t *testing.T) {
-		accountWorkspace := &workspaceEntities.AccountWorkspace{Role: accountEnums.Admin}
+		accountWorkspace := &workspaceEntities.AccountWorkspace{Role: accountEnums.Member}
 
 		databaseMock := &database.Mock{}
 		databaseMock.On("Find").Return(response.NewResponse(1, nil, accountWorkspace))
@@ -136,6 +136,18 @@ func TestIsWorkspaceAdmin(t *testing.T) {
 			workspaceUseCases.NewWorkspaceUseCases())
 
 		assert.False(t, repository.IsWorkspaceAdmin(uuid.New(), uuid.New()))
+	})
+
+	t.Run("should return true for admin", func(t *testing.T) {
+		accountWorkspace := &workspaceEntities.AccountWorkspace{Role: accountEnums.Admin}
+
+		databaseMock := &database.Mock{}
+		databaseMock.On("Find").Return(response.NewResponse(1, nil, accountWorkspace))
+
+		repository := NewWorkspaceRepository(&database.Connection{Read: databaseMock, Write: databaseMock},
+			workspaceUseCases.NewWorkspaceUseCases())
+
+		assert.True(t, repository.IsWorkspaceAdmin(uuid.New(), uuid.New()))
 	})
 }
 
