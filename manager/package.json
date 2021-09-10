@@ -88,7 +88,7 @@
     "eslint-plugin-react": "7.25.1",
     "eslint-plugin-styled-components-a11y": "0.0.34",
     "eslint-plugin-testing-library": "4.12.2",
-    "prettier": "2.3.2",
+    "prettier": "2.4.0",
     "typescript": "3.9.10"
   },
   "scripts": {
