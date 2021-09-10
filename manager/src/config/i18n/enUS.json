@@ -8,6 +8,7 @@
     "REPOSITORIES": "Repositories",
     "ADMIN": "Administrator",
     "MEMBER": "Member",
+    "APPLICATIONADMIN": "Admin Application",
     "SUPERVISOR": "Supervisor",
     "SELECT": "Select",
     "HANDLER": "Handler",

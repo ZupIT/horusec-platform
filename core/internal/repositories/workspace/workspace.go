@@ -165,8 +165,11 @@ func (r *Repository) ListWorkspacesApplicationAdmin() (*[]workspaceEntities.Resp
 
 func (r *Repository) queryListWorkspacesApplicationAdmin() string {
 	return `
-			SELECT ws.workspace_id, ws.name, ws.description, 'applicationAdmin' AS role, ws.created_at, ws.updated_at
+			SELECT ws.workspace_id, ws.name, ws.description, 'applicationAdmin' AS role, ws.created_at, ws.updated_at,
+				COUNT(repo) AS repositories_count
 			FROM workspaces as ws
+			LEFT JOIN repositories AS repo ON repo.workspace_id = ws.workspace_id
+			GROUP BY ws.workspace_id
 	`
 }
 

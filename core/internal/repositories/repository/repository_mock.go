@@ -69,7 +69,7 @@ func (m *Mock) GetWorkspace(_ uuid.UUID) (*workspaceEntities.Workspace, error) {
 	return args.Get(0).(*workspaceEntities.Workspace), mockUtils.ReturnNilOrError(args, 1)
 }
 
-func (m *Mock) ListRepositoriesWhenApplicationAdmin(_ *repositoryEntities.PaginatedContent) (*[]repositoryEntities.Response, error) {
+func (m *Mock) ListRepositoriesWhenApplicationAdmin(_ *repositoryEntities.PaginatedContent, _ uuid.UUID) (*[]repositoryEntities.Response, error) {
 	args := m.MethodCalled("ListRepositoriesWhenApplicationAdmin")
 	return args.Get(0).(*[]repositoryEntities.Response), mockUtils.ReturnNilOrError(args, 1)
 }
