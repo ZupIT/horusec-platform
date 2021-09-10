@@ -233,7 +233,7 @@ func (r *Repository) ListRepositoriesWhenApplicationAdmin(
 
 	return repositories, r.databaseRead.Raw(
 		r.queryListRepositoriesWhenApplicationAdmin(paginated),
-			repositories, sql.Named("workspaceID", workspaceID)).GetErrorExceptNotFound()
+		repositories, sql.Named("workspaceID", workspaceID)).GetErrorExceptNotFound()
 }
 
 func (r *Repository) queryListRepositoriesWhenApplicationAdmin(paginated *repositoryEntities.PaginatedContent) string {
