@@ -16,7 +16,7 @@
 
 import React from 'react';
 import Styled from './styled';
-import { Button, Icon, Pagination } from 'components';
+import { Button, Pagination } from 'components';
 import { PaginationInfo } from 'helpers/interfaces/Pagination';
 import ReactTooltip, { TooltipProps } from 'react-tooltip';
 import {
@@ -32,7 +32,7 @@ import {
   Toolbar,
 } from '@material-ui/core';
 import { MoreHoriz } from '@material-ui/icons';
-import { divide, kebabCase } from 'lodash';
+import { kebabCase } from 'lodash';
 import PopupState, { bindTrigger, bindMenu } from 'material-ui-popup-state';
 
 export interface TableColumn {
@@ -82,10 +82,8 @@ const Datatable: React.FC<DatatableInterface> = (props) => {
     columns,
     dataSource,
     emptyListText,
-    isLoading,
     paginate,
     tooltip,
-    fixed = true,
     buttons = [],
     title,
   } = props;

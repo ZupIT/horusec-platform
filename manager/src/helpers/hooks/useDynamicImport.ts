@@ -23,7 +23,7 @@ const useDynamicImport = (name: string) => {
     let abort: () => void;
 
     (async () => {
-      const abortController = new Promise((resolve) => {
+      const abortController = new Promise((resolve: any) => {
         abort = resolve;
       });
       const svgData = name
