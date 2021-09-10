@@ -71,7 +71,7 @@
     "@types/react-linkify": "1.0.1",
     "@types/react-router-dom": "5.1.8",
     "@types/single-spa-react": "2.12.0",
-    "@types/styled-components": "5.1.13",
+    "@types/styled-components": "5.1.14",
     "@typescript-eslint/eslint-plugin": "4.26.0",
     "@typescript-eslint/parser": "4.26.0",
     "chokidar": "^3.5.2",
