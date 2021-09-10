@@ -37,7 +37,7 @@
     "react-app-rewired": "2.1.8",
     "react-datepicker": "3.8.0",
     "react-dom": "17.0.2",
-    "react-hook-form": "6.15.8",
+    "react-hook-form": "7.15.2",
     "react-i18next": "11.12.0",
     "react-linkify": "1.0.0-alpha",
     "react-router-dom": "5.2.0",
