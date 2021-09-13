@@ -65,7 +65,7 @@
     "@types/keycloak-js": "3.4.1",
     "@types/lodash": "4.14.172",
     "@types/node": "14.17.15",
-    "@types/react-datepicker": "4.1.6",
+    "@types/react-datepicker": "4.1.7",
     "@types/react-dom": "17.0.9",
     "@types/react": "17.0.20",
     "@types/react-linkify": "1.0.1",
