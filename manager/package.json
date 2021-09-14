@@ -27,7 +27,7 @@
     "formik": "2.2.9",
     "html-to-image": "1.7.0",
     "i18next": "20.6.1",
-    "jspdf": "2.3.1",
+    "jspdf": "2.4.0",
     "keycloak-js": "15.0.2",
     "lodash": "4.17.21",
     "material-ui-popup-state": "1.9.3",
