@@ -41,6 +41,15 @@ func NewUseCaseDashboard() IUseCases {
 
 func (u *UseCases) ParseAnalysisToVulnerabilitiesByAuthor(
 	analysis *analysisEntities.Analysis) []*dashboard.VulnerabilitiesByAuthor {
+	if len(analysis.AnalysisVulnerabilities) == 0 {
+		return u.emptyAnalysisResponseByAuthor(analysis)
+	}
+
+	return u.processVulnerabilitiesByAuthor(analysis)
+}
+
+func (u *UseCases) processVulnerabilitiesByAuthor(
+	analysis *analysisEntities.Analysis) []*dashboard.VulnerabilitiesByAuthor {
 	mapVulnByAuthor := map[string]*dashboard.VulnerabilitiesByAuthor{}
 
 	for index := range analysis.AnalysisVulnerabilities {
@@ -55,6 +64,16 @@ func (u *UseCases) ParseAnalysisToVulnerabilitiesByAuthor(
 	}
 
 	return u.mapVulnByAuthorToSlice(mapVulnByAuthor)
+}
+
+func (u *UseCases) emptyAnalysisResponseByAuthor(
+	analysis *analysisEntities.Analysis) []*dashboard.VulnerabilitiesByAuthor {
+	return []*dashboard.VulnerabilitiesByAuthor{
+		{
+			Author:        "",
+			Vulnerability: u.newVulnerabilityFromAnalysis(analysis),
+		},
+	}
 }
 
 func (u *UseCases) newVulnerabilitiesByAuthor(analysis *analysisEntities.Analysis,
@@ -81,6 +100,15 @@ func (u *UseCases) mapVulnByAuthorToSlice(mapVulnByAuthor map[string]*dashboard.
 
 func (u *UseCases) ParseAnalysisToVulnerabilitiesByRepository(
 	analysis *analysisEntities.Analysis) []*dashboard.VulnerabilitiesByRepository {
+	if len(analysis.AnalysisVulnerabilities) == 0 {
+		return u.emptyAnalysisResponseByRepository(analysis)
+	}
+
+	return u.processVulnerabilitiesByRepository(analysis)
+}
+
+func (u *UseCases) processVulnerabilitiesByRepository(
+	analysis *analysisEntities.Analysis) []*dashboard.VulnerabilitiesByRepository {
 	mapVulnByRepository := map[string]*dashboard.VulnerabilitiesByRepository{}
 
 	for index := range analysis.AnalysisVulnerabilities {
@@ -95,6 +123,16 @@ func (u *UseCases) ParseAnalysisToVulnerabilitiesByRepository(
 	}
 
 	return u.mapVulnByRepositoryToSlice(mapVulnByRepository)
+}
+
+func (u *UseCases) emptyAnalysisResponseByRepository(
+	analysis *analysisEntities.Analysis) []*dashboard.VulnerabilitiesByRepository {
+	return []*dashboard.VulnerabilitiesByRepository{
+		{
+			RepositoryName: analysis.RepositoryName,
+			Vulnerability:  u.newVulnerabilityFromAnalysis(analysis),
+		},
+	}
 }
 
 func (u *UseCases) newVulnerabilitiesByRepository(analysis *analysisEntities.Analysis,
@@ -120,6 +158,15 @@ func (u *UseCases) mapVulnByRepositoryToSlice(mapVulnByRepository map[string]*da
 }
 
 func (u *UseCases) ParseAnalysisToVulnerabilitiesByLanguage(
+	analysis *analysisEntities.Analysis) []*dashboard.VulnerabilitiesByLanguage {
+	if len(analysis.AnalysisVulnerabilities) == 0 {
+		return u.emptyAnalysisResponseByLanguage(analysis)
+	}
+
+	return u.processVulnerabilitiesByLanguage(analysis)
+}
+
+func (u *UseCases) processVulnerabilitiesByLanguage(
 	analysis *analysisEntities.Analysis) []*dashboard.VulnerabilitiesByLanguage {
 	mapVulnByLanguage := map[languages.Language]*dashboard.VulnerabilitiesByLanguage{}
 
@@ -158,6 +205,16 @@ func (u *UseCases) mapVulnByLanguageToSlice(
 	}
 
 	return sliceVulnsByLanguage
+}
+
+func (u *UseCases) emptyAnalysisResponseByLanguage(
+	analysis *analysisEntities.Analysis) []*dashboard.VulnerabilitiesByLanguage {
+	return []*dashboard.VulnerabilitiesByLanguage{
+		{
+			Language:      "",
+			Vulnerability: u.newVulnerabilityFromAnalysis(analysis),
+		},
+	}
 }
 
 func (u *UseCases) ParseAnalysisToVulnerabilitiesByTime(

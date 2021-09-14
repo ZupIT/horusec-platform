@@ -1,5 +1,5 @@
 /**
- * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * Copyright 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -70,7 +70,7 @@ const Permissions: React.FC<Props> = ({ isOpen, onClose, rolesType }) => {
     <Styled.Background>
       <Styled.Wrapper>
         <Styled.Header>
-          <Styled.TitleWrapper>
+          <Styled.TitleWrapper id="title-permissions-wrapper">
             <Styled.Close name="lock" size="22px" onClick={onClose} />
             <Styled.Title>{t('PERMISSIONS.TITLE')}</Styled.Title>
           </Styled.TitleWrapper>

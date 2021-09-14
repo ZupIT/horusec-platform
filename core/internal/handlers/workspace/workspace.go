@@ -19,6 +19,8 @@ import (
 	"net/http"
 	"strings"
 
+	databaseEnums "github.com/ZupIT/horusec-devkit/pkg/services/database/enums"
+
 	"github.com/go-chi/chi"
 	"github.com/google/uuid"
 
@@ -249,7 +251,7 @@ func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) List(w http.ResponseWriter, r *http.Request) {
 	data, err := h.getListData(r)
 	if err != nil {
-		if strings.Contains(err.Error(), "{KEYCLOAK AUTH} failed to get user info") {
+		if h.isNotAuthorized(err) {
 			httpUtil.StatusUnauthorized(w, err)
 		} else {
 			httpUtil.StatusBadRequest(w, err)
@@ -550,4 +552,10 @@ func (h *Handler) ListTokens(w http.ResponseWriter, r *http.Request) {
 	}
 
 	httpUtil.StatusOK(w, tokens)
+}
+
+func (h *Handler) isNotAuthorized(err error) bool {
+	return strings.Contains(err.Error(), "{KEYCLOAK AUTH} failed to get user info") ||
+		strings.Contains(err.Error(), "{AUTHENTICATION} is not possible get user without email") ||
+		strings.Contains(err.Error(), databaseEnums.ErrorNotFoundRecords.Error())
 }

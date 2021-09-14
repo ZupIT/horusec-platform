@@ -48,15 +48,19 @@ const updateVulnerability = (
     severity: string;
     type: string;
     vulnerabilityID: string;
-  }[]
+  }[],
+  overviewType: 'repository' | 'workspace'
 ) => {
-  return http.patch(
-    `${SERVICE_VULNERABILITY}/vulnerability/management/workspace/${workspaceID}/repository/${repositoryID}/vulnerabilities`,
-    {
-      analysisID,
-      vulnerabilities,
-    }
-  );
+  const route = `${SERVICE_VULNERABILITY}/vulnerability/management/workspace/${workspaceID}${
+    overviewType === 'repository'
+      ? `/repository/${repositoryID}/vulnerabilities`
+      : '/vulnerabilities'
+  }`;
+
+  return http.patch(route, {
+    analysisID,
+    vulnerabilities,
+  });
 };
 
 export default {

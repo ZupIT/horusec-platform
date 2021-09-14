@@ -1,4 +1,4 @@
-// Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+// Copyright 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@ package keycloak
 import (
 	"context"
 	"strings"
+
+	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 
 	"github.com/pkg/errors"
 
@@ -79,6 +81,7 @@ func (c *Client) GetAccountIDByJWTToken(token string) (uuid.UUID, error) {
 func (c *Client) GetUserInfo(accessToken string) (*gocloak.UserInfo, error) {
 	userInfo, err := c.client.GetUserInfo(c.ctx, c.removeBearer(accessToken), c.realm)
 	if err != nil {
+		logger.LogError("ERROR -> ", err)
 		return nil, errors.Wrap(err, keycloakEnums.MessageFailedToGetUserInfo)
 	}
 

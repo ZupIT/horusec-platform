@@ -1,5 +1,5 @@
 /**
- * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * Copyright 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,25 +17,66 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import Styled from './styled';
+import { Menu, MenuItem } from '@material-ui/core';
+import { repository, bugs } from '../../../package.json';
 
 interface HelperInterface {
-  url: string;
+  pageHelperUrl: string;
 }
 
-const Helper: React.FC<HelperInterface> = ({ url }) => {
+const Helper: React.FC<HelperInterface> = ({ pageHelperUrl }) => {
   const { t } = useTranslation();
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const openExternalLink = (url: string) => {
+    window.open(url, '_blank');
+    handleClose();
+  };
 
   return (
-    <Styled.Link
-      tabIndex={0}
-      aria-label={t('HEADER.ARIA.HELP')}
-      href={url}
-      target="_blank"
-    >
-      <Styled.HelpIcon name="help" size="20px" />
+    <>
+      <Styled.Button
+        tabIndex={0}
+        aria-label={t('HEADER.ARIA.HELP')}
+        aria-controls="simple-menu"
+        aria-haspopup="true"
+        onClick={handleClick}
+      >
+        <Styled.HelpIcon name="help" size="20px" />
 
-      <Styled.Text>{t('SIDE_MENU.HELPER')}</Styled.Text>
-    </Styled.Link>
+        <Styled.Text>{t('SIDE_MENU.HELPER')}</Styled.Text>
+      </Styled.Button>
+
+      <Menu
+        id="simple-menu"
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleClose}
+      >
+        <MenuItem onClick={() => openExternalLink(pageHelperUrl)}>
+          <Styled.IconItemMenu size="18px" name="documentation" />
+          {t('GENERAL.ABOUT_PAGE')}
+        </MenuItem>
+
+        <MenuItem onClick={() => openExternalLink(repository.url)}>
+          <Styled.IconItemMenu size="18px" name="github" />
+          {t('GENERAL.GITHUB')}
+        </MenuItem>
+
+        <MenuItem onClick={() => openExternalLink(bugs.url)}>
+          <Styled.IconItemMenu size="18px" name="forum" />
+          {t('GENERAL.FORUM')}
+        </MenuItem>
+      </Menu>
+    </>
   );
 };
 

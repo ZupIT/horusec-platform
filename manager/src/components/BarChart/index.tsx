@@ -1,5 +1,5 @@
 /**
- * Copyright 2020 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+ * Copyright 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,10 +46,15 @@ const BarChart: React.FC<BarChartProps> = ({
   const [ariaLabel, setAriaLabel] = useState<string>('');
 
   const calculatePercentageOfBar = (value: number) => {
-    const total = data.reduce((a, b) => {
-      return { legend: null, value: a.value + b.value };
-    });
-    return `${(value * 100) / total.value}%`;
+    if (value > 0) {
+      const total = data.reduce((a, b) => {
+        return { legend: null, value: a.value + b.value };
+      });
+
+      return `${(value * 100) / total.value}%`;
+    } else {
+      return '0%';
+    }
   };
 
   const renderRow = ({ value, legend, color }: BarCharRow) => (
@@ -57,6 +62,7 @@ const BarChart: React.FC<BarChartProps> = ({
       isVertical={isVertical}
       key={legend}
       onClick={() => onClickRow({ value, legend })}
+      id={`${title}_${legend}`.replaceAll(' ', '_')}
     >
       <Styled.Value isVertical={isVertical}>{value}</Styled.Value>
 
@@ -115,10 +121,6 @@ const BarChart: React.FC<BarChartProps> = ({
       </Styled.Header>
 
       <Styled.WrapperChart isVertical={isVertical}>
-        {data.length <= 0 && !isLoading ? (
-          <Styled.Empty>{t('DASHBOARD_SCREEN.CHART_NO_DATA')}</Styled.Empty>
-        ) : null}
-
         {!isLoading ? data.map((item) => renderRow(item)) : renderLoading()}
       </Styled.WrapperChart>
     </Styled.Wrapper>
