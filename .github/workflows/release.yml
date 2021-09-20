@@ -14,12 +14,7 @@
 
 name: Release
 
-on:
-  pull_request:
-    branches:
-      - main
-    types:
-      - closed
+on: ["push"]
 
 jobs:
   version:
