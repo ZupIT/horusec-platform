@@ -48,7 +48,7 @@
     "single-spa-react": "4.4.0",
     "styled-components": "5.3.1",
     "systemjs-webpack-interop": "2.3.7",
-    "xlsx": "0.17.1",
+    "xlsx": "0.17.2",
     "yup": "0.32.9"
   },
   "devDependencies": {
