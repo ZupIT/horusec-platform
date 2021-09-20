@@ -178,7 +178,7 @@ func (au *UseCases) sliceLanguages() []interface{} {
 		languages.Elixir,
 		languages.Nginx,
 		languages.Swift,
-		languages.Swift,
+		languages.Unknown,
 	}
 }
 
