@@ -118,7 +118,7 @@ components:
         pullSecrets: [ ]
         registry: docker.io/horuszup
         repository: horusec-auth
-        tag: v2.16.8
+        tag: v2.17.0
       livenessProbe: null
       readinessProbe: null
       resources: null
