@@ -18,6 +18,10 @@ COPY . /manager
 
 WORKDIR /manager
 
+ENV NO_PROXY=localhost
+ENV NODE_TLS_REJECT_UNAUTHORIZED=0
+RUN npm config set registry http://registry.npmjs.org
+
 RUN npm install
 RUN npm run build
 

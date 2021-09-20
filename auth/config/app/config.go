@@ -128,14 +128,28 @@ func (c *Config) GetEnableDefaultUser() bool {
 func (c *Config) GetDefaultUserData() (*accountEntities.Account, error) {
 	account := &accountEntities.Account{}
 
-	return account, json.Unmarshal([]byte(c.DefaultUserData), &account)
+	if c.DefaultUserData == enums.DefaultUserData {
+		logger.LogWarn(enums.MessageWarningDefaultUser)
+	}
+	if err := json.Unmarshal([]byte(c.DefaultUserData), &account); err != nil {
+		return nil, err
+	}
+	return account, nil
 }
 
 func (c *Config) GetApplicationAdminData() (*accountEntities.Account, error) {
 	account := &accountEntities.Account{}
 
 	logger.LogWarn(fmt.Sprintf(enums.MessageFailedToFormatAppAdminValue, enums.EnvApplicationAdminData))
-	return account.SetApplicationAdminTrue(), json.Unmarshal([]byte(c.ApplicationAdminData), account)
+
+	if c.ApplicationAdminData == enums.ApplicationAdminDefaultData {
+		logger.LogWarn(enums.MessageWarningDefaultApplicationAdmin)
+	}
+	if err := json.Unmarshal([]byte(c.ApplicationAdminData), account); err != nil {
+		return nil, err
+	}
+
+	return account.SetApplicationAdminTrue(), nil
 }
 
 func (c *Config) createDefaultUsers() IConfig {
