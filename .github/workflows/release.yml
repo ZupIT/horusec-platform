@@ -124,7 +124,7 @@ jobs:
         with:
           cosign-release: 'v1.2.0'
       - name: install cosign private key
-        run: 'echo "$COSIGN_KEY" > $COSIGN_KEY_LOCATION'
+        run: 'echo "$COSIGN_KEY" > cosign.key'
         shell: bash
         env:
           COSIGN_KEY: ${{secrets.COSIGN_KEY}}
