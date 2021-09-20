@@ -28,8 +28,8 @@ services:
 #      - "5433"
 #    command: -p 5433
 #    environment:
-#      POSTGRES_PASSWORD: root
-#      POSTGRES_USER: root
+#      POSTGRES_PASSWORD: root # Sensitive information we not recommended usage in production environment, change for usage strong data for connection with this service
+#      POSTGRES_USER: root # Sensitive information we not recommended usage in production environment, change for usage strong data for connection with this service
 #      POSTGRES_DB: keycloak
 #  keycloak:
 #    depends_on:
@@ -42,10 +42,10 @@ services:
 #      DB_VENDOR: "postgres"
 #      DB_ADDR: postgresql_keycloak
 #      DB_PORT: "5433"
-#      DB_USER: "root"
-#      DB_PASSWORD: "root"
-#      KEYCLOAK_USER: "keycloak"
-#      KEYCLOAK_PASSWORD: "keycloak"
+#      DB_USER: "root" # Sensitive information we not recommended usage in production environment, change for usage strong data for connection with this service
+#      DB_PASSWORD: "root" # Sensitive information we not recommended usage in production environment, change for usage strong data for connection with this service
+#      KEYCLOAK_USER: "keycloak" # Sensitive information we not recommended usage in production environment, change for usage strong data for connection with this service
+#      KEYCLOAK_PASSWORD: "keycloak" # Sensitive information we not recommended usage in production environment, change for usage strong data for connection with this service
   rabbit:
     container_name: rabbit
     image: rabbitmq:3-management
@@ -58,8 +58,8 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_PASSWORD: root
-      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root # Sensitive information we not recommended usage in production environment, change for usage strong data for connection with this service
+      POSTGRES_USER: root # Sensitive information we not recommended usage in production environment, change for usage strong data for connection with this service
       POSTGRES_DB: horusec_db
     volumes:
       - /var/lib/postgres/db/data:/var/lib/postgresql/data
@@ -80,11 +80,11 @@ services:
       HORUSEC_PORT: "8002"
       HORUSEC_BROKER_HOST: "rabbit"
       HORUSEC_BROKER_PORT: "5672"
-      HORUSEC_BROKER_USERNAME: "guest"
-      HORUSEC_BROKER_PASSWORD: "guest"
+      HORUSEC_BROKER_USERNAME: "guest" # Sensitive information we not recommended usage in production environment, change for usage strong data for connection with this service
+      HORUSEC_BROKER_PASSWORD: "guest" # Sensitive information we not recommended usage in production environment, change for usage strong data for connection with this service
       HORUSEC_SMTP_ADDRESS: "smtp.mailtrap.io"
-      HORUSEC_SMTP_USERNAME: ${HORUSEC_SMTP_USERNAME}
-      HORUSEC_SMTP_PASSWORD: ${HORUSEC_SMTP_PASSWORD}
+      HORUSEC_SMTP_USERNAME: ${HORUSEC_SMTP_USERNAME} # Sensitive information we not recommended usage in production environment, change for usage strong data for connection with this service
+      HORUSEC_SMTP_PASSWORD: ${HORUSEC_SMTP_PASSWORD} # Sensitive information we not recommended usage in production environment, change for usage strong data for connection with this service
       HORUSEC_SMTP_HOST: "smtp.mailtrap.io"
       HORUSEC_SMTP_PORT: "2525"
       HORUSEC_EMAIL_FROM: "horusec@zup.com.br"
@@ -101,13 +101,13 @@ services:
     environment:
       HORUSEC_PORT: "8006"
       HORUSEC_GRPC_PORT: "8007"
-      HORUSEC_DATABASE_SQL_URI: "postgresql://root:root@horusec_postgresql:5432/horusec_db?sslmode=disable"
+      HORUSEC_DATABASE_SQL_URI: "postgresql://root:root@horusec_postgresql:5432/horusec_db?sslmode=disable" # Sensitive information we not recommended usage in production environment, change for usage strong data for connection with this service
       HORUSEC_DATABASE_SQL_LOG_MODE: "false"
-      HORUSEC_JWT_SECRET_KEY: "horusec-secret"
+      HORUSEC_JWT_SECRET_KEY: "horusec-secret" # Sensitive information we not recommended usage in production environment, change for usage strong data for connection with this service
       HORUSEC_KEYCLOAK_BASE_PATH: ${HORUSEC_KEYCLOAK_BASE_PATH}
-      HORUSEC_KEYCLOAK_CLIENT_ID: ${HORUSEC_KEYCLOAK_CLIENT_ID}
-      HORUSEC_KEYCLOAK_CLIENT_SECRET: ${HORUSEC_KEYCLOAK_CLIENT_SECRET} # Get secret inside of keycloak server
-      HORUSEC_KEYCLOAK_REALM: ${HORUSEC_KEYCLOAK_REALM}
+      HORUSEC_KEYCLOAK_CLIENT_ID: ${HORUSEC_KEYCLOAK_CLIENT_ID} # Sensitive information we not recommended usage in production environment, change for usage strong data for connection with this service
+      HORUSEC_KEYCLOAK_CLIENT_SECRET: ${HORUSEC_KEYCLOAK_CLIENT_SECRET} # Sensitive information we not recommended usage in production environment, change for usage strong data for connection with this service
+      HORUSEC_KEYCLOAK_REALM: ${HORUSEC_KEYCLOAK_REALM} # Sensitive information we not recommended usage in production environment, change for usage strong data for connection with this service
       HORUSEC_LDAP_BASE: "dc=wimpi,dc=net"
       HORUSEC_LDAP_HOST: "ldap-service"
       HORUSEC_LDAP_PORT: "10389"
@@ -115,18 +115,18 @@ services:
       HORUSEC_LDAP_SKIP_TLS: "true"
       HORUSEC_LDAP_INSECURE_SKIP_VERIFY: "true"
       HORUSEC_LDAP_BINDDN: "uid=admin,ou=system"
-      HORUSEC_LDAP_BINDPASSWORD: "secret"
+      HORUSEC_LDAP_BINDPASSWORD: "secret" # Sensitive information we not recommended usage in production environment, change for usage strong data for connection with this service
       HORUSEC_LDAP_USERFILTER: "(sAMAccountName=%s)"
-      HORUSEC_LDAP_ADMIN_GROUP: "admin"
+      HORUSEC_LDAP_ADMIN_GROUP: "admin" # Sensitive information we not recommended usage in production environment, change for usage strong data for connection with this service
       HORUSEC_ENABLE_APPLICATION_ADMIN: "false"
-      HORUSEC_APPLICATION_ADMIN_DATA: "{\"username\": \"horusec-admin\", \"email\":\"horusec-admin@example.com\", \"password\":\"Devpass0*\"}"
+      HORUSEC_APPLICATION_ADMIN_DATA: "{\"username\": \"horusec-admin\", \"email\":\"horusec-admin@example.com\", \"password\":\"Devpass0*\"}" # Sensitive information we not recommended usage in production environment, change for usage strong data for connection with this service
       HORUSEC_ENABLE_DEFAULT_USER: "true"
-      HORUSEC_DEFAULT_USER_DATA: "{\"username\": \"dev\", \"email\":\"dev@example.com\", \"password\":\"Devpass0*\"}"
+      HORUSEC_DEFAULT_USER_DATA: "{\"username\": \"dev\", \"email\":\"dev@example.com\", \"password\":\"Devpass0*\"}" # Sensitive information we not recommended usage in production environment, change for usage strong data for connection with this service
       HORUSEC_AUTH_TYPE: "horusec"
       HORUSEC_BROKER_HOST: "rabbit"
       HORUSEC_BROKER_PORT: "5672"
-      HORUSEC_BROKER_USERNAME: "guest"
-      HORUSEC_BROKER_PASSWORD: "guest"
+      HORUSEC_BROKER_USERNAME: "guest" # Sensitive information we not recommended usage in production environment, change for usage strong data for connection with this service
+      HORUSEC_BROKER_PASSWORD: "guest" # Sensitive information we not recommended usage in production environment, change for usage strong data for connection with this service
       HORUSEC_DISABLE_EMAILS: "true"
   horusec-core:
     image: horuszup/horusec-core:v2.17.0
@@ -143,9 +143,9 @@ services:
       HORUSEC_DISABLED_BROKER: "true"
       HORUSEC_BROKER_HOST: "rabbit"
       HORUSEC_BROKER_PORT: "5672"
-      HORUSEC_BROKER_USERNAME: "guest"
-      HORUSEC_BROKER_PASSWORD: "guest"
-      HORUSEC_DATABASE_SQL_URI: "postgresql://root:root@horusec_postgresql:5432/horusec_db?sslmode=disable"
+      HORUSEC_BROKER_USERNAME: "guest" # Sensitive information we not recommended usage in production environment, change for usage strong data for connection with this service
+      HORUSEC_BROKER_PASSWORD: "guest" # Sensitive information we not recommended usage in production environment, change for usage strong data for connection with this service
+      HORUSEC_DATABASE_SQL_URI: "postgresql://root:root@horusec_postgresql:5432/horusec_db?sslmode=disable" # Sensitive information we not recommended usage in production environment, change for usage strong data for connection with this service
       HORUSEC_DATABASE_SQL_LOG_MODE: "false"
       HORUSEC_GRPC_AUTH_URL: "horusec-auth:8007"
   horusec-analytic:
@@ -160,13 +160,13 @@ services:
     container_name: horusec-analytic
     environment:
       HORUSEC_PORT: "8005"
-      HORUSEC_DATABASE_SQL_URI: "postgresql://root:root@horusec_postgresql:5432/horusec_analytic_db?sslmode=disable"
+      HORUSEC_DATABASE_SQL_URI: "postgresql://root:root@horusec_postgresql:5432/horusec_analytic_db?sslmode=disable" # Sensitive information we not recommended usage in production environment, change for usage strong data for connection with this service
       HORUSEC_DATABASE_SQL_LOG_MODE: "false"
       HORUSEC_GRPC_AUTH_URL: "horusec-auth:8007"
       HORUSEC_BROKER_HOST: "rabbit"
       HORUSEC_BROKER_PORT: "5672"
-      HORUSEC_BROKER_USERNAME: "guest"
-      HORUSEC_BROKER_PASSWORD: "guest"
+      HORUSEC_BROKER_USERNAME: "guest" # Sensitive information we not recommended usage in production environment, change for usage strong data for connection with this service
+      HORUSEC_BROKER_PASSWORD: "guest" # Sensitive information we not recommended usage in production environment, change for usage strong data for connection with this service
   horusec-api:
     image: horuszup/horusec-api:v2.17.0
     ports:
@@ -179,13 +179,13 @@ services:
     container_name: horusec-api
     environment:
       HORUSEC_PORT: "8000"
-      HORUSEC_DATABASE_SQL_URI: "postgresql://root:root@horusec_postgresql:5432/horusec_db?sslmode=disable"
+      HORUSEC_DATABASE_SQL_URI: "postgresql://root:root@horusec_postgresql:5432/horusec_db?sslmode=disable" # Sensitive information we not recommended usage in production environment, change for usage strong data for connection with this service
       HORUSEC_DATABASE_SQL_LOG_MODE: "false"
       HORUSEC_GRPC_AUTH_URL: "horusec-auth:8007"
       HORUSEC_BROKER_HOST: "rabbit"
       HORUSEC_BROKER_PORT: "5672"
-      HORUSEC_BROKER_USERNAME: "guest"
-      HORUSEC_BROKER_PASSWORD: "guest"
+      HORUSEC_BROKER_USERNAME: "guest" # Sensitive information we not recommended usage in production environment, change for usage strong data for connection with this service
+      HORUSEC_BROKER_PASSWORD: "guest" # Sensitive information we not recommended usage in production environment, change for usage strong data for connection with this service
   horusec-vulnerability:
     image: horuszup/horusec-vulnerability:v2.17.0
     ports:
@@ -197,13 +197,13 @@ services:
     container_name: horusec-vulnerability
     environment:
       HORUSEC_PORT: "8001"
-      HORUSEC_DATABASE_SQL_URI: "postgresql://root:root@horusec_postgresql:5432/horusec_db?sslmode=disable"
+      HORUSEC_DATABASE_SQL_URI: "postgresql://root:root@horusec_postgresql:5432/horusec_db?sslmode=disable" # Sensitive information we not recommended usage in production environment, change for usage strong data for connection with this service
       HORUSEC_DATABASE_SQL_LOG_MODE: "false"
       HORUSEC_GRPC_AUTH_URL: "horusec-auth:8007"
       HORUSEC_BROKER_HOST: "rabbit"
       HORUSEC_BROKER_PORT: "5672"
-      HORUSEC_BROKER_USERNAME: "guest"
-      HORUSEC_BROKER_PASSWORD: "guest"
+      HORUSEC_BROKER_USERNAME: "guest" # Sensitive information we not recommended usage in production environment, change for usage strong data for connection with this service
+      HORUSEC_BROKER_PASSWORD: "guest" # Sensitive information we not recommended usage in production environment, change for usage strong data for connection with this service
   horusec-webhook:
     image: horuszup/horusec-webhook:v2.17.0
     ports:
@@ -215,7 +215,7 @@ services:
     container_name: horusec-webhook
     environment:
      HORUSEC_PORT: "8004"
-     HORUSEC_DATABASE_SQL_URI: "postgresql://root:root@horusec_postgresql:5432/horusec_db?sslmode=disable"
+     HORUSEC_DATABASE_SQL_URI: "postgresql://root:root@horusec_postgresql:5432/horusec_db?sslmode=disable" # Sensitive information we not recommended usage in production environment, change for usage strong data for connection with this service
      HORUSEC_DATABASE_SQL_LOG_MODE: "false"
      HORUSEC_GRPC_AUTH_URL: "horusec-auth:8007"
      HORUSEC_BROKER_HOST: "rabbit"
