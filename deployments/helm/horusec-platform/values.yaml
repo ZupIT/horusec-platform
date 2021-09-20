@@ -42,7 +42,7 @@ components:
           pullSecrets: [ ]
           registry: docker.io/horuszup
           repository: horusec-migrations
-          tag: v2.16.8
+          tag: v2.17.0
       name: analytic_db
       password:
         secretKeyRef:
@@ -371,7 +371,7 @@ global:
         pullSecrets: [ ]
         registry: docker.io/horuszup
         repository: horusec-migrations
-        tag: v2.16.8
+        tag: v2.17.0
     name: horusec_db
     password:
       secretKeyRef:
