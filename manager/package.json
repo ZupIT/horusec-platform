@@ -67,7 +67,7 @@
     "@types/node": "14.17.16",
     "@types/react-datepicker": "4.1.7",
     "@types/react-dom": "17.0.9",
-    "@types/react": "17.0.20",
+    "@types/react": "17.0.22",
     "@types/react-linkify": "1.0.1",
     "@types/react-router-dom": "5.1.9",
     "@types/single-spa-react": "3.0.1",
