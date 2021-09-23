@@ -1,0 +1,5 @@
+FROM alpine
+
+COPY horusec-analytic /
+COPY horusec-analytic-migrate-v1-v2 /
+ENTRYPOINT ["./horusec-analytic"]
