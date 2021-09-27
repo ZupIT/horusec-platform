@@ -31,7 +31,7 @@ jobs:
     steps:
       - name: "Extract version from branch name"
         id: from-branch
-        uses: actions/github-script@v4
+        uses: actions/github-script@v5
         with:
           script: |
             const branch = context.payload.pull_request.head.ref;
