@@ -12,6 +12,6 @@ require (
 	github.com/google/wire v0.5.0
 	github.com/streadway/amqp v1.0.0
 	github.com/stretchr/testify v1.7.0
-	github.com/swaggo/swag v1.7.1
+	github.com/swaggo/swag v1.7.3
 	google.golang.org/grpc v1.41.0
 )
