@@ -29,107 +29,108 @@
         <img src="https://img.shields.io/badge/license-Apache%202-blue"/></a>
 </p>
 
-# Horusec Platform
+# **Horusec Platform**
 
-Horusec Platform is a set of web services that integrate with the [Horusec CLI](https://github.com/ZupIT/horusec) 
-to facilitate the visualization and management of vulnerabilities.
+Horusec Platform is a set of web services that integrate with [**Horusec CLI**](https://github.com/ZupIT/horusec) to make it easier for you to see and manage the vulnerabilities. 
 
 [comment]: <> (@todo add a gif of manager usage)
 
-## Dependencies
 
-- [RabbitMQ](https://www.rabbitmq.com/)
-- [PostgreSQL](https://www.postgresql.org/)
+## **How to install?**
 
-## Installation
+### **Requirements**
+You need to have:
 
-There are several ways to install horusec platform in your environment, choose the one that is most comfortable for you.
+- [**RabbitMQ**](https://www.rabbitmq.com/)
+- [**PostgreSQL**](https://www.postgresql.org/)
 
-Just remember to change the default environment variables values to the new and secure ones.
 
-In some types of installation we use a `make` command to simplify the process.
-If you want to know everything that will be executed, take a look at the `Makefile` located at the root of the project.
+There are several ways to install the Horusec Platform in your environment.
+In some types of installations, we use a `make` command to simplify the process.
+If you want to know everything that will be executed, take a look at the `Makefile` located at the project's root.
 
-### Install with docker compose:
+You can choose what type of installation you want below, but remember to change the default environment variables values to new and secure ones.
 
+### **Install with docker compose**
+Follow the steps: 
+
+**Step 1:** Run the command: 
 ```cmd
 make install
 ```
 
-After executing the command, we will start the docker compose file `compose.yml`, which contains all services, migrations and the needed dependencies. 
-The compose file can be found in `deployments/compose/compose.yaml` and migrations in `migrations/source`.
+**Step 2:** Start the docker compose file **`compose.yml`**. It contains all services, migrations and the needed dependencies. 
+- You can find the compose file in **`deployments/compose/compose.yaml`**; 
+- You can find migrations in **`migrations/source`**.
 
-After that, the installation will be ready, with all default values, the latest versions, and
-the following user for tests:
+**Step 3:** After this, the installation is ready with all default values, the latest versions, and the following user for tests:
 
 ```
 Username: dev@example.com
 Password: Devpass0*
 ```
 
-By default, the docker compose file is configured to perform a standard installation. 
-In the case of production environments, be sure to change the values of the environment variables to new and secure ones.
+Docker compose file is configured to perform a standard installation by default.  
+In the production environments' case, make sure to **change the values of the environment variables to new and secure ones**.
 
 > :warning: We **do not recommend** using docker-compose installation in a productive environment.
 
-Click [here](https://horusec.io/docs/web/installation/install-with-docker-compose) 
-to check full docker compose installation docs.
+For more information about Docker compose, check out [**Docker compose installation section in our documetation**](https://horusec.io/docs/web/installation/install-with-docker-compose).
 
-### Install with helm:
+### **Install with Helm**
 
-Each release contains its own helm files for that version, which can be found 
-[here](https://github.com/ZupIT/horusec-platform/releases), they can also be found at `deployments/helm`.
+Each release contains its own helm files for that specific version, you can find them [**in the repository**](https://github.com/ZupIT/horusec-platform/releases) and in the folder **`deployments/helm`**.
 In both cases they will be separated by each service of the architecture.
 
-Click [here](https://horusec.io/docs/web/installation/install-with-helm) to check the complete helm installation docs.
+For more information, check out [**the installing with Helm section in our documentation**](https://horusec.io/docs/web/installation/install-with-helm).
 
-### Install with horusec-operator:
+### **Install with Horusec-Operator**
 
-Horusec-operator performs management between Horusec web services and its Kubernetes cluster. It was created based on a community’s idea to have a simpler way to install the services in an environment using Kubernetes. You can see more about kubernetes operators [here](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/)
-Click [here](https://horusec.io/docs/web/installation/install-with-operator/) to check full horusec-operator installation docs.
+Horusec-Operator performs management between Horusec web services and its Kubernetes cluster. It was created based on a community’s idea to have a simpler way to install the services in an environment using Kubernetes. 
+
+-  Check out how to install Horusec-Operator in our [**installing section**](https://horusec.io/docs/web/installation/install-with-operator/).
+- You can see more about Kubernetes Operators [**in their documentation**](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/).
 
 
-## Features
+## **Features**
 
-The following are some main features that Horusec Platform provides, to learn more about these and several other 
-features access our [documentation](https://horusec.io/docs/web/overview).
+Horusec Platform provides several features, see some of them below. 
 
-### MultiTenancy
+### **MultiTenancy**
 
-Distribute only the necessary [permissions](https://horusec.io/docs/web/overview/#1-multitenant) according to each user.
+It distributes only the necessary [**permissions**](https://horusec.io/docs/web/overview/#1-multitenant) according to each user: 
 
 <p align="center" margin="20 0"><img src="assets/horusec-invite-users-1.png" alt="multiTenancy" width="100%" style="max-width:100%;"/></p>
 
-### Dashboard
+### **Dashboard**
 
-Dashboard with various metrics about your vulnerabilities for both workspace and repository.
+The dashboard shows you various metrics about your vulnerabilities for workspaces and repositories:
 
 <p align="center" margin="20 0"><img src="assets/horusec-dashboard-1.png" alt="dashboard" width="100%" style="max-width:100%;"/></p>
 
-### Vulnerability Management
+### **Vulnerability Management**
 
-Vulnerability management screen, allowing to identify false positives, accepted risk and even modify a severity 
-to a value appropriate to the reality of the vulnerability.
+The vulnerability management screen allows you to identify false positives, accepted risk, and even modify a severity to an appropriate value to the reality of the vulnerability:
 
 <p align="center" margin="20 0"><img src="assets/horusec-vuln-management-1.png" alt="vuln-management" width="100%" style="max-width:100%;"/></p>
 
-### Tokens
-Creation of workspace or repository authentication 
-[tokens](https://horusec.io/docs/tutorials/how-to-create-an-authorization-token) for your pipeline.
+### **Tokens**
+It creates workspaces or repositories authentication 
+[**tokens**](https://horusec.io/docs/tutorials/how-to-create-an-authorization-token) for your pipeline: 
 
 <p align="center" margin="20 0"><img src="assets/horusec-create-token-1.png" alt="tokens" width="100%" style="max-width:100%;"/></p>
 
-### Authentication Types
+### **Authentication Types**
 
-With the Horusec Platform you can choose which form of authentication you will use.
+You can choose which form of authentication you will use with Horusec Platform.
 
-Currently, having three possibilities:
+There are three possibilities:
 
 - HORUSEC (native) 
 - LDAP
 - KEYCLOAK
 
-Checkout for our authentication types [docs](https://horusec.io/docs/tutorials/how-to-change-authentication-types).
+For more information about authentication types, check out our [**documentation**](https://horusec.io/docs/tutorials/how-to-change-authentication-types).
 
 [comment]: <> ([comment]: <> &#40;## Migrating From V1&#41;)
 
@@ -137,25 +138,29 @@ Checkout for our authentication types [docs](https://horusec.io/docs/tutorials/h
 
 [comment]: <> ([documentation]&#40;@todo&#41;.)
 
-## Communication
+## **Documentation**
 
-We have a few channels for contact, feel free to reach out to us at:
+For more information about Horusec, please check out the [**documentation**](https://horusec.io/docs/).
 
-- [GitHub Issues](https://github.com/ZupIT/horusec-platform/issues)
-- [Zup Open Source Forum](https://forum.zup.com.br)
 
-## Contributing
+## **Contributing**
 
-Feel free to use, recommend improvements, or contribute to new implementations.
+If you want to contribute to this repository, access our [**Contributing Guide**](https://github.com/ZupIT/charlescd/blob/main/CONTRIBUTING.md). 
+And if you want to know more about Horusec, check out some of our other projects:
 
-If this is our first repository that you visit, or would like to know more about Horusec,
-check out some of our other projects.
 
-- [Horusec CLI](https://github.com/ZupIT/horusec)
-- [Horusec DevKit](https://github.com/ZupIT/horusec-devkit)
-- [Horusec Engine](https://github.com/ZupIT/horusec-engine)
-- [Horusec Operator](https://github.com/ZupIT/horusec-operator)
-- [Horusec Admin](https://github.com/ZupIT/horusec-admin)
-- [Horusec VsCode](https://github.com/ZupIT/horusec-vscode-plugin)
+- [**Horusec CLI**](https://github.com/ZupIT/horusec)
+- [**Horusec Devkit**](https://github.com/ZupIT/horusec-platform)
+- [**Horusec Engine**](https://github.com/ZupIT/horusec-engine)
+- [**Horusec Operator**](https://github.com/ZupIT/horusec-operator)
+- [**Horusec Admin**](https://github.com/ZupIT/horusec-admin)
+- [**Horusec VsCode**](https://github.com/ZupIT/horusec-vscode-plugin)
+
+## **Community**
+Feel free to reach out to us at:
+
+- [**GitHub Issues**](https://github.com/ZupIT/horusec-devkit/issues)
+- [**Zup Open Source Forum**](https://forum.zup.com.br)
+
 
 This project exists thanks to all the contributors. You rock! ❤️🚀
