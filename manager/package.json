@@ -23,7 +23,7 @@
     "date-fns": "2.24.0",
     "downloadjs": "1.4.7",
     "eslint": "7.32.0",
-    "export-from-json": "1.4.0",
+    "export-from-json": "1.4.1",
     "formik": "2.2.9",
     "html-to-image": "1.8.5",
     "i18next": "21.1.1",
