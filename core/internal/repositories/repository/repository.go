@@ -246,8 +246,7 @@ func (r *Repository) queryListRepositoriesWhenApplicationAdmin(paginated *reposi
 			SELECT repo.repository_id, repo.workspace_id, repo.description, repo.name, 'applicationAdmin' AS role,
 				repo.created_at, repo.updated_at
 			FROM repositories AS repo
-			INNER JOIN account_repository AS ar ON ar.repository_id = repo.repository_id
-			WHERE ar.workspace_id = @workspaceID %s`, queryPaginated)
+			WHERE repo.workspace_id = @workspaceID %s`, queryPaginated)
 }
 
 func (r *Repository) GetRepositoryLdap(
