@@ -1,0 +1,404 @@
+# Copyright 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+source:
+  enabled: true
+
+release:
+  ids:
+    -
+  draft: true
+
+signs:
+  - cmd: cosign
+    stdin: '{{ .Env.COSIGN_PWD }}'
+    args: ["sign-blob", "-key={{ .Env.COSIGN_KEY_LOCATION }}", "-output=${signature}", "${artifact}"]
+    artifacts: all
+
+docker_signs:
+  - cmd: cosign
+    stdin: '{{ .Env.COSIGN_PWD }}'
+    args: ["sign", "-key={{ .Env.COSIGN_KEY_LOCATION }}", "${artifact}"]
+    artifacts: all
+
+builds:
+  - id: horusec-analytic
+    dir: ./analytic
+    env: [ CGO_ENABLED=0 ]
+    main: ./cmd/app/main.go
+    binary: horusec-analytic
+    ldflags:
+      - -X github.com/ZupIT/horusec-platform/config.version=v{{ .Version }}
+    goos:
+      - linux
+    goarch:
+      - amd64
+
+  - id: horusec-api
+    dir: ./api
+    env: [ CGO_ENABLED=0 ]
+    main: ./cmd/app/main.go
+    binary: horusec-api
+    ldflags:
+      - -X github.com/ZupIT/horusec-platform/config.version=v{{ .Version }}
+    goos:
+      - linux
+    goarch:
+      - amd64
+
+  - id: horusec-auth
+    dir: ./auth
+    env: [ CGO_ENABLED=0 ]
+    main: ./cmd/app/main.go
+    binary: horusec-auth
+    ldflags:
+      - -X github.com/ZupIT/horusec-platform/config.version=v{{ .Version }}
+    goos:
+      - linux
+    goarch:
+      - amd64
+
+  - id: horusec-core
+    dir: ./core
+    env: [ CGO_ENABLED=0 ]
+    main: ./cmd/app/main.go
+    binary: horusec-core
+    ldflags:
+      - -X github.com/ZupIT/horusec-platform/config.version=v{{ .Version }}
+    goos:
+      - linux
+    goarch:
+      - amd64
+
+  - id: horusec-messages
+    dir: ./messages
+    env: [ CGO_ENABLED=0 ]
+    main: ./cmd/app/main.go
+    binary: horusec-messages
+    ldflags:
+      - -X github.com/ZupIT/horusec-platform/config.version=v{{ .Version }}
+    goos:
+      - linux
+    goarch:
+      - amd64
+
+  - id: horusec-vulnerability
+    dir: ./vulnerability
+    env: [ CGO_ENABLED=0 ]
+    main: ./cmd/app/main.go
+    binary: horusec-vulnerability
+    ldflags:
+      - -X github.com/ZupIT/horusec-platform/config.version=v{{ .Version }}
+    goos:
+      - linux
+    goarch:
+      - amd64
+
+  - id: horusec-webhook
+    dir: ./webhook
+    env: [ CGO_ENABLED=0 ]
+    main: ./cmd/app/main.go
+    binary: horusec-webhook
+    ldflags:
+      - -X github.com/ZupIT/horusec-platform/config.version=v{{ .Version }}
+    goos:
+      - linux
+    goarch:
+      - amd64
+
+  - id: horusec-analytic-migrate-v1-v2
+    dir: ./analytic
+    env: [ CGO_ENABLED=0 ]
+    main: ./cmd/migration/v2/main.go
+    binary: horusec-analytic-migrate-v1-v2
+    ldflags:
+      - -X github.com/ZupIT/horusec-platform/config.version=v{{ .Version }}
+    goos:
+      - linux
+    goarch:
+      - amd64
+
+  - id: horusec-api-migrate-v1-v2
+    dir: ./api
+    env: [ CGO_ENABLED=0 ]
+    main: ./cmd/migration/v2/main.go
+    binary: horusec-api-migrate-v1-v2
+    ldflags:
+      - -X github.com/ZupIT/horusec-platform/config.version=v{{ .Version }}
+    goos:
+      - linux
+    goarch:
+      - amd64
+
+checksum:
+  name_template: 'checksums.txt'
+
+snapshot:
+  name_template: "{{ incpatch .Version }}-next"
+
+archives:
+  - format: binary
+
+dockers:
+  - id: horusec-api
+    goos: linux
+    goarch: amd64
+    ids:
+      - horusec-api
+      - horusec-api-migrate-v1-v2
+    image_templates:
+      - "horuszup/horusec-api:latest"
+      - "horuszup/horusec-api:{{ .Tag }}"
+      - "horuszup/horusec-api:v{{ .Major }}"
+      - "horuszup/horusec-api:v{{ .Major }}.{{ .Minor }}"
+    skip_push: false
+
+    dockerfile: ./api/deployments/dockerfiles/Dockerfile.goreleaser
+    use: docker
+
+    build_flag_templates:
+      - "--pull"
+      - "--label=org.opencontainers.image.created={{.Date}}"
+      - "--label=org.opencontainers.image.title={{.ProjectName}}"
+      - "--label=org.opencontainers.image.revision={{.FullCommit}}"
+      - "--label=org.opencontainers.image.version={{.Version}}"
+
+    push_flags:
+      - --tls-verify=false
+
+  - id: horusec-migrations
+    goos: linux
+    goarch: amd64
+    image_templates:
+      - "horuszup/horusec-migrations:latest"
+      - "horuszup/horusec-migrations:{{ .Tag }}"
+      - "horuszup/horusec-migrations:v{{ .Major }}"
+      - "horuszup/horusec-migrations:v{{ .Major }}.{{ .Minor }}"
+    skip_push: false
+    dockerfile: ./migrations/deployments/dockerfiles/Dockerfile.goreleaser
+    use: docker
+    ids:
+      - horusec-vulnerability
+    build_flag_templates:
+      - "--pull"
+      - "--label=org.opencontainers.image.created={{.Date}}"
+      - "--label=org.opencontainers.image.title={{.ProjectName}}"
+      - "--label=org.opencontainers.image.revision={{.FullCommit}}"
+      - "--label=org.opencontainers.image.version={{.Version}}"
+    push_flags:
+      - --tls-verify=false
+    extra_files:
+      - ./migrations/scripts/migrate.sh
+      - ./migrations/source/analytic/20210419185606_initial_migration.down.sql
+      - ./migrations/source/analytic/20210419185606_initial_migration.up.sql
+      - ./migrations/source/analytic/20210609124606_horusec_migration.down.sql
+      - ./migrations/source/analytic/20210609124606_horusec_migration.up.sql
+      - ./migrations/source/platform/20210609124606_horusec_migration.up.sql
+      - ./migrations/source/platform/20200508100413_create_table_if_not_exists.down.sql
+      - ./migrations/source/platform/20200508100413_create_table_if_not_exists.up.sql
+      - ./migrations/source/platform/20200818092502_create_table_cache.down.sql
+      - ./migrations/source/platform/20200818092502_create_table_cache.up.sql
+      - ./migrations/source/platform/20200820125410_create_table_analysis.down.sql
+      - ./migrations/source/platform/20200820125410_create_table_analysis.up.sql
+      - ./migrations/source/platform/20200925114542_vuln_hash.down.sql
+      - ./migrations/source/platform/20200925114542_vuln_hash.up.sql
+      - ./migrations/source/platform/20200929095207_token_repositoryid_null.down.sql
+      - ./migrations/source/platform/20200929095207_token_repositoryid_null.up.sql
+      - ./migrations/source/platform/20200930164025_remove-type-vulnerable-version.down.sql
+      - ./migrations/source/platform/20200930164025_remove-type-vulnerable-version.up.sql
+      - ./migrations/source/platform/20201001094426_unique_names.down.sql
+      - ./migrations/source/platform/20201001094426_unique_names.up.sql
+      - ./migrations/source/platform/20201002082520_create-nn-analysis-vulnerability.down.sql
+      - ./migrations/source/platform/20201002082520_create-nn-analysis-vulnerability.up.sql
+      - ./migrations/source/platform/20201021174800_ldap_permission_group.down.sql
+      - ./migrations/source/platform/20201021174800_ldap_permission_group.up.sql
+      - ./migrations/source/platform/20201023190326_create-super-admin-field.down.sql
+      - ./migrations/source/platform/20201023190326_create-super-admin-field.up.sql
+      - ./migrations/source/platform/20201111195526_webhook.down.sql
+      - ./migrations/source/platform/20201111195526_webhook.up.sql
+      - ./migrations/source/platform/20210129093830_ldap-groups-array-type.down.sql
+      - ./migrations/source/platform/20210129093830_ldap-groups-array-type.up.sql
+      - ./migrations/source/platform/20210301125133_update-token-no-expires.down.sql
+      - ./migrations/source/platform/20210301125133_update-token-no-expires.up.sql
+      - ./migrations/source/platform/20210406121213_workspace_rename.down.sql
+      - ./migrations/source/platform/20210406121213_workspace_rename.up.sql
+      - ./migrations/source/platform/20210514165700_analysis-timestamp.down.sql
+      - ./migrations/source/platform/20210514165700_analysis-timestamp.up.sql
+      - ./migrations/source/platform/20210609124606_horusec_migration.down.sql
+      - ./migrations/source/platform/20210609124606_horusec_migration.up.sql
+
+  - id: horusec-core
+    goos: linux
+    goarch: amd64
+    ids:
+      - horusec-core
+    image_templates:
+      - "horuszup/horusec-core:latest"
+      - "horuszup/horusec-core:{{ .Tag }}"
+      - "horuszup/horusec-core:v{{ .Major }}"
+      - "horuszup/horusec-core:v{{ .Major }}.{{ .Minor }}"
+
+    skip_push: false
+
+    dockerfile: ./core/deployments/dockerfiles/Dockerfile.goreleaser
+    use: docker
+
+    build_flag_templates:
+      - "--pull"
+      - "--label=org.opencontainers.image.created={{.Date}}"
+      - "--label=org.opencontainers.image.title={{.ProjectName}}"
+      - "--label=org.opencontainers.image.revision={{.FullCommit}}"
+      - "--label=org.opencontainers.image.version={{.Version}}"
+
+    push_flags:
+      - --tls-verify=false
+
+  - id: horusec-auth
+    goos: linux
+    goarch: amd64
+    ids:
+      - horusec-auth
+    image_templates:
+      - "horuszup/horusec-auth:latest"
+      - "horuszup/horusec-auth:{{ .Tag }}"
+      - "horuszup/horusec-auth:v{{ .Major }}"
+      - "horuszup/horusec-auth:v{{ .Major }}.{{ .Minor }}"
+
+    skip_push: false
+
+    dockerfile: ./auth/deployments/dockerfiles/Dockerfile.goreleaser
+    use: docker
+
+    build_flag_templates:
+      - "--pull"
+      - "--label=org.opencontainers.image.created={{.Date}}"
+      - "--label=org.opencontainers.image.title={{.ProjectName}}"
+      - "--label=org.opencontainers.image.revision={{.FullCommit}}"
+      - "--label=org.opencontainers.image.version={{.Version}}"
+
+    push_flags:
+      - --tls-verify=false
+
+  - id: horusec-analytic
+    goos: linux
+    goarch: amd64
+    ids:
+      - horusec-analytic
+      - horusec-analytic-migrate-v1-v2
+    image_templates:
+      - "horuszup/horusec-analytic:latest"
+      - "horuszup/horusec-analytic:{{ .Tag }}"
+      - "horuszup/horusec-analytic:v{{ .Major }}"
+      - "horuszup/horusec-analytic:v{{ .Major }}.{{ .Minor }}"
+
+    skip_push: false
+
+    dockerfile: ./analytic/deployments/dockerfiles/Dockerfile.goreleaser
+    use: docker
+
+    build_flag_templates:
+      - "--pull"
+      - "--label=org.opencontainers.image.created={{.Date}}"
+      - "--label=org.opencontainers.image.title={{.ProjectName}}"
+      - "--label=org.opencontainers.image.revision={{.FullCommit}}"
+      - "--label=org.opencontainers.image.version={{.Version}}"
+
+    push_flags:
+      - --tls-verify=false
+
+  - id: horusec-messages
+    goos: linux
+    goarch: amd64
+    ids:
+      - horusec-messages
+    image_templates:
+      - "horuszup/horusec-messages:latest"
+      - "horuszup/horusec-messages:{{ .Tag }}"
+      - "horuszup/horusec-messages:v{{ .Major }}"
+      - "horuszup/horusec-messages:v{{ .Major }}.{{ .Minor }}"
+
+    skip_push: false
+
+    dockerfile: ./messages/deployments/dockerfiles/Dockerfile.goreleaser
+    use: docker
+
+    build_flag_templates:
+      - "--pull"
+      - "--label=org.opencontainers.image.created={{.Date}}"
+      - "--label=org.opencontainers.image.title={{.ProjectName}}"
+      - "--label=org.opencontainers.image.revision={{.FullCommit}}"
+      - "--label=org.opencontainers.image.version={{.Version}}"
+
+    push_flags:
+      - --tls-verify=false
+
+  - id: horusec-vulnerability
+    goos: linux
+    goarch: amd64
+    ids:
+      - horusec-vulnerability
+    image_templates:
+      - "horuszup/horusec-vulnerability:latest"
+      - "horuszup/horusec-vulnerability:{{ .Tag }}"
+      - "horuszup/horusec-vulnerability:v{{ .Major }}"
+      - "horuszup/horusec-vulnerability:v{{ .Major }}.{{ .Minor }}"
+
+    skip_push: false
+
+    dockerfile: ./vulnerability/deployments/dockerfiles/Dockerfile.goreleaser
+    use: docker
+
+    build_flag_templates:
+      - "--pull"
+      - "--label=org.opencontainers.image.created={{.Date}}"
+      - "--label=org.opencontainers.image.title={{.ProjectName}}"
+      - "--label=org.opencontainers.image.revision={{.FullCommit}}"
+      - "--label=org.opencontainers.image.version={{.Version}}"
+
+    push_flags:
+      - --tls-verify=false
+
+  - id: horusec-webhook
+    goos: linux
+    goarch: amd64
+    ids:
+      - horusec-webhook
+    image_templates:
+      - "horuszup/horusec-webhook:latest"
+      - "horuszup/horusec-webhook:{{ .Tag }}"
+      - "horuszup/horusec-webhook:v{{ .Major }}"
+      - "horuszup/horusec-webhook:v{{ .Major }}.{{ .Minor }}"
+
+    skip_push: false
+
+    dockerfile: ./webhook/deployments/dockerfiles/Dockerfile.goreleaser
+    use: docker
+
+    build_flag_templates:
+      - "--pull"
+      - "--label=org.opencontainers.image.created={{.Date}}"
+      - "--label=org.opencontainers.image.title={{.ProjectName}}"
+      - "--label=org.opencontainers.image.revision={{.FullCommit}}"
+      - "--label=org.opencontainers.image.version={{.Version}}"
+
+    push_flags:
+      - --tls-verify=false
+
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
