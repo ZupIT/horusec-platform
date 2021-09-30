@@ -1,0 +1,5 @@
+FROM alpine
+
+COPY horusec-api /
+COPY horusec-api-migrate-v1-v2 /
+ENTRYPOINT ["./horusec-api"]
