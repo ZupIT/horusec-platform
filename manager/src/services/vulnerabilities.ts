@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { AxiosResponse } from 'axios';
 import http from 'config/axios';
 import { FilterVuln } from 'helpers/interfaces/FIlterVuln';
 import { PaginationInfo } from 'helpers/interfaces/Pagination';
@@ -23,7 +24,7 @@ const getAllVulnerabilities = (
   filters: FilterVuln,
   type: 'workspace' | 'repository',
   pagination: PaginationInfo
-) => {
+): Promise<AxiosResponse<any>> => {
   const path =
     type === 'repository'
       ? `workspace/${filters.workspaceID}/repository/${filters.repositoryID}`
@@ -50,7 +51,7 @@ const updateVulnerability = (
     vulnerabilityID: string;
   }[],
   overviewType: 'repository' | 'workspace'
-) => {
+): Promise<AxiosResponse<any>> => {
   const route = `${SERVICE_VULNERABILITY}/vulnerability/management/workspace/${workspaceID}${
     overviewType === 'repository'
       ? `/repository/${repositoryID}/vulnerabilities`

@@ -14,17 +14,18 @@
  * limitations under the License.
  */
 
+import { AxiosResponse } from 'axios';
 import http from 'config/axios';
 import { APIResponse } from 'helpers/interfaces/APIResponse';
 import { LDAPGroups } from 'helpers/interfaces/LDAPGroups';
 import { Repository } from 'helpers/interfaces/Repository';
 import { SERVICE_CORE } from '../config/endpoints';
 
-const getAllWorkspaces = () => {
+const getAllWorkspaces = (): Promise<AxiosResponse<any>> => {
   return http.get(`${SERVICE_CORE}/core/workspaces`);
 };
 
-const getOneWorkspace = (workspaceID: string) => {
+const getOneWorkspace = (workspaceID: string): Promise<AxiosResponse<any>> => {
   return http.get(`${SERVICE_CORE}/core/workspaces/${workspaceID}`);
 };
 
@@ -32,7 +33,7 @@ const createWorkspace = (
   name: string,
   description?: string,
   ldapGroups?: LDAPGroups
-) => {
+): Promise<AxiosResponse<any>> => {
   return http.post(`${SERVICE_CORE}/core/workspaces`, {
     name,
     description,
@@ -45,7 +46,7 @@ const updateWorkspace = (
   name: string,
   description?: string,
   ldapGroups?: LDAPGroups
-) => {
+): Promise<AxiosResponse<any>> => {
   return http.patch(`${SERVICE_CORE}/core/workspaces/${workspaceID}`, {
     name,
     description,
@@ -53,7 +54,7 @@ const updateWorkspace = (
   });
 };
 
-const deleteWorkspace = (workspaceID: string) => {
+const deleteWorkspace = (workspaceID: string): Promise<AxiosResponse<any>> => {
   return http.delete(`${SERVICE_CORE}/core/workspaces/${workspaceID}`);
 };
 
@@ -61,7 +62,7 @@ const getUsers = (
   workspaceID: string,
   repositoryID: string,
   notBelong?: string
-) => {
+): Promise<AxiosResponse<any>> => {
   const path = repositoryID ? `/repositories/${repositoryID}/roles` : '/roles';
   return http.get(`${SERVICE_CORE}/core/workspaces/${workspaceID}${path}`, {
     params: {
@@ -77,7 +78,7 @@ const inviteUser = (
   repositoryId?: string,
   accountID?: string,
   username?: string
-) => {
+): Promise<AxiosResponse<any>> => {
   const path = repositoryId ? `/repositories/${repositoryId}/` : '/';
 
   return http.post(
@@ -96,7 +97,7 @@ const updateUserRole = (
   repositoryId: string,
   accountId: string,
   role: string
-) => {
+): Promise<AxiosResponse<any>> => {
   const path = repositoryId ? `/repositories/${repositoryId}/` : '/';
 
   return http.patch(
@@ -111,7 +112,7 @@ const removeUser = (
   workspaceID: string,
   repositoryId: string,
   accountId: string
-) => {
+): Promise<AxiosResponse<any>> => {
   const path = repositoryId ? `/repositories/${repositoryId}/` : '/';
 
   return http.delete(
@@ -119,7 +120,10 @@ const removeUser = (
   );
 };
 
-const getAllTokens = (workspaceID: string, repositoryId?: string) => {
+const getAllTokens = (
+  workspaceID: string,
+  repositoryId?: string
+): Promise<AxiosResponse<any>> => {
   const path = repositoryId ? `/repositories/${repositoryId}` : '';
   return http.get(
     `${SERVICE_CORE}/core/workspaces/${workspaceID}${path}/tokens`
@@ -129,7 +133,7 @@ const getAllTokens = (workspaceID: string, repositoryId?: string) => {
 const removeToken = (
   data: { workspaceID: string; repositoryID?: string },
   tokenId: string
-) => {
+): Promise<AxiosResponse<any>> => {
   const path = data.repositoryID ? `/repositories/${data.repositoryID}` : '';
   return http.delete(
     `${SERVICE_CORE}/core/workspaces/${data.workspaceID}${path}/tokens/${tokenId}`
@@ -140,7 +144,7 @@ const getAllRepositories = (
   workspaceID: string,
   page?: number,
   search?: string
-) => {
+): Promise<AxiosResponse<any>> => {
   return http.get(
     `${SERVICE_CORE}/core/workspaces/${workspaceID}/repositories`,
     {
@@ -149,7 +153,10 @@ const getAllRepositories = (
   );
 };
 
-const getOneRepository = (workspaceID: string, repositoryID: string) => {
+const getOneRepository = (
+  workspaceID: string,
+  repositoryID: string
+): Promise<AxiosResponse<any>> => {
   return http.get(
     `${SERVICE_CORE}/core/workspaces/${workspaceID}/repositories/${repositoryID}`
   );
@@ -160,8 +167,8 @@ const createRepository = (
   name: string,
   description: string,
   ldapGroups?: LDAPGroups
-) => {
-  return http.post<APIResponse<Repository>>(
+): Promise<AxiosResponse<any>> => {
+  return http.post(
     `${SERVICE_CORE}/core/workspaces/${workspaceID}/repositories`,
     {
       name,
@@ -177,14 +184,17 @@ const updateRepository = (
   name: string,
   description: string,
   ldapGroups?: LDAPGroups
-) => {
-  return http.patch<APIResponse<Repository>>(
+): Promise<AxiosResponse<any>> => {
+  return http.patch(
     `${SERVICE_CORE}/core/workspaces/${workspaceID}/repositories/${repositoryId}`,
     { name, description, ...ldapGroups }
   );
 };
 
-const deleteRepository = (workspaceID: string, repositoryId: string) => {
+const deleteRepository = (
+  workspaceID: string,
+  repositoryId: string
+): Promise<AxiosResponse<any>> => {
   return http.delete(
     `${SERVICE_CORE}/core/workspaces/${workspaceID}/repositories/${repositoryId}`
   );
@@ -197,7 +207,7 @@ const createToken = (
     isExpirable?: boolean;
     expiredAt?: string;
   }
-) => {
+): Promise<AxiosResponse<any>> => {
   const path = params.repositoryID
     ? `/repositories/${params.repositoryID}`
     : '';

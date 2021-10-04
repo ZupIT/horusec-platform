@@ -71,7 +71,7 @@ const Dashboard: React.FC<Props> = ({ type }) => {
 
       analyticService
         .getDashboardData(filters)
-        .then((result: AxiosResponse) => {
+        .then((result) => {
           if (!isCancelled) {
             const data = result?.data?.content as DashboardData;
             setDashboardData(data);

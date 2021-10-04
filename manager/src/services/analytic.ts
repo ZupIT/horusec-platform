@@ -18,8 +18,11 @@ import http from 'config/axios';
 import { SERVICE_ANALYTIC } from '../config/endpoints';
 import { FilterValues } from 'helpers/interfaces/FilterValues';
 import { formatInitialAndFinalDate } from 'helpers/formatters/date';
+import { AxiosResponse } from 'axios';
 
-const getDashboardData = (filters: FilterValues) => {
+const getDashboardData = (
+  filters: FilterValues
+): Promise<AxiosResponse<any>> => {
   const path =
     filters.type === 'repository'
       ? `${filters.workspaceID}/${filters.repositoryID}`
