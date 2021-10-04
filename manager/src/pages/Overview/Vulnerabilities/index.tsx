@@ -182,7 +182,7 @@ const Vulnerabilities: React.FC = () => {
 
       vulnerabilitiesService
         .getAllVulnerabilities(filterAux, overviewType, page)
-        .then((result: AxiosResponse) => {
+        .then((result) => {
           if (!isCancelled) {
             const response = result.data?.content;
 
@@ -240,7 +240,7 @@ const Vulnerabilities: React.FC = () => {
     setLoading(true);
     vulnerabilitiesService
       .getAllVulnerabilities(refresh.filter, overviewType, refresh.page)
-      .then((result: AxiosResponse) => {
+      .then((result) => {
         const response = result.data?.content;
         const data: Vulnerability[] = response?.data;
         setVulnerabilities(data);

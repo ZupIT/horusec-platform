@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
+import { AxiosResponse } from 'axios';
 import http from 'config/axios';
 import { WebhookHeader } from 'helpers/interfaces/Webhook';
 import { SERVICE_WEBHOOK } from '../config/endpoints';
 
-const getAll = (workspaceID: string) => {
+const getAll = (workspaceID: string): Promise<AxiosResponse<any>> => {
   return http.get(`${SERVICE_WEBHOOK}/webhook/webhook/${workspaceID}`);
 };
 
@@ -29,7 +30,7 @@ const create = (
   method: string,
   headers: WebhookHeader[],
   description: string
-) => {
+): Promise<AxiosResponse<any>> => {
   return http.post(`${SERVICE_WEBHOOK}/webhook/webhook/${workspaceID}`, {
     url,
     method,
@@ -48,7 +49,7 @@ const update = (
   method: string,
   headers: WebhookHeader[],
   description: string
-) => {
+): Promise<AxiosResponse<any>> => {
   return http.put(
     `${SERVICE_WEBHOOK}/webhook/webhook/${workspaceID}/${webhookID}`,
     {
@@ -62,7 +63,10 @@ const update = (
   );
 };
 
-const remove = (webhookID: string, workspaceID: string) => {
+const remove = (
+  webhookID: string,
+  workspaceID: string
+): Promise<AxiosResponse<any>> => {
   return http.delete(
     `${SERVICE_WEBHOOK}/webhook/webhook/${workspaceID}/${webhookID}`
   );

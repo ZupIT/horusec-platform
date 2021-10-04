@@ -29,14 +29,18 @@ import {
 } from 'helpers/localStorage/tokens';
 import { LoginParams } from 'helpers/interfaces/LoginParams';
 
-const login = (params: LoginParams) => {
+const login = (params: LoginParams): Promise<AxiosResponse<any>> => {
   return http.post(`${SERVICE_AUTH}/auth/authenticate/login`, params);
 };
 
-const logout = (refreshToken: string) =>
+const logout = (refreshToken: string): Promise<AxiosResponse<any>> =>
   http.post(`${SERVICE_AUTH}/auth/account/logout`, { refreshToken });
 
-const createAccount = (username: string, password: string, email: string) => {
+const createAccount = (
+  username: string,
+  password: string,
+  email: string
+): Promise<AxiosResponse<any>> => {
   return http.post(`${SERVICE_AUTH}/auth/account/create-account-horusec`, {
     username,
     email,
@@ -44,35 +48,46 @@ const createAccount = (username: string, password: string, email: string) => {
   });
 };
 
-const update = (username: string, email: string) => {
+const update = (
+  username: string,
+  email: string
+): Promise<AxiosResponse<any>> => {
   return http.patch(`${SERVICE_AUTH}/auth/account/update`, {
     username,
     email,
   });
 };
 
-const deleteAccount = () => {
+const deleteAccount = (): Promise<AxiosResponse<any>> => {
   return http.delete(`${SERVICE_AUTH}/auth/account/delete`);
 };
 
-const createAccountFromKeycloak = (accessToken: string) => {
+const createAccountFromKeycloak = (
+  accessToken: string
+): Promise<AxiosResponse<any>> => {
   return http.post(`${SERVICE_AUTH}/auth/account/create-account-keycloak`, {
     accessToken,
   });
 };
 
-const sendCode = (email: string) => {
+const sendCode = (email: string): Promise<AxiosResponse<any>> => {
   return http.post(`${SERVICE_AUTH}/auth/account/send-reset-code`, { email });
 };
 
-const validateCode = (email: string, code: string) => {
+const validateCode = (
+  email: string,
+  code: string
+): Promise<AxiosResponse<any>> => {
   return http.post(`${SERVICE_AUTH}/auth/account/check-reset-code`, {
     email,
     code,
   });
 };
 
-const changePassword = (token: string, password: string) => {
+const changePassword = (
+  token: string,
+  password: string
+): Promise<AxiosResponse<any>> => {
   return http.post(
     `${SERVICE_AUTH}/auth/account/change-password`,
     { password },
@@ -84,13 +99,16 @@ const changePassword = (token: string, password: string) => {
   );
 };
 
-const updatePassword = (password: string) => {
+const updatePassword = (password: string): Promise<AxiosResponse<any>> => {
   return http.post(`${SERVICE_AUTH}/auth/account/change-password`, {
     password,
   });
 };
 
-const verifyUniqueUsernameEmail = (email: string, username: string) => {
+const verifyUniqueUsernameEmail = (
+  email: string,
+  username: string
+): Promise<AxiosResponse<any>> => {
   return http.post(`${SERVICE_AUTH}/auth/account/verify-already-used`, {
     email,
     username,
@@ -110,7 +128,7 @@ const callRenewToken = async (): Promise<string> => {
     return new Promise((resolve, reject) => {
       axios
         .post(`${SERVICE_AUTH}/auth/account/refresh-token`, { refreshToken })
-        .then((result: AxiosResponse) => {
+        .then((result: AxiosResponse<any>) => {
           const {
             username,
             isApplicationAdmin,
@@ -135,7 +153,7 @@ const callRenewToken = async (): Promise<string> => {
   }
 };
 
-const getHorusecConfig = () => {
+const getHorusecConfig = (): Promise<AxiosResponse<any>> => {
   return axios.get(`${SERVICE_AUTH}/auth/authenticate/config`);
 };
 
