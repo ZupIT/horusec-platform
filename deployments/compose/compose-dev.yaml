@@ -133,6 +133,7 @@ services:
       HORUSEC_BROKER_USERNAME: "guest" # Sensitive information we not recommended usage in production environment, change for usage strong data for connection with this service
       HORUSEC_BROKER_PASSWORD: "guest" # Sensitive information we not recommended usage in production environment, change for usage strong data for connection with this service
       HORUSEC_DISABLE_EMAILS: "true"
+      HORUSEC_AUTH_URL: "127.0.0.1:8006"
   horusec-core:
     build:
       context: ../../core
