@@ -21,11 +21,12 @@ on:
         description: 'Release type: M (Major); m (Minor); p (Path)'
         required: true
 
-permissions:
-  contents: write
-
+permissions: read-all
 jobs:
   release:
+    permissions:
+      contents: write
+      packages: write
     env:
       COSIGN_KEY_LOCATION: "/tmp/cosign.key"
     runs-on: ubuntu-latest

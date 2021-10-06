@@ -14,7 +14,7 @@
 
 name: Webhook
 on: ["push"]
-
+permissions: read-all
 jobs:
   lint-coverage-build-security:
     runs-on: ubuntu-latest
@@ -40,4 +40,4 @@ jobs:
           HORUSEC_CLI_HORUSEC_API_URI: ${{ secrets.HORUSEC_CLI_HORUSEC_API_URI }}
         run: |
           curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec/master/deployments/scripts/install.sh | bash -s latest
-          horusec start -p . -e true -n="Horusec/Platform-Webhook" -G true
+          horusec start -p . -e -n="Horusec/Platform-Webhook" -G --show-vulnerabilities-types="Vulnerability, Risk Accepted"

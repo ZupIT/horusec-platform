@@ -14,7 +14,6 @@
 
 name: Manager
 on: ["push"]
-
 jobs:
   lint-coverage-build-security:
     runs-on: ubuntu-latest
@@ -52,4 +51,4 @@ jobs:
           HORUSEC_CLI_HORUSEC_API_URI: ${{ secrets.HORUSEC_CLI_HORUSEC_API_URI }}
         run: |
           curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec/master/deployments/scripts/install.sh | bash -s latest
-          horusec start -p . -n="Horusec/Platform-Manager" -G true
+          horusec start -p . -n="Horusec/Platform-Manager" -G -e --show-vulnerabilities-types="Vulnerability, Risk Accepted"
