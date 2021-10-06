@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM golang:alpine AS builder
+FROM golang:1.17-alpine AS builder
 
 RUN apk update && apk add --no-cache git build-base
 
@@ -25,7 +25,7 @@ RUN go get -t -v -d ./...
 RUN GOOS=linux go build -a -o horusec-api-main ./cmd/app/main.go
 RUN GOOS=linux go build -a -o horusec-api-v1-to-v2-migrate ./cmd/migration/v2/main.go
 
-FROM alpine
+FROM alpine:3.14.2
 
 COPY --from=builder /api/horusec-api-main .
 COPY --from=builder /api/horusec-api-v1-to-v2-migrate .
