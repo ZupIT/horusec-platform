@@ -25,7 +25,7 @@
     "eslint": "7.32.0",
     "export-from-json": "1.4.1",
     "formik": "2.2.9",
-    "html-to-image": "1.8.5",
+    "html-to-image": "1.9.0",
     "i18next": "21.2.6",
     "jspdf": "2.4.0",
     "keycloak-js": "15.0.2",
