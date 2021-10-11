@@ -1,4 +1,18 @@
-FROM golang:alpine AS builder-backend
+# Copyright 2021 ZUP IT SERVICOS EM TECNOLOGIA E INOVACAO SA
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+FROM golang:1.17-alpine AS builder
 
 RUN apk add build-base
 
@@ -22,7 +36,7 @@ RUN cd vulnerability && OOS=linux go build -a -o /bin/horusec-vulnerability-main
 RUN cd webhook && go get -t -v -d ./...
 RUN cd webhook && OOS=linux go build -a -o /bin/horusec-webhook-main ./cmd/app/main.go
 
-FROM node:alpine AS builder-manager
+FROM node:16.10.0-alpine3.14 AS builder-manager
 
 WORKDIR /usr/src/app
 
