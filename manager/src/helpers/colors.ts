@@ -13,12 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { random } from 'lodash';
 
 const generateRandomColor = (): string => {
-  const x = Math.floor(Math.random() * 256);
-  const y = Math.floor(Math.random() * 256);
-  const z = Math.floor(Math.random() * 256);
-  return `rgba(${x}, ${y}, ${z}, 0.55)`;
+  const X = random(0, 250, false);
+  const Y = random(0, 250, false);
+  const Z = random(0, 250, false);
+
+  const opacity = 0.55;
+
+  return `rgba(${X}, ${Y}, ${Z}, ${opacity})`;
 };
 
 export { generateRandomColor };

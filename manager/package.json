@@ -76,7 +76,7 @@
     "@typescript-eslint/parser": "4.33.0",
     "chokidar": "3.5.2",
     "cypress": "8.5.0",
-    "cypress-react-unit-test": "4.17.2",
+    "@cypress/react": "5.10.1",
     "eslint": "7.32.0",
     "eslint-config-prettier": "6.15.0",
     "eslint-config-react": "1.1.7",
@@ -91,6 +91,16 @@
     "prettier": "2.4.1",
     "typescript": "4.4.3"
   },
+  "resolutions": {
+    "immer": "9.0.6",
+    "ansi-html": "https://registry.yarnpkg.com/ansi-html-community/-/ansi-html-community-0.0.8.tgz#69fbc4d6ccbe383f9736934ae34c3f8290f1bf41",
+    "ansi-regex": "5.0.1",
+    "glob-parent": "5.1.2",
+    "nth-check": "2.0.1",
+    "browserslist": "4.16.5",
+    "highlight.js": "10.4.1",
+    "set-value": "4.0.1"
+  },
   "scripts": {
     "start": "npx react-scripts start",
     "build": "npx react-scripts build ---production",
@@ -98,7 +108,8 @@
     "lint": "eslint './src/**/*.{ts,tsx}'",
     "eject": "react-scripts eject",
     "cypress": "cypress run",
-    "cypress:open": "cypress open"
+    "cypress:open": "cypress open",
+    "preinstall": "npx npm-force-resolutions"
   },
   "jest": {
     "coverageThreshold": {
