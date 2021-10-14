@@ -20,10 +20,10 @@ WORKDIR /manager
 
 ENV NO_PROXY=localhost
 ENV NODE_TLS_REJECT_UNAUTHORIZED=0
-RUN npm config set registry http://registry.npmjs.org
+RUN yarn config set registry http://registry.yarnpkg.com
 
-RUN npm install
-RUN npm run build
+RUN yarn
+RUN yarn build
 
 FROM nginx:1.21.3-alpine
 

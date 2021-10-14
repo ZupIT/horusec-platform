@@ -103,15 +103,17 @@
     "set-value": "4.0.1"
   },
   "scripts": {
-    "start": "npx react-scripts start",
-    "build": "npx react-scripts build ---production",
+    "start": "npx react-scripts start --yarn",
+    "build": "npx react-scripts build --yarn",
     "lint:fix": "eslint './src/**/*.{ts,tsx}' --fix",
     "lint": "eslint './src/**/*.{ts,tsx}'",
     "eject": "react-scripts eject",
     "cypress": "cypress run",
-    "cypress:open": "cypress open",
-    "preinstall": "npx npm-force-resolutions",
-    "install:resolutions": "npm install && npx npm-force-resolutions"
+    "cypress:open": "cypress open"
+  },
+  "engines": {
+    "npm": "please-use-yarn",
+    "yarn": ">=1.10.0"
   },
   "jest": {
     "coverageThreshold": {

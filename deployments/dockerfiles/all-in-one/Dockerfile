@@ -42,8 +42,8 @@ WORKDIR /usr/src/app
 
 ADD . .
 
-RUN cd manager && npm install
-RUN cd manager && npm run build
+RUN cd manager && yarn
+RUN cd manager && yarn build
 
 FROM docker:dind
 

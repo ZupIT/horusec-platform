@@ -28,16 +28,16 @@ jobs:
         id: node
       - uses: actions/checkout@v2
       - name: Install dependencies
-        run: npm install
+        run: yarn
       - name: Lint
-        run: npm run lint
+        run: yarn lint
       - name: Test
         uses: cypress-io/github-action@v2
         with:
           working-directory: manager
           browser: chrome
-          install-command: npm run install:resolutions
-          build: npm run build
+          install-command: yarn
+          build: yarn build
           start: npx serve -s build -l 3000
           wait-on: 'http://localhost:3000'
       - name: Upload cypress videos
