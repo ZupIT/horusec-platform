@@ -110,7 +110,8 @@
     "eject": "react-scripts eject",
     "cypress": "cypress run",
     "cypress:open": "cypress open",
-    "preinstall": "npx npm-force-resolutions"
+    "preinstall": "npx npm-force-resolutions",
+    "install:resolutions": "npm install && npx npm-force-resolutions"
   },
   "jest": {
     "coverageThreshold": {
