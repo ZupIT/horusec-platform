@@ -36,7 +36,7 @@ jobs:
         with:
           working-directory: manager
           browser: chrome
-          install-command: npm preinstall && npm install
+          install-command: npm run preinstall && npm install
           build: npm run build
           start: npx serve -s build -l 3000
           wait-on: 'http://localhost:3000'
