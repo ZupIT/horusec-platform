@@ -15,6 +15,7 @@
 package hash
 
 import (
+	"fmt"
 	"regexp"
 	"strings"
 
@@ -27,6 +28,9 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/utils/crypto"
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
 )
+
+const MigrationName = "20211019_hash_migration"
+const MigrationTable = "horusec_migrations"
 
 type Migration struct {
 	databaseConnection *database.Connection
@@ -47,7 +51,29 @@ func StartMigration() {
 		databaseConnection: databaseConnection,
 	}
 
+	if migration.alreadyMigrated() {
+		return
+	}
+
 	migration.migrateHashesToRemoveVulnID()
+	migration.setMigrationAsApplied()
+}
+
+func (m *Migration) alreadyMigrated() bool {
+	var migrations []string
+
+	err := m.databaseConnection.Read.Find(&migrations, map[string]interface{}{}, MigrationTable).GetErrorExceptNotFound()
+	if err != nil {
+		logger.LogError("HASH MIGRATION - failed to check if migration is already applied", err)
+	}
+
+	for _, v := range migrations {
+		if v == MigrationName {
+			return true
+		}
+	}
+
+	return false
 }
 
 func (m *Migration) migrateHashesToRemoveVulnID() {
@@ -82,6 +108,9 @@ func (m *Migration) querySelectLatestVulnerabilities() string {
 			ORDER BY an.repository_id, an.created_at DESC
 		) AS latest_analysis 
 		ON latest_analysis.analysis_id = av.analysis_id
+		WHERE vuln.details LIKE ANY (array['%HS-JAVA%', '%HS-JS%', '%HS-CSHARP%', 
+		'%HS-DART%', '%HS-JVM%', '%HS-KOTLIN%', '%HS-KUBERNETES%', '%HS-LEAKS%', '%HS-NGINX%',
+		'%HS-JAVASCRIPT%', '%HS-SWIFT%'])
 	`
 }
 
@@ -91,20 +120,23 @@ func (m *Migration) updateVulnerability(vuln *Vulnerability) {
 	if vuln.VulnHash != expectHash {
 		correctVulnerability, err := m.getVulnerabilityByHash(expectHash)
 		if err != nil {
-			logger.LogWarn("HASH MIGRATION - failed to get vulnerability by hash")
 			return
 		}
 
 		vulnerabilityNToN, err := m.getVulnerabilityNToN(vuln.AnalysisID, vuln.VulnerabilityID)
 		if err != nil {
-			logger.LogWarn("HASH MIGRATION - failed to get vulnerability n to n")
 			return
 		}
 
 		vulnerabilityNToN.VulnerabilityID = correctVulnerability.VulnerabilityID
 		err = m.databaseConnection.Write.Update(vulnerabilityNToN,
 			m.filterManyToManyByID(vuln.AnalysisID, vuln.VulnerabilityID), vulnerabilityNToN.GetTable()).GetError()
-		logger.LogError("HASH MIGRATION - failed to update vulnerability n to n", err)
+		if err != nil {
+			logger.LogError("HASH MIGRATION - failed to update vulnerability n to n", err)
+			return
+		}
+
+		logger.LogInfo(fmt.Sprintf("HASH MIGRATION - hash %s migrated", vuln.VulnHash))
 	}
 }
 
@@ -149,4 +181,11 @@ func (m *Migration) removeHorusecIDFromDetails(details string) string {
 	const horusecIDRegex = `HS-(JAVA|JS|CSHARP|DART|JVM|KOTLIN|KUBERNETES|LEAKS|NGINX|JAVASCRIPT|SWIFT)-[0-9]+:\s`
 
 	return regexp.MustCompile(horusecIDRegex).ReplaceAllString(details, "")
+}
+
+func (m *Migration) setMigrationAsApplied() {
+	err := m.databaseConnection.Write.Create(map[string]interface{}{"name": MigrationName}, MigrationTable).GetError()
+	if err != nil {
+		logger.LogPanic("HASH MIGRATION- failed to set that migration was applied on database", err)
+	}
 }
