@@ -15,6 +15,7 @@
 package main
 
 import (
+	"github.com/ZupIT/horusec-platform/api/cmd/migration/hash"
 	"github.com/ZupIT/horusec-platform/api/config/providers"
 	"github.com/ZupIT/horusec-platform/api/internal/enums"
 )
@@ -36,5 +37,6 @@ func main() {
 		panic(err)
 	}
 
+	hash.StartMigration()
 	router.ListenAndServe()
 }
