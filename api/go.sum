@@ -46,6 +46,8 @@ github.com/PuerkitoBio/urlesc v0.0.0-20170810143723-de5bf2ad4578 h1:d+Bc7a5rLufV
 github.com/PuerkitoBio/urlesc v0.0.0-20170810143723-de5bf2ad4578/go.mod h1:uGdkoq3SwY9Y+13GIhn11/XLaGBb4BfwItxLd5jeuXE=
 github.com/ZupIT/horusec-devkit v1.0.18 h1:Nbl7YQTBnwPFRmIEn0LKINN5u2SwvCu6Jt8wmlhHTO8=
 github.com/ZupIT/horusec-devkit v1.0.18/go.mod h1:8rEUFNoFOGeAIG1unUfaF5qP6agHPnf9WsMtGfQR/iU=
+github.com/ZupIT/horusec-devkit v1.0.19 h1:eQNzst0a91YkAzSWy+1A/brBR9Lon2dMmzs0vZ3dUzQ=
+github.com/ZupIT/horusec-devkit v1.0.19/go.mod h1:8rEUFNoFOGeAIG1unUfaF5qP6agHPnf9WsMtGfQR/iU=
 github.com/alecthomas/template v0.0.0-20160405071501-a0175ee3bccc/go.mod h1:LOuyumcjzFXgccqObfd/Ljyb9UuFJ6TxHnclSeseNhc=
 github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751 h1:JYp7IbQjafoB+tBA3gMyHYHrpOtNuDiK/uB5uXxq5wM=
 github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751/go.mod h1:LOuyumcjzFXgccqObfd/Ljyb9UuFJ6TxHnclSeseNhc=
