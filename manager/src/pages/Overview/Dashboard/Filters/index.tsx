@@ -103,7 +103,7 @@ const Filters: React.FC<FilterProps> = ({ type, onApply }) => {
 
   useEffect(() => {
     onApply(initialValues);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line
   }, []);
 
   return (
