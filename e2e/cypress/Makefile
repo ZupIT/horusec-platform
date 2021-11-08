@@ -1,5 +1,6 @@
 DOCKER_COMPOSE ?= docker-compose
 NPM ?= npm
+NPX ?= npx
 CD ?= cd
 MAKE ?= make
 
@@ -17,7 +18,7 @@ migrate-horusec-postgresql:
 	$(CD) ../.. && $(MAKE) migrate-drop && $(MAKE) migrate-up && $(CD) ./e2e/cypress
 
 test-e2e-install:
-	$(NPM) install
+	$(NPM) install && $(NPX) browserslist@latest --update-db
 
 test-e2e-auth-horusec-without-application-admin: test-e2e-install compose-e2e-auth-horusec-without-application-admin
 	$(NPM) run test::auth-horusec::without-application-admin
