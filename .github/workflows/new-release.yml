@@ -28,58 +28,76 @@ jobs:
       contents: write
       packages: write
     env:
-      COSIGN_KEY_LOCATION: "/tmp/cosign.key"
+      COSIGN_KEY_LOCATION: /tmp/cosign.key
+      COSIGN_PWD: ${{ secrets.COSIGN_PWD }}
     runs-on: ubuntu-latest
+
     steps:
+      - name: Set up nodejs
+        uses: actions/setup-node@v2
+        with:
+          node-version: 12
       - name: Checkout
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-          token: ${{ secrets.HORUSEC_PUSH_TOKEN }}
+        run: cd deployments/mage
 
       - name: Set up Go
         uses: actions/setup-go@v2
         with:
           go-version: 1.17
-      - name: Set up nodejs
-        uses: actions/setup-node@v2
-        with:
-          node-version: 12
-      - name: "Login to DockerHub"
+
+      - name: Docker Login
         uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Cosign Installer
+        uses: sigstore/cosign-installer@main
+        with:
+          cosign-release: 'v1.2.0'
+
+      - name: Install Mage
+        run: go install github.com/magefile/mage@07afc7d24f4d6d6442305d49552f04fbda5ccb3e
+
+      - name: Get current date
+        id: date
+        run: mage -v getCurrentDate
+
+      - name: Git config
+        run: mage -v defaultGitConfig
+
       - name: Import GPG key
         uses: crazy-max/ghaction-import-gpg@v4
         with:
           gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
-          passphrase: ${{ secrets.PASSPHRASE }}
+          passphrase: ${{ secrets.GPG_PASSPHRASE }}
           git_user_signingkey: true
           git_commit_gpgsign: true
+
+      - name: Install cosign private key
+        run: mage -v writeCosignKeyToFile
+        env:
+          COSIGN_KEY: ${{secrets.COSIGN_KEY}}
 
       - name: Version increment
         id: updated-version
         run: |
-          curl https://raw.githubusercontent.com/ZupIT/horusec-devkit/main/scripts/semver.sh -o /tmp/semver.sh
-          chmod +x /tmp/semver.sh
-          /tmp/semver.sh -${{ github.event.inputs.releaseType }} ${{ github.event.repository.full_name }}
-      - uses: sigstore/cosign-installer@main
-        with:
-          cosign-release: 'v1.2.0'
-      - name: install cosign private key
-        run: 'echo "$COSIGN_KEY" > $COSIGN_KEY_LOCATION'
-        shell: bash
+          mage -v upVersions ${{ github.event.inputs.releaseType }}
         env:
-          COSIGN_KEY: ${{secrets.COSIGN_KEY}}
+          HORUSEC_REPOSITORY_ORG: ${{ github.repository_owner }}
+          HORUSEC_REPOSITORY_NAME: ${{ github.event.repository.name }}
+
+      - name: Checkout release candidate branch
+        run: echo "release ${{ steps.updated-version.outputs.releaseVersion }} rc ${{ steps.updated-version.outputs.rcVersion }}" && mage -v checkoutReleaseBranch ${{ steps.updated-version.outputs.releaseVersion }}
+
       - name: Update versions on package.json
-        run: |
-          npm install -g json
-          json -I -f ./manager/package.json -e 'this.version="${{ steps.updated-version.outputs.strippedVersion }}"'
+        run: mage -v updatePackageJson ${{ steps.updated-version.outputs.strippedVersion }}
+
       - name: Update versions on rest of the project
-        run: |
-          find . -type f -not -path "./.git/*" -not -path "./Makefile" -not -path "./manager/cypress/*" -not -path "./manager/cypress/*" -not -name "*.sum" -not -name "*.mod"|
-          xargs sed -i "s/${{ steps.updated-version.outputs.actualVersion }}/${{ steps.updated-version.outputs.version }}/g"
+        run:  mage -v updateHorusecVersionInProject ${{ steps.updated-version.outputs.actualVersion }} ${{ steps.updated-version.outputs.releaseVersion }}  |
+
       - name: Commit changes
         uses: EndBug/add-and-commit@v7.4.0
         with:
@@ -89,10 +107,9 @@ jobs:
           author_email: horusec@zup.com.br
           committer_name: Horusec
           committer_email: horusec@zup.com.br
-      - name: Create tag
-        run: |
-          git tag ${{ steps.updated-version.outputs.version }}
-          sleep 5
+      - name: Create local tag
+        run: mage -v createLocalTag ${{ steps.updated-version.outputs.releaseVersion }}
+
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
         with:
@@ -103,7 +120,7 @@ jobs:
           COSIGN_KEY: ${{ secrets.COSIGN_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           COSIGN_PWD: ${{ secrets.COSIGN_PWD }}
-          GORELEASER_CURRENT_TAG: ${{ steps.updated-version.outputs.version }}
+          GORELEASER_CURRENT_TAG: ${{ steps.updated-version.outputs.releaseVersion }}
 
       - name: "Docker meta"
         uses: docker/metadata-action@v3
@@ -132,11 +149,28 @@ jobs:
         env:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PWD }}
 
-      - name: Push tag
+      # This step gets the sha of last commit made, witch is the updating versioning files commit, after that creates a
+      # branch from the origin main and cherry pick this commit on it. This process need to occur only when the release
+      # workflow is started from a branch that isn't the main branch, for example a release branch.
+      # When the workflow it's triggered to run on main, the commit it's going to be made directly to the main branch.
+      - name: Cherry pick
+        if: github.ref != 'refs/heads/main'
+        id: cherry-pick
         run: |
-          git push origin ${{ steps.updated-version.outputs.version }}
-      - name: Create release branch
-        if: github.event.inputs.releaseType != 'p'
-        run: |
-          git branch ${{ steps.updated-version.outputs.releaseBranchName }}
-          git push origin ${{ steps.updated-version.outputs.releaseBranchName }}
+          mage CherryPick
+      - name: Push updates
+        run: mage -v gitPushAll
+
+
+      # This step utilizes an action to create a pull request with the branch that was cherry picked on the last step
+      # into the main branch. As the last commit, this also needs to run only when the release workflow is started from a
+      # branch that isn't the main branch. Others workflows should be skipped cause of the skip ci in the pull request title.
+      - name: Create Pull Request
+        if: github.ref != 'refs/heads/main'
+        uses: repo-sync/pull-request@v2
+        with:
+          source_branch: "${{ steps.cherry-pick.outputs.branchName }}"
+          destination_branch: "main"
+          pr_title: "versioning:release - [skip ci] automatic pull request updating versioning files"
+          pr_body: "This is a automatic pull request that contains changes to files that need to be updated with the new release version. Where the commit ${{ steps.cherry-pick.outputs.commitSha }} was cherry picked from the release branch, which already contains all the necessary changes."
+          github_token: ${{ secrets.HORUSEC_PUSH_TOKEN }}
