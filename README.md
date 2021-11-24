@@ -31,27 +31,39 @@
 
 # **Horusec Platform**
 
-Horusec Platform is a set of web services that integrate with [**Horusec CLI**](https://github.com/ZupIT/horusec) to make it easier for you to see and manage the vulnerabilities. 
+## **Table of contents**
+### 1. [**About**](#about)
+### 2. [**Usage**](#usage)
+>#### 2.1. [**Requirements**](#requirements)
+>#### 2.2. [**Installation**](#installation)
+### 3. [**Features**](#features)
+### 4. [**Documentation**](#documentation)
+### 5. [**Contributing**](#contributing)
+### 6. [**License**](#license)
+### 7. [**Community**](#community)
+
+## **About**
+Horusec Platform is a set of web services that integrate with [**Horusec-CLI**](https://github.com/ZupIT/horusec) to make it easier for you to see and manage the vulnerabilities. 
 
 [comment]: <> (@todo add a gif of manager usage)
 
 
-## **How to install?**
+## **Usage**
 
 ### **Requirements**
-You need to have:
+See below the requirements to install Horusec-Platform: 
 
 - [**RabbitMQ**](https://www.rabbitmq.com/)
 - [**PostgreSQL**](https://www.postgresql.org/)
 
+### **Installation**
+There are several ways to install the Horusec-Platform in your environment.
+In some of them, we use a **`make`** command to simplify the process.
+If you want to know everything that will be executed, take a look at the **`Makefile`** located at the project's root.
 
-There are several ways to install the Horusec Platform in your environment.
-In some types of installations, we use a `make` command to simplify the process.
-If you want to know everything that will be executed, take a look at the `Makefile` located at the project's root.
+Choose what type of installation you want below, but remember to change the default environment variables values to new and secure ones.
 
-You can choose what type of installation you want below, but remember to change the default environment variables values to new and secure ones.
-
-### **Install with docker compose**
+### **1. Install with docker compose**
 Follow the steps: 
 
 **Step 1:** Run the command: 
@@ -59,11 +71,11 @@ Follow the steps:
 make install
 ```
 
-**Step 2:** Start the docker compose file **`compose.yml`**. It contains all services, migrations and the needed dependencies. 
+**Step 2:** Start the docker compose file **`compose.yml`**. It has all services, migrations and the needed dependencies. 
 - You can find the compose file in **`deployments/compose/compose.yaml`**; 
 - You can find migrations in **`migrations/source`**.
 
-**Step 3:** After this, the installation is ready with all default values, the latest versions, and the following user for tests:
+**Step 3:** Now the installation is ready with all default values, the latest versions, and the user for tests, see below:
 
 ```
 Username: dev@example.com
@@ -75,26 +87,26 @@ In the production environments' case, make sure to **change the values of the en
 
 > :warning: We **do not recommend** using docker-compose installation in a productive environment.
 
-For more information about Docker compose, check out [**Docker compose installation section in our documetation**](https://horusec.io/docs/web/installation/install-with-docker-compose).
+For more information about Docker compose, check out [**Docker compose installation section**](https://horusec.io/docs/web/installation/install-with-docker-compose).
 
-### **Install with Helm**
+### **2. Install with Helm**
 
 Each release contains its own helm files for that specific version, you can find them [**in the repository**](https://github.com/ZupIT/horusec-platform/releases) and in the folder **`deployments/helm`**.
-In both cases they will be separated by each service of the architecture.
+In both cases, they will be separated by each service of the architecture.
 
-For more information, check out [**the installing with Helm section in our documentation**](https://horusec.io/docs/web/installation/install-with-helm).
+For more information, check out [**the installing with Helm section**](https://horusec.io/docs/web/installation/install-with-helm).
 
-### **Install with Horusec-Operator**
+### **3. Install with Horusec-Operator**
 
-Horusec-Operator performs management between Horusec web services and its Kubernetes cluster. It was created based on a community’s idea to have a simpler way to install the services in an environment using Kubernetes. 
+Horusec-Operator manages Horusec web services and its Kubernetes cluster. It was created based on the community’s idea to have a simpler way to install the services in an environment using Kubernetes. 
 
--  Check out how to install Horusec-Operator in our [**installing section**](https://horusec.io/docs/web/installation/install-with-operator/).
-- You can see more about Kubernetes Operators [**in their documentation**](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/).
+-  Check out how to install Horusec-Operator in our [**installation section**](https://horusec.io/docs/web/installation/install-with-operator/).
+- For more information about Kubernetes Operators, [**check out the documentation**](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/).
 
 
 ## **Features**
 
-Horusec Platform provides several features, see some of them below. 
+Horusec-Platform provides several features, see some of them below. 
 
 ### **MultiTenancy**
 
@@ -104,13 +116,13 @@ It distributes only the necessary [**permissions**](https://horusec.io/docs/web/
 
 ### **Dashboard**
 
-The dashboard shows you various metrics about your vulnerabilities for workspaces and repositories:
+The dashboard shows you several metrics about your workspaces and repositories' vulnerabilities:
 
 <p align="center" margin="20 0"><img src="assets/horusec-dashboard-1.png" alt="dashboard" width="100%" style="max-width:100%;"/></p>
 
 ### **Vulnerability Management**
 
-The vulnerability management screen allows you to identify false positives, accepted risk, and even modify a severity to an appropriate value to the reality of the vulnerability:
+The vulnerability management screen allows you to identify false positives and accepted risks. You can modify a severity to an appropriate value to the reality of the vulnerability:
 
 <p align="center" margin="20 0"><img src="assets/horusec-vuln-management-1.png" alt="vuln-management" width="100%" style="max-width:100%;"/></p>
 
@@ -122,7 +134,7 @@ It creates workspaces or repositories authentication
 
 ### **Authentication Types**
 
-You can choose which form of authentication you will use with Horusec Platform.
+You can choose which form of authentication you will use with Horusec-Platform.
 
 There are three possibilities:
 
@@ -145,22 +157,44 @@ For more information about Horusec, please check out the [**documentation**](htt
 
 ## **Contributing**
 
-If you want to contribute to this repository, access our [**Contributing Guide**](https://github.com/ZupIT/charlescd/blob/main/CONTRIBUTING.md). 
-And if you want to know more about Horusec, check out some of our other projects:
+If you want to contribute to this repository, access our [**Contributing Guide**](https://github.com/ZupIT/horusec-platform/blob/main/CONTRIBUTING.md). 
 
+### **Developer Certificate of Origin - DCO**
 
-- [**Horusec CLI**](https://github.com/ZupIT/horusec)
-- [**Horusec Devkit**](https://github.com/ZupIT/horusec-platform)
-- [**Horusec Engine**](https://github.com/ZupIT/horusec-engine)
-- [**Horusec Operator**](https://github.com/ZupIT/horusec-operator)
-- [**Horusec Admin**](https://github.com/ZupIT/horusec-admin)
-- [**Horusec VsCode**](https://github.com/ZupIT/horusec-vscode-plugin)
+ This is a security layer for the project and for the developers. It is mandatory.
+ 
+ Follow one of these two methods to add DCO to your commits:
+ 
+**1. Command line**
+ Follow the steps: 
+ **Step 1:** Configure your local git environment adding the same name and e-mail configured at your GitHub account. It helps to sign commits manually during reviews and suggestions.
+
+ ```
+git config --global user.name “Name”
+git config --global user.email “email@domain.com.br”
+```
+**Step 2:** Add the Signed-off-by line with the `'-s'` flag in the git commit command:
+
+```
+$ git commit -s -m "This is my commit message"
+```
+
+**2. GitHub website**
+You can also manually sign your commits during GitHub reviews and suggestions, follow the steps below: 
+
+**Step 1:** When the commit changes box opens, manually type or paste your signature in the comment box, see the example:
+
+```
+Signed-off-by: Name < e-mail address >
+```
+
+For this method, your name and e-mail must be the same registered on your GitHub account.
+
+## **License**
+[**Apache License 2.0**](https://github.com/ZupIT/horusec-platform/blob/main/LICENSE).
 
 ## **Community**
-Feel free to reach out to us at:
-
-- [**GitHub Issues**](https://github.com/ZupIT/horusec-devkit/issues)
-- [**Zup Open Source Forum**](https://forum.zup.com.br)
+Do you have any question about Horusec? Let's chat in our [**forum**](https://forum.zup.com.br/).
 
 
 This project exists thanks to all the contributors. You rock! ❤️🚀
