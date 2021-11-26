@@ -13,8 +13,13 @@
 # limitations under the License.
 
 name: Tests e2e
-on: ["push"]
-
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
 jobs:
   e2e-auth-horusec:
     runs-on: ubuntu-latest
