@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: release-new
+name: release-rc
 
 on:
   workflow_dispatch:
@@ -23,7 +23,7 @@ on:
 
 permissions: read-all
 jobs:
-  release:
+  rc:
     permissions:
       contents: write
       packages: write
@@ -62,7 +62,8 @@ jobs:
           cd deployments/mage/ && go run mage.go -compile ../../mage
 
       - name: Git config
-        run: ./mage -v defaultGitConfig
+        run: |
+          ./mage -v defaultGitConfig
 
       - name: Import GPG key
         uses: crazy-max/ghaction-import-gpg@v4
@@ -73,7 +74,8 @@ jobs:
           git_commit_gpgsign: true
 
       - name: Install cosign private key
-        run: ./mage -v writeCosignKeyToFile
+        run: |
+          ./mage -v writeCosignKeyToFile
         env:
           COSIGN_KEY: ${{secrets.COSIGN_KEY}}
 
@@ -86,46 +88,41 @@ jobs:
           HORUSEC_REPOSITORY_NAME: ${{ github.event.repository.name }}
 
       - name: Checkout release candidate branch
-        run: ./mage -v checkoutReleaseBranch ${{ steps.updated-version.outputs.nextReleaseBranchName }}
-      - name: Update versions on package.json
-        run: ./mage -v updatePackageJson ${{ steps.updated-version.outputs.nextReleaseVersionStripped }}
-
-      - name: Update versions on rest of the project
         run: |
-          find . -type f -not -path "./.git/*" -not -path "./manager/cypress/*" -not -name "*.sum" -not -name "*.mod"|
-          xargs sed -i "s/${{ steps.updated-version.outputs.actualReleaseVersion }}/${{ steps.updated-version.outputs.nextReleaseVersion }}/g"
-
-      - name: Commit changes
-        uses: EndBug/add-and-commit@v7.4.0
-        with:
-          push: false
-          signoff: true
-          author_name: Horusec
-          author_email: horusec@zup.com.br
-          committer_name: Horusec
-          committer_email: horusec@zup.com.br
-          branch: ${{ steps.updated-version.outputs.nextReleaseBranchName }}
+          ./mage -v checkoutReleaseBranch ${{ steps.updated-version.outputs.nextReleaseBranchName }}
 
       - name: Create local tag
-        run: ./mage -v createLocalTag ${{ steps.updated-version.outputs.nextReleaseVersion }}
+        run: |
+          ./mage -v createLocalTag ${{ steps.updated-version.outputs.nextRcVersion }}
 
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
         with:
           distribution: goreleaser
           version: latest
-          args: release --rm-dist
+          args: release --rm-dist --skip-publish
         env:
           COSIGN_KEY: ${{ secrets.COSIGN_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           COSIGN_PWD: ${{ secrets.COSIGN_PWD }}
-          GORELEASER_CURRENT_TAG: ${{ steps.updated-version.outputs.nextReleaseVersion }}
+          GORELEASER_CURRENT_TAG: ${{ steps.updated-version.outputs.nextRcVersion }}
+
+      - name: Push go projects to dockerhub
+        run: |
+          ./mage -v dockerPushPlatformGoProjects ${{ steps.updated-version.outputs.nextRcVersion }}
+
+      - name: Sign go projects in dockerhub
+        env:
+          COSIGN_KEY: ${{secrets.COSIGN_KEY}}
+          COSIGN_PASSWORD: ${{ secrets.COSIGN_PWD }}
+        run: |
+          ./mage -v dockerSignPlatformGoProjects ${{ steps.updated-version.outputs.nextRcVersion }}
 
       - name: "Docker meta"
         uses: docker/metadata-action@v3
         id: meta
         env:
-          RELEASE_VERSION: ${{ steps.updated-version.outputs.nextReleaseVersion }}
+          RELEASE_VERSION: ${{ steps.updated-version.outputs.nextRcVersion }}
         with:
           images: |
             horuszup/horusec-manager
@@ -142,33 +139,36 @@ jobs:
           file: ./manager/deployments/dockerfiles/Dockerfile
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
       - name: Sign image
         run: |
-          cosign sign -key $COSIGN_KEY_LOCATION horuszup/horusec-manager:latest
+          cosign sign -key $COSIGN_KEY_LOCATION horuszup/horusec-manager:${{ steps.updated-version.outputs.nextRcVersion }}
         env:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PWD }}
-
 
       - name: Push updates
         run: |
           ./mage -v gitPushAll
-      # This step gets the sha of last commit made, witch is the updating versioning files commit, after that creates a
-      # branch from the origin main and cherry pick this commit on it. This process need to occur only when the release
-      # workflow is started from a branch that isn't the main branch, for example a release branch.
-      # When the workflow it's triggered to run on main, the commit it's going to be made directly to the main branch.
-      - name: Cherry pick
-        id: cherry-pick
-        run: |
-          ./mage CherryPick
-      # This step utilizes an action to create a pull request with the branch that was cherry picked on the last step
-      # into the main branch. As the last commit, this also needs to run only when the release workflow is started from a
-      # branch that isn't the main branch. Others workflows should be skipped cause of the skip ci in the pull request title.
-      - name: Create Pull Request
-        uses: repo-sync/pull-request@v2
-        with:
-          source_branch: "${{ steps.cherry-pick.outputs.cherryPickBranchName }}"
-          destination_branch: "main"
-          pr_title: "versioning:release - [skip ci] automatic pull request updating versioning files"
-          pr_body: "This is a automatic pull request that contains changes to files that need to be updated with the new release version. Where the commit ${{ steps.cherry-pick.outputs.commitShaToPick }} was cherry picked from the release branch, which already contains all the necessary changes."
-          github_token: ${{ secrets.HORUSEC_PUSH_TOKEN }}
 
+      - name: Update release
+        uses: meeDamian/github-release@2.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ steps.updated-version.outputs.nextRcVersion }}
+          name: ${{ steps.updated-version.outputs.nextRcVersion }}
+          draft: true
+          prerelease: false
+          commitish: ${{ github.sha }}
+          gzip: false
+          allow_override: false
+          body: |
+            ## Docker images
+            - `docker pull horuszup/horusec-analytic:${{ steps.updated-version.outputs.nextRcVersion }}`
+            - `docker pull horuszup/horusec-api:${{ steps.updated-version.outputs.nextRcVersion }}`
+            - `docker pull horuszup/horusec-auth:${{ steps.updated-version.outputs.nextRcVersion }}`
+            - `docker pull horuszup/horusec-core:${{ steps.updated-version.outputs.nextRcVersion }}`
+            - `docker pull horuszup/horusec-manager:${{ steps.updated-version.outputs.nextRcVersion }}`
+            - `docker pull horuszup/horusec-messages:${{ steps.updated-version.outputs.nextRcVersion }}`
+            - `docker pull horuszup/horusec-migrations:${{ steps.updated-version.outputs.nextRcVersion }}`
+            - `docker pull horuszup/horusec-vulnerability:${{ steps.updated-version.outputs.nextRcVersion }}`
+            - `docker pull horuszup/horusec-webhook:${{ steps.updated-version.outputs.nextRcVersion }}`

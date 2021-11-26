@@ -162,7 +162,7 @@ dockers:
       - "horuszup/horusec-api:{{ .Tag }}"
       - "horuszup/horusec-api:v{{ .Major }}"
       - "horuszup/horusec-api:v{{ .Major }}.{{ .Minor }}"
-    skip_push: false
+    skip_push: auto
 
     dockerfile: ./api/deployments/dockerfiles/Dockerfile.goreleaser
     use: docker
@@ -185,7 +185,7 @@ dockers:
       - "horuszup/horusec-migrations:{{ .Tag }}"
       - "horuszup/horusec-migrations:v{{ .Major }}"
       - "horuszup/horusec-migrations:v{{ .Major }}.{{ .Minor }}"
-    skip_push: false
+    skip_push: auto
     dockerfile: ./migrations/deployments/dockerfiles/Dockerfile.goreleaser
     use: docker
     ids:
@@ -249,7 +249,7 @@ dockers:
       - "horuszup/horusec-core:v{{ .Major }}"
       - "horuszup/horusec-core:v{{ .Major }}.{{ .Minor }}"
 
-    skip_push: false
+    skip_push: auto
 
     dockerfile: ./core/deployments/dockerfiles/Dockerfile.goreleaser
     use: docker
@@ -275,7 +275,7 @@ dockers:
       - "horuszup/horusec-auth:v{{ .Major }}"
       - "horuszup/horusec-auth:v{{ .Major }}.{{ .Minor }}"
 
-    skip_push: false
+    skip_push: auto
 
     dockerfile: ./auth/deployments/dockerfiles/Dockerfile.goreleaser
     use: docker
@@ -302,7 +302,7 @@ dockers:
       - "horuszup/horusec-analytic:v{{ .Major }}"
       - "horuszup/horusec-analytic:v{{ .Major }}.{{ .Minor }}"
 
-    skip_push: false
+    skip_push: auto
 
     dockerfile: ./analytic/deployments/dockerfiles/Dockerfile.goreleaser
     use: docker
@@ -328,7 +328,7 @@ dockers:
       - "horuszup/horusec-messages:v{{ .Major }}"
       - "horuszup/horusec-messages:v{{ .Major }}.{{ .Minor }}"
 
-    skip_push: false
+    skip_push: auto
 
     dockerfile: ./messages/deployments/dockerfiles/Dockerfile.goreleaser
     use: docker
@@ -354,7 +354,7 @@ dockers:
       - "horuszup/horusec-vulnerability:v{{ .Major }}"
       - "horuszup/horusec-vulnerability:v{{ .Major }}.{{ .Minor }}"
 
-    skip_push: false
+    skip_push: auto
 
     dockerfile: ./vulnerability/deployments/dockerfiles/Dockerfile.goreleaser
     use: docker
@@ -379,8 +379,7 @@ dockers:
       - "horuszup/horusec-webhook:{{ .Tag }}"
       - "horuszup/horusec-webhook:v{{ .Major }}"
       - "horuszup/horusec-webhook:v{{ .Major }}.{{ .Minor }}"
-
-    skip_push: false
+    skip_push: auto
 
     dockerfile: ./webhook/deployments/dockerfiles/Dockerfile.goreleaser
     use: docker
@@ -394,7 +393,6 @@ dockers:
 
     push_flags:
       - --tls-verify=false
-
 
 changelog:
   sort: asc
