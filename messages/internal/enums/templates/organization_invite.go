@@ -14,6 +14,7 @@
 
 package templates
 
+//nolint:lll // not necessary check lint on text content
 const OrganizationInviteTpl = `<!doctype html>
 <html>
 <head>
@@ -259,7 +260,7 @@ const OrganizationInviteTpl = `<!doctype html>
                   <tr>
                     <td>
                       <p class="align-center logo-wrapper">
-                        <img width="150px" src="https://horusec.io/public/email_logo.png">
+                        <img width="150px" src="https://github.com/ZupIT/horusec-platform/blob/main/assets/horusec-logo-vertical.png?raw=true">
                       </p>
                       <h1 class="align-left">Hello, {{.Username}}!</h1>
                       <p>You have been invited to join the workspace {{.CompanyName}}.</p>
