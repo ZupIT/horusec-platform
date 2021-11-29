@@ -9,7 +9,7 @@
   "bugs": {
     "url": "https://forum.zup.com.br/c/en/horusec"
   },
-  "version": "v2.17.1",
+  "version": "v2.17.3",
   "private": true,
   "dependencies": {
     "@date-io/date-fns": "1.3.13",
