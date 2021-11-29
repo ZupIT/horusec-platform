@@ -14,7 +14,7 @@
 
 package templates
 
-//nolint:gosec //false positive
+// nolint // not necessary check lint on text content
 const ResetPasswordTpl = `<!doctype html>
 <html>
 <head>
@@ -269,7 +269,7 @@ const ResetPasswordTpl = `<!doctype html>
                   <tr>
                     <td>
                       <p class="align-center logo-wrapper">
-                        <img width="150px" src="https://horusec.io/public/email_logo.png">
+                        <img width="150px" src="https://github.com/ZupIT/horusec-platform/blob/main/assets/horusec-logo-vertical.png?raw=true">
                       </p>
                       <h1 class="align-left">Hello, {{.Username}}!</h1>
                       <p>You have requested a password reset to access HORUSEC. The code is valid for 10 minutes

@@ -26,6 +26,8 @@ jobs:
         id: node
       - uses: actions/checkout@v2
       - name: Run e2e tests
+        env:
+          NODE_TLS_REJECT_UNAUTHORIZED: 0
         run: |
           cd ./e2e/cypress
           make test-e2e-auth-horusec-without-application-admin
@@ -45,6 +47,8 @@ jobs:
         id: node
       - uses: actions/checkout@v2
       - name: Run e2e tests
+        env:
+          NODE_TLS_REJECT_UNAUTHORIZED: 0
         run: |
           cd ./e2e/cypress
           make test-e2e-auth-keycloak-without-application-admin

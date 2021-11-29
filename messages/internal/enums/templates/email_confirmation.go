@@ -14,6 +14,7 @@
 
 package templates
 
+//nolint:lll // not necessary check lint on text content
 const EmailConfirmationTpl = `<!doctype html>
 <html>
 <head>
@@ -261,7 +262,7 @@ const EmailConfirmationTpl = `<!doctype html>
                   <tr>
                     <td>
                       <p class="align-center logo-wrapper">
-                        <img width="150px" src="https://horusec.io/public/email_logo.png">
+                        <img width="150px" src="https://github.com/ZupIT/horusec-platform/blob/main/assets/horusec-logo-vertical.png?raw=true">
                       </p>
                       <h1 class="align-left">Hello, {{.Username}}!</h1>
                       <p>To start using Horusec, confirm your email.</p>
