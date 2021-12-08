@@ -404,3 +404,23 @@ global:
     certManager: true
     annotations: {}
       # kubernetes.io/ingress.class: "nginx"
+  ldap:
+    base:
+      secretKeyRef:
+        key: base 
+        name: ldap 
+    host: ""
+    port: ""
+    ssl: false
+    tls: true
+    skipVerify: true
+    bindDn:
+      secretKeyRef:
+        key: bind-dn 
+        name: ldap 
+    bindPassword:
+      secretKeyRef:
+        key: bind-password 
+        name: ldap
+    userFilter: "(sAMAccountName=%s)"
+    adminGroup: ""

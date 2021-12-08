@@ -106,9 +106,37 @@ spec:
           - name: HORUSEC_KEYCLOAK_OTP
             value: {{ .Values.global.keycloak.otp | quote }}
           {{- end }}
+          {{- if eq .Values.components.auth.type "ldap" }}
+          - name: HORUSEC_LDAP_HOST
+            value: {{ required "A valid global.ldap.host is required!" .Values.global.ldap.host | quote }}
+          - name: HORUSEC_LDAP_BASE
+            valueFrom:
+              secretKeyRef:
+              {{- toYaml .Values.global.ldap.base.secretKeyRef | nindent 16 }}
+          - name: HORUSEC_LDAP_PORT
+            value: {{ required "A valid global.ldap.port is required!" .Values.global.ldap.port | quote }}
+          - name: HORUSEC_LDAP_USESSL
+            value: {{ .Values.global.ldap.ssl | quote }}
+          - name: HORUSEC_LDAP_SKIP_TLS
+            value: {{ .Values.global.ldap.tls | quote }}
+          - name: HORUSEC_LDAP_INSECURE_SKIP_VERIFY
+            value: {{ .Values.global.ldap.skipVerify | quote }}
+          - name: HORUSEC_LDAP_BINDDN
+            valueFrom:
+              secretKeyRef:
+              {{- toYaml .Values.global.ldap.bindDn.secretKeyRef | nindent 16 }}
+          - name: HORUSEC_LDAP_BINDPASSWORD
+            valueFrom:
+              secretKeyRef:
+              {{- toYaml .Values.global.ldap.bindPassword.secretKeyRef | nindent 16 }}
+          - name: HORUSEC_LDAP_USERFILTER
+            value: {{ .Values.global.ldap.userFilter | quote }}
+          - name: HORUSEC_LDAP_ADMIN_GROUP
+            value: {{ .Values.global.ldap.adminGroup | quote }}
+          {{- end }}
           {{- if .Values.components.auth.extraEnv }}
           # Extra environment variables
-          {{- toYaml .Values.components.auth.extraEnv | nindent 12 }}
+          {{- toYaml .Values.components.auth.extraEnv | nindent 10 }}
           {{- end }}
           image: "{{ template "auth.image" . }}"
           imagePullPolicy: {{ .Values.components.auth.container.image.pullPolicy | quote }}
