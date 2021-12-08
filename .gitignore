@@ -20,3 +20,4 @@ vendor
 **/e2e/cypress/src/screenshots/**
 **/e2e/cypress/src/videos/**
 dist/
+mage
