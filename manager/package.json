@@ -100,7 +100,7 @@
     "nth-check": "2.0.1",
     "browserslist": "4.16.5",
     "highlight.js": "10.4.1",
-    "set-value": "4.0.1"
+    "set-value": "4.1.0"
   },
   "scripts": {
     "start": "npx react-scripts start --yarn",
