@@ -33,8 +33,6 @@ jobs:
           node-version: "12"
         id: node
       - uses: actions/checkout@v2
-      - name: Clean cache
-        run: yarn cache clean --force
       - name: Install dependencies
         run: yarn
       - name: Lint
