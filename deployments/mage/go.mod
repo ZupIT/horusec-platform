@@ -4,7 +4,7 @@ go 1.17
 
 require (
 	github.com/ZupIT/horusec-devkit v1.0.21
-	github.com/magefile/mage v1.11.0
+	github.com/magefile/mage v1.12.0
 )
 
 require (
