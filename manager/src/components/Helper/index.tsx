@@ -18,13 +18,14 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import Styled from './styled';
 import { Menu, MenuItem } from '@material-ui/core';
-import { repository, bugs } from '../../../package.json';
+import packageJSON from '../../../package.json';
 
 interface HelperInterface {
   pageHelperUrl: string;
 }
 
 const Helper: React.FC<HelperInterface> = ({ pageHelperUrl }) => {
+  const { repository, bugs } = packageJSON;
   const { t } = useTranslation();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 

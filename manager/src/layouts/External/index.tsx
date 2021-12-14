@@ -19,9 +19,10 @@ import Styled from './styled';
 import HorusecLogo from 'assets/logos/horusec.svg';
 import { Signature, Language, Icon } from 'components';
 import { useTranslation } from 'react-i18next';
-import { bugs, repository } from '../../../package.json';
+import packageJSON from '../../../package.json';
 
 function ExternalLayout({ children }: { children: JSX.Element }) {
+  const { repository, bugs } = packageJSON;
   const { t } = useTranslation();
 
   return (
