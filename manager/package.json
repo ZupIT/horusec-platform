@@ -29,7 +29,7 @@
     "jspdf": "2.4.0",
     "keycloak-js": "15.0.2",
     "lodash": "4.17.21",
-    "material-ui-popup-state": "1.9.3",
+    "material-ui-popup-state": "2.0.0",
     "node-releases": "2.0.1",
     "query-string": "7.0.1",
     "react": "17.0.2",
