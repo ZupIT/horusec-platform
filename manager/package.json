@@ -84,7 +84,7 @@
     "eslint-plugin-jest-dom": "3.9.2",
     "eslint-plugin-jsx-a11y": "6.5.1",
     "eslint-plugin-prettier": "4.0.0",
-    "eslint-plugin-react": "7.26.1",
+    "eslint-plugin-react": "7.27.1",
     "eslint-plugin-styled-components-a11y": "0.0.34",
     "eslint-plugin-testing-library": "5.0.1",
     "prettier": "2.4.1",
