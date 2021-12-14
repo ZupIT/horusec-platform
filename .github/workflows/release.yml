@@ -96,7 +96,7 @@ jobs:
           xargs sed -i "s/${{ steps.updated-version.outputs.actualReleaseVersion }}/${{ steps.updated-version.outputs.nextReleaseVersion }}/g"
 
       - name: Commit changes
-        uses: EndBug/add-and-commit@v7.4.0
+        uses: EndBug/add-and-commit@v7.5.0
         with:
           push: false
           signoff: true
