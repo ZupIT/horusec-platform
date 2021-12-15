@@ -36,7 +36,7 @@ RUN cd vulnerability && OOS=linux go build -a -o /bin/horusec-vulnerability-main
 RUN cd webhook && go get -t -v -d ./...
 RUN cd webhook && OOS=linux go build -a -o /bin/horusec-webhook-main ./cmd/app/main.go
 
-FROM node:16.13.0-alpine3.14 AS builder-manager
+FROM node:16.13.1-alpine3.14 AS builder-manager
 
 WORKDIR /usr/src/app
 
