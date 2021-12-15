@@ -13,7 +13,7 @@ require (
 	github.com/lib/pq v1.10.4
 	github.com/stretchr/testify v1.7.0
 	github.com/swaggo/swag v1.7.6
-	google.golang.org/grpc v1.42.0
+	google.golang.org/grpc v1.43.0
 )
 
 require (
