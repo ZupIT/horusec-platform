@@ -22,7 +22,7 @@ services:
       - "15672:15672"
   horusec_postgresql:
     container_name: horusec_postgresql
-    image: postgres:12
+    image: postgres:14
     ports:
       - "5432:5432"
     environment:
