@@ -52,8 +52,8 @@
     "yup": "0.32.11"
   },
   "devDependencies": {
-    "@axe-core/react": "4.3.2",
-    "@cypress/react": "5.10.1",
+    "@axe-core/react": "4.3.1",
+    "@cypress/react": "5.10.3",
     "@testing-library/jest-dom": "5.16.1",
     "@testing-library/react": "12.1.2",
     "@testing-library/react-hooks": "7.0.2",
@@ -70,11 +70,11 @@
     "@types/react-datepicker": "4.3.2",
     "@types/react-dom": "17.0.11",
     "@types/react-linkify": "1.0.1",
-    "@types/react-router-dom": "5.3.1",
+    "@types/react-router-dom": "5.3.2",
     "@types/single-spa-react": "3.0.1",
     "@types/styled-components": "5.1.18",
-    "@typescript-eslint/eslint-plugin": "5.3.1",
-    "@typescript-eslint/parser": "5.3.1",
+    "@typescript-eslint/eslint-plugin": "5.7.0",
+    "@typescript-eslint/parser": "5.7.0",
     "chokidar": "3.5.2",
     "cypress": "7.7.0",
     "eslint-config-prettier": "8.3.0",
@@ -88,7 +88,7 @@
     "eslint-plugin-styled-components-a11y": "0.0.34",
     "eslint-plugin-testing-library": "5.0.1",
     "prettier": "2.5.1",
-    "typescript": "4.4.4"
+    "typescript": "4.5.4"
   },
   "resolutions": {
     "immer": "9.0.7",
@@ -96,7 +96,7 @@
     "ansi-regex": "5.0.1",
     "glob-parent": "6.0.2",
     "nth-check": "2.0.1",
-    "browserslist": "4.19.0",
+    "browserslist": "4.19.1",
     "highlight.js": "11.3.1",
     "set-value": "4.1.0"
   },
