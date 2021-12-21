@@ -27,7 +27,7 @@
     "html-to-image": "1.9.0",
     "i18next": "21.6.3",
     "jspdf": "2.4.0",
-    "keycloak-js": "15.1.0",
+    "keycloak-js": "15.1.1",
     "lodash": "4.17.21",
     "material-ui-popup-state": "2.0.0",
     "node-releases": "2.0.1",
