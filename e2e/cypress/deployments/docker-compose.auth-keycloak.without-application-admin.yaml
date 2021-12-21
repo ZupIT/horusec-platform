@@ -17,7 +17,7 @@ services:
   horusec_postgresql_keycloak:
     network_mode: "host"
     container_name: horusec_postgresql_keycloak
-    image: postgres:12
+    image: postgres:14
     expose:
       - "5433"
     command: -p 5433
@@ -31,7 +31,7 @@ services:
     container_name: horusec_keycloak
     depends_on:
       - "horusec_postgresql_keycloak"
-    image: jboss/keycloak:15.0.2
+    image: jboss/keycloak:15.1.0
     restart: always
     environment:
       DB_VENDOR: "postgres"
@@ -48,7 +48,7 @@ services:
   horusec_postgresql:
     network_mode: "host"
     container_name: horusec_postgresql
-    image: postgres:12
+    image: postgres:14
     environment:
       POSTGRES_PASSWORD: root
       POSTGRES_USER: root

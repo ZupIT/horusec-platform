@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM node:16.13.0-alpine3.14 AS builder
+FROM node:16.13.1-alpine3.14 AS builder
 
 COPY . /manager
 
@@ -25,7 +25,7 @@ RUN yarn config set registry http://registry.yarnpkg.com
 RUN yarn
 RUN yarn build
 
-FROM nginx:1.21.3-alpine
+FROM nginx:1.21.4-alpine
 
 COPY --from=builder /manager/build /var/www
 COPY ./deployments/nginx.conf /etc/nginx/conf.d/default.conf

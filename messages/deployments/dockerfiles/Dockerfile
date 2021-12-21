@@ -24,7 +24,7 @@ RUN go get -t -v -d ./...
 
 RUN GOOS=linux go build -a -o horusec-messages-main ./cmd/app/main.go
 
-FROM alpine:3.14.2
+FROM alpine:3.15.0
 
 COPY --from=builder /messages/horusec-messages-main .
 

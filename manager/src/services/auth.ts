@@ -136,7 +136,7 @@ const callRenewToken = async (): Promise<string> => {
             expiresAt,
             refreshToken,
             accessToken,
-          } = result.data?.content;
+          } = result.data.content;
 
           setTokens(accessToken, refreshToken, expiresAt);
           setCurrentUser({ username, isApplicationAdmin, email });
