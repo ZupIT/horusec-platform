@@ -31,7 +31,7 @@ services:
     container_name: horusec_keycloak
     depends_on:
       - "horusec_postgresql_keycloak"
-    image: jboss/keycloak:15.1.0
+    image: jboss/keycloak:15.1.1
     restart: always
     environment:
       DB_VENDOR: "postgres"
