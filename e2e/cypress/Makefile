@@ -18,7 +18,7 @@ migrate-horusec-postgresql:
 	$(CD) ../.. && $(MAKE) migrate-drop && $(MAKE) migrate-up && $(CD) ./e2e/cypress
 
 test-e2e-install:
-	$(NPM) install && $(NPX) browserslist@latest --update-db
+	$(NPM) install && npm_config_yes=true $(NPX) browserslist@latest --update-db
 
 test-e2e-auth-horusec-without-application-admin: test-e2e-install compose-e2e-auth-horusec-without-application-admin
 	$(NPM) run test::auth-horusec::without-application-admin
