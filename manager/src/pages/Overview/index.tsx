@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import { Redirect, Switch, useRouteMatch } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Redirect, Switch, useRouteMatch, useLocation } from 'react-router-dom';
 import { PrivateRoute } from 'components';
 import InternalLayout from 'layouts/Internal';
+import { setCurrentPath } from 'helpers/localStorage/currentPage';
 
 import Dashboard from 'pages/Overview/Dashboard';
 import Webhooks from 'pages/Overview/Webhooks';
@@ -27,6 +28,11 @@ import Users from './Users';
 
 function InternalRoutes() {
   const { path } = useRouteMatch();
+  const location = useLocation();
+
+  useEffect(() => {
+    setCurrentPath(location?.pathname);
+  }, [location?.pathname]);
 
   return (
     <InternalLayout>
