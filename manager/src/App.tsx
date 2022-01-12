@@ -31,9 +31,15 @@ import {
 } from 'config/keycloak';
 import { handleSetKeyclockData } from 'helpers/localStorage/tokens';
 import themeMatUi from 'config/themes/material-ui';
+import { clearCurrentPath } from 'helpers/localStorage/currentPage';
 
 function App() {
   const theme = getCurrentTheme();
+
+  window.addEventListener('beforeunload', (ev) => {
+    ev?.preventDefault();
+    return clearCurrentPath();
+  });
 
   const AppContent = () => (
     <ThemeProviderMatUi theme={themeMatUi}>

@@ -14,15 +14,20 @@
  * limitations under the License.
  */
 
-export enum localStorageKeys {
-  LANGUAGE = '@HORUSEC:LANGUAGE',
-  THEME = '@HORUSEC:THEME',
-  USER = '@HORUSEC:USER',
-  CONFIG = '@HORUSEC:CONFIG',
-  TOKEN_EXPIRES = '@HORUSEC:TOKEN_EXPIRES',
-  ACCESS_TOKEN = '@HORUSEC:ACCESS_TOKEN',
-  ID_TOKEN = '@HORUSEC:ID_TOKEN',
-  REFRESH_TOKEN = '@HORUSEC:REFRESH_TOKEN',
-  FAVORITE = '@HORUSEC:FAVORITE',
-  PATH = '@HORUSEC:CURRENT_PATH',
-}
+import { localStorageKeys } from 'helpers/enums/localStorageKeys';
+import { isEmpty } from 'lodash';
+
+const getCurrentPath = (): string => {
+  const currentPath = window.localStorage.getItem(localStorageKeys.PATH);
+  return isEmpty(currentPath) ? null : currentPath;
+};
+
+const setCurrentPath = (value: string) => {
+  window.localStorage.setItem(localStorageKeys.PATH, value);
+};
+
+const clearCurrentPath = () => {
+  window.localStorage.removeItem(localStorageKeys.PATH);
+};
+
+export { getCurrentPath, setCurrentPath, clearCurrentPath };

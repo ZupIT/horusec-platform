@@ -26,6 +26,10 @@ import accountService from 'services/auth';
 import { clearTokens, getAccessToken } from 'helpers/localStorage/tokens';
 import { setCurrentUser } from 'helpers/localStorage/currentUser';
 import useFlashMessage from 'helpers/hooks/useFlashMessage';
+import {
+  clearCurrentPath,
+  getCurrentPath,
+} from 'helpers/localStorage/currentPage';
 
 function KeycloakAuth() {
   const { t } = useTranslation();
@@ -34,6 +38,7 @@ function KeycloakAuth() {
   const { showErrorFlash } = useFlashMessage();
 
   keycloakInstance.onAuthSuccess = () => {
+    const currentPath = getCurrentPath();
     const accessToken = getAccessToken() || keycloakInstance.token;
 
     accountService
@@ -43,7 +48,7 @@ function KeycloakAuth() {
 
         setCurrentUser(userData);
 
-        history.replace('/home');
+        history.replace(currentPath ? currentPath : '/home');
       })
       .catch(() => {
         showErrorFlash(t('API_ERRORS.KEYCLOAK_LOGIN'));
@@ -51,6 +56,7 @@ function KeycloakAuth() {
         setTimeout(() => {
           clearTokens();
           keycloakInstance.logout();
+          clearCurrentPath();
         }, 3200);
       });
   };
