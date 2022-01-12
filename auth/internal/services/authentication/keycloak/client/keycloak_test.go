@@ -58,26 +58,16 @@ func TestAuthenticate(t *testing.T) {
 
 func TestGetAccountIDByJWTToken(t *testing.T) {
 	t.Run("should success get account id without errors", func(t *testing.T) {
-		email := "test@horusec.com"
-		valid := true
-		sub := uuid.New().String()
-
-		userInfo := &gocloak.UserInfo{
-			Email: &email,
-			Sub:   &sub,
-		}
+		token := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4NDc3ZDdmYy0wOTFlLTQwZWEtYjJkMC04ZTg0YWM0Y2Q5ZDQiLCJuYW1lIjoiVGVzdGUiLCJpYXQiOjE1MTYyMzkwMjJ9.HbLKk9hkWw_nGPNwststdFrEjqbQQpDdpQb42KKSVLM"
 
 		goCloakMock := &GoCloakMock{}
-		goCloakMock.On("RetrospectToken").Return(&gocloak.RetrospecTokenResult{Active: &valid}, nil)
-		goCloakMock.On("IsActiveToken").Return(true, nil)
-		goCloakMock.On("GetUserInfo").Return(userInfo, nil)
 
 		service := &Client{
 			ctx:    context.Background(),
 			client: goCloakMock,
 		}
 
-		userID, err := service.GetAccountIDByJWTToken("")
+		userID, err := service.GetAccountIDByJWTToken(token)
 		assert.NoError(t, err)
 		assert.NotEqual(t, uuid.Nil, userID)
 	})
