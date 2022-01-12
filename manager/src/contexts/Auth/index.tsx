@@ -21,12 +21,13 @@ import { getCurrentConfig } from 'helpers/localStorage/horusecConfig';
 import { clearCurrentUser } from 'helpers/localStorage/currentUser';
 import { clearTokens } from 'helpers/localStorage/tokens';
 import { Authenticator } from 'helpers/interfaces/Authenticator';
-import accountService from 'services/auth';
 import { setCurrenConfig } from 'helpers/localStorage/horusecConfig';
+import { clearCurrentPath } from 'helpers/localStorage/currentPage';
+import { LoginParams } from 'helpers/interfaces/LoginParams';
+import accountService from 'services/auth';
 
 import defaultAuth from './default';
 import keycloakAuth from './keycloak';
-import { LoginParams } from 'helpers/interfaces/LoginParams';
 
 const MANAGER_PATH: string =
   (window as any).REACT_APP_HORUSEC_MANAGER_PATH || '';
@@ -99,6 +100,7 @@ const AuthProvider = ({ children }: AuthProviderPops) => {
           .finally(() => {
             resolve();
             clearLocalStorage();
+            clearCurrentPath();
             window.location.replace(
               `${
                 MANAGER_PATH.endsWith('/')
@@ -110,6 +112,7 @@ const AuthProvider = ({ children }: AuthProviderPops) => {
       });
     } else {
       clearLocalStorage();
+      clearCurrentPath();
       window.location.replace('/auth');
     }
   };

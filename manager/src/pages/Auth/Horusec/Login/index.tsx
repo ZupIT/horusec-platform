@@ -21,7 +21,7 @@ import { useTranslation } from 'react-i18next';
 import useAuth from 'helpers/hooks/useAuth';
 import { getCurrentConfig } from 'helpers/localStorage/horusecConfig';
 import * as Yup from 'yup';
-
+import { getCurrentPath } from 'helpers/localStorage/currentPage';
 import { Formik } from 'formik';
 
 function LoginScreen() {
@@ -30,6 +30,7 @@ function LoginScreen() {
   const { path } = useRouteMatch();
   const { login, loginInProgress } = useAuth();
   const { disableEmails } = getCurrentConfig();
+  const currentPath = getCurrentPath();
 
   const ValidationScheme = Yup.object({
     email: Yup.string()
@@ -52,7 +53,7 @@ function LoginScreen() {
       onSubmit={(values) => {
         login({ username: values.email, password: values.password }).then(
           () => {
-            history.replace('/home');
+            history.replace(currentPath ? currentPath : '/home');
           }
         );
       }}
