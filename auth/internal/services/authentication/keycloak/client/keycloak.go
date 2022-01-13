@@ -19,6 +19,7 @@ import (
 	"strings"
 
 	"github.com/ZupIT/horusec-devkit/pkg/utils/logger"
+	"github.com/form3tech-oss/jwt-go"
 
 	"github.com/pkg/errors"
 
@@ -70,12 +71,19 @@ func (c *Client) IsActiveToken(token string) (bool, error) {
 }
 
 func (c *Client) GetAccountIDByJWTToken(token string) (uuid.UUID, error) {
-	userInfo, err := c.GetUserInfo(c.removeBearer(token))
+	accessToken, _, err := new(jwt.Parser).ParseUnverified(c.removeBearer(token), jwt.MapClaims{})
+
 	if err != nil {
-		return uuid.Nil, errors.Wrap(err, keycloakEnums.MessageFailedToGetAccountIDFromKeycloakToken)
+		return uuid.Nil, errors.Wrap(err, keycloakEnums.MessageFailedToParseKeycloakToken)
 	}
 
-	return uuid.Parse(*userInfo.Sub)
+	if claims, isValid := accessToken.Claims.(jwt.MapClaims); isValid {
+		if subString, ok := claims["sub"].(string); ok {
+			return uuid.Parse(subString)
+		}
+	}
+
+	return uuid.Nil, errors.Wrap(err, keycloakEnums.MessageFailedToGetAccountIDFromKeycloakToken)
 }
 
 func (c *Client) GetUserInfo(accessToken string) (*gocloak.UserInfo, error) {

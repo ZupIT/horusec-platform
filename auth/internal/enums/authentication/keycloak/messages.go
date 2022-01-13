@@ -16,4 +16,5 @@ package keycloak
 
 var MessageFailedToCheckIfTokenIsActive = "{KEYCLOAK AUTH} failed to check if token is active" //nolint:gosec, lll // false positive
 var MessageFailedToGetUserInfo = "{KEYCLOAK AUTH} failed to get user info"
-var MessageFailedToGetAccountIDFromKeycloakToken = "{KEYCLOAK AUTH} failed to fet account if from keycloak token" //nolint:gosec, lll // false positive
+var MessageFailedToGetAccountIDFromKeycloakToken = "{KEYCLOAK AUTH} failed to get account id from keycloak token" //nolint:gosec, lll // false positive
+var MessageFailedToParseKeycloakToken = "{KEYCLOAK AUTH} failed to parse keycloak token to get account id"        //nolint:gosec, lll // false positive
