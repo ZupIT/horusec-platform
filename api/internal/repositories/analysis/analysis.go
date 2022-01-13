@@ -110,12 +110,13 @@ func (a *Analysis) createVulnerabilityIfNotExists(vuln *vulnerability.Vulnerabil
 		if !exists {
 			return vuln.VulnerabilityID, tsx.Create(vuln, vuln.GetTable()).GetError()
 		}
-		return a.updateCommitAuthors(vuln, res.GetData(), tsx)
+		return a.updateVulnerability(vuln, res.GetData(), tsx)
 	}
 	return uuid.Nil, err
 }
 
-func (a *Analysis) updateCommitAuthors(vuln *vulnerability.Vulnerability, resFindVuln interface{},
+// nolint:funlen // method is not necessary broken
+func (a *Analysis) updateVulnerability(vuln *vulnerability.Vulnerability, resFindVuln interface{},
 	tsx database.IDatabaseWrite) (uuid.UUID, error) {
 	vulnID, err := uuid.Parse(resFindVuln.(map[string]interface{})["vulnerability_id"].(string))
 	if err != nil {
@@ -124,6 +125,10 @@ func (a *Analysis) updateCommitAuthors(vuln *vulnerability.Vulnerability, resFin
 	tableName := (&vulnerability.Vulnerability{}).GetTable()
 	condition := map[string]interface{}{"vulnerability_id": vulnID}
 	entity := map[string]interface{}{
+		"column":         vuln.Column,
+		"confidence":     vuln.Confidence.ToString(),
+		"security_tool":  vuln.SecurityTool.ToString(),
+		"language":       vuln.Language.ToString(),
 		"commit_author":  vuln.CommitAuthor,
 		"commit_email":   vuln.CommitEmail,
 		"commit_hash":    vuln.CommitHash,
