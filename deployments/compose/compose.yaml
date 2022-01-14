@@ -46,8 +46,8 @@ services:
 #      DB_PASSWORD: "root" # Sensitive information we not recommended usage in production environment, change for usage strong data for connection with this service
 #      KEYCLOAK_USER: "keycloak" # Sensitive information we not recommended usage in production environment, change for usage strong data for connection with this service
 #      KEYCLOAK_PASSWORD: "keycloak" # Sensitive information we not recommended usage in production environment, change for usage strong data for connection with this service
-  rabbit:
-    container_name: rabbit
+  horusec_rabbit:
+    container_name: horusec_rabbit
     image: rabbitmq:3-management
     ports:
       - "5672:5672"
@@ -68,6 +68,22 @@ services:
       driver: json-file
       options:
         max-size: 10m
+  # horusec_grafana:
+  #   image: grafana/grafana
+  #   ports:
+  #     - 3000:3000
+  #   container_name: horusec_grafana
+  #   depends_on:
+  #     - prometheus
+  # horusec_prometheus:
+  #   image: prom/prometheus
+  #   ports:
+  #     - 9090:9090
+  #   command:
+  #     - "--config.file=/etc/prometheus/prometheus.yml"
+  #   volumes:
+  #     - "../prometheus:/etc/prometheus"
+  #   container_name: horusec_prometheus
   horusec-messages:
     image: horuszup/horusec-messages:v2.17.3
     ports:
