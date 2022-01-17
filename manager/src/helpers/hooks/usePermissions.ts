@@ -71,6 +71,7 @@ const usePermissions = () => {
       tokens: [ROLES.ADMIN, ROLES.APP_ADMIN],
       users: [ROLES.ADMIN, ROLES.APP_ADMIN],
       webhooks: [ROLES.ADMIN, ROLES.APP_ADMIN],
+      new: Object.values(ROLES),
     };
 
     const routeMatched = Object.entries(routesPermissions).find((item) =>

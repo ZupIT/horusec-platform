@@ -87,7 +87,6 @@ const Tokens: React.FC = () => {
   return (
     <Styled.Wrapper>
       <Styled.Header>
-        <Styled.TitleContent />
         <Button
           text={t('TOKENS_SCREEN.ADD_TOKEN')}
           rounded

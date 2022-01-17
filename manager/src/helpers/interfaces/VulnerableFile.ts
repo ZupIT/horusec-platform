@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-export interface FilterVuln {
-  workspaceID: string;
-  repositoryID?: string;
-  vulnSeverity?: string;
-  vulnHash?: string;
-  vulnType?: string;
-  vulnFile?: string;
+export interface VulnerableFile {
+  totalVulnerabilities: number;
+  repositoryID: string;
+  repositoryName: string;
+  languages: string[];
+  file: string;
+  createdAt: string;
+  analysisID: string;
 }

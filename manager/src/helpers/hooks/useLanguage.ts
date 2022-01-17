@@ -22,6 +22,12 @@ import {
   setCurrentLanguage,
 } from 'helpers/localStorage/currentLanguage';
 
+import { Locale } from 'date-fns';
+import enUS from 'date-fns/locale/en-US';
+import ptBR from 'date-fns/locale/pt-BR';
+import es from 'date-fns/locale/es';
+import { get } from 'lodash';
+
 const allLanguages: LanguageItem[] = [
   {
     name: 'en - US',
@@ -51,11 +57,23 @@ const allLanguages: LanguageItem[] = [
 
 const useLanguage = () => {
   const [currentLanguage, setLanguage] = useState(allLanguages[0]);
+  const [currentLocale, setLocale] = useState<Locale>();
   const { i18n } = useTranslation();
+
+  const handleLocale = (lang: LanguageItem) => {
+    const locales = {
+      enUS,
+      ptBR,
+      es,
+    };
+
+    setLocale(get(locales, lang.i18nValue, locales.enUS));
+  };
 
   const setUserLanguage = (lang: LanguageItem) => {
     setLanguage(lang);
     setCurrentLanguage(lang);
+    handleLocale(lang);
 
     i18n.changeLanguage(lang.i18nValue);
     window.document.documentElement.lang = lang.htmlValue;
@@ -73,6 +91,7 @@ const useLanguage = () => {
     allLanguages,
     currentLanguage,
     setUserLanguage,
+    currentLocale,
   };
 };
 

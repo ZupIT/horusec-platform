@@ -15,7 +15,7 @@
  */
 
 import { getCurrentLanguage } from 'helpers/localStorage/currentLanguage';
-import { format } from 'date-fns';
+import { format, formatDistance, Locale } from 'date-fns';
 
 const formatInitialAndFinalDate = (initial: Date, final: Date) => {
   if (initial && final) {
@@ -34,4 +34,16 @@ const formatToHumanDate = (date: string) => {
   return format(new Date(date), dateFormat);
 };
 
-export { formatInitialAndFinalDate, formatToHumanDate };
+const formatToDistanceDate = (date: string, locale: Locale) => {
+  const dt = new Date(date);
+  const dtDateOnly = new Date(
+    dt.valueOf() + dt.getTimezoneOffset() * 60 * 1000
+  );
+
+  return formatDistance(dtDateOnly, new Date(), {
+    addSuffix: true,
+    locale,
+  });
+};
+
+export { formatInitialAndFinalDate, formatToHumanDate, formatToDistanceDate };

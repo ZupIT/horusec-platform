@@ -18,6 +18,7 @@ import styled, { css } from 'styled-components';
 
 interface ButtonProps {
   outline?: boolean;
+  outlinePrimary?: boolean;
   rounded?: boolean;
   opaque?: boolean;
   ghost?: boolean;
@@ -77,6 +78,21 @@ const Button = styled.button<ButtonProps>`
     css`
       background: transparent;
       border: 1px solid ${({ theme }) => theme.colors.button.border};
+    `};
+
+  ${({ outlinePrimary, isLoading }) =>
+    outlinePrimary && isLoading
+      ? css`
+          background: ${({ theme }) => theme.colors.button.outlineBackground};
+          border: 1px solid ${({ theme }) => theme.colors.button.disableInDark} !important;
+        `
+      : null}
+
+  ${({ outlinePrimary }) =>
+    outlinePrimary &&
+    css`
+      background: ${({ theme }) => theme.colors.button.outlineBackground};
+      border: 1px solid ${({ theme }) => theme.colors.button.primary};
     `};
 
   ${({ ghost }) =>

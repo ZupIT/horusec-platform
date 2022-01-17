@@ -20,27 +20,6 @@ import { FilterVuln } from 'helpers/interfaces/FIlterVuln';
 import { PaginationInfo } from 'helpers/interfaces/Pagination';
 import { SERVICE_VULNERABILITY } from '../config/endpoints';
 
-const getAllVulnerabilities = (
-  filters: FilterVuln,
-  type: 'workspace' | 'repository',
-  pagination: PaginationInfo
-): Promise<AxiosResponse<any>> => {
-  const path =
-    type === 'repository'
-      ? `workspace/${filters.workspaceID}/repository/${filters.repositoryID}`
-      : `workspace/${filters.workspaceID}`;
-
-  return http.get(`${SERVICE_VULNERABILITY}/vulnerability/management/${path}`, {
-    params: {
-      page: pagination.currentPage,
-      size: pagination.pageSize,
-      vulnSeverity: filters.vulnSeverity,
-      vulnHash: filters.vulnHash,
-      vulnType: filters.vulnType,
-    },
-  });
-};
-
 const updateVulnerability = (
   workspaceID: string,
   repositoryID: string,
@@ -64,7 +43,52 @@ const updateVulnerability = (
   });
 };
 
+const getFilesWithVulnerabilities = (
+  filters: FilterVuln,
+  type: 'workspace' | 'repository',
+  pagination: PaginationInfo
+) => {
+  const path =
+    type === 'repository'
+      ? `workspace/${filters.workspaceID}/repository/${filters.repositoryID}`
+      : `workspace/${filters.workspaceID}`;
+
+  return http.get(
+    `${SERVICE_VULNERABILITY}/vulnerability/management/${path}/files`,
+    {
+      params: {
+        page: pagination.currentPage,
+        size: pagination.pageSize,
+        vulnSeverity: filters.vulnSeverity,
+        vulnHash: filters.vulnHash,
+        vulnType: filters.vulnType,
+      },
+    }
+  );
+};
+
+const getVulnerabilitiesOfFile = (
+  filters: FilterVuln,
+  pagination: PaginationInfo,
+  vulnFile: string
+) => {
+  return http.get(
+    `${SERVICE_VULNERABILITY}/vulnerability/management/workspace/${filters.workspaceID}/repository/${filters.repositoryID}/files/vulnerabilities`,
+    {
+      params: {
+        vulnFile,
+        page: pagination.currentPage,
+        size: pagination.pageSize,
+        vulnSeverity: filters.vulnSeverity,
+        vulnHash: filters.vulnHash,
+        vulnType: filters.vulnType || 'Vulnerability',
+      },
+    }
+  );
+};
+
 export default {
-  getAllVulnerabilities,
   updateVulnerability,
+  getFilesWithVulnerabilities,
+  getVulnerabilitiesOfFile,
 };

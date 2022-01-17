@@ -23,15 +23,24 @@ interface Props extends InputHTMLAttributes<HTMLInputElement> {
   placeholder: string;
 }
 
-const SearchBar: React.FC<Props> = ({ placeholder, onSearch, ...rest }) => {
+const SearchBar: React.FC<Props> = ({
+  placeholder,
+  onSearch,
+  onBlur,
+  onFocus,
+  style,
+  ...rest
+}) => {
   return (
-    <Styled.Wrapper>
+    <Styled.Wrapper style={style}>
       <Icon name="search" size="14px" />
 
       <Styled.Input
         {...rest}
         placeholder={placeholder}
         onChange={(event) => onSearch(event.target.value)}
+        onBlur={onBlur}
+        onFocus={onFocus}
       />
     </Styled.Wrapper>
   );

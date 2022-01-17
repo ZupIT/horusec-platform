@@ -14,58 +14,39 @@
  * limitations under the License.
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Styled from './styled';
-import { SearchBar, Select, Icon, Datatable, DataSource } from 'components';
+import { Button, Icon, Pagination, Select } from 'components';
+import { FilterVuln } from 'helpers/interfaces/FIlterVuln';
+import useParamsRoute from 'helpers/hooks/useParamsRoute';
 import { useTranslation } from 'react-i18next';
-import useResponseMessage from 'helpers/hooks/useResponseMessage';
+import { findIndex, get, cloneDeep } from 'lodash';
 import vulnerabilitiesService from 'services/vulnerabilities';
 import { PaginationInfo } from 'helpers/interfaces/Pagination';
+import { VulnerableFile } from 'helpers/interfaces/VulnerableFile';
+import { formatToDistanceDate } from 'helpers/formatters/date';
 import { Vulnerability } from 'helpers/interfaces/Vulnerability';
-import { cloneDeep, debounce, get } from 'lodash';
-import Details from './Details';
-import { FilterVuln } from 'helpers/interfaces/FIlterVuln';
-import useFlashMessage from 'helpers/hooks/useFlashMessage';
-import { useTheme } from 'styled-components';
-import { AxiosError, AxiosResponse } from 'axios';
-import useParamsRoute from 'helpers/hooks/useParamsRoute';
+import Linkify from 'react-linkify';
 import usePermissions from 'helpers/hooks/usePermissions';
+import useResponseMessage from 'helpers/hooks/useResponseMessage';
+import useFlashMessage from 'helpers/hooks/useFlashMessage';
+import { AxiosError } from 'axios';
+import useLanguage from 'helpers/hooks/useLanguage';
 
 const INITIAL_PAGE = 1;
-interface RefreshInterface {
-  filter: FilterVuln;
-  page: PaginationInfo;
-}
-
-interface KeyValueVuln {
-  vulnerabilityID: string;
-  type: string;
-  severity: string;
-}
 
 const Vulnerabilities: React.FC = () => {
   const { workspaceId, repositoryId } = useParamsRoute();
-
-  const overviewType = repositoryId ? 'repository' : 'workspace';
-
-  const { t } = useTranslation();
-  const { colors } = useTheme();
+  const { ACTIONS, isAuthorizedAction } = usePermissions();
   const { dispatchMessage } = useResponseMessage();
   const { showSuccessFlash } = useFlashMessage();
-  const { ACTIONS, isAuthorizedAction } = usePermissions();
+  const { t } = useTranslation();
+  const { currentLocale } = useLanguage();
 
   const [isLoading, setLoading] = useState(false);
-  const [vulnerabilities, setVulnerabilities] = useState<Vulnerability[]>([]);
-  const [selectedVuln, setSelectedVuln] = useState<Vulnerability>(null);
-  const [updateVulnIds, setUpdateVulnIds] = useState<KeyValueVuln[]>([]);
-
-  const [filters, setFilters] = useState<FilterVuln>({
-    workspaceID: workspaceId,
-    repositoryID: repositoryId,
-    vulnHash: '',
-    vulnSeverity: 'ALL',
-    vulnType: 'ALL',
-  });
+  const [isLoadingUpdate, setLoadingUpdated] = useState(false);
+  const [isSearching, setSearching] = useState(false);
+  const [vulOpened, setVulOpened] = useState<string>();
 
   const [pagination, setPagination] = useState<PaginationInfo>({
     currentPage: INITIAL_PAGE,
@@ -74,16 +55,28 @@ const Vulnerabilities: React.FC = () => {
     totalPages: 10,
   });
 
-  const [refresh, setRefresh] = useState<RefreshInterface>({
-    filter: filters,
-    page: pagination,
+  const [vulnerableFiles, setVulnerableFiles] = useState<VulnerableFile[]>([]);
+  const [selectedFile, setSelectedFile] = useState<VulnerableFile>(null);
+
+  const [vulnerabilitiesOfFile, setVulnerabilitiesOfFile] = useState<
+    Vulnerability[]
+  >([]);
+
+  const [vulnerabilitiesToUpdate, setVulnerabilitiesToUpdate] = useState<
+    Vulnerability[]
+  >([]);
+
+  const overviewType = repositoryId ? 'repository' : 'workspace';
+
+  const [filters, setFilters] = useState<FilterVuln>({
+    workspaceID: workspaceId,
+    repositoryID: repositoryId,
+    vulnHash: '',
+    vulnSeverity: 'ALL',
+    vulnType: 'Vulnerability',
   });
 
-  const vulnTypes = [
-    {
-      label: t('VULNERABILITIES_SCREEN.ALL_STATUS'),
-      value: 'ALL',
-    },
+  const vulTypes = [
     {
       label: t('VULNERABILITIES_SCREEN.STATUS.VULNERABILITY'),
       value: 'Vulnerability',
@@ -133,170 +126,39 @@ const Vulnerabilities: React.FC = () => {
     },
   ];
 
-  const handleSearch = debounce((searchString: string) => {
-    setRefresh((state) => ({
-      ...state,
-      filter: { ...state.filter, vulnHash: searchString },
-    }));
-  }, 800);
-
-  const handleUpdateVulnerability = () => {
-    vulnerabilitiesService
-      .updateVulnerability(
-        filters.workspaceID,
-        filters.repositoryID,
-        vulnerabilities[0].analysisID,
-        updateVulnIds,
-        overviewType
-      )
-      .then(() => {
-        resetUpdateVuln();
-        showSuccessFlash(t('VULNERABILITIES_SCREEN.SUCCESS_UPDATE'));
-      })
-      .catch((err: AxiosError) => {
-        setRefresh((state) => state);
-        dispatchMessage(err?.response?.data);
-      });
+  const extensionColors = {
+    GO: '#66d1dd',
+    SUM: '#66d1dd',
+    MOD: '#66d1dd',
+    CS: '#8823ec',
+    C: '#28348e',
+    RB: '#970f03',
+    PY: '#366b97',
+    JAVA: '#f0931e',
+    KT: '#746dda',
+    KTS: '#746dda',
+    KTM: '#746dda',
+    JS: '#f0d81e',
+    TS: '#2f74c0',
+    CPP: '#005697',
+    PHP: '#7377ad',
+    HTML: '#e96229',
+    DART: '#ccd7dd',
+    SH: '#7f8c8d',
+    JSON: '#cc9d1d',
+    XML: '#e98629',
+    YAML: '#72a250',
+    YML: '#72a250',
+    TF: '#7f8c8d',
+    SWIFT: '#f57836',
+    NGINX: '#008e36',
+    TXT: '#CDCDCD',
+    PERF: '#CDCDCD',
+    EXS: '#351350',
+    EX: '#351350',
+    ELF: '#7f8c8d',
+    LOCK: '#86523c',
   };
-
-  useEffect(() => {
-    let isCancelled = false;
-
-    const fetchVulnerabilities = () => {
-      setLoading(true);
-
-      const page = refresh.page;
-      const filter = refresh.filter;
-
-      if (page.pageSize !== pagination.pageSize) {
-        page.currentPage = INITIAL_PAGE;
-      }
-
-      const filterAux = {
-        ...filter,
-        vulnSeverity: filter.vulnHash ? null : filter.vulnSeverity,
-        vulnType: filter.vulnHash ? null : filter.vulnType,
-      };
-
-      setFilters(filter);
-
-      vulnerabilitiesService
-        .getAllVulnerabilities(filterAux, overviewType, page)
-        .then((result) => {
-          if (!isCancelled) {
-            const response = result.data?.content;
-
-            const data: Vulnerability[] = response?.data;
-
-            for (const row of data) {
-              const { type = row.type, severity = row.severity } =
-                updateVulnIds.find(
-                  (x) => x.vulnerabilityID === row.vulnerabilityID
-                ) || {};
-              row.type = type;
-              row.severity = severity;
-            }
-
-            setVulnerabilities(data);
-            const totalItems = response?.totalItems;
-
-            let totalPages = totalItems
-              ? Math.ceil(totalItems / page.pageSize)
-              : 1;
-
-            if (totalPages <= 0) {
-              totalPages = 1;
-            }
-
-            setPagination({ ...page, totalPages, totalItems });
-          }
-        })
-        .catch((err: AxiosError) => {
-          if (!isCancelled) {
-            dispatchMessage(err?.response?.data);
-            setVulnerabilities([]);
-          }
-        })
-        .finally(() => {
-          if (!isCancelled) {
-            setLoading(false);
-          }
-        });
-
-      if (!isCancelled) {
-        setLoading(false);
-      }
-    };
-
-    fetchVulnerabilities();
-    return () => {
-      isCancelled = true;
-    };
-    // eslint-disable-next-line
-  }, [refresh, pagination.pageSize]);
-
-  function resetUpdateVuln() {
-    setUpdateVulnIds([]);
-    setLoading(true);
-    vulnerabilitiesService
-      .getAllVulnerabilities(refresh.filter, overviewType, refresh.page)
-      .then((result) => {
-        const response = result.data?.content;
-        const data: Vulnerability[] = response?.data;
-        setVulnerabilities(data);
-      })
-      .catch((err: AxiosError) => {
-        dispatchMessage(err?.response?.data);
-        setVulnerabilities([]);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }
-
-  function updateVulnerability(
-    row: Vulnerability,
-    severity: string,
-    type: string
-  ) {
-    setUpdateVulnIds((state) => {
-      const data = cloneDeep(state);
-      const index = data.findIndex(
-        (x) => x.vulnerabilityID === row.vulnerabilityID
-      );
-      const record: KeyValueVuln = {
-        vulnerabilityID: row.vulnerabilityID,
-        severity: severity,
-        type: type,
-      };
-
-      if (index >= 0) {
-        data[index] = record;
-      } else {
-        data.push(record);
-      }
-
-      setVulnerabilities((state) =>
-        state.map((row) => {
-          const { severity = row.severity, type = row.type } =
-            data.find((x) => x.vulnerabilityID === row.vulnerabilityID) || {};
-          row.severity = severity;
-          row.type = type;
-          return row;
-        })
-      );
-
-      return data;
-    });
-  }
-
-  function isTouched(row: Vulnerability): boolean {
-    const index = updateVulnIds.findIndex(
-      (x) => x.vulnerabilityID === row.vulnerabilityID
-    );
-
-    return index > -1;
-  }
 
   const isDisabled = !isAuthorizedAction(
     repositoryId
@@ -304,157 +166,433 @@ const Vulnerabilities: React.FC = () => {
       : ACTIONS.HANDLE_VULNERABILITIES_WORKSPACE
   );
 
-  return (
-    <Styled.Wrapper>
-      <Styled.Options>
-        <SearchBar
-          placeholder={t('VULNERABILITIES_SCREEN.SEARCH')}
-          onSearch={(value) => handleSearch(value)}
-        />
+  const getFileExtension = (path: string) => {
+    if (path) {
+      if (path?.split('.').length > 1) {
+        const extension = path?.split('.')?.slice(-1)?.pop()?.toUpperCase();
+        const color = get(extensionColors, extension, '#FFF');
+        return { extension, color };
+      }
+    }
 
+    return { extension: '?', color: '#FFF' };
+  };
+
+  const handleSearchValue = (value: string) => {
+    setSearching(!!value);
+    setFilters((state) => ({ ...state, vulnHash: value }));
+    getFilesWithVul();
+  };
+
+  const handlePagination = (totalItems: number) => {
+    let totalPages = totalItems
+      ? Math.ceil(totalItems / pagination.pageSize)
+      : 1;
+
+    if (totalPages <= 0) {
+      totalPages = 1;
+    }
+
+    const paginationToSet = {
+      ...pagination,
+      currentPage: INITIAL_PAGE,
+      totalPages,
+      totalItems,
+    };
+
+    if (paginationToSet.totalItems !== pagination.totalItems) {
+      setPagination(paginationToSet);
+    }
+  };
+
+  const setVulnerabilityToUpdate = (vul: Vulnerability) => {
+    setVulnerabilitiesOfFile((state) =>
+      state.map((el) => (el.vulnerabilityID === vul.vulnerabilityID ? vul : el))
+    );
+
+    const index = findIndex(vulnerabilitiesToUpdate, {
+      vulnerabilityID: vul.vulnerabilityID,
+    });
+
+    let vulsToUpdateClone = cloneDeep(vulnerabilitiesToUpdate);
+
+    if (index > -1) {
+      vulsToUpdateClone[index] = vul;
+    } else {
+      vulsToUpdateClone = vulsToUpdateClone.concat(vul);
+    }
+
+    setVulnerabilitiesToUpdate(vulsToUpdateClone);
+  };
+
+  const applyCurrentUpdatesVulnerabilities = (
+    vulnerabilities: Vulnerability[]
+  ) => {
+    vulnerabilitiesToUpdate.map((item) => {
+      const index = findIndex(vulnerabilities, {
+        vulnerabilityID: item.vulnerabilityID,
+      });
+
+      if (index > -1) vulnerabilities[index] = item;
+    });
+
+    return vulnerabilities;
+  };
+
+  const getFilesWithVul = () => {
+    setLoading(true);
+    setSelectedFile(null);
+
+    vulnerabilitiesService
+      .getFilesWithVulnerabilities(filters, overviewType, pagination)
+      .then((result) => {
+        const files: VulnerableFile[] = result?.data?.content?.data;
+        const totalItems: number = result?.data?.content?.totalItems;
+
+        setVulnerableFiles(files);
+        handlePagination(totalItems);
+      })
+      .catch((err) => {
+        dispatchMessage(err?.response?.data);
+        setVulnerableFiles([]);
+        handlePagination(0);
+      })
+      .finally(() => setLoading(false));
+  };
+
+  const getVulOfFile = (vulFile: VulnerableFile) => {
+    setLoading(true);
+    setSelectedFile(vulFile);
+
+    vulnerabilitiesService
+      .getVulnerabilitiesOfFile(
+        { workspaceID: workspaceId, repositoryID: vulFile.repositoryID },
+        pagination,
+        vulFile.file
+      )
+      .then((result) => {
+        let vulnerabilities: Vulnerability[] = result?.data?.content?.data;
+        vulnerabilities = applyCurrentUpdatesVulnerabilities(vulnerabilities);
+
+        const totalItems: number = result?.data?.content?.totalItems;
+
+        setVulnerabilitiesOfFile(vulnerabilities);
+        handlePagination(totalItems);
+      })
+      .catch((err) => {
+        dispatchMessage(err?.response?.data);
+        setVulnerabilitiesOfFile([]);
+        handlePagination(0);
+      })
+      .finally(() => setLoading(false));
+  };
+
+  const getVulCodeDetail = (vuln: Vulnerability) => {
+    let message = `Line: ${vuln.line || '-'}, Column: ${vuln.column || '-'}`;
+
+    if (vuln?.commitAuthor && vuln?.commitAuthor !== '-') {
+      message = `${message} - Committed by: ${vuln.commitAuthor} <${vuln.commitEmail}>`;
+    }
+
+    return message;
+  };
+
+  const handleUpdateVulnerability = () => {
+    setLoadingUpdated(true);
+
+    vulnerabilitiesService
+      .updateVulnerability(
+        filters.workspaceID,
+        filters.repositoryID,
+        vulnerableFiles[0].analysisID,
+        vulnerabilitiesToUpdate,
+        overviewType
+      )
+      .then(() => {
+        showSuccessFlash(t('VULNERABILITIES_SCREEN.SUCCESS_UPDATE'));
+        setVulnerabilitiesToUpdate([]);
+      })
+      .catch((err: AxiosError) => {
+        dispatchMessage(err?.response?.data);
+      })
+      .finally(() => setLoadingUpdated(false));
+  };
+
+  const renderFilter = () => (
+    <Styled.Options>
+      <Styled.SelectsWrapper isSearching={isSearching}>
         <Select
-          width="250px"
+          width="300px"
+          className="filter"
+          wrapperStyle={{ marginRight: '50px', marginBottom: '10px' }}
           placeholder={t('VULNERABILITIES_SCREEN.ALL_SEVERITIES')}
           disabled={!!filters.vulnHash}
           options={severities}
           value={filters.vulnSeverity}
           label={t('VULNERABILITIES_SCREEN.SEVERITY')}
-          onChangeValue={(item) => {
-            setFilters((state) => ({ ...state, vulnSeverity: item }));
-            setRefresh({
-              filter: { ...filters, vulnSeverity: item },
-              page: { ...pagination, currentPage: INITIAL_PAGE },
-            });
-          }}
+          onChangeValue={(item) =>
+            setFilters((state) => ({ ...state, vulnSeverity: item }))
+          }
         />
 
-        <Styled.Select
-          width="250px"
+        <Select
+          width="300px"
+          className="filter"
+          wrapperStyle={{ marginBottom: '10px' }}
           placeholder={t('VULNERABILITIES_SCREEN.ALL_STATUS')}
           disabled={!!filters.vulnHash}
-          options={vulnTypes}
+          options={vulTypes}
           label={t('VULNERABILITIES_SCREEN.STATUS_TITLE')}
           value={filters.vulnType}
-          onChangeValue={(item) => {
-            setFilters((state) => ({ ...state, vulnType: item }));
-            setRefresh({
-              filter: { ...filters, vulnType: item },
-              page: { ...pagination, currentPage: INITIAL_PAGE },
+          onChangeValue={(item) =>
+            setFilters((state) => ({ ...state, vulnType: item }))
+          }
+        />
+      </Styled.SelectsWrapper>
+
+      <Styled.SearchWrapper isSearching={isSearching}>
+        <Styled.SearchBar
+          placeholder={t('VULNERABILITIES_SCREEN.SEARCH')}
+          onSearch={handleSearchValue}
+        />
+      </Styled.SearchWrapper>
+    </Styled.Options>
+  );
+
+  const renderMenuUpdating = () => {
+    if (vulnerabilitiesToUpdate.length > 0) {
+      return (
+        <Styled.UpdateContent>
+          <Styled.UpdateCount>
+            <b>{vulnerabilitiesToUpdate.length}</b>
+            {t('VULNERABILITIES_SCREEN.UPDATE_VULNERABILITY')}
+          </Styled.UpdateCount>
+
+          <Styled.UpdateBtns>
+            <Button
+              text={t('GENERAL.SAVE')}
+              isLoading={isLoadingUpdate}
+              width={100}
+              outlinePrimary
+              onClick={handleUpdateVulnerability}
+              className="save-vulnerabilities"
+            />
+
+            <Button
+              text={t('GENERAL.CANCEL')}
+              width={100}
+              isDisabled={isLoadingUpdate}
+              outline
+              style={{ marginLeft: '15px' }}
+              onClick={() => {
+                setVulnerabilitiesToUpdate([]);
+                getFilesWithVul();
+              }}
+            />
+          </Styled.UpdateBtns>
+        </Styled.UpdateContent>
+      );
+    }
+  };
+
+  const renderFileItem = (vulnerableFile: VulnerableFile, index: number) => (
+    <Styled.File key={index} onClick={() => getVulOfFile(vulnerableFile)}>
+      <Styled.FileRow>
+        <Styled.FileColumn>
+          <Styled.FileRow>
+            <Styled.FileLanguage
+              color={get(
+                extensionColors,
+                getFileExtension(vulnerableFile.file).extension,
+                '#FFF'
+              )}
+            >
+              {vulnerableFile?.languages?.join('/')}
+            </Styled.FileLanguage>
+            <Styled.FileName>{vulnerableFile.file}</Styled.FileName>
+          </Styled.FileRow>
+        </Styled.FileColumn>
+
+        <Styled.FileRow>
+          <Styled.Date>
+            {formatToDistanceDate(vulnerableFile.createdAt, currentLocale)}
+          </Styled.Date>
+          <Styled.View className="view">⮕</Styled.View>
+        </Styled.FileRow>
+      </Styled.FileRow>
+
+      <Styled.FileInfo>
+        <Styled.FileRow>
+          <Styled.FileInfoText>
+            <Styled.FileVulCount>
+              {vulnerableFile.totalVulnerabilities}
+            </Styled.FileVulCount>
+            {t('VULNERABILITIES_SCREEN.TITLE').toLowerCase()}.
+          </Styled.FileInfoText>
+        </Styled.FileRow>
+
+        {overviewType === 'workspace' && (
+          <Styled.FileRow>
+            <Styled.FileInfoText>
+              {vulnerableFile.repositoryName}
+            </Styled.FileInfoText>
+          </Styled.FileRow>
+        )}
+      </Styled.FileInfo>
+    </Styled.File>
+  );
+
+  const renderTableMessage = (message: string, icon?: string) => {
+    return (
+      <Styled.LoadingWrapper>
+        {icon && <Icon name={icon} size="50px" />}
+        <Styled.LoadingText>{message}</Styled.LoadingText>
+      </Styled.LoadingWrapper>
+    );
+  };
+
+  const renderFilesList = () => (
+    <Styled.Content className="file-list">
+      <Styled.ScrollList>
+        {vulnerableFiles.length > 0
+          ? vulnerableFiles.map((file, index) => renderFileItem(file, index))
+          : renderTableMessage(t('VULNERABILITIES_SCREEN.TABLE.EMPTY'))}
+      </Styled.ScrollList>
+
+      <Pagination
+        pagination={pagination}
+        onChange={(value) => setPagination(value)}
+      />
+    </Styled.Content>
+  );
+
+  const renderVulnerability = (vulnerability: Vulnerability) => (
+    <Styled.Vulnerability key={vulnerability.vulnerabilityID}>
+      <Styled.VulDetailWrapper>
+        <Styled.VulDetail isOpen={vulOpened === vulnerability.vulnerabilityID}>
+          <Linkify>{vulnerability.details}</Linkify>
+
+          <Styled.Info>
+            {t('VULNERABILITIES_SCREEN.DETAILS.SECURITY_TOOL')}:{' '}
+            {vulnerability.securityTool} -{' '}
+            {t('VULNERABILITIES_SCREEN.DETAILS.CONFIDENCE')}:{' '}
+            {vulnerability.confidence}
+          </Styled.Info>
+
+          <Styled.Code>{vulnerability.code}</Styled.Code>
+          <Styled.CodeInfoWrapper>
+            <Styled.CodeInfo>{getVulCodeDetail(vulnerability)}</Styled.CodeInfo>
+            <Styled.CodeInfo>Hash: {vulnerability.vulnHash}</Styled.CodeInfo>
+          </Styled.CodeInfoWrapper>
+        </Styled.VulDetail>
+
+        <Styled.Ellipsis
+          onClick={() =>
+            vulOpened === vulnerability.vulnerabilityID
+              ? setVulOpened(null)
+              : setVulOpened(vulnerability.vulnerabilityID)
+          }
+        >
+          ...
+        </Styled.Ellipsis>
+      </Styled.VulDetailWrapper>
+
+      <Styled.SelectOptionsWrapper>
+        <Icon name={vulnerability.severity} size="18px" />
+
+        <Select
+          variant="filled"
+          width="max-content"
+          className="severity-dropdown"
+          value={vulnerability.severity}
+          options={severities.slice(1)}
+          disabled={isDisabled}
+          style={{
+            color: isDisabled ? '#F4F4F4' : '',
+            marginRight: '20px',
+            fontSize: '12px',
+          }}
+          onChangeValue={(value) => {
+            setVulnerabilityToUpdate({
+              ...vulnerability,
+              severity: value,
             });
           }}
         />
-      </Styled.Options>
 
-      <Styled.Content>
-        <Datatable
-          buttons={[
-            {
-              title: `${t('VULNERABILITIES_SCREEN.UPDATE_VULNERABILITY')} (${
-                updateVulnIds.length
-              })`,
-              function: handleUpdateVulnerability,
-              icon: 'success',
-              disabled: !!updateVulnIds.length,
-              show: updateVulnIds.length > 0,
-            },
-            {
-              title: t('GENERAL.CANCEL'),
-              function: resetUpdateVuln,
-              icon: 'error',
-              disabled: !!updateVulnIds.length,
-              show: updateVulnIds.length > 0,
-            },
-          ]}
-          columns={[
-            {
-              label: t('VULNERABILITIES_SCREEN.TABLE.SEVERITY'),
-              property: 'severity',
-              type: 'custom',
-              cssClass: ['center'],
-            },
-            {
-              label: t('VULNERABILITIES_SCREEN.TABLE.STATUS'),
-              property: 'status',
-              type: 'custom',
-            },
-            {
-              label: t('VULNERABILITIES_SCREEN.TABLE.HASH'),
-              property: 'hash',
-              type: 'text',
-            },
-            {
-              label: t('VULNERABILITIES_SCREEN.TABLE.DETAILS'),
-              property: 'details',
-              type: 'custom',
-            },
-          ]}
-          dataSource={vulnerabilities.map((row) => {
-            const repo: DataSource = {
-              ...row,
-              id: row.vulnerabilityID,
-              hash: row.vulnHash,
-              description: `${row.file} ( ${row.line || ' - '} : ${
-                row.column || ' - '
-              })`,
-              highlight: isTouched(row),
-              severity: (
-                <Select
-                  style={{
-                    backgroundColor: get(
-                      colors.vulnerabilities,
-                      row.severity,
-                      colors.vulnerabilities.DEFAULT
-                    ),
-                    color: isDisabled ? '#F4F4F4' : '',
-                  }}
-                  variant="filled"
-                  width="150px"
-                  value={row.severity}
-                  options={severities.slice(1)}
-                  disabled={isDisabled}
-                  onChangeValue={(value) => {
-                    updateVulnerability(row, value, row.type);
-                  }}
-                />
-              ),
-              status: (
-                <Select
-                  value={row.type}
-                  options={vulnTypes.slice(1)}
-                  width="200px"
-                  variant="filled"
-                  style={{ color: isDisabled ? '#F4F4F4' : '' }}
-                  disabled={isDisabled}
-                  onChangeValue={(value) => {
-                    updateVulnerability(row, row.severity, value);
-                  }}
-                />
-              ),
-              details: (
-                <Icon
-                  name="info"
-                  size="20px"
-                  onClick={() => setSelectedVuln(row)}
-                />
-              ),
-            };
-            return repo;
-          })}
-          isLoading={isLoading}
-          emptyListText={t('VULNERABILITIES_SCREEN.TABLE.EMPTY')}
-          fixed={false}
-          paginate={{
-            pagination,
-            onChange: (page) => setRefresh({ filter: filters, page }),
+        <Select
+          value={vulnerability.type}
+          options={vulTypes}
+          width="max-content"
+          className="status-dropdown"
+          variant="filled"
+          style={{ color: isDisabled ? '#F4F4F4' : '', fontSize: '12px' }}
+          disabled={isDisabled}
+          onChangeValue={(value) => {
+            setVulnerabilityToUpdate({
+              ...vulnerability,
+              type: value,
+            });
           }}
         />
-      </Styled.Content>
+      </Styled.SelectOptionsWrapper>
+    </Styled.Vulnerability>
+  );
 
-      <Details
-        isOpen={!!selectedVuln}
-        onClose={() => setSelectedVuln(null)}
-        vulnerability={selectedVuln}
+  const renderVulnerabilitiesOfFile = () => (
+    <Styled.Content className="vulnerabilities-box">
+      <Styled.HeaderVulList>
+        <Styled.FileTitle>
+          {selectedFile.file}
+          {overviewType === 'workspace' && (
+            <Styled.Info>{selectedFile.repositoryName}</Styled.Info>
+          )}
+        </Styled.FileTitle>
+        <Styled.Back onClick={() => getFilesWithVul()}>
+          <Icon name="back" size="20px" />
+          <Styled.BackText>{t('GENERAL.BACK')}</Styled.BackText>
+        </Styled.Back>
+      </Styled.HeaderVulList>
+
+      <Styled.ScrollList>
+        {vulnerabilitiesOfFile.length > 0
+          ? vulnerabilitiesOfFile.map((vuln) => renderVulnerability(vuln))
+          : renderTableMessage(t('VULNERABILITIES_SCREEN.TABLE.EMPTY'))}
+      </Styled.ScrollList>
+
+      <Pagination
+        pagination={pagination}
+        onChange={(value) => setPagination(value)}
       />
+    </Styled.Content>
+  );
+
+  const renderContent = () => {
+    if (isLoading) {
+      return (
+        <Styled.Content>
+          {renderTableMessage(t('VULNERABILITIES_SCREEN.LOADING'), 'loading')}
+        </Styled.Content>
+      );
+    } else if (selectedFile) {
+      return renderVulnerabilitiesOfFile();
+    } else {
+      return renderFilesList();
+    }
+  };
+
+  useEffect(() => {
+    if (selectedFile) getVulOfFile(selectedFile);
+    else getFilesWithVul();
+  }, [filters, pagination]);
+
+  return (
+    <Styled.Wrapper>
+      {renderFilter()}
+
+      {renderMenuUpdating()}
+
+      {renderContent()}
     </Styled.Wrapper>
   );
 };
