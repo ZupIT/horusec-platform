@@ -21,10 +21,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/go-chi/chi"
-	"github.com/google/uuid"
-	"github.com/stretchr/testify/assert"
-
 	analysisEntities "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 	"github.com/ZupIT/horusec-devkit/pkg/entities/vulnerability"
 	analysisEnum "github.com/ZupIT/horusec-devkit/pkg/enums/analysis"
@@ -33,6 +29,9 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/enums/severities"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/tools"
 	vulnerabilityEnum "github.com/ZupIT/horusec-devkit/pkg/enums/vulnerability"
+	"github.com/go-chi/chi"
+	"github.com/google/uuid"
+	"github.com/stretchr/testify/assert"
 )
 
 func getAnalysisMock() *analysisEntities.Analysis {

@@ -15,38 +15,37 @@
 package router
 
 import (
-	"github.com/go-chi/chi"
-
-	httpRouter "github.com/ZupIT/horusec-devkit/pkg/services/http/router"
+	"github.com/ZupIT/horusec-devkit/pkg/services/http/router"
 	"github.com/ZupIT/horusec-devkit/pkg/services/middlewares"
 	"github.com/ZupIT/horusec-devkit/pkg/services/swagger"
+	"github.com/go-chi/chi"
 
 	"github.com/ZupIT/horusec-platform/analytic/docs"
 	"github.com/ZupIT/horusec-platform/analytic/internal/enums/routes"
-	dashboardEvents "github.com/ZupIT/horusec-platform/analytic/internal/events/dashboard"
+	eventsdashboard "github.com/ZupIT/horusec-platform/analytic/internal/events/dashboard"
 	"github.com/ZupIT/horusec-platform/analytic/internal/handlers/dashboard"
 	"github.com/ZupIT/horusec-platform/analytic/internal/handlers/health"
 )
 
 type IRouter interface {
-	httpRouter.IRouter
+	router.IRouter
 }
 
 type Router struct {
-	httpRouter.IRouter
+	router.IRouter
 	swagger.ISwagger
 	middlewares.IAuthzMiddleware
 	healthHandler    *health.Handler
 	dashboardHandler *dashboard.Handler
-	dashboardEvents  *dashboardEvents.Events
+	dashboardEvents  *eventsdashboard.Events
 }
 
-func NewHTTPRouter(router httpRouter.IRouter, authzMiddleware middlewares.IAuthzMiddleware,
-	healthHandler *health.Handler, dashboardHandler *dashboard.Handler, eventsDashboard *dashboardEvents.Events) IRouter {
+func NewHTTPRouter(route router.IRouter, authzMiddleware middlewares.IAuthzMiddleware,
+	healthHandler *health.Handler, dashboardHandler *dashboard.Handler, eventsDashboard *eventsdashboard.Events) IRouter {
 	requestRouter := &Router{
-		IRouter:          router,
+		IRouter:          route,
 		IAuthzMiddleware: authzMiddleware,
-		ISwagger:         swagger.NewSwagger(router.GetMux(), router.GetPort()),
+		ISwagger:         swagger.NewSwagger(route.GetMux(), route.GetPort()),
 		healthHandler:    healthHandler,
 		dashboardHandler: dashboardHandler,
 		dashboardEvents:  eventsDashboard,

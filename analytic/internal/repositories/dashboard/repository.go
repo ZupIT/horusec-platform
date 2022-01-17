@@ -20,7 +20,7 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/services/database"
 
 	"github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard"
-	dashboardEnums "github.com/ZupIT/horusec-platform/analytic/internal/enums/dashboard"
+	enumsdashboard "github.com/ZupIT/horusec-platform/analytic/internal/enums/dashboard"
 )
 
 type IRepoRepository interface {
@@ -44,7 +44,7 @@ func NewRepoDashboard(connection *database.Connection) IRepoRepository {
 }
 
 func (r *RepoRepository) GetDashboardTotalDevelopers(filter *dashboard.Filter) (count int, err error) {
-	query := fmt.Sprintf(r.queryGetDashboardTotalDevelopers(), dashboardEnums.TableVulnerabilitiesByAuthor)
+	query := fmt.Sprintf(r.queryGetDashboardTotalDevelopers(), enumsdashboard.TableVulnerabilitiesByAuthor)
 
 	return count, r.databaseRead.Raw(query, &count, filter.GetRepositoryFilter()).GetErrorExceptNotFound()
 }
@@ -62,7 +62,7 @@ func (r *RepoRepository) queryGetDashboardTotalDevelopers() string {
 func (r *RepoRepository) GetDashboardVulnBySeverity(filter *dashboard.Filter) (*dashboard.Vulnerability, error) {
 	vulns := &dashboard.Vulnerability{}
 
-	query := fmt.Sprintf(r.queryGetDashboardVulnBySeverity(), dashboardEnums.TableVulnerabilitiesByTime)
+	query := fmt.Sprintf(r.queryGetDashboardVulnBySeverity(), enumsdashboard.TableVulnerabilitiesByTime)
 
 	return vulns, r.databaseRead.Raw(query, vulns, filter.GetRepositoryFilter()).GetErrorExceptNotFound()
 }
@@ -83,7 +83,7 @@ func (r *RepoRepository) queryGetDashboardVulnBySeverity() string {
 
 func (r *RepoRepository) GetDashboardVulnByAuthor(
 	filter *dashboard.Filter) (vulns []*dashboard.VulnerabilitiesByAuthor, err error) {
-	query := fmt.Sprintf(r.queryGetDashboardVulnByAuthor(), dashboardEnums.TableVulnerabilitiesByAuthor)
+	query := fmt.Sprintf(r.queryGetDashboardVulnByAuthor(), enumsdashboard.TableVulnerabilitiesByAuthor)
 
 	err = r.databaseRead.Raw(query, &vulns, filter.GetRepositoryFilter()).GetErrorExceptNotFound()
 	if err != nil || len(vulns) == 0 {
@@ -127,7 +127,7 @@ func (r *RepoRepository) queryGetDashboardVulnByAuthor() string {
 
 func (r *RepoRepository) GetDashboardVulnByLanguage(
 	filter *dashboard.Filter) (vulns []*dashboard.VulnerabilitiesByLanguage, err error) {
-	query := fmt.Sprintf(r.queryGetDashboardVulnByLanguage(), dashboardEnums.TableVulnerabilitiesByLanguage)
+	query := fmt.Sprintf(r.queryGetDashboardVulnByLanguage(), enumsdashboard.TableVulnerabilitiesByLanguage)
 
 	err = r.databaseRead.Raw(query, &vulns, filter.GetRepositoryFilter()).GetErrorExceptNotFound()
 	if err != nil || len(vulns) == 0 {
@@ -151,7 +151,7 @@ func (r *RepoRepository) GetDashboardVulnByTime(
 	filter *dashboard.Filter) (vulns []*dashboard.VulnerabilitiesByTime, err error) {
 	condition, args := filter.GetDateFilter()
 
-	query := fmt.Sprintf(r.queryGetDashboardVulnByTime(), dashboardEnums.TableVulnerabilitiesByTime, condition)
+	query := fmt.Sprintf(r.queryGetDashboardVulnByTime(), enumsdashboard.TableVulnerabilitiesByTime, condition)
 
 	return vulns, r.databaseRead.Raw(query, &vulns, args...).GetErrorExceptNotFound()
 }

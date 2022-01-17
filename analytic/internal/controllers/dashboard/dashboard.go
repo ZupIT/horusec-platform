@@ -15,34 +15,34 @@
 package dashboard
 
 import (
-	analysisEntities "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
+	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 	"github.com/ZupIT/horusec-devkit/pkg/services/database"
 
 	"github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard"
-	dashboardEnums "github.com/ZupIT/horusec-platform/analytic/internal/enums/dashboard"
-	dashboardRepository "github.com/ZupIT/horusec-platform/analytic/internal/repositories/dashboard"
-	dashboardUseCases "github.com/ZupIT/horusec-platform/analytic/internal/usecases/dashboard"
+	enumsdashboard "github.com/ZupIT/horusec-platform/analytic/internal/enums/dashboard"
+	repositoriesdashboard "github.com/ZupIT/horusec-platform/analytic/internal/repositories/dashboard"
+	usecasesdashboard "github.com/ZupIT/horusec-platform/analytic/internal/usecases/dashboard"
 )
 
 type IController interface {
 	GetAllDashboardChartsWorkspace(filter *dashboard.Filter) (*dashboard.Response, error)
 	GetAllDashboardChartsRepository(filter *dashboard.Filter) (*dashboard.Response, error)
-	AddVulnerabilitiesByAuthor(entity *analysisEntities.Analysis) error
-	AddVulnerabilitiesByRepository(entity *analysisEntities.Analysis) error
-	AddVulnerabilitiesByLanguage(entity *analysisEntities.Analysis) error
-	AddVulnerabilitiesByTime(entity *analysisEntities.Analysis) error
+	AddVulnerabilitiesByAuthor(entity *analysis.Analysis) error
+	AddVulnerabilitiesByRepository(entity *analysis.Analysis) error
+	AddVulnerabilitiesByLanguage(entity *analysis.Analysis) error
+	AddVulnerabilitiesByTime(entity *analysis.Analysis) error
 }
 
 type Controller struct {
-	repoRepository      dashboardRepository.IRepoRepository
-	workspaceRepository dashboardRepository.IWorkspaceRepository
-	useCases            dashboardUseCases.IUseCases
+	repoRepository      repositoriesdashboard.IRepoRepository
+	workspaceRepository repositoriesdashboard.IWorkspaceRepository
+	useCases            usecasesdashboard.IUseCases
 	databaseWrite       database.IDatabaseWrite
 }
 
-func NewDashboardController(repoRepository dashboardRepository.IRepoRepository,
-	workspaceRepository dashboardRepository.IWorkspaceRepository, connection *database.Connection,
-	useCases dashboardUseCases.IUseCases) IController {
+func NewDashboardController(repoRepository repositoriesdashboard.IRepoRepository,
+	workspaceRepository repositoriesdashboard.IWorkspaceRepository, connection *database.Connection,
+	useCases usecasesdashboard.IUseCases) IController {
 	return &Controller{
 		repoRepository:      repoRepository,
 		workspaceRepository: workspaceRepository,
@@ -51,24 +51,24 @@ func NewDashboardController(repoRepository dashboardRepository.IRepoRepository,
 	}
 }
 
-func (c *Controller) AddVulnerabilitiesByAuthor(analysis *analysisEntities.Analysis) error {
-	return c.databaseWrite.Create(c.useCases.ParseAnalysisToVulnerabilitiesByAuthor(analysis),
-		dashboardEnums.TableVulnerabilitiesByAuthor).GetError()
+func (c *Controller) AddVulnerabilitiesByAuthor(entity *analysis.Analysis) error {
+	return c.databaseWrite.Create(c.useCases.ParseAnalysisToVulnerabilitiesByAuthor(entity),
+		enumsdashboard.TableVulnerabilitiesByAuthor).GetError()
 }
 
-func (c *Controller) AddVulnerabilitiesByRepository(analysis *analysisEntities.Analysis) error {
-	return c.databaseWrite.Create(c.useCases.ParseAnalysisToVulnerabilitiesByRepository(analysis),
-		dashboardEnums.TableVulnerabilitiesByRepository).GetError()
+func (c *Controller) AddVulnerabilitiesByRepository(entity *analysis.Analysis) error {
+	return c.databaseWrite.Create(c.useCases.ParseAnalysisToVulnerabilitiesByRepository(entity),
+		enumsdashboard.TableVulnerabilitiesByRepository).GetError()
 }
 
-func (c *Controller) AddVulnerabilitiesByLanguage(analysis *analysisEntities.Analysis) error {
-	return c.databaseWrite.Create(c.useCases.ParseAnalysisToVulnerabilitiesByLanguage(analysis),
-		dashboardEnums.TableVulnerabilitiesByLanguage).GetError()
+func (c *Controller) AddVulnerabilitiesByLanguage(entity *analysis.Analysis) error {
+	return c.databaseWrite.Create(c.useCases.ParseAnalysisToVulnerabilitiesByLanguage(entity),
+		enumsdashboard.TableVulnerabilitiesByLanguage).GetError()
 }
 
-func (c *Controller) AddVulnerabilitiesByTime(analysis *analysisEntities.Analysis) error {
-	return c.databaseWrite.Create(c.useCases.ParseAnalysisToVulnerabilitiesByTime(analysis),
-		dashboardEnums.TableVulnerabilitiesByTime).GetError()
+func (c *Controller) AddVulnerabilitiesByTime(entity *analysis.Analysis) error {
+	return c.databaseWrite.Create(c.useCases.ParseAnalysisToVulnerabilitiesByTime(entity),
+		enumsdashboard.TableVulnerabilitiesByTime).GetError()
 }
 
 func (c *Controller) GetAllDashboardChartsWorkspace(filter *dashboard.Filter) (*dashboard.Response, error) {

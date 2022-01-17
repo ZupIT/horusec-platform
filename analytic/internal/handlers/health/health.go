@@ -20,7 +20,9 @@ import (
 	brokerLib "github.com/ZupIT/horusec-devkit/pkg/services/broker"
 	"github.com/ZupIT/horusec-devkit/pkg/services/database"
 	httpUtil "github.com/ZupIT/horusec-devkit/pkg/utils/http"
-	_ "github.com/ZupIT/horusec-devkit/pkg/utils/http/entities" // [swagger-import]
+
+	// [swagger-import]
+	_ "github.com/ZupIT/horusec-devkit/pkg/utils/http/entities"
 	httpUtilEnums "github.com/ZupIT/horusec-devkit/pkg/utils/http/enums"
 )
 
@@ -54,11 +56,13 @@ func (h *Handler) Options(w http.ResponseWriter, _ *http.Request) {
 func (h *Handler) Get(w http.ResponseWriter, _ *http.Request) {
 	if h.IsDatabaseNotAvailable() {
 		httpUtil.StatusInternalServerError(w, httpUtilEnums.ErrorDatabaseIsNotHealth)
+
 		return
 	}
 
 	if isAvailable := h.broker.IsAvailable(); !isAvailable {
 		httpUtil.StatusInternalServerError(w, httpUtilEnums.ErrorBrokerIsNotHealth)
+
 		return
 	}
 

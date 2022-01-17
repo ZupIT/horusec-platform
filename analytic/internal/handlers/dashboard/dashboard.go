@@ -20,7 +20,9 @@ import (
 	httpUtil "github.com/ZupIT/horusec-devkit/pkg/utils/http"
 
 	controller "github.com/ZupIT/horusec-platform/analytic/internal/controllers/dashboard"
-	_ "github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard" // [swagger-usage]
+
+	// [swagger-usage]
+	_ "github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard"
 	useCase "github.com/ZupIT/horusec-platform/analytic/internal/usecases/dashboard"
 )
 
@@ -58,12 +60,14 @@ func (h *Handler) GetAllChartsByWorkspace(w http.ResponseWriter, r *http.Request
 	filter, err := h.useCase.FilterFromRequest(r)
 	if err != nil {
 		httpUtil.StatusBadRequest(w, err)
+
 		return
 	}
 
 	result, err := h.controller.GetAllDashboardChartsWorkspace(filter)
 	if err != nil {
 		httpUtil.StatusInternalServerError(w, err)
+
 		return
 	}
 
@@ -89,12 +93,14 @@ func (h *Handler) GetAllChartsByRepository(w http.ResponseWriter, r *http.Reques
 	filter, err := h.useCase.FilterFromRequest(r)
 	if err != nil {
 		httpUtil.StatusBadRequest(w, err)
+
 		return
 	}
 
 	result, err := h.controller.GetAllDashboardChartsRepository(filter)
 	if err != nil {
 		httpUtil.StatusInternalServerError(w, err)
+
 		return
 	}
 

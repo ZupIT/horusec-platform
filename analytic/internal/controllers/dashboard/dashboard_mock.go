@@ -15,10 +15,9 @@
 package dashboard
 
 import (
-	"github.com/stretchr/testify/mock"
-
 	analysisEntities "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 	utilsMock "github.com/ZupIT/horusec-devkit/pkg/utils/mock"
+	"github.com/stretchr/testify/mock"
 
 	"github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard"
 )

@@ -19,10 +19,9 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
-
 	"github.com/ZupIT/horusec-devkit/pkg/services/broker"
 	"github.com/ZupIT/horusec-devkit/pkg/services/database"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestOptions(t *testing.T) {
