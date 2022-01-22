@@ -23,7 +23,7 @@ const Header = styled.div`
   padding: 22px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
 `;
 
 const Content = styled.div`

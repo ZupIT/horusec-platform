@@ -42,20 +42,22 @@ const Pagination: React.FC<Props> = ({ onChange, pagination }) => {
   };
 
   return (
-    <TablePagination
-      rowsPerPageOptions={[10, 50, 100]}
-      count={pagination.totalItems}
-      rowsPerPage={pagination.pageSize}
-      page={pagination.currentPage - 1}
-      onPageChange={handleChangePage}
-      onRowsPerPageChange={handleChangeRowsPerPage}
-      labelRowsPerPage={t('GENERAL.PAGINATION.ITENS_PAGE')}
-      labelDisplayedRows={({ from, to, count }) =>
-        `${from}-${to} ${t('GENERAL.PAGINATION.OF')} ${
-          count !== -1 ? count : to
-        }`
-      }
-    />
+    pagination.totalItems > 0 && (
+      <TablePagination
+        rowsPerPageOptions={[10, 50, 100]}
+        count={pagination.totalItems}
+        rowsPerPage={pagination.pageSize}
+        page={pagination.currentPage - 1}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+        labelRowsPerPage={t('GENERAL.PAGINATION.ITENS_PAGE')}
+        labelDisplayedRows={({ from, to, count }) =>
+          `${from}-${to} ${t('GENERAL.PAGINATION.OF')} ${
+            count !== -1 ? count : to
+          }`
+        }
+      />
+    )
   );
 };
 

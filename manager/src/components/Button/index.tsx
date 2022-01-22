@@ -22,6 +22,7 @@ import { useTranslation } from 'react-i18next';
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   text: string;
   outline?: boolean;
+  outlinePrimary?: boolean;
   rounded?: boolean;
   opaque?: boolean;
   ghost?: boolean;
@@ -39,6 +40,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 const Button: React.FC<ButtonProps> = ({
   text,
   outline,
+  outlinePrimary,
   rounded,
   opaque,
   ghost,
@@ -64,6 +66,7 @@ const Button: React.FC<ButtonProps> = ({
       {...props}
       isLoading={isLoading}
       outline={outline}
+      outlinePrimary={outlinePrimary}
       rounded={rounded}
       opaque={opaque}
       ghost={ghost}

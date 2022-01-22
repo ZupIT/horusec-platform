@@ -15,10 +15,18 @@
  */
 
 import styled, { css } from 'styled-components';
-import { Button, Select as SelectComponent } from 'components';
+import { SearchBar as SearchBarComp } from 'components';
 
-interface TagProps {
+interface LangueProps {
   color: string;
+}
+
+interface SearchBarProps {
+  isSearching: boolean;
+}
+
+interface VulDetailProps {
+  isOpen: boolean;
 }
 
 const Wrapper = styled.div`
@@ -35,45 +43,371 @@ const Options = styled.div`
   padding: 22px;
   display: flex;
   align-items: center;
-  gap: 20px;
+`;
+
+const SearchWrapper = styled.div<SearchBarProps>`
+  width: 390px;
+  transition: ease all 0.7s;
+
+  ${({ isSearching }) =>
+    isSearching &&
+    css`
+      width: 100%;
+    `};
+`;
+
+const SelectsWrapper = styled.div<SearchBarProps>`
+  width: 100%;
+  transition: ease all 0.7s;
+  display: flex;
+
+  ${({ isSearching }) =>
+    isSearching &&
+    css`
+      margin: 0;
+      padding: 0;
+      width: 0;
+
+      .filter {
+        width: 0;
+        opacity: 0;
+        pointer-events: none;
+      }
+    `};
 `;
 
 const Content = styled.div`
-  margin-top: 25px;
-  padding: 25px 15px;
   background-color: ${({ theme }) => theme.colors.background.secundary};
   border-radius: 4px;
-  overflow: hidden;
-  max-width: 95vw;
-  height: 100%;
+  padding: 22px;
+  margin-top: 15px;
+  height: 75%;
+  display: flex;
+  flex-direction: column;
 `;
 
-const Select = styled(SelectComponent)`
+const ScrollList = styled.ul`
+  overflow-y: auto;
+  margin-bottom: 10px;
+  height: 90%;
+  list-style: none;
+  padding-right: 10px;
+
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: ${({ theme }) => theme.colors.background.primary};
+    border-radius: 2px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background-color: ${({ theme }) => theme.colors.background.highlight};
+  }
+`;
+
+const File = styled.li`
+  background-color: ${({ theme }) => theme.colors.background.highlight};
+  border-radius: 2px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 10px 20px;
+  margin-bottom: 12px;
+
+  :hover {
+    box-shadow: 0 4px 6px rgba(33, 33, 33, 0.8);
+    cursor: pointer;
+
+    div.view {
+      width: 18px;
+      opacity: 1;
+    }
+  }
+`;
+
+const FileColumn = styled.div`
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  flex-direction: column;
+`;
+
+const FileRow = styled.div`
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: space-between;
+`;
+
+const FileLanguage = styled.div<LangueProps>`
+  display: block;
+  margin-right: 15px;
+  font-weight: bold;
+  font-size: ${({ theme }) => theme.metrics.fontSize.xsmall};
+  color: ${({ color }) => color};
+  margin-right: 20px;
+`;
+
+const FileName = styled.div`
+  display: block;
+  color: ${({ theme }) => theme.colors.text.opaque};
+`;
+
+const FileVulCount = styled.div`
+  display: block;
+  color: ${({ theme }) => theme.colors.text.primary};
+  background: #a30d0033;
+  border: 1px solid ${({ theme }) => theme.colors.flashMessage.error};
+  padding: 4px 15px;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: ${({ theme }) => theme.metrics.fontSize.xsmall};
+  font-weight: bold;
+  border-radius: 4px;
+  margin-right: 5px;
+`;
+
+const Date = styled.div`
+  color: ${({ theme }) => theme.colors.text.primary};
+  font-size: ${({ theme }) => theme.metrics.fontSize.xsmall};
   margin-right: 15px;
 `;
 
-const Tag = styled.span<TagProps>`
+const View = styled.div`
+  color: ${({ theme }) => theme.colors.text.primary};
+  font-size: ${({ theme }) => theme.metrics.fontSize.large};
+  margin-left: 10px;
   display: block;
+  width: 0px;
+  white-space: nowrap;
+  opacity: 0;
+  transition: all ease 1s;
+  text-align: end;
+  font-weight: bold;
+`;
+
+const LoadingWrapper = styled.li`
+  width: 100%;
+  padding: 10px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: ${({ theme }) => theme.colors.background.highlight};
+`;
+
+const LoadingText = styled.span`
+  color: ${({ theme }) => theme.colors.text.primary};
+  font-size: ${({ theme }) => theme.metrics.fontSize.medium};
+`;
+
+const SearchBar = styled(SearchBarComp)``;
+
+const HeaderVulList = styled.div`
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 25px;
+`;
+
+const FileTitle = styled.span`
+  display: block;
+  color: ${({ theme }) => theme.colors.text.primary};
+  font-size: ${({ theme }) => theme.metrics.fontSize.medium};
+  font-weight: bold;
+`;
+
+const Back = styled.div`
+  display: flex;
+  color: ${({ theme }) => theme.colors.text.primary};
+  align-items: center;
+  cursor: pointer;
+
+  &:hover {
+    transform: scale(1.2);
+  }
+`;
+
+const BackText = styled.span`
+  display: block;
+  margin-left: 7px;
+  font-size: ${({ theme }) => theme.metrics.fontSize.medium};
+`;
+
+const VulnerabilitiesList = styled.ul`
+  list-style: none;
+  margin-top: 15px;
+`;
+
+const Vulnerability = styled.li`
+  width: 100%;
+  border: 1px solid #787878;
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: 3px;
+
+  a {
+    color: ${({ theme }) => theme.colors.text.link};
+
+    :hover {
+      text-decoration: underline;
+    }
+  }
+`;
+
+const VulDetailWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+const VulDetail = styled.p<VulDetailProps>`
+  color: ${({ theme }) => theme.colors.text.opaque};
+  word-wrap: normal;
+  display: block;
+  overflow: hidden;
+  max-height: 20px;
+  line-height: 20px;
+  width: 95%;
+
+  ${({ isOpen }) =>
+    isOpen &&
+    css`
+      max-height: max-content;
+      margin-bottom: 20px;
+    `};
+`;
+
+const Ellipsis = styled.span`
+  color: ${({ theme }) => theme.colors.text.primary};
+  font-size: ${({ theme }) => theme.metrics.fontSize.xxlarge};
+  background-color: ${({ theme }) => theme.colors.background.highlight};
+  border-radius: 2px;
+  width: 25px;
   text-align: center;
-  text-transform: uppercase;
-  height: 23px;
-  line-height: 25px;
-  width: 84px;
-  border-radius: 64px;
+  line-height: 16px;
+  height: 26px;
+  transition: all ease 1s;
+  cursor: pointer;
 
-  ${({ color }) => css`
-    background-color: ${color};
-  `};
+  &:hover {
+    transform: scale(1.1);
+    background-color: #444446;
+  }
 `;
 
-const ApplyButton = styled(Button)`
-  margin: 0px 15px;
+const Info = styled.span`
+  display: block;
+  margin-top: 10px;
+  margin-bottom: 5px;
+  font-size: ${({ theme }) => theme.metrics.fontSize.xsmall};
 `;
+
+const Code = styled.code`
+  display: block;
+  padding: 8px;
+  margin-top: 14px;
+  background-color: ${({ theme }) => theme.colors.background.overlap};
+`;
+
+const CodeInfoWrapper = styled.span`
+  display: flex;
+  justify-content: space-between;
+`;
+
+const CodeInfo = styled.span`
+  display: block;
+  font-size: 12px;
+  margin-top: 2px;
+`;
+
+const SelectOptionsWrapper = styled.span`
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+`;
+
+const SearchTitle = styled.span`
+  color: ${({ theme }) => theme.colors.text.opaque};
+  margin-bottom: 20px;
+`;
+
+const UpdateContent = styled.div`
+  background-color: ${({ theme }) => theme.colors.background.secundary};
+  border-radius: 4px;
+  padding: 10px 22px;
+  margin-top: 10px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+const UpdateCount = styled.span`
+  color: ${({ theme }) => theme.colors.text.opaque};
+`;
+
+const UpdateBtns = styled.div`
+  display: flex;
+`;
+
+const FileInfo = styled.div`
+  margin-top: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+const FileInfoText = styled.span`
+  margin-top: 5px;
+  display: flex;
+  align-items: center;
+  color: ${({ theme }) => theme.colors.text.opaque};
+  font-size: ${({ theme }) => theme.metrics.fontSize.xsmall};
+`;
+
 export default {
+  UpdateContent,
+  FileInfoText,
+  FileInfo,
+  FileRow,
+  UpdateBtns,
+  UpdateCount,
+  SearchTitle,
+  SelectOptionsWrapper,
+  Info,
+  CodeInfoWrapper,
+  CodeInfo,
+  HeaderVulList,
+  Code,
+  Ellipsis,
+  VulDetailWrapper,
+  VulDetail,
+  VulnerabilitiesList,
+  Vulnerability,
+  BackText,
+  Back,
   Wrapper,
-  Tag,
-  Select,
   Options,
+  SearchWrapper,
+  SelectsWrapper,
   Content,
-  ApplyButton,
+  File,
+  FileLanguage,
+  FileName,
+  FileVulCount,
+  FileColumn,
+  Date,
+  View,
+  LoadingWrapper,
+  LoadingText,
+  ScrollList,
+  SearchBar,
+  FileTitle,
 };

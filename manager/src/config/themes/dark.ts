@@ -44,6 +44,7 @@ export default {
       border: '#F2F2F7',
       disabled: '#2C2C2E',
       disableInDark: '#636366',
+      outlineBackground: '#ed6d351a',
     },
 
     optionButton: {

@@ -44,6 +44,7 @@ interface Props {
   testId?: string;
   placeholder?: string;
   style?: CSSProperties;
+  wrapperStyle?: CSSProperties;
   variant?: SelectProps['variant'];
 }
 
@@ -58,11 +59,15 @@ const SelectInput: React.FC<Props> = ({
   placeholder,
   style,
   variant,
+  wrapperStyle,
 }) => {
   const { t } = useTranslation();
 
   return (
-    <FormControl className={className} style={{ width: width }}>
+    <FormControl
+      className={className}
+      style={{ width: width, ...wrapperStyle }}
+    >
       {label && <InputLabel id="select-label">{label}</InputLabel>}
       <Select
         labelId="select-label"

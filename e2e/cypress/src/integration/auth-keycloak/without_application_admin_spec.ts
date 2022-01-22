@@ -333,37 +333,23 @@ function CheckIfExistsVulnerabilitiesAndCanUpdateSeverityAndStatus(): void {
     cy.get("li").contains("Vulnerabilities").click();
     cy.wait(1500);
 
-    cy.get('.MuiTableBody-root > :nth-child(1) > :nth-child(3)').invoke('text')
-    .then((firstHash)=>{ 
-        console.log(firstHash)
-        expect(firstHash).not.to.equal("");
-        expect(firstHash).not.to.equal(undefined);
-        expect(firstHash).not.to.equal(null);
+    // Select first vulnerability
+    cy.get('.file-list > :nth-child(1)').click();
 
-        // Select first vulnerability and open Severity dropdown
-        cy.get(":nth-child(1) > .center > .MuiFormControl-root > .MuiInputBase-root > #select").click();
-        cy.wait(500);
+    // Open severity dropdown of first vulnerability
+    cy.get(".severity-dropdown").first().click();
 
-        // Change severity to HIGH
-        cy.get('[data-value="HIGH"]').click();
+    // Change severity to CRITICAL
+    cy.get('[data-value="CRITICAL"]').click();
 
-        // Select first vulnerability and open status dropdown
-        cy.get(":nth-child(1) > :nth-child(2) > .MuiFormControl-root > .MuiInputBase-root > #select").click();
+    // Open status dropdown of first vulnerability
+    cy.get(".status-dropdown").first().click();
 
-        // Change status to Risk Accepted
-        cy.get('[data-value="Risk Accepted"]').click();
-        cy.get("button").contains("Update Vulnerabilities").click();
-        cy.wait(1500);
+    // Change status to Risk Accepted
+    cy.get('[data-value="Risk Accepted"]').click();
 
-        // Open modal of vulnerability and check if details exists
-        cy.get("[data-testid=\"icon-info\"]").first().click();
-        cy.contains("Vulnerability Details").should("exist")
-        cy.wait(1500);
-
-        cy.get("[data-testid=\"icon-close\"]").first().click();
-
-        cy.contains(firstHash).should("not.exist");
-    })
+    cy.get("button.save-vulnerabilities").click();
+    cy.wait(1500);
 }
 
 function CreateUserAndInviteToExistingWorkspace(): void {

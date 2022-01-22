@@ -1,6 +1,7 @@
 {
   "GENERAL": {
     "BACK": "Back",
+    "SAVE": "Save",
     "SELECT": "Select",
     "SELECT_SEARCH": "Type a word to filter the results.",
     "CANCEL": "Cancel",
@@ -391,6 +392,9 @@
   },
   "VULNERABILITIES_SCREEN": {
     "SEARCH": "Search for hash Vulnerability",
+    "LOADING": "Searching for the vulnerabilities...",
+    "EMPTY_SEARCH": "No results for this searching",
+    "SEARCH_TITLE": "This is the result search:",
     "TITLE": "Vulnerabilities",
     "REPOSITORY": "Repository",
     "SEVERITY": "Severity",
@@ -425,7 +429,7 @@
       "DETAILS": "Details",
       "CONFIDENCE": "Confidence"
     },
-    "UPDATE_VULNERABILITY": "Update Vulnerabilities"
+    "UPDATE_VULNERABILITY": " changed vulnerability(s), do you want to save?"
   },
   "WEBHOOK_SCREEN": {
     "TITLE": "Webhooks",
