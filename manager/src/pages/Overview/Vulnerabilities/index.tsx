@@ -265,11 +265,7 @@ const Vulnerabilities: React.FC = () => {
     setSelectedFile(vulFile);
 
     vulnerabilitiesService
-      .getVulnerabilitiesOfFile(
-        { workspaceID: workspaceId, repositoryID: vulFile.repositoryID },
-        pagination,
-        vulFile.file
-      )
+      .getVulnerabilitiesOfFile(filters, pagination, vulFile.file)
       .then((result) => {
         let vulnerabilities: Vulnerability[] = result?.data?.content?.data;
         vulnerabilities = applyCurrentUpdatesVulnerabilities(vulnerabilities);
