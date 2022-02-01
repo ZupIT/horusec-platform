@@ -38,9 +38,10 @@
 >#### 2.2. [**Installation**](#installation)
 ### 3. [**Features**](#features)
 ### 4. [**Documentation**](#documentation)
-### 5. [**Contributing**](#contributing)
-### 6. [**License**](#license)
-### 7. [**Community**](#community)
+### 5. [**Issues**](#issues)
+### 6. [**Contributing**](#contributing)
+### 7. [**License**](#license)
+### 8. [**Community**](#community)
 
 ## **About**
 Horusec Platform is a set of web services that integrate with [**Horusec-CLI**](https://github.com/ZupIT/horusec) to make it easier for you to see and manage the vulnerabilities. 
@@ -154,6 +155,9 @@ For more information about authentication types, check out our [**documentation*
 
 For more information about Horusec, please check out the [**documentation**](https://horusec.io/docs/).
 
+## **Issues**
+
+To open or track an issue for this project, in order to better coordinate your discussions, we recommend that you use the [**Issues tab**](https://github.com/ZupIT/horusec/issues) in the main [**Horusec**](https://github.com/ZupIT/horusec) repository.
 
 ## **Contributing**
 
