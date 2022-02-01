@@ -371,10 +371,12 @@ Print "true" if the API pathType field is supported.
 Return the appropriate apiVersion for Ingress.
 */}}
 {{- define "ingress.apiVersion" -}}
-{{- if semverCompare "<1.14-0" .Capabilities.KubeVersion.Version -}}
-{{- print "extensions/v1beta1" -}}
-{{- else -}}
+{{- if semverCompare ">=1.19-0" .Capabilities.KubeVersion.GitVersion -}}
+{{- print "networking.k8s.io/v1" -}}
+{{- else if semverCompare ">=1.14-0" .Capabilities.KubeVersion.GitVersion -}}
 {{- print "networking.k8s.io/v1beta1" -}}
+{{- else -}}
+{{- print "extensions/v1beta1" -}}
 {{- end -}}
 {{- end -}}
 
@@ -414,23 +416,26 @@ If enabled, return Ingress Rules.
 {{- end -}}
 
 rules:
-{{- range $host, $components := $hosts }}
-  - host: {{ $host }}
-    http:
-      paths:
-        {{- range $component := $components }}
-        - backend:
-            serviceName: {{ $component.name }}
-            servicePort: {{ $component.port.http }}
-          {{- if not (eq "manager" $component.name) }}
-          path: {{ $component.ingress.path }}
-          {{- if eq "true" (include "ingress.supportsPathType" .) }}
-          pathType: Prefix
+    {{- range $host, $components := $hosts }}
+    - host: {{ $host }}
+      http:
+        paths:
+          {{- range $component := $components }}
+          - path: {{ $component.ingress.path }}
+            pathType: "Prefix"
+            backend:
+              {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
+              service:
+                name: {{ $component.name }}
+                port:
+                  number: {{ $component.port.http }}
+              {{- else }}
+              serviceName: {{ $component.name }}
+              servicePort: {{ $component.port.http }}
+              {{- end }}
           {{- end }}
-          {{- end }}
-        {{- end }}
-{{- end -}}
-{{- end -}}
+    {{- end }}
+{{- end }}
 
 
 {{/*
