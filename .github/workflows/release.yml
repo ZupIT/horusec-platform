@@ -87,13 +87,9 @@ jobs:
 
       - name: Checkout release candidate branch
         run: ./mage -v checkoutReleaseBranch ${{ steps.updated-version.outputs.nextReleaseBranchName }}
-      - name: Update versions on package.json
-        run: ./mage -v updatePackageJson ${{ steps.updated-version.outputs.nextReleaseVersionStripped }}
 
-      - name: Update versions on rest of the project
-        run: |
-          find . -type f -not -path "./.git/*" -not -path "./manager/cypress/*" -not -name "*.sum" -not -name "*.mod"|
-          xargs sed -i "s/${{ steps.updated-version.outputs.actualReleaseVersion }}/${{ steps.updated-version.outputs.nextReleaseVersion }}/g"
+      - name: Update all Horusec versions in project
+        run: ./mage UpdateHorusecVersionInProject ${{ steps.updated-version.outputs.actualReleaseVersion }} ${{ steps.updated-version.outputs.nextReleaseVersion }}
 
       - name: Commit changes
         uses: EndBug/add-and-commit@v7.5.0

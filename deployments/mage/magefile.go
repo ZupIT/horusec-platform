@@ -15,31 +15,37 @@
 //go:build mage
 // +build mage
 
-// Horusec-Plaform mage file.
+// Horusec-Platform mage file.
 package main
 
 import (
 	"fmt"
-	"github.com/magefile/mage/mg"
-	"github.com/magefile/mage/sh"
 	"os"
+	"strings"
+
 	// mage:import
 	_ "github.com/ZupIT/horusec-devkit/pkg/utils/mageutils"
+	"github.com/magefile/mage/mg"
+	"github.com/magefile/mage/sh"
 )
 
-//UpdatePackageJson updates packge.json lock horusec version
-func UpdatePackageJson(version string) error {
-	if err := sh.RunV("npm", "install", "-g", "json"); err != nil {
+// UpdateHorusecVersionInProject update project version in all files
+func UpdateHorusecVersionInProject(actualReleaseVersion, nextReleaseVersion string) error {
+	output, err := sh.Output("find", "./", "-type", "f", "-not", "-path", "'./.git/*'", "-not", "-path",
+		"'./Makefile'", "-not", "-path", "./Manager/cypress/*", "-not", "-name", "'*.sum'", "-not", "-name",
+		"'*.mod'")
+	if err != nil {
 		return err
 	}
-	return sh.RunV(fmt.Sprintf("json", "-I", "-f", "./manager/package.json", "-e", `'this.version="%s"'`, version))
-}
 
-func UpdateHorusecVersionInProject(actualVersion, releaseVersion string) error {
-	return sh.RunV(fmt.Sprintf(
-		`find ./ -type f -not -path "./.git/*" -not -path "./Makefile" -not -path "./manager/cypress/*" -not -name "*.sum" -not -name "*.mod"| xargs  sed -t -i "s/%s/%s/g"`,
-		actualVersion, releaseVersion))
+	for _, path := range strings.Split(output, "\n") {
+		expression := fmt.Sprintf("s/%s/%s/g", actualReleaseVersion, nextReleaseVersion)
+		if err := sh.RunV("sed", "-i", expression, path); err != nil {
+			return err
+		}
+	}
 
+	return err
 }
 
 func DockerPushPlatformGoProjects(tag string) error {
@@ -53,11 +59,11 @@ func DockerPushPlatformGoProjects(tag string) error {
 
 func DockerSignPlatformGoProjects(tag string) error {
 	mg.Deps(hasAllNecessaryEnvs, isCosignInstalled)
-	err := os.MkdirAll("./tmp", 0700)
+	err := os.MkdirAll("./tmp", 0o700)
 	if err != nil {
 		return err
 	}
-	err = os.WriteFile("./tmp/cosign.key", []byte(os.Getenv("COSIGN_KEY")), 0700)
+	err = os.WriteFile("./tmp/cosign.key", []byte(os.Getenv("COSIGN_KEY")), 0o700)
 	if err != nil {
 		return err
 	}
@@ -92,6 +98,7 @@ func getImages() []string {
 		ImageApi,
 	}
 }
+
 func isCosignInstalled() error {
 	return sh.RunV("cosign", "version")
 }
@@ -120,5 +127,4 @@ func getConsingEnvs() map[string]string {
 		"COSIGN_PWD": os.Getenv("COSIGN_PWD"),
 		"COSIGN_KEY": os.Getenv("COSIGN_KEY"),
 	}
-
 }
