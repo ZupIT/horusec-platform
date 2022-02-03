@@ -69,7 +69,7 @@ services:
       options:
         max-size: 10m
   horusec-messages:
-    image: horuszup/horusec-messages:v2.17.3
+    image: horuszup/horusec-messages:v2.17.4
     ports:
       - "8002:8002"
     depends_on:
@@ -89,7 +89,7 @@ services:
       HORUSEC_SMTP_PORT: "2525"
       HORUSEC_EMAIL_FROM: "horusec@zup.com.br"
   horusec-auth:
-    image: horuszup/horusec-auth:v2.17.3
+    image: horuszup/horusec-auth:v2.17.4
     ports:
       - "8006:8006"
       - "8007:8007"
@@ -131,7 +131,7 @@ services:
       HORUSEC_AUTH_URL: "127.0.0.1:8006"
       HORUSEC_MANAGER_URL: "127.0.0.1:8043"
   horusec-core:
-    image: horuszup/horusec-core:v2.17.3
+    image: horuszup/horusec-core:v2.17.4
     ports:
       - "8003:8003"
     depends_on:
@@ -152,7 +152,7 @@ services:
       HORUSEC_GRPC_AUTH_URL: "horusec-auth:8007"
       HORUSEC_MANAGER_URL: "127.0.0.1:8043"
   horusec-analytic:
-    image: horuszup/horusec-analytic:v2.17.3
+    image: horuszup/horusec-analytic:v2.17.4
     ports:
       - "8005:8005"
     depends_on:
@@ -171,7 +171,7 @@ services:
       HORUSEC_BROKER_USERNAME: "guest" # Sensitive information we not recommended usage in production environment, change for usage strong data for connection with this service
       HORUSEC_BROKER_PASSWORD: "guest" # Sensitive information we not recommended usage in production environment, change for usage strong data for connection with this service
   horusec-api:
-    image: horuszup/horusec-api:v2.17.3
+    image: horuszup/horusec-api:v2.17.4
     ports:
       - "8000:8000"
     depends_on:
@@ -190,7 +190,7 @@ services:
       HORUSEC_BROKER_USERNAME: "guest" # Sensitive information we not recommended usage in production environment, change for usage strong data for connection with this service
       HORUSEC_BROKER_PASSWORD: "guest" # Sensitive information we not recommended usage in production environment, change for usage strong data for connection with this service
   horusec-vulnerability:
-    image: horuszup/horusec-vulnerability:v2.17.3
+    image: horuszup/horusec-vulnerability:v2.17.4
     ports:
       - "8001:8001"
     depends_on:
@@ -208,7 +208,7 @@ services:
       HORUSEC_BROKER_USERNAME: "guest" # Sensitive information we not recommended usage in production environment, change for usage strong data for connection with this service
       HORUSEC_BROKER_PASSWORD: "guest" # Sensitive information we not recommended usage in production environment, change for usage strong data for connection with this service
   horusec-webhook:
-    image: horuszup/horusec-webhook:v2.17.3
+    image: horuszup/horusec-webhook:v2.17.4
     ports:
       - "8004:8004"
     depends_on:
@@ -226,7 +226,7 @@ services:
      HORUSEC_BROKER_USERNAME: "guest"
      HORUSEC_BROKER_PASSWORD: "guest"
   horusec-manager:
-    image: horuszup/horusec-manager:v2.17.3
+    image: horuszup/horusec-manager:v2.17.4
     ports:
       - "8043:8080"
     restart: always
