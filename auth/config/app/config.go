@@ -131,21 +131,23 @@ func (c *Config) GetDefaultUserData() (*accountEntities.Account, error) {
 	if c.DefaultUserData == enums.DefaultUserData {
 		logger.LogWarn(enums.MessageWarningDefaultUser)
 	}
+
 	if err := json.Unmarshal([]byte(c.DefaultUserData), &account); err != nil {
 		return nil, err
 	}
+
 	return account, nil
 }
 
 func (c *Config) GetApplicationAdminData() (*accountEntities.Account, error) {
 	account := &accountEntities.Account{}
 
-	logger.LogWarn(fmt.Sprintf(enums.MessageFailedToFormatAppAdminValue, enums.EnvApplicationAdminData))
-
 	if c.ApplicationAdminData == enums.ApplicationAdminDefaultData {
 		logger.LogWarn(enums.MessageWarningDefaultApplicationAdmin)
 	}
+
 	if err := json.Unmarshal([]byte(c.ApplicationAdminData), account); err != nil {
+		logger.LogWarn(fmt.Sprintf(enums.MessageFailedToFormatAppAdminValue, enums.EnvApplicationAdminData))
 		return nil, err
 	}
 
@@ -212,10 +214,12 @@ func (c *Config) createApplicationAdminUser() {
 }
 
 func (c *Config) createAccount(account *accountEntities.Account) {
-	err := c.databaseWrite.Create(account, accountEnums.DatabaseTableAccount).GetError()
-	if err != nil {
-		c.checkCreateAccountErrors(err, account)
-		return
+	_, err := c.getAccountByEmail(account.Email)
+	if err != nil && err == databaseEnums.ErrorNotFoundRecords {
+		if err := c.databaseWrite.Create(account, accountEnums.DatabaseTableAccount).GetError(); err != nil {
+			c.checkCreateAccountErrors(err, account)
+			return
+		}
 	}
 
 	logger.LogInfo(fmt.Sprintf(enums.MessageUserCreateWithSuccess, account.Username, account.Email))

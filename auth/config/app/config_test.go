@@ -32,6 +32,7 @@ import (
 func getMockedConnection() *database.Connection {
 	databaseMock := &database.Mock{}
 	databaseMock.On("Create").Return(&response.Response{})
+	databaseMock.On("Find").Return(&response.Response{})
 
 	return &database.Connection{Read: databaseMock, Write: databaseMock}
 }
@@ -142,6 +143,8 @@ func TestNewAuthAppConfig(t *testing.T) {
 		databaseMock := &database.Mock{}
 		databaseMock.On("Create").Once().Return(
 			response.NewResponse(0, errors.New(enums.DuplicatedAccount), nil))
+		databaseMock.On("Find").Once().
+			Return(response.NewResponse(0, databaseEnums.ErrorNotFoundRecords, nil))
 		databaseMock.On("Find").Return(&response.Response{})
 		databaseMock.On("Delete").Return(&response.Response{})
 		databaseMock.On("Create").Return(&response.Response{})
