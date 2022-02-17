@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM node:16.13.1-alpine3.14 AS builder
+FROM node:16.14.0-alpine3.14 AS builder
 
 COPY . /manager
 
