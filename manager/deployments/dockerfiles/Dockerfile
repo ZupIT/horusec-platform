@@ -25,7 +25,7 @@ RUN yarn config set registry http://registry.yarnpkg.com
 RUN yarn
 RUN yarn build
 
-FROM nginx:1.21.4-alpine
+FROM nginx:1.21.6-alpine
 
 COPY --from=builder /manager/build /var/www
 COPY ./deployments/nginx.conf /etc/nginx/conf.d/default.conf
