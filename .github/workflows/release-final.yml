@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: release-new
+name: release-final
 
 on:
   workflow_dispatch:
@@ -23,20 +23,21 @@ on:
 
 permissions: read-all
 jobs:
-  release:
+  ReleaseFinal:
     permissions:
       contents: write
       packages: write
+      issues:   write
     env:
       COSIGN_KEY_LOCATION: /tmp/cosign.key
       COSIGN_PWD: ${{ secrets.COSIGN_PWD }}
     runs-on: ubuntu-latest
-
+    if: contains('["wiliansilvazup","matheusalcantarazup","lucasbrunozup","nathanmartinszup","iancardosozup","oliveirafelipezup"]', github.actor)
     steps:
       - name: Set up nodejs
         uses: actions/setup-node@v2
         with:
-          node-version: 12
+          node-version: 14
       - name: Checkout
         uses: actions/checkout@v2
         with:
@@ -68,7 +69,7 @@ jobs:
         uses: crazy-max/ghaction-import-gpg@v4
         with:
           gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
-          passphrase: ${{ secrets.PASSPHRASE }}
+          passphrase: ${{ secrets.GPG_PASSWORD }}
           git_user_signingkey: true
           git_commit_gpgsign: true
 
@@ -101,9 +102,10 @@ jobs:
           committer_name: Horusec
           committer_email: horusec@zup.com.br
           branch: ${{ steps.updated-version.outputs.nextReleaseBranchName }}
+          message: "versioning:release - [skip ci] automatic commit updating versioning files"
 
-      - name: Create local tag
-        run: ./mage -v createLocalTag ${{ steps.updated-version.outputs.nextReleaseVersion }}
+      - name: Create and push tag
+        run: ./mage -v createAndPushTag ${{ steps.updated-version.outputs.nextReleaseVersion }}
 
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
@@ -116,8 +118,10 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           COSIGN_PWD: ${{ secrets.COSIGN_PWD }}
           GORELEASER_CURRENT_TAG: ${{ steps.updated-version.outputs.nextReleaseVersion }}
+          GORELEASER_PREVIOUS_TAG: ${{ steps.updated-version.outputs.actualReleaseVersion }}
 
       - name: "Docker meta"
+        if: ${{ success() }}
         uses: docker/metadata-action@v3
         id: meta
         env:
@@ -131,6 +135,7 @@ jobs:
             type=semver,prefix=v,pattern={{major}},value=${{ env.RELEASE_VERSION }}
 
       - name: "Build and push manager"
+        if: ${{ success() }}
         uses: docker/build-push-action@v2
         with:
           push: true
@@ -146,13 +151,18 @@ jobs:
 
 
       - name: Push updates
-        run: |
-          ./mage -v gitPushAll
+        if: ${{ success() }}
+        run: ./mage -v gitPushAll
+
+      - name: Remove updates
+        if: ${{ !success() }}
+        run: ./mage -v removeTag ${{ steps.updated-version.outputs.nextReleaseVersion }}
       # This step gets the sha of last commit made, witch is the updating versioning files commit, after that creates a
       # branch from the origin main and cherry pick this commit on it. This process need to occur only when the release
       # workflow is started from a branch that isn't the main branch, for example a release branch.
       # When the workflow it's triggered to run on main, the commit it's going to be made directly to the main branch.
       - name: Cherry pick
+        if: ${{ success() }}
         id: cherry-pick
         run: |
           ./mage CherryPick
@@ -160,6 +170,7 @@ jobs:
       # into the main branch. As the last commit, this also needs to run only when the release workflow is started from a
       # branch that isn't the main branch. Others workflows should be skipped cause of the skip ci in the pull request title.
       - name: Create Pull Request
+        if: ${{ success() }}
         uses: repo-sync/pull-request@v2
         with:
           source_branch: "${{ steps.cherry-pick.outputs.cherryPickBranchName }}"
@@ -167,4 +178,3 @@ jobs:
           pr_title: "versioning:release - [skip ci] automatic pull request updating versioning files"
           pr_body: "This is a automatic pull request that contains changes to files that need to be updated with the new release version. Where the commit ${{ steps.cherry-pick.outputs.commitShaToPick }} was cherry picked from the release branch, which already contains all the necessary changes."
           github_token: ${{ secrets.HORUSEC_PUSH_TOKEN }}
-
