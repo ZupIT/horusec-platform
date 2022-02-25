@@ -105,8 +105,12 @@ func (r *Repository) listRepositoriesWhenWorkspaceAdmin(accountID,
 	workspaceID uuid.UUID, paginated *repositoryEntities.PaginatedContent) (*[]repositoryEntities.Response, error) {
 	repositories := &[]repositoryEntities.Response{}
 
+	filters := []interface{}{accountID, workspaceID}
+	if paginated.Enable {
+		filters = append(filters, paginated.GetSearch())
+	}
 	return repositories, r.databaseRead.Raw(r.queryListRepositoriesWhenWorkspaceAdmin(paginated),
-		repositories, accountID, workspaceID, paginated.GetSearch()).GetErrorExceptNotFound()
+		repositories, filters...).GetErrorExceptNotFound()
 }
 
 func (r *Repository) queryListRepositoriesWhenWorkspaceAdmin(paginated *repositoryEntities.PaginatedContent) string {
