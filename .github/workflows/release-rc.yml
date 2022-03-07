@@ -100,7 +100,7 @@ jobs:
         with:
           distribution: goreleaser
           version: latest
-          args: release --rm-dist --skip-publish
+          args: release --rm-dist
         env:
           COSIGN_KEY: ${{ secrets.COSIGN_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

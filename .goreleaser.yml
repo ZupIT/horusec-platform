@@ -16,7 +16,10 @@ source:
   enabled: true
 
 release:
+  ids:
+    -
   draft: false
+  prerelease: auto
   mode: append
   footer: |
     ## Docker images
@@ -430,3 +433,5 @@ changelog:
       - '^build(deps):.*$'
       - '^Update dependency.*$'
       - '^versioning:release.*$'
+      - '^deps:\supdate.*$'
+      - '^renovatebot:.*$'
