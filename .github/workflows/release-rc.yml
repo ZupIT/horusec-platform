@@ -23,20 +23,21 @@ on:
 
 permissions: read-all
 jobs:
-  rc:
+  ReleaseRC:
     permissions:
       contents: write
       packages: write
+      issues:   write
     env:
       COSIGN_KEY_LOCATION: /tmp/cosign.key
       COSIGN_PWD: ${{ secrets.COSIGN_PWD }}
     runs-on: ubuntu-latest
-
+    if: contains('["wiliansilvazup","matheusalcantarazup","lucasbrunozup","nathanmartinszup","iancardosozup","oliveirafelipezup"]', github.actor)
     steps:
       - name: Set up nodejs
         uses: actions/setup-node@v2
         with:
-          node-version: 12
+          node-version: 14
       - name: Checkout
         uses: actions/checkout@v2
         with:
@@ -69,7 +70,7 @@ jobs:
         uses: crazy-max/ghaction-import-gpg@v4
         with:
           gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
-          passphrase: ${{ secrets.PASSPHRASE }}
+          passphrase: ${{ secrets.GPG_PASSWORD }}
           git_user_signingkey: true
           git_commit_gpgsign: true
 
@@ -91,9 +92,8 @@ jobs:
         run: |
           ./mage -v checkoutReleaseBranch ${{ steps.updated-version.outputs.nextReleaseBranchName }}
 
-      - name: Create local tag
-        run: |
-          ./mage -v createLocalTag ${{ steps.updated-version.outputs.nextRcVersion }}
+      - name: Create and push tag
+        run: ./mage -v createAndPushTag ${{ steps.updated-version.outputs.nextRcVersion }}
 
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
@@ -106,12 +106,15 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           COSIGN_PWD: ${{ secrets.COSIGN_PWD }}
           GORELEASER_CURRENT_TAG: ${{ steps.updated-version.outputs.nextRcVersion }}
+          GORELEASER_PREVIOUS_TAG: ${{ steps.updated-version.outputs.actualRCVersion }}
 
       - name: Push go projects to dockerhub
+        if: ${{ success() }}
         run: |
           ./mage -v dockerPushPlatformGoProjects ${{ steps.updated-version.outputs.nextRcVersion }}
 
       - name: Sign go projects in dockerhub
+        if: ${{ success() }}
         env:
           COSIGN_KEY: ${{secrets.COSIGN_KEY}}
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PWD }}
@@ -119,6 +122,7 @@ jobs:
           ./mage -v dockerSignPlatformGoProjects ${{ steps.updated-version.outputs.nextRcVersion }}
 
       - name: "Docker meta"
+        if: ${{ success() }}
         uses: docker/metadata-action@v3
         id: meta
         env:
@@ -132,6 +136,7 @@ jobs:
             type=semver,prefix=v,pattern={{major}},value=${{ env.RELEASE_VERSION }}
 
       - name: "Build and push manager"
+        if: ${{ success() }}
         uses: docker/build-push-action@v2
         with:
           push: true
@@ -141,34 +146,16 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
 
       - name: Sign image
+        if: ${{ success() }}
         run: |
           cosign sign -key $COSIGN_KEY_LOCATION horuszup/horusec-manager:${{ steps.updated-version.outputs.nextRcVersion }}
         env:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PWD }}
 
       - name: Push updates
-        run: |
-          ./mage -v gitPushAll
+        if: ${{ success() }}
+        run: ./mage -v gitPushAll
 
-      - name: Update release
-        uses: meeDamian/github-release@2.0
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{ steps.updated-version.outputs.nextRcVersion }}
-          name: ${{ steps.updated-version.outputs.nextRcVersion }}
-          draft: true
-          prerelease: false
-          commitish: ${{ github.sha }}
-          gzip: false
-          allow_override: false
-          body: |
-            ## Docker images
-            - `docker pull horuszup/horusec-analytic:${{ steps.updated-version.outputs.nextRcVersion }}`
-            - `docker pull horuszup/horusec-api:${{ steps.updated-version.outputs.nextRcVersion }}`
-            - `docker pull horuszup/horusec-auth:${{ steps.updated-version.outputs.nextRcVersion }}`
-            - `docker pull horuszup/horusec-core:${{ steps.updated-version.outputs.nextRcVersion }}`
-            - `docker pull horuszup/horusec-manager:${{ steps.updated-version.outputs.nextRcVersion }}`
-            - `docker pull horuszup/horusec-messages:${{ steps.updated-version.outputs.nextRcVersion }}`
-            - `docker pull horuszup/horusec-migrations:${{ steps.updated-version.outputs.nextRcVersion }}`
-            - `docker pull horuszup/horusec-vulnerability:${{ steps.updated-version.outputs.nextRcVersion }}`
-            - `docker pull horuszup/horusec-webhook:${{ steps.updated-version.outputs.nextRcVersion }}`
+      - name: Remove updates
+        if: ${{ !success() }}
+        run: ./mage -v removeTag ${{ steps.updated-version.outputs.nextRCVersion }}

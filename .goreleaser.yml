@@ -16,9 +16,20 @@ source:
   enabled: true
 
 release:
-  ids:
-    -
-  draft: true
+  draft: false
+  mode: append
+  footer: |
+    ## Docker images
+    - `docker pull horuszup/horusec-analytic:{{ .Tag }}`
+    - `docker pull horuszup/horusec-api:{{ .Tag }}`
+    - `docker pull horuszup/horusec-auth:{{ .Tag }}`
+    - `docker pull horuszup/horusec-core:{{ .Tag }}`
+    - `docker pull horuszup/horusec-manager:{{ .Tag }}`
+    - `docker pull horuszup/horusec-messages:{{ .Tag }}`
+    - `docker pull horuszup/horusec-migrations:{{ .Tag }}`
+    - `docker pull horuszup/horusec-vulnerability:{{ .Tag }}`
+    - `docker pull horuszup/horusec-webhook:{{ .Tag }}`
+    **Full Changelog**: https://github.com/ZupIT/horusec-platform/compare/{{ .PreviousTag }}...{{ .Tag }}
 
 signs:
   - cmd: cosign
@@ -395,8 +406,27 @@ dockers:
       - --tls-verify=false
 
 changelog:
-  sort: asc
+  skip: false
+  use: github
+  groups:
+  - title: 'Features'
+    regexp: "^.*:(feature|feat)\\s-.*$"
+    order: 0
+  - title: 'Bug fixes'
+    regexp: "^.*:(bugfix|fix)\\s-.*$"
+    order: 1
+  - title: 'Hotfixes'
+    regexp: "^.*:hotfix\\s-.*$"
+    order: 2
+  - title: 'Chores'
+    regexp: "^.*:chore\\s-.*$"
+    order: 3
+  - title: Others
+    order: 999
   filters:
     exclude:
-      - '^docs:'
-      - '^test:'
+      - '^deps:chore.*$'
+      - '^Commit\sfrom\sGitHub\sActions.*$'
+      - '^build(deps):.*$'
+      - '^Update dependency.*$'
+      - '^versioning:release.*$'
