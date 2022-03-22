@@ -32,6 +32,8 @@ import (
 type IAnalysis interface {
 	FindAnalysisByID(analysisID uuid.UUID) response.IResponse
 	CreateFullAnalysis(newAnalysis *analysis.Analysis) error
+	FindVulnerabilitiesByHashSliceInRepository(vulnHash []string, repositoryID uuid.UUID) response.IResponse
+	RawQuery(string string, values ...interface{}) error
 }
 
 type Analysis struct {
@@ -62,6 +64,7 @@ func (a *Analysis) CreateFullAnalysis(newAnalysis *analysis.Analysis) error {
 		logger.LogError(enums.ErrorRollbackCreate, tsx.RollbackTransaction().GetError())
 		return err
 	}
+
 	if err := a.createManyToManyAnalysisAndVulnerabilities(newAnalysis, tsx); err != nil {
 		logger.LogError(enums.ErrorRollbackCreate, tsx.RollbackTransaction().GetError())
 		return err
@@ -167,4 +170,25 @@ func (a *Analysis) findVulnerabilityByHashInRepository(vulnHash string, reposito
 		AND analysis.repository_id = ?
 	`
 	return a.databaseRead.Raw(query, map[string]interface{}{}, vulnHash, repositoryID)
+}
+
+func (a *Analysis) FindVulnerabilitiesByHashSliceInRepository(vulnHash []string,
+	repositoryID uuid.UUID) response.IResponse {
+	query := `
+		SELECT DISTINCT vulnerabilities.vulnerability_id as vulnerability_id,
+			vulnerabilities.vuln_hash as vuln_hash
+		FROM vulnerabilities
+		INNER JOIN analysis_vulnerabilities ON vulnerabilities.vulnerability_id = analysis_vulnerabilities.vulnerability_id 
+		INNER JOIN analysis ON analysis_vulnerabilities.analysis_id = analysis.analysis_id 
+		WHERE vulnerabilities.vuln_hash IN ?
+		AND analysis.repository_id = ?
+	`
+	object := make([]map[string]interface{}, 0)
+	return a.databaseRead.Raw(query, &object, vulnHash, repositoryID)
+}
+
+// Deprecated: RawQuery starts a transaction and try to execute the raw query into database.
+// is not recommended using this and the method will not be available after cli v2.10.0
+func (a *Analysis) RawQuery(rawQuery string, values ...interface{}) error {
+	return a.databaseWrite.Exec(rawQuery, values)
 }
