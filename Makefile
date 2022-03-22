@@ -64,9 +64,9 @@ stop-web:
 	docker rm -f horusec-all-in-one
 
 license:
-	$(GO) get -u github.com/google/addlicense
-	@$(ADDLICENSE) -check -f ./copyright.txt $(shell find -not -path '*/manager/build*' -not -path '*/.git/*' -not -path '*/node_modules*' -regex '.*\.\(go\|js\|ts\|yml\|yaml\|sh\|dockerfile\)')
+	$(GO) install github.com/google/addlicense@latest
+	@$(ADDLICENSE) -check -f ./copyright.txt $(shell find -regex '.*\.\(go\|js\|ts\|yml\|yaml\|sh\|dockerfile\)')
 
 license-fix:
-	$(GO) get -u github.com/google/addlicense
-	@$(ADDLICENSE) -f ./copyright.txt $(shell find -not -path '*/manager/build*' -not -path '*/.git/*' -not -path '*/node_modules*' -regex '.*\.\(go\|js\|ts\|yml\|yaml\|sh\|dockerfile\)')
+	$(GO) install github.com/google/addlicense@latest
+	@$(ADDLICENSE) -f ./copyright.txt $(shell find -regex '.*\.\(go\|js\|ts\|yml\|yaml\|sh\|dockerfile\)')

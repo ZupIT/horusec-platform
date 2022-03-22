@@ -17,21 +17,19 @@ package dashboard
 import (
 	"net/http"
 
-	"github.com/google/uuid"
-
-	analysisEntities "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
+	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/languages"
+	"github.com/google/uuid"
 
 	"github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard"
 )
 
 type IUseCases interface {
 	FilterFromRequest(request *http.Request) (*dashboard.Filter, error)
-	ParseAnalysisToVulnerabilitiesByAuthor(analysis *analysisEntities.Analysis) []*dashboard.VulnerabilitiesByAuthor
-	ParseAnalysisToVulnerabilitiesByRepository(
-		analysis *analysisEntities.Analysis) []*dashboard.VulnerabilitiesByRepository
-	ParseAnalysisToVulnerabilitiesByLanguage(analysis *analysisEntities.Analysis) []*dashboard.VulnerabilitiesByLanguage
-	ParseAnalysisToVulnerabilitiesByTime(analysis *analysisEntities.Analysis) *dashboard.VulnerabilitiesByTime
+	ParseAnalysisToVulnerabilitiesByAuthor(entity *analysis.Analysis) []*dashboard.VulnerabilitiesByAuthor
+	ParseAnalysisToVulnerabilitiesByRepository(entity *analysis.Analysis) []*dashboard.VulnerabilitiesByRepository
+	ParseAnalysisToVulnerabilitiesByLanguage(entity *analysis.Analysis) []*dashboard.VulnerabilitiesByLanguage
+	ParseAnalysisToVulnerabilitiesByTime(entity *analysis.Analysis) *dashboard.VulnerabilitiesByTime
 }
 type UseCases struct{}
 
@@ -40,51 +38,53 @@ func NewUseCaseDashboard() IUseCases {
 }
 
 func (u *UseCases) ParseAnalysisToVulnerabilitiesByAuthor(
-	analysis *analysisEntities.Analysis) []*dashboard.VulnerabilitiesByAuthor {
-	if len(analysis.AnalysisVulnerabilities) == 0 {
-		return u.emptyAnalysisResponseByAuthor(analysis)
+	entity *analysis.Analysis) []*dashboard.VulnerabilitiesByAuthor {
+	if len(entity.AnalysisVulnerabilities) == 0 {
+		return u.emptyAnalysisResponseByAuthor(entity)
 	}
 
-	return u.processVulnerabilitiesByAuthor(analysis)
+	return u.processVulnerabilitiesByAuthor(entity)
 }
 
+// nolint:funlen // TODO: Check if is necessary broken method
 func (u *UseCases) processVulnerabilitiesByAuthor(
-	analysis *analysisEntities.Analysis) []*dashboard.VulnerabilitiesByAuthor {
+	entity *analysis.Analysis) []*dashboard.VulnerabilitiesByAuthor {
 	mapVulnByAuthor := map[string]*dashboard.VulnerabilitiesByAuthor{}
 
-	for index := range analysis.AnalysisVulnerabilities {
-		if vulnByAuthor, ok := mapVulnByAuthor[analysis.AnalysisVulnerabilities[index].Vulnerability.CommitEmail]; ok {
-			vulnByAuthor.AddCountVulnerabilityBySeverity(analysis.AnalysisVulnerabilities[index].Vulnerability.Severity,
-				analysis.AnalysisVulnerabilities[index].Vulnerability.Type)
+	for index := range entity.AnalysisVulnerabilities {
+		if vulnByAuthor, ok := mapVulnByAuthor[entity.AnalysisVulnerabilities[index].Vulnerability.CommitEmail]; ok {
+			vulnByAuthor.AddCountVulnerabilityBySeverity(entity.AnalysisVulnerabilities[index].Vulnerability.Severity,
+				entity.AnalysisVulnerabilities[index].Vulnerability.Type)
+
 			continue
 		}
 
-		mapVulnByAuthor[analysis.AnalysisVulnerabilities[index].Vulnerability.CommitEmail] =
-			u.newVulnerabilitiesByAuthor(analysis, index)
+		// nolint:lll // attribution is necessary
+		mapVulnByAuthor[entity.AnalysisVulnerabilities[index].Vulnerability.CommitEmail] = u.newVulnerabilitiesByAuthor(entity, index)
 	}
 
 	return u.mapVulnByAuthorToSlice(mapVulnByAuthor)
 }
 
 func (u *UseCases) emptyAnalysisResponseByAuthor(
-	analysis *analysisEntities.Analysis) []*dashboard.VulnerabilitiesByAuthor {
+	entity *analysis.Analysis) []*dashboard.VulnerabilitiesByAuthor {
 	return []*dashboard.VulnerabilitiesByAuthor{
 		{
 			Author:        "",
-			Vulnerability: u.newVulnerabilityFromAnalysis(analysis),
+			Vulnerability: u.newVulnerabilityFromAnalysis(entity),
 		},
 	}
 }
 
-func (u *UseCases) newVulnerabilitiesByAuthor(analysis *analysisEntities.Analysis,
+func (u *UseCases) newVulnerabilitiesByAuthor(entity *analysis.Analysis,
 	index int) *dashboard.VulnerabilitiesByAuthor {
 	vulnsByAuthor := &dashboard.VulnerabilitiesByAuthor{
-		Author:        analysis.AnalysisVulnerabilities[index].Vulnerability.CommitEmail,
-		Vulnerability: u.newVulnerabilityFromAnalysis(analysis),
+		Author:        entity.AnalysisVulnerabilities[index].Vulnerability.CommitEmail,
+		Vulnerability: u.newVulnerabilityFromAnalysis(entity),
 	}
 
-	vulnsByAuthor.AddCountVulnerabilityBySeverity(analysis.AnalysisVulnerabilities[index].Vulnerability.Severity,
-		analysis.AnalysisVulnerabilities[index].Vulnerability.Type)
+	vulnsByAuthor.AddCountVulnerabilityBySeverity(entity.AnalysisVulnerabilities[index].Vulnerability.Severity,
+		entity.AnalysisVulnerabilities[index].Vulnerability.Type)
 
 	return vulnsByAuthor
 }
@@ -99,51 +99,51 @@ func (u *UseCases) mapVulnByAuthorToSlice(mapVulnByAuthor map[string]*dashboard.
 }
 
 func (u *UseCases) ParseAnalysisToVulnerabilitiesByRepository(
-	analysis *analysisEntities.Analysis) []*dashboard.VulnerabilitiesByRepository {
-	if len(analysis.AnalysisVulnerabilities) == 0 {
-		return u.emptyAnalysisResponseByRepository(analysis)
+	entity *analysis.Analysis) []*dashboard.VulnerabilitiesByRepository {
+	if len(entity.AnalysisVulnerabilities) == 0 {
+		return u.emptyAnalysisResponseByRepository(entity)
 	}
 
-	return u.processVulnerabilitiesByRepository(analysis)
+	return u.processVulnerabilitiesByRepository(entity)
 }
 
 func (u *UseCases) processVulnerabilitiesByRepository(
-	analysis *analysisEntities.Analysis) []*dashboard.VulnerabilitiesByRepository {
+	entity *analysis.Analysis) []*dashboard.VulnerabilitiesByRepository {
 	mapVulnByRepository := map[string]*dashboard.VulnerabilitiesByRepository{}
 
-	for index := range analysis.AnalysisVulnerabilities {
-		if vulnByRepository, ok := mapVulnByRepository[analysis.RepositoryName]; ok {
-			vulnByRepository.AddCountVulnerabilityBySeverity(analysis.AnalysisVulnerabilities[index].Vulnerability.Severity,
-				analysis.AnalysisVulnerabilities[index].Vulnerability.Type)
+	for index := range entity.AnalysisVulnerabilities {
+		if vulnByRepository, ok := mapVulnByRepository[entity.RepositoryName]; ok {
+			vulnByRepository.AddCountVulnerabilityBySeverity(entity.AnalysisVulnerabilities[index].Vulnerability.Severity,
+				entity.AnalysisVulnerabilities[index].Vulnerability.Type)
+
 			continue
 		}
 
-		mapVulnByRepository[analysis.RepositoryName] =
-			u.newVulnerabilitiesByRepository(analysis, index)
+		mapVulnByRepository[entity.RepositoryName] = u.newVulnerabilitiesByRepository(entity, index)
 	}
 
 	return u.mapVulnByRepositoryToSlice(mapVulnByRepository)
 }
 
 func (u *UseCases) emptyAnalysisResponseByRepository(
-	analysis *analysisEntities.Analysis) []*dashboard.VulnerabilitiesByRepository {
+	entity *analysis.Analysis) []*dashboard.VulnerabilitiesByRepository {
 	return []*dashboard.VulnerabilitiesByRepository{
 		{
-			RepositoryName: analysis.RepositoryName,
-			Vulnerability:  u.newVulnerabilityFromAnalysis(analysis),
+			RepositoryName: entity.RepositoryName,
+			Vulnerability:  u.newVulnerabilityFromAnalysis(entity),
 		},
 	}
 }
 
-func (u *UseCases) newVulnerabilitiesByRepository(analysis *analysisEntities.Analysis,
+func (u *UseCases) newVulnerabilitiesByRepository(entity *analysis.Analysis,
 	index int) *dashboard.VulnerabilitiesByRepository {
 	vulnByRepository := &dashboard.VulnerabilitiesByRepository{
-		RepositoryName: analysis.RepositoryName,
-		Vulnerability:  u.newVulnerabilityFromAnalysis(analysis),
+		RepositoryName: entity.RepositoryName,
+		Vulnerability:  u.newVulnerabilityFromAnalysis(entity),
 	}
 
-	vulnByRepository.AddCountVulnerabilityBySeverity(analysis.AnalysisVulnerabilities[index].Vulnerability.Severity,
-		analysis.AnalysisVulnerabilities[index].Vulnerability.Type)
+	vulnByRepository.AddCountVulnerabilityBySeverity(entity.AnalysisVulnerabilities[index].Vulnerability.Severity,
+		entity.AnalysisVulnerabilities[index].Vulnerability.Type)
 
 	return vulnByRepository
 }
@@ -158,41 +158,44 @@ func (u *UseCases) mapVulnByRepositoryToSlice(mapVulnByRepository map[string]*da
 }
 
 func (u *UseCases) ParseAnalysisToVulnerabilitiesByLanguage(
-	analysis *analysisEntities.Analysis) []*dashboard.VulnerabilitiesByLanguage {
-	if len(analysis.AnalysisVulnerabilities) == 0 {
-		return u.emptyAnalysisResponseByLanguage(analysis)
+	entity *analysis.Analysis) []*dashboard.VulnerabilitiesByLanguage {
+	if len(entity.AnalysisVulnerabilities) == 0 {
+		return u.emptyAnalysisResponseByLanguage(entity)
 	}
 
-	return u.processVulnerabilitiesByLanguage(analysis)
+	return u.processVulnerabilitiesByLanguage(entity)
 }
 
+// nolint:funlen // TODO: Check if is necessary broken method
 func (u *UseCases) processVulnerabilitiesByLanguage(
-	analysis *analysisEntities.Analysis) []*dashboard.VulnerabilitiesByLanguage {
+	entity *analysis.Analysis) []*dashboard.VulnerabilitiesByLanguage {
 	mapVulnByLanguage := map[languages.Language]*dashboard.VulnerabilitiesByLanguage{}
 
-	for index := range analysis.AnalysisVulnerabilities {
-		if vulnByRepository, ok := mapVulnByLanguage[analysis.AnalysisVulnerabilities[index].Vulnerability.Language]; ok {
-			vulnByRepository.AddCountVulnerabilityBySeverity(analysis.AnalysisVulnerabilities[index].Vulnerability.Severity,
-				analysis.AnalysisVulnerabilities[index].Vulnerability.Type)
+	for index := range entity.AnalysisVulnerabilities {
+		if vulnByRepository, ok := mapVulnByLanguage[entity.AnalysisVulnerabilities[index].Vulnerability.Language]; ok {
+			vulnByRepository.AddCountVulnerabilityBySeverity(
+				entity.AnalysisVulnerabilities[index].Vulnerability.Severity,
+				entity.AnalysisVulnerabilities[index].Vulnerability.Type)
+
 			continue
 		}
 
-		mapVulnByLanguage[analysis.AnalysisVulnerabilities[index].Vulnerability.Language] =
-			u.newVulnerabilitiesByLanguage(analysis, index)
+		// nolint:lll // attribution is necessary
+		mapVulnByLanguage[entity.AnalysisVulnerabilities[index].Vulnerability.Language] = u.newVulnerabilitiesByLanguage(entity, index)
 	}
 
 	return u.mapVulnByLanguageToSlice(mapVulnByLanguage)
 }
 
-func (u *UseCases) newVulnerabilitiesByLanguage(analysis *analysisEntities.Analysis,
+func (u *UseCases) newVulnerabilitiesByLanguage(entity *analysis.Analysis,
 	index int) *dashboard.VulnerabilitiesByLanguage {
 	vulnByLanguage := &dashboard.VulnerabilitiesByLanguage{
-		Language:      analysis.AnalysisVulnerabilities[index].Vulnerability.Language,
-		Vulnerability: u.newVulnerabilityFromAnalysis(analysis),
+		Language:      entity.AnalysisVulnerabilities[index].Vulnerability.Language,
+		Vulnerability: u.newVulnerabilityFromAnalysis(entity),
 	}
 
-	vulnByLanguage.AddCountVulnerabilityBySeverity(analysis.AnalysisVulnerabilities[index].Vulnerability.Severity,
-		analysis.AnalysisVulnerabilities[index].Vulnerability.Type)
+	vulnByLanguage.AddCountVulnerabilityBySeverity(entity.AnalysisVulnerabilities[index].Vulnerability.Severity,
+		entity.AnalysisVulnerabilities[index].Vulnerability.Type)
 
 	return vulnByLanguage
 }
@@ -208,35 +211,35 @@ func (u *UseCases) mapVulnByLanguageToSlice(
 }
 
 func (u *UseCases) emptyAnalysisResponseByLanguage(
-	analysis *analysisEntities.Analysis) []*dashboard.VulnerabilitiesByLanguage {
+	entity *analysis.Analysis) []*dashboard.VulnerabilitiesByLanguage {
 	return []*dashboard.VulnerabilitiesByLanguage{
 		{
 			Language:      "",
-			Vulnerability: u.newVulnerabilityFromAnalysis(analysis),
+			Vulnerability: u.newVulnerabilityFromAnalysis(entity),
 		},
 	}
 }
 
 func (u *UseCases) ParseAnalysisToVulnerabilitiesByTime(
-	analysis *analysisEntities.Analysis) *dashboard.VulnerabilitiesByTime {
+	entity *analysis.Analysis) *dashboard.VulnerabilitiesByTime {
 	vulnsByTime := &dashboard.VulnerabilitiesByTime{
-		Vulnerability: u.newVulnerabilityFromAnalysis(analysis),
+		Vulnerability: u.newVulnerabilityFromAnalysis(entity),
 	}
 
-	for index := range analysis.AnalysisVulnerabilities {
-		vulnsByTime.AddCountVulnerabilityBySeverity(analysis.AnalysisVulnerabilities[index].Vulnerability.Severity,
-			analysis.AnalysisVulnerabilities[index].Vulnerability.Type)
+	for index := range entity.AnalysisVulnerabilities {
+		vulnsByTime.AddCountVulnerabilityBySeverity(entity.AnalysisVulnerabilities[index].Vulnerability.Severity,
+			entity.AnalysisVulnerabilities[index].Vulnerability.Type)
 	}
 
 	return vulnsByTime
 }
 
-func (u *UseCases) newVulnerabilityFromAnalysis(analysis *analysisEntities.Analysis) dashboard.Vulnerability {
+func (u *UseCases) newVulnerabilityFromAnalysis(entity *analysis.Analysis) dashboard.Vulnerability {
 	return dashboard.Vulnerability{
 		VulnerabilityID: uuid.New(),
-		CreatedAt:       analysis.CreatedAt,
-		WorkspaceID:     analysis.WorkspaceID,
-		RepositoryID:    analysis.RepositoryID,
+		CreatedAt:       entity.CreatedAt,
+		WorkspaceID:     entity.WorkspaceID,
+		RepositoryID:    entity.RepositoryID,
 	}
 }
 

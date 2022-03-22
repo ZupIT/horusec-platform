@@ -17,11 +17,10 @@ package router
 import (
 	"testing"
 
-	"github.com/go-chi/cors"
-	"github.com/stretchr/testify/assert"
-
 	"github.com/ZupIT/horusec-devkit/pkg/services/http/router"
 	"github.com/ZupIT/horusec-devkit/pkg/services/middlewares"
+	"github.com/go-chi/cors"
+	"github.com/stretchr/testify/assert"
 
 	eventDashboard "github.com/ZupIT/horusec-platform/analytic/internal/events/dashboard"
 	"github.com/ZupIT/horusec-platform/analytic/internal/handlers/dashboard"

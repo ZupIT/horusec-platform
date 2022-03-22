@@ -19,13 +19,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/streadway/amqp"
-	"github.com/stretchr/testify/assert"
-
 	"github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 	"github.com/ZupIT/horusec-devkit/pkg/enums/queues"
 	"github.com/ZupIT/horusec-devkit/pkg/services/broker"
 	brokerPacket "github.com/ZupIT/horusec-devkit/pkg/services/broker/packet"
+	"github.com/streadway/amqp"
+	"github.com/stretchr/testify/assert"
 
 	dashboardController "github.com/ZupIT/horusec-platform/analytic/internal/controllers/dashboard"
 )

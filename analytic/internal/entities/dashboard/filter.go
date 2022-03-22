@@ -25,7 +25,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
 
-	dashboardEnums "github.com/ZupIT/horusec-platform/analytic/internal/enums/dashboard"
+	"github.com/ZupIT/horusec-platform/analytic/internal/enums/dashboard"
 )
 
 type Filter struct {
@@ -72,24 +72,25 @@ func (f *Filter) Validate() error {
 		validation.Field(&f.StartTime, validation.Required),
 		validation.Field(&f.EndTime, validation.Required),
 		validation.Field(&f.Page, validation.Min(0)),
-		validation.Field(&f.Size, validation.Min(dashboardEnums.DefaultPaginationSize)),
+		validation.Field(&f.Size, validation.Min(dashboard.DefaultPaginationSize)),
 	)
 }
 
 func (f *Filter) SetDateRangeAndPagination(request *http.Request) error {
-	initialDate, err := f.parseDate(request.URL.Query().Get(dashboardEnums.InitialDateHeader))
+	initialDate, err := f.parseDate(request.URL.Query().Get(dashboard.InitialDateHeader))
 	if err != nil {
-		return errors.Wrap(err, dashboardEnums.MessageInvalidInitialDate)
+		return errors.Wrap(err, dashboard.MessageInvalidInitialDate)
 	}
 
-	finalDate, err := f.parseDate(request.URL.Query().Get(dashboardEnums.FinalDateHeader))
+	finalDate, err := f.parseDate(request.URL.Query().Get(dashboard.FinalDateHeader))
 	if err != nil {
-		return errors.Wrap(err, dashboardEnums.MessageInvalidFinalDate)
+		return errors.Wrap(err, dashboard.MessageInvalidFinalDate)
 	}
 
 	f.StartTime = initialDate
 	f.EndTime = finalDate
 	f.setPageAndSize(request)
+
 	return nil
 }
 
@@ -102,31 +103,31 @@ func (f *Filter) parseDate(date string) (time.Time, error) {
 }
 
 func (f *Filter) setPageAndSize(request *http.Request) {
-	page, _ := strconv.Atoi(request.URL.Query().Get(dashboardEnums.PageHeader))
-	size, _ := strconv.Atoi(request.URL.Query().Get(dashboardEnums.SizeHeader))
+	page, _ := strconv.Atoi(request.URL.Query().Get(dashboard.PageHeader))
+	size, _ := strconv.Atoi(request.URL.Query().Get(dashboard.SizeHeader))
 
 	f.Page = page
 	f.Size = f.getPaginationMinSize(size)
 }
 
 func (f *Filter) getPaginationMinSize(size int) int {
-	if size < dashboardEnums.DefaultPaginationSize {
-		return dashboardEnums.DefaultPaginationSize
+	if size < dashboard.DefaultPaginationSize {
+		return dashboard.DefaultPaginationSize
 	}
 
 	return size
 }
 
 func (f *Filter) SetWorkspaceAndRepositoryID(request *http.Request) (err error) {
-	f.WorkspaceID, err = uuid.Parse(chi.URLParam(request, dashboardEnums.WorkspaceID))
+	f.WorkspaceID, err = uuid.Parse(chi.URLParam(request, dashboard.WorkspaceID))
 	if err != nil {
-		return dashboardEnums.ErrorInvalidWorkspaceID
+		return dashboard.ErrorInvalidWorkspaceID
 	}
 
-	if chi.URLParam(request, dashboardEnums.RepositoryID) != "" {
-		f.RepositoryID, err = uuid.Parse(chi.URLParam(request, dashboardEnums.RepositoryID))
+	if chi.URLParam(request, dashboard.RepositoryID) != "" {
+		f.RepositoryID, err = uuid.Parse(chi.URLParam(request, dashboard.RepositoryID))
 		if err != nil {
-			return dashboardEnums.ErrorInvalidRepositoryID
+			return dashboard.ErrorInvalidRepositoryID
 		}
 	}
 

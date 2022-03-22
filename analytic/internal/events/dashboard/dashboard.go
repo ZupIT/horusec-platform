@@ -61,11 +61,13 @@ func (e *Events) startConsumers() *Events {
 
 func (e *Events) handleNewAnalysis(analysisPacket packet.IPacket, queue queues.Queue) {
 	logger.LogInfo(eventsEnums.MessageNewAnalysisReceivedAnalytic)
+
 	analysis := &analysisEntities.Analysis{}
 
 	if err := parser.ParsePacketToEntity(analysisPacket, analysis); err != nil {
 		logger.LogError(fmt.Sprintf(eventsEnums.MessageFailedToParsePacket, analysisPacket.GetBody(), queue), err)
 		_ = analysisPacket.Ack()
+
 		return
 	}
 

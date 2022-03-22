@@ -40,6 +40,8 @@ jobs:
         run: make coverage
       - name: build
         run: make build
+      - name: Check go mod tidy diff
+        run: if [ $(go mod tidy && git diff | wc -l) -gt 0 ]; then git diff && exit 1; fi
       - name: security
         env:
           HORUSEC_CLI_REPOSITORY_AUTHORIZATION: ${{ secrets.HORUSEC_CLI_REPOSITORY_AUTHORIZATION }}

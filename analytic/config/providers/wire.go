@@ -12,13 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//+build wireinject
+//go:build wireinject
+// +build wireinject
 
 package providers
 
 import (
-	"github.com/google/wire"
-
 	"github.com/ZupIT/horusec-devkit/pkg/services/app"
 	"github.com/ZupIT/horusec-devkit/pkg/services/broker"
 	"github.com/ZupIT/horusec-devkit/pkg/services/broker/config"
@@ -28,6 +27,7 @@ import (
 	"github.com/ZupIT/horusec-devkit/pkg/services/grpc/auth/proto"
 	routerHttp "github.com/ZupIT/horusec-devkit/pkg/services/http/router"
 	"github.com/ZupIT/horusec-devkit/pkg/services/middlewares"
+	"github.com/google/wire"
 
 	"github.com/ZupIT/horusec-platform/analytic/config/cors"
 	dashboardController "github.com/ZupIT/horusec-platform/analytic/internal/controllers/dashboard"

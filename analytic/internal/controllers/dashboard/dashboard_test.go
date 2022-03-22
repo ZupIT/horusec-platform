@@ -18,11 +18,10 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
-
 	analysisEntities "github.com/ZupIT/horusec-devkit/pkg/entities/analysis"
 	"github.com/ZupIT/horusec-devkit/pkg/services/database"
 	"github.com/ZupIT/horusec-devkit/pkg/services/database/response"
+	"github.com/stretchr/testify/assert"
 
 	"github.com/ZupIT/horusec-platform/analytic/internal/entities/dashboard"
 	dashboardRepository "github.com/ZupIT/horusec-platform/analytic/internal/repositories/dashboard"
