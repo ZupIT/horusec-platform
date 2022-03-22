@@ -27,11 +27,6 @@ type Mock struct {
 	mock.Mock
 }
 
-func (m *Mock) RawQuery(_ string, _ ...interface{}) error {
-	args := m.MethodCalled("RawQuery")
-	return utilsMock.ReturnNilOrError(args, 0)
-}
-
 func (m *Mock) FindAnalysisByID(_ uuid.UUID) response.IResponse {
 	args := m.MethodCalled("FindAnalysisByID")
 	return args.Get(0).(response.IResponse)
@@ -41,7 +36,12 @@ func (m *Mock) CreateFullAnalysis(analysisArgument *analysis.Analysis) error {
 	args := m.MethodCalled("CreateFullAnalysisResponse")
 	return utilsMock.ReturnNilOrError(args, 0)
 }
-func (m *Mock) FindVulnerabilitiesByHashSliceInRepository(vulnHash []string, repositoryID uuid.UUID) response.IResponse {
-	args := m.MethodCalled("FindVulnerabilitiesByHashSliceInRepository")
+func (m *Mock) FindAllVulnerabilitiesByHashesAndRepository(_ []string, _ uuid.UUID) response.IResponse {
+	args := m.MethodCalled("FindAllVulnerabilitiesByHashesAndRepository")
 	return args.Get(0).(response.IResponse)
+}
+
+func (m *Mock) SaveTreatCompatibility(_ map[string]uuid.UUID, _ *analysis.Analysis) error {
+	args := m.MethodCalled("SaveTreatCompatibility")
+	return utilsMock.ReturnNilOrError(args, 0)
 }

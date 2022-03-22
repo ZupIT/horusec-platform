@@ -32,8 +32,8 @@ import (
 type IAnalysis interface {
 	FindAnalysisByID(analysisID uuid.UUID) response.IResponse
 	CreateFullAnalysis(newAnalysis *analysis.Analysis) error
-	FindVulnerabilitiesByHashSliceInRepository(vulnHash []string, repositoryID uuid.UUID) response.IResponse
-	RawQuery(string string, values ...interface{}) error
+	FindAllVulnerabilitiesByHashesAndRepository(hashes []string, repositoryID uuid.UUID) response.IResponse
+	SaveTreatCompatibility(mapHashToVulnerabilityID map[string]uuid.UUID, newAnalysis *analysis.Analysis) error
 }
 
 type Analysis struct {
@@ -172,23 +172,40 @@ func (a *Analysis) findVulnerabilityByHashInRepository(vulnHash string, reposito
 	return a.databaseRead.Raw(query, map[string]interface{}{}, vulnHash, repositoryID)
 }
 
-func (a *Analysis) FindVulnerabilitiesByHashSliceInRepository(vulnHash []string,
+func (a *Analysis) FindAllVulnerabilitiesByHashesAndRepository(hashes []string,
 	repositoryID uuid.UUID) response.IResponse {
 	query := `
-		SELECT DISTINCT vulnerabilities.vulnerability_id as vulnerability_id,
-			vulnerabilities.vuln_hash as vuln_hash
+		SELECT DISTINCT vulnerabilities.vulnerability_id as vulnerability_id, vulnerabilities.vuln_hash as vuln_hash
 		FROM vulnerabilities
 		INNER JOIN analysis_vulnerabilities ON vulnerabilities.vulnerability_id = analysis_vulnerabilities.vulnerability_id 
 		INNER JOIN analysis ON analysis_vulnerabilities.analysis_id = analysis.analysis_id 
 		WHERE vulnerabilities.vuln_hash IN ?
 		AND analysis.repository_id = ?
 	`
-	object := make([]map[string]interface{}, 0)
-	return a.databaseRead.Raw(query, &object, vulnHash, repositoryID)
+	return a.databaseRead.Raw(query, &[]vulnerability.Vulnerability{}, hashes, repositoryID)
 }
 
-// Deprecated: RawQuery starts a transaction and try to execute the raw query into database.
-// is not recommended using this and the method will not be available after cli v2.10.0
-func (a *Analysis) RawQuery(rawQuery string, values ...interface{}) error {
+// Deprecated: SaveTreatCompatibility starts a transaction and try to execute the raw query into database.
+// is not recommended using this and the method will not be available after cli v2.10.0.
+// The mapHashToVulnerabilityID param is the deprecated hash on the key and
+// its value is vulnerabilityID founded in database the newAnalysis param is required to compare
+// if exists deprecated hash from analysis and to update in database.
+// nolint:funlen // funlen is not necessary in deprecated hash
+func (a *Analysis) SaveTreatCompatibility(mapHashToVulnerabilityID map[string]uuid.UUID,
+	newAnalysis *analysis.Analysis) error {
+	rawQuery := ""
+	values := []string{}
+	for indexNN := range newAnalysis.AnalysisVulnerabilities {
+		manyToMany := newAnalysis.AnalysisVulnerabilities[indexNN]
+		for _, deprecatedHash := range manyToMany.Vulnerability.DeprecatedHashes {
+			if mapHashToVulnerabilityID[deprecatedHash] != uuid.Nil {
+				rawQuery += "UPDATE vulnerabilities SET vuln_hash = ?  where vulnerability_id = ? ;\n"
+				values = append(values, manyToMany.Vulnerability.VulnHash, mapHashToVulnerabilityID[deprecatedHash].String())
+			}
+		}
+	}
+	if rawQuery == "" {
+		return nil
+	}
 	return a.databaseWrite.Exec(rawQuery, values)
 }
