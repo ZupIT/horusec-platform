@@ -558,14 +558,14 @@ func TestController_SaveAnalysis(t *testing.T) {
 		appConfigMock := &appConfiguration.Mock{}
 		repoRepositoryMock := &repository.Mock{}
 		repoAnalysisMock := &repoAnalysis.Mock{}
-		repoAnalysisMock.On("RawQuery").Return(nil)
-		repoAnalysisMock.On("FindVulnerabilitiesByHashSliceInRepository").Return(response.NewResponse(
+		repoAnalysisMock.On("SaveTreatCompatibility").Return(nil)
+		repoAnalysisMock.On("FindAllVulnerabilitiesByHashesAndRepository").Return(response.NewResponse(
 			1,
 			nil,
-			&[]map[string]interface{}{
+			&[]vulnerability.Vulnerability{
 				{
-					"vulnerability_id": "47a7807b-ca70-41b1-8ff2-432a5d1752fd",
-					"vuln_hash":        "oldHash",
+					VulnerabilityID: uuid.New(),
+					VulnHash:        "oldHash",
 				},
 			},
 		))
@@ -625,20 +625,20 @@ func TestController_SaveAnalysis(t *testing.T) {
 		assert.NoError(t, err)
 		assert.NotEqual(t, res, uuid.Nil)
 	})
-	t.Run("Should save analysis with error when FindVulnerabilitiesByHashSliceInRepository fails", func(t *testing.T) {
+	t.Run("Should save analysis with error when FindAllVulnerabilitiesByHashesAndRepository fails", func(t *testing.T) {
 		brokerMock := &broker.Mock{}
 		brokerMock.On("Publish").Return(nil)
 		appConfigMock := &appConfiguration.Mock{}
 		repoRepositoryMock := &repository.Mock{}
 		repoAnalysisMock := &repoAnalysis.Mock{}
-		repoAnalysisMock.On("RawQuery").Return(nil)
-		repoAnalysisMock.On("FindVulnerabilitiesByHashSliceInRepository").Return(response.NewResponse(
+		repoAnalysisMock.On("SaveTreatCompatibility").Return(nil)
+		repoAnalysisMock.On("FindAllVulnerabilitiesByHashesAndRepository").Return(response.NewResponse(
 			1,
 			errors.New("error"),
-			&[]map[string]interface{}{
+			&[]vulnerability.Vulnerability{
 				{
-					"vulnerability_id": "47a7807b-ca70-41b1-8ff2-432a5d1752fd",
-					"vuln_hash":        "oldHash",
+					VulnerabilityID: uuid.New(),
+					VulnHash:        "oldHash",
 				},
 			},
 		))
@@ -697,6 +697,74 @@ func TestController_SaveAnalysis(t *testing.T) {
 		})
 		assert.Error(t, err)
 		assert.Equal(t, res, uuid.Nil)
+	})
+	t.Run("Should save analysis with not found records when FindAllVulnerabilitiesByHashesAndRepository fails", func(t *testing.T) {
+		brokerMock := &broker.Mock{}
+		brokerMock.On("Publish").Return(nil)
+		appConfigMock := &appConfiguration.Mock{}
+		repoRepositoryMock := &repository.Mock{}
+		repoAnalysisMock := &repoAnalysis.Mock{}
+		repoAnalysisMock.On("SaveTreatCompatibility").Return(nil)
+		repoAnalysisMock.On("FindAllVulnerabilitiesByHashesAndRepository").Return(response.NewResponse(
+			0,
+			enums.ErrorNotFoundRecords,
+			&[]vulnerability.Vulnerability{},
+		))
+		repoAnalysisMock.On("CreateFullAnalysisResponse").Return(nil)
+		repoAnalysisMock.On("CreateFullAnalysisArguments").Return(func(any *analysis.Analysis) {})
+		repoAnalysisMock.On("FindAnalysisByID").Return(response.NewResponse(0, nil, &analysis.Analysis{
+			ID:         uuid.New(),
+			Status:     analysisEnum.Success,
+			Errors:     "",
+			CreatedAt:  time.Now(),
+			FinishedAt: time.Now(),
+		}))
+		controller := NewAnalysisController(
+			brokerMock,
+			appConfigMock,
+			repoRepositoryMock,
+			repoAnalysisMock,
+		)
+		res, err := controller.SaveAnalysis(&analysis.Analysis{
+			ID:             uuid.New(),
+			WorkspaceID:    uuid.New(),
+			WorkspaceName:  uuid.NewString(),
+			RepositoryID:   uuid.New(),
+			RepositoryName: uuid.NewString(),
+			Status:         analysisEnum.Success,
+			Errors:         "",
+			CreatedAt:      time.Now(),
+			FinishedAt:     time.Now(),
+			AnalysisVulnerabilities: []analysis.AnalysisVulnerabilities{
+				{
+					VulnerabilityID: uuid.New(),
+					AnalysisID:      uuid.New(),
+					CreatedAt:       time.Now(),
+					Vulnerability: vulnerability.Vulnerability{
+						VulnerabilityID:  uuid.New(),
+						Line:             "1",
+						Column:           "1",
+						Confidence:       confidence.High,
+						File:             "/deployments/cert.pem",
+						Code:             "-----BEGIN CERTIFICATE-----",
+						Details:          "Asymmetric Private Key \n Found SSH and/or x.509 Cerficates among the files of your project, make sure you want this kind of information inside your Git repo, since it can be missused by someone with access to any kind of copy.  For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
+						SecurityTool:     "Wrong security tool",
+						Language:         languages.Leaks,
+						Severity:         severities.Critical,
+						VulnHash:         "1234567890",
+						Type:             vulnerabilityEnum.Vulnerability,
+						CommitAuthor:     "Wilian Gabriel",
+						CommitEmail:      "wilian.silva@zup.com.br",
+						CommitHash:       "9876543210",
+						CommitMessage:    "Initial Commit",
+						CommitDate:       "2021-03-31T10:58:42Z",
+						DeprecatedHashes: []string{"oldHash", "oldHash1"},
+					},
+				},
+			},
+		})
+		assert.NoError(t, err)
+		assert.NotEqual(t, res, uuid.Nil)
 	})
 	t.Run("Should save analysis with error when RawQuery fails", func(t *testing.T) {
 		brokerMock := &broker.Mock{}
@@ -704,14 +772,14 @@ func TestController_SaveAnalysis(t *testing.T) {
 		appConfigMock := &appConfiguration.Mock{}
 		repoRepositoryMock := &repository.Mock{}
 		repoAnalysisMock := &repoAnalysis.Mock{}
-		repoAnalysisMock.On("RawQuery").Return(errors.New("some error"))
-		repoAnalysisMock.On("FindVulnerabilitiesByHashSliceInRepository").Return(response.NewResponse(
+		repoAnalysisMock.On("SaveTreatCompatibility").Return(errors.New("some error"))
+		repoAnalysisMock.On("FindAllVulnerabilitiesByHashesAndRepository").Return(response.NewResponse(
 			1,
 			nil,
-			&[]map[string]interface{}{
+			&[]vulnerability.Vulnerability{
 				{
-					"vulnerability_id": "47a7807b-ca70-41b1-8ff2-432a5d1752fd",
-					"vuln_hash":        "oldHash",
+					VulnerabilityID: uuid.New(),
+					VulnHash:        "oldHash",
 				},
 			},
 		))
@@ -771,14 +839,14 @@ func TestController_SaveAnalysis(t *testing.T) {
 		assert.Error(t, err)
 		assert.Equal(t, res, uuid.Nil)
 	})
-	t.Run("Should save analysis with error when nil response.GetData on FindVulnerabilitiesByHashSliceInRepository", func(t *testing.T) {
+	t.Run("Should save analysis with error when nil response.GetData on FindAllVulnerabilitiesByHashesAndRepository", func(t *testing.T) {
 		brokerMock := &broker.Mock{}
 		brokerMock.On("Publish").Return(nil)
 		appConfigMock := &appConfiguration.Mock{}
 		repoRepositoryMock := &repository.Mock{}
 		repoAnalysisMock := &repoAnalysis.Mock{}
-		repoAnalysisMock.On("RawQuery").Return(errors.New("some error"))
-		repoAnalysisMock.On("FindVulnerabilitiesByHashSliceInRepository").Return(response.NewResponse(
+		repoAnalysisMock.On("SaveTreatCompatibility").Return(errors.New("some error"))
+		repoAnalysisMock.On("FindAllVulnerabilitiesByHashesAndRepository").Return(response.NewResponse(
 			1,
 			nil,
 			nil,
@@ -836,7 +904,7 @@ func TestController_SaveAnalysis(t *testing.T) {
 				},
 			},
 		})
-		assert.Error(t, err)
-		assert.Equal(t, res, uuid.Nil)
+		assert.NoError(t, err)
+		assert.NotEqual(t, res, uuid.Nil)
 	})
 }

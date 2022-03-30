@@ -3,7 +3,7 @@ module github.com/ZupIT/horusec-platform/api
 go 1.17
 
 require (
-	github.com/ZupIT/horusec-devkit v1.0.23
+	github.com/ZupIT/horusec-devkit v1.0.24
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
 	github.com/go-chi/chi v4.1.2+incompatible
 	github.com/go-chi/cors v1.2.0
@@ -64,6 +64,6 @@ require (
 	google.golang.org/protobuf v1.27.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
-	gorm.io/driver/postgres v1.2.3 // indirect
-	gorm.io/gorm v1.22.5 // indirect
+	gorm.io/driver/postgres v1.3.1 // indirect
+	gorm.io/gorm v1.23.2 // indirect
 )

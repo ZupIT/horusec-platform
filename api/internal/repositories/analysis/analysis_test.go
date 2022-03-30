@@ -438,14 +438,14 @@ func TestAnalysis_CreateFullAnalysis(t *testing.T) {
 		err := NewRepositoriesAnalysis(connectionMock).CreateFullAnalysis(data)
 		assert.Error(t, err)
 	})
-	t.Run("Should run FindVulnerabilitiesByHashSliceInRepository", func(t *testing.T) {
+	t.Run("Should run FindAllVulnerabilitiesByHashesAndRepository", func(t *testing.T) {
 		mockRead := &database.Mock{}
 		connectionMock := &database.Connection{
 			Write: nil,
 			Read:  mockRead,
 		}
 		mockRead.On("Raw").Return(response.NewResponse(1, nil, nil))
-		res := NewRepositoriesAnalysis(connectionMock).FindVulnerabilitiesByHashSliceInRepository([]string{"something"}, uuid.New())
+		res := NewRepositoriesAnalysis(connectionMock).FindAllVulnerabilitiesByHashesAndRepository([]string{"something"}, uuid.New())
 		assert.NoError(t, res.GetError())
 	})
 	t.Run("Should run Exec", func(t *testing.T) {
@@ -455,7 +455,95 @@ func TestAnalysis_CreateFullAnalysis(t *testing.T) {
 			Read:  nil,
 		}
 		mockWrite.On("Exec").Return(nil)
-		err := NewRepositoriesAnalysis(connectionMock).RawQuery("something")
+		err := NewRepositoriesAnalysis(connectionMock).SaveTreatCompatibility(map[string]uuid.UUID{"something": uuid.New()}, &analysis.Analysis{})
+		assert.NoError(t, err)
+	})
+	t.Run("Should run SaveTreatCompatibility with success", func(t *testing.T) {
+		mockWrite := &database.Mock{}
+		connectionMock := &database.Connection{
+			Write: mockWrite,
+			Read:  nil,
+		}
+		mockWrite.On("Exec").Return(nil)
+		vulnerabilityID := uuid.New()
+		mapHashes := map[string]uuid.UUID{
+			"oldHash":  uuid.New(),
+			"oldHash1": uuid.New(),
+		}
+		newAnalysis := &analysis.Analysis{
+			AnalysisVulnerabilities: []analysis.AnalysisVulnerabilities{
+				{
+					VulnerabilityID: vulnerabilityID,
+					AnalysisID:      uuid.New(),
+					CreatedAt:       time.Now(),
+					Vulnerability: vulnerability.Vulnerability{
+						VulnerabilityID:  vulnerabilityID,
+						Line:             "1",
+						Column:           "1",
+						Confidence:       confidence.High,
+						File:             "/deployments/cert.pem",
+						Code:             "-----BEGIN CERTIFICATE-----",
+						Details:          "Asymmetric Private Key \n Found SSH and/or x.509 Cerficates among the files of your project, make sure you want this kind of information inside your Git repo, since it can be missused by someone with access to any kind of copy.  For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
+						SecurityTool:     "Wrong security tool",
+						Language:         languages.Leaks,
+						Severity:         severities.Critical,
+						VulnHash:         "1234567890",
+						Type:             vulnerabilityEnum.Vulnerability,
+						CommitAuthor:     "Wilian Gabriel",
+						CommitEmail:      "wilian.silva@zup.com.br",
+						CommitHash:       "9876543210",
+						CommitMessage:    "Initial Commit",
+						CommitDate:       "2021-03-31T10:58:42Z",
+						DeprecatedHashes: []string{"oldHash", "oldHash1"},
+					},
+				},
+			},
+		}
+		err := NewRepositoriesAnalysis(connectionMock).SaveTreatCompatibility(mapHashes, newAnalysis)
+		assert.NoError(t, err)
+	})
+
+	t.Run("Should run SaveTreatCompatibility and return not error but not run any query", func(t *testing.T) {
+		mockWrite := &database.Mock{}
+		connectionMock := &database.Connection{
+			Write: mockWrite,
+			Read:  nil,
+		}
+		mockWrite.On("Exec").Return(nil)
+		vulnerabilityID := uuid.New()
+		mapHashes := map[string]uuid.UUID{
+			"other-hash-not-exists": uuid.New(),
+		}
+		newAnalysis := &analysis.Analysis{
+			AnalysisVulnerabilities: []analysis.AnalysisVulnerabilities{
+				{
+					VulnerabilityID: vulnerabilityID,
+					AnalysisID:      uuid.New(),
+					CreatedAt:       time.Now(),
+					Vulnerability: vulnerability.Vulnerability{
+						VulnerabilityID:  vulnerabilityID,
+						Line:             "1",
+						Column:           "1",
+						Confidence:       confidence.High,
+						File:             "/deployments/cert.pem",
+						Code:             "-----BEGIN CERTIFICATE-----",
+						Details:          "Asymmetric Private Key \n Found SSH and/or x.509 Cerficates among the files of your project, make sure you want this kind of information inside your Git repo, since it can be missused by someone with access to any kind of copy.  For more information checkout the CWE-312 (https://cwe.mitre.org/data/definitions/312.html) advisory.",
+						SecurityTool:     "Wrong security tool",
+						Language:         languages.Leaks,
+						Severity:         severities.Critical,
+						VulnHash:         "1234567890",
+						Type:             vulnerabilityEnum.Vulnerability,
+						CommitAuthor:     "Wilian Gabriel",
+						CommitEmail:      "wilian.silva@zup.com.br",
+						CommitHash:       "9876543210",
+						CommitMessage:    "Initial Commit",
+						CommitDate:       "2021-03-31T10:58:42Z",
+						DeprecatedHashes: []string{"oldHash", "oldHash1"},
+					},
+				},
+			},
+		}
+		err := NewRepositoriesAnalysis(connectionMock).SaveTreatCompatibility(mapHashes, newAnalysis)
 		assert.NoError(t, err)
 	})
 }
