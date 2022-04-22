@@ -1180,10 +1180,10 @@
   dependencies:
     regenerator-runtime "^0.13.4"
 
-"@babel/runtime@^7.16.5":
-  version "7.16.5"
-  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.16.5.tgz#7f3e34bf8bdbbadf03fbb7b1ea0d929569c9487a"
-  integrity sha512-TXWihFIS3Pyv5hzR7j6ihmeLkZfrXGxAr5UfSl8CHf+6q/wpiYDkUau0czckpYG8QmnCIuPpdLtuA9VmuGGyMA==
+"@babel/runtime@^7.17.9":
+  version "7.17.9"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.17.9.tgz#d19fbf802d01a8cb6cf053a64e472d42c434ba72"
+  integrity sha512-lSiBBvodq29uShpWGNbgFdKYNiFDo5/HIYsaCEY9ff4sb10x9jizo2+pRrSyF4jKZCXqgzuqBOQKbUm90gQwJg==
   dependencies:
     regenerator-runtime "^0.13.4"
 
@@ -2056,12 +2056,12 @@
     "@svgr/plugin-svgo" "^5.5.0"
     loader-utils "^2.0.0"
 
-"@tanem/svg-injector@^10.1.13":
-  version "10.1.14"
-  resolved "https://registry.yarnpkg.com/@tanem/svg-injector/-/svg-injector-10.1.14.tgz#e42f5defb524551770c1a583f950d4bc89e6fd73"
-  integrity sha512-VjcuoKb2jCyx7FeOoz+p3LfH+V2HYXpPPVbTqWdHNV4R8d6DtHYNfQWPivSVcNi0cAtkLnDuEE+2c714YA2l5A==
+"@tanem/svg-injector@^10.1.21":
+  version "10.1.22"
+  resolved "https://registry.yarnpkg.com/@tanem/svg-injector/-/svg-injector-10.1.22.tgz#90b602025c0ba02d0dde0fb69f1a9bce824bda0c"
+  integrity sha512-sGI9c+BbDm00b651pSfSQSuaN9xqe3RmBD4tY+qsnYBaqh5agW6pn/CeCeju0tM5Fh7geEMg2PXUbOfxT88jjA==
   dependencies:
-    "@babel/runtime" "^7.16.5"
+    "@babel/runtime" "^7.17.9"
     content-type "^1.0.4"
     tslib "^2.3.1"
 
@@ -2356,6 +2356,11 @@
   version "15.7.4"
   resolved "https://registry.yarnpkg.com/@types/prop-types/-/prop-types-15.7.4.tgz#fcf7205c25dff795ee79af1e30da2c9790808f11"
   integrity sha512-rZ5drC/jWjrArrS8BR6SIr4cWpW09RNTYt9AMZo3Jwwif+iacXAqgVjm0B0Bv/S1jhDXKHqRVNCbACkJ89RAnQ==
+
+"@types/prop-types@^15.7.5":
+  version "15.7.5"
+  resolved "https://registry.yarnpkg.com/@types/prop-types/-/prop-types-15.7.5.tgz#5f19d2b85a98e9558036f6a3cacc8819420f05cf"
+  integrity sha512-JCB8C6SnDoQf0cNycqd/35A7MjcnK+ZTqE7judS6o7utxUCg6imJg3QK2qzHKszlTjcj2cn+NwMB2i96ubpj7w==
 
 "@types/q@^1.5.1":
   version "1.5.5"
@@ -10719,6 +10724,15 @@ prop-types@^15.5.7, prop-types@^15.6.2, prop-types@^15.7.2:
     object-assign "^4.1.1"
     react-is "^16.8.1"
 
+prop-types@^15.8.1:
+  version "15.8.1"
+  resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.8.1.tgz#67d87bf1a694f48435cf332c24af10214a3140b5"
+  integrity sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==
+  dependencies:
+    loose-envify "^1.4.0"
+    object-assign "^4.1.1"
+    react-is "^16.13.1"
+
 property-expr@^2.0.4:
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/property-expr/-/property-expr-2.0.4.tgz#37b925478e58965031bb612ec5b3260f8241e910"
@@ -11012,7 +11026,7 @@ react-i18next@11.15.4:
     html-escaper "^2.0.2"
     html-parse-stringify "^3.0.1"
 
-react-is@^16.6.0, react-is@^16.7.0, react-is@^16.8.1:
+react-is@^16.13.1, react-is@^16.6.0, react-is@^16.7.0, react-is@^16.8.1:
   version "16.13.1"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
   integrity sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==
@@ -11143,15 +11157,15 @@ react-scripts@4.0.3:
   optionalDependencies:
     fsevents "^2.1.3"
 
-react-svg@14.1.6:
-  version "14.1.6"
-  resolved "https://registry.yarnpkg.com/react-svg/-/react-svg-14.1.6.tgz#80b58b423a7d050814c0af6c5deda7286c1c2dd2"
-  integrity sha512-OJGGwuq+ocl6k8QbkWZ2XRF+RO6DbIG2v6as1Xd+oPI0U/4fWInBvtGeCKh3CYcfLIQWI3icyp4atV3BE7bcBg==
+react-svg@14.1.19:
+  version "14.1.19"
+  resolved "https://registry.yarnpkg.com/react-svg/-/react-svg-14.1.19.tgz#c660d86bf1ee78afb07153717c624b987d6cf140"
+  integrity sha512-s2wBLSo2D3Wi0VNnZ4vzO54a6I3ZPN3qAMypkEWjg/OaTpLSFGVakG2CDE2cR/6cfWjIptDi/DAbT7TpL0OCow==
   dependencies:
-    "@babel/runtime" "^7.16.5"
-    "@tanem/svg-injector" "^10.1.13"
-    "@types/prop-types" "^15.7.4"
-    prop-types "^15.7.2"
+    "@babel/runtime" "^7.17.9"
+    "@tanem/svg-injector" "^10.1.21"
+    "@types/prop-types" "^15.7.5"
+    prop-types "^15.8.1"
 
 react-tooltip@4.2.21:
   version "4.2.21"
