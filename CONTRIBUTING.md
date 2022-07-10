@@ -168,7 +168,7 @@ Your pull request is approved when:
 ## **Community**
 
 - Do you have any question about Horusec? Send to our e-mail **horusec@zup.com.br**.
-- Let's chat in our [**forum**](https://forum.zup.com.br/c/en/horusec/14).
+- Let's chat in our [**discussion center**](https://github.com/ZupIT/horusec/discussions).
 
 Thank you for your contribution, you rock! 🚀
 
