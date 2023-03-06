@@ -12,7 +12,7 @@ require (
 	github.com/google/wire v0.5.0
 	github.com/streadway/amqp v1.0.0
 	github.com/stretchr/testify v1.7.0
-	github.com/swaggo/swag v1.7.8
+	github.com/swaggo/swag v1.7.9
 	google.golang.org/grpc v1.43.0
 )
 
@@ -56,7 +56,7 @@ require (
 	github.com/sirupsen/logrus v1.8.1 // indirect
 	github.com/stretchr/objx v0.3.0 // indirect
 	github.com/swaggo/files v0.0.0-20210815190702-a29dd2bc99b2 // indirect
-	github.com/swaggo/http-swagger v1.1.2 // indirect
+	github.com/swaggo/http-swagger v1.2.6 // indirect
 	golang.org/x/crypto v0.0.0-20211117183948-ae814b36b871 // indirect
 	golang.org/x/net v0.0.0-20211112202133-69e39bad7dc2 // indirect
 	golang.org/x/sys v0.0.0-20210809222454-d867a43fc93e // indirect
