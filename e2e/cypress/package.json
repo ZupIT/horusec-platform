@@ -16,7 +16,7 @@
     "typescript": "4.5.4"
   },
   "dependencies": {
-    "axios": "0.24.0",
+    "axios": "0.28.0",
     "uuid": "8.3.2"
   }
 }
