@@ -6159,10 +6159,10 @@ expect@^26.6.0, expect@^26.6.2:
     jest-message-util "^26.6.2"
     jest-regex-util "^26.0.0"
 
-export-from-json@1.4.1:
-  version "1.4.1"
-  resolved "https://registry.yarnpkg.com/export-from-json/-/export-from-json-1.4.1.tgz#7700516406b4c0b6d1a279d3e4dfb6254b109bcb"
-  integrity sha512-7kg3g55+jKUTu13w0byDBTZIr4pR/yBlusqWuBCF3pukbyUC8wTsqRmqqTHELWXkCzdik7n/qSPGVvZC7sSuVQ==
+export-from-json@1.7.4:
+  version "1.7.4"
+  resolved "https://registry.yarnpkg.com/export-from-json/-/export-from-json-1.7.4.tgz#ea2ea0e88ae27870aba3727a8e7eb8c6439ca4a6"
+  integrity sha512-FjmpluvZS2PTYyhkoMfQoyEJMfe2bfAyNpa5Apa6C9n7SWUWyJkG/VFnzERuj3q9Jjo3iwBjwVsDQ7Z7sczthA==
 
 express@^4.17.1:
   version "4.17.1"
