@@ -65,7 +65,7 @@
     "@types/jest": "27.4.0",
     "@types/keycloak-js": "3.4.1",
     "@types/lodash": "4.14.178",
-    "@types/node": "16.11.25",
+    "@types/node": "16.18.114",
     "@types/react": "17.0.39",
     "@types/react-datepicker": "4.3.4",
     "@types/react-dom": "17.0.11",
